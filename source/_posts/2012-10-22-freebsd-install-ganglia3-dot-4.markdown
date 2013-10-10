@@ -253,10 +253,11 @@ error: too many arguments to function 'rrd_lastupdate'
 参考这里https://bugs.php.net/bug.php?id=59558
 
  
-
+```c
 - if (rrd_lastupdate(2, &argv[1], &last_update, &ds_cnt, &ds_namv,
 
 + if (rrd_lastupdate_r(argv[1], &last_update, &ds_cnt, &ds_namv,
+```
 
 装完看到phpinfo里有了。
 
