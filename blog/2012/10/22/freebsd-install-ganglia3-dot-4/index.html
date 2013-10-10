@@ -451,10 +451,13 @@ wget http://downloads. &hellip;">
 
 <p>参考这里<a href="https://bugs.php.net/bug.php?id=59558">https://bugs.php.net/bug.php?id=59558</a></p>
 
-<ul>
-<li><p>if (rrd_lastupdate(2, &amp;argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,</p></li>
-<li><p>if (rrd_lastupdate_r(argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,</p></li>
-</ul>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">-</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate_r</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>装完看到phpinfo里有了。</p>
