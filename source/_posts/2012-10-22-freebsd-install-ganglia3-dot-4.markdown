@@ -3,7 +3,7 @@ layout: post
 title: "freebsd install ganglia3.4"
 date: 2012-10-22 11:24
 comments: true
-categories:    监控
+categories:    monitor
 ---
 ##Ganglia是什么?
 简单形象的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。
