@@ -5,6 +5,10 @@ date: 2012-10-22 11:24
 comments: true
 categories:    监控
 ---
+##Ganglia是什么?
+简单形象的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。
+
+##安装小记
 首先是下载ganglia
 {% codeblock shell lang:bash %}
 wget http://downloads.sourceforge.net/project/ganglia/
