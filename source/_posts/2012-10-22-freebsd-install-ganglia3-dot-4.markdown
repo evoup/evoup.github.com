@@ -145,7 +145,7 @@ sudo make install
 {% endcodeblock %} 
 安装完成！
 
-测试gametad的运行
+测试gmetad的运行
 {% codeblock shell lang:bash %}
 sudo /usr/local/sbin/gmetad -d 5
 
@@ -225,7 +225,7 @@ http://192.168.174.133/ganglia/
 There was an error collecting ganglia data (127.0.0.1:8652): fsockopen error: Connection refused
 
  
-因为没有打开gmond和gametad，打开发现界面ok了，但是没有数据！
+因为没有打开gmond和gmetad，打开发现界面ok了，但是没有数据！
 
 怀疑是php没有安装rrdtool的扩展,继续安装php的rrdtool扩展
 
