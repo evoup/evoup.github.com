@@ -3,7 +3,7 @@ layout: post
 title: "头文件中变量赋值方法"
 date: 2010-12-15 00:04
 comments: true
-categories: 
+categories:     c-language
 ---
 先看这段文字
 <hr>
