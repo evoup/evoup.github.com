@@ -1,12 +1,14 @@
 ---
 layout: post
-title: "call_user_func动态调用函数"
+title: "PHP之call_user_func动态调用函数"
 date: 2009-06-11 11:40
 comments: true
 categories:     php
 ---
 call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
 做项目修改a2billing代码时发现了这个函数。
+
+<!-- readmore -->
 在a2billing/Public/call-log-custoners.php的大约780行
 
 
