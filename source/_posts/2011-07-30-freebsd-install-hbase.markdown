@@ -9,9 +9,9 @@ categories:           hbase
 
 http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2
 
-下完就放到/usr/port/distfile
-
 <!-- more -->
+
+下完就放到/usr/port/distfile
 
 进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。
 
