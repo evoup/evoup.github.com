@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T11:38:33+08:00</updated>
+  <updated>2013-10-11T13:03:30+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -430,6 +430,44 @@ long2ip（3232290954).
 <p>还有一个$conf[&lsquo;rrdtool&rsquo;]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
 
 <p>应该就差不多了！这样如果还不行，检查自身人品，然后看下/var/log/message</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php_call_user_func]]></title>
+    <link href="http://evoupsight.com/blog/2009/06/11/php-call-user-func/"/>
+    <updated>2009-06-11T11:40:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2009/06/11/php-call-user-func</id>
+    <content type="html"><![CDATA[<p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。</p>
+
+<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
+</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
+$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display!!!!
+call_user_func这是PHP的函数，我还以为是自定义函数！
+到把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
+数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+
+<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
 ]]></content>
   </entry>
   

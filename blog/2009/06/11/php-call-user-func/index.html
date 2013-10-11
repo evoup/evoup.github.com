@@ -5,12 +5,20 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>W3的父框架下另一子框架跳转 - Evoup`s Blog</title>
+  <title>php_call_user_func - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="1
-parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
+  <meta name="description" content="call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。 在a2billing/Public/call-log-custoners.php的大约780行 1
+2
+3
+4
+5
+6
+7
+8
+while...
+echo $FG_TABLE_COL[$i][11 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +27,7 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2008/05/23/parent-frame-location">
+  <link rel="canonical" href="http://evoupsight.com/blog/2009/06/11/php-call-user-func">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -69,7 +77,7 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
   
   <header>
     
-      <h1 class="entry-title">W3的父框架下另一子框架跳转</h1>
+      <h1 class="entry-title">Php_call_user_func</h1>
     
     
       <p class="meta">
@@ -85,17 +93,43 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
   
 
 
-<time datetime="2008-05-23T21:15:00+08:00" pubdate data-updated="true">May 23<span>rd</span>, 2008</time>
+<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">parent</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s2">&quot;http://www.baidu.com&quot;</span>
+<div class="entry-content"><p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。</p>
+
+<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
+</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
+$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display!!!!
+call_user_func这是PHP的函数，我还以为是自定义函数！
+到把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
+数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+
+<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
 </div>
 
 
@@ -118,12 +152,12 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
   
 
 
-<time datetime="2008-05-23T21:15:00+08:00" pubdate data-updated="true">May 23<span>rd</span>, 2008</time>
+<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/javascript/'>javascript</a>
+    <a class='category' href='/blog/categories/php/'>php</a>
   
 </span>
 
@@ -132,7 +166,7 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2008/05/23/parent-frame-location/" data-via="" data-counturl="http://evoupsight.com/blog/2008/05/23/parent-frame-location/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/06/11/php-call-user-func/" data-via="" data-counturl="http://evoupsight.com/blog/2009/06/11/php-call-user-func/" >Tweet</a>
   
   
   
@@ -148,10 +182,10 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2008/05/22/js-get-cookie/" title="Previous Post: js获取cookie">&laquo; js获取cookie</a>
+        <a class="basic-alignment left" href="/blog/2008/07/20/delete-cvs-dir/" title="Previous Post: 批量删除CVS目录的cmd">&laquo; 批量删除CVS目录的cmd</a>
       
       
-        <a class="basic-alignment right" href="/blog/2008/07/20/delete-cvs-dir/" title="Next Post: 批量删除CVS目录的cmd">批量删除CVS目录的cmd &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Next Post: freebsd install ganglia3.4">freebsd install ganglia3.4 &raquo;</a>
       
     </p>
   </footer>
