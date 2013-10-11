@@ -9,8 +9,13 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="以php语言为例 1
-find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebsd里面，我还是去http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7% &hellip;">
+  <meta name="description" content="工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。 erlang代码片段 1
+2
+3
+4
+5
+%%从整形转换为IP地址元组
+long2ip(IpInteger) -&gt; Integer_to_ip=fun(Ip)-&gt; {Ip bsr 24, (Ip band &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,85 +71,6 @@ find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebs
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/11/freebsd-ctag/">freebsd下如何创建和使用Ctag</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-11T14:48:00+08:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>以php语言为例</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在freebsd里面，我还是去<a href="http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags">http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags</a> -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了
-于是</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
-</span><span class='line'>/usr/bin/
-</span><span class='line'>mv ctags ctags.orig
-</span><span class='line'>ln -s /usr/local/bin/ctags ctags
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>对于c语言可能包含的h文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.*&quot;</span> -exec exctags <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>题外话，要将find到的文件移动到其他目录，可以这么干
-find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
-
-<p>彩色查找</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>替换全部代码中的abc为123，排除svn文件夹</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -1229,6 +1155,98 @@ long2ip（3232290954).
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成中间文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1244,10 +1262,6 @@ long2ip（3232290954).
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/10/11/freebsd-ctag/">freebsd下如何创建和使用Ctag</a>
-      </li>
-    
-      <li class="post">
         <a href="/blog/2013/10/09/erlang-long2ip/">Erlang版的long2ip函数</a>
       </li>
     
@@ -1261,6 +1275,10 @@ long2ip（3232290954).
     
       <li class="post">
         <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a>
       </li>
     
   </ul>

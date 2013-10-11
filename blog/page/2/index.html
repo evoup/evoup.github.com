@@ -9,13 +9,8 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
-编译静态库
-先找一下源文件 1
-2
-3
-4 &hellip;">
+  <meta name="description" content="以php语言为例 1
+find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,7 +72,7 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
+      <h1 class="entry-title"><a href="/blog/2010/07/23/freebsd-ctag/">freebsd下如何创建和使用Ctag</a></h1>
     
     
       <p class="meta">
@@ -93,68 +88,70 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   
 
 
-<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+<time datetime="2010-07-23T14:48:00+08:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
-编译静态库
-先找一下源文件</p>
+  <div class="entry-content"><p>以php语言为例</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了！</p>
+
+<p>于是就直接port安装了。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
-</span><span class='line'>./sfhashfcn.c
-</span><span class='line'>./test.c
-</span><span class='line'>./sfmemcap.c
-</span><span class='line'>./sfxhash.c
-</span><span class='line'>./sfprimetable.c
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
+</span><span class='line'>/usr/bin/
+</span><span class='line'>mv ctags ctags.orig
+</span><span class='line'>ln -s /usr/local/bin/ctags ctags
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>生成中间文件</p>
+<p>对于c语言可能包含的h文件的方法，我采用如下的方式：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
-</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
-</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
-</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -regex <span class="s2">&quot;.*\.\(c\|h\)&quot;</span> -exec exctags <span class="o">{}</span> +
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>生成静态库</p>
+<p>题外话，要将find到的文件移动到其他目录，可以这么干
+find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
+
+<p>彩色查找CM_MISC关键字</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+<p>替换全部代码中的abc为123，排除svn文件夹</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+<p>我最后在~/.cshrc的配置文件中直接把查找关键字做成一个别名，如下：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">alias </span>f <span class="s2">&quot;find . \( -path &#39;*.svn*&#39; -o -path &#39;*.fcgi*&#39; -o -path &#39;*tags*&#39; -o -name &#39;*.o&#39; -o -name &#39;*.so&#39; -o -name &#39;*.a&#39; \) -p    rune -o -name .git -prune -o -print | xargs grep -in --color&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样查找某个字符串的时候只需要输入如下指令即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>f <span class="s1">&#39;字符串&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 </div>
@@ -552,10 +549,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/10/11/freebsd-ctag/">freebsd下如何创建和使用Ctag</a>
-      </li>
-    
-      <li class="post">
         <a href="/blog/2013/10/09/erlang-long2ip/">Erlang版的long2ip函数</a>
       </li>
     
@@ -569,6 +562,10 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
     
       <li class="post">
         <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a>
       </li>
     
   </ul>

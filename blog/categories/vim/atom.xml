@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vim | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/vim/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T14:53:53+08:00</updated>
+  <updated>2013-10-11T15:03:41+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -15,15 +15,17 @@
   
   <entry>
     <title type="html"><![CDATA[freebsd下如何创建和使用Ctag]]></title>
-    <link href="http://evoupsight.com/blog/2013/10/11/freebsd-ctag/"/>
-    <updated>2013-10-11T14:48:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/10/11/freebsd-ctag</id>
+    <link href="http://evoupsight.com/blog/2010/07/23/freebsd-ctag/"/>
+    <updated>2010-07-23T14:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/07/23/freebsd-ctag</id>
     <content type="html"><![CDATA[<p>以php语言为例
 <code>bash
 find . -name "*.php" -exec exctags --language-force=php {} +
-</code>
-在freebsd里面，我还是去<a href="http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags">http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags</a> -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了
-于是
+</code></p>
+
+<p>在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了！</p>
+
+<p>于是就直接port安装了。
 <code>bash
 pwd
 /usr/bin/
@@ -31,15 +33,15 @@ mv ctags ctags.orig
 ln -s /usr/local/bin/ctags ctags
 </code></p>
 
-<p>对于c语言可能包含的h文件
+<p>对于c语言可能包含的h文件的方法，我采用如下的方式：
 <code>bash
-find . -name "*.*" -exec exctags {} +
+find . -regex ".*\.\(c\|h\)" -exec exctags {} +
 </code></p>
 
 <p>题外话，要将find到的文件移动到其他目录，可以这么干
 find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
 
-<p>彩色查找
+<p>彩色查找CM_MISC关键字
 <code>bash
 find . ! -path "*.svn*" -type f -exec grep -n --color CM_MISC {} \;
 </code></p>
@@ -47,6 +49,15 @@ find . ! -path "*.svn*" -type f -exec grep -n --color CM_MISC {} \;
 <p>替换全部代码中的abc为123，排除svn文件夹
 <code>bash
 find . ! -path "*.svn*" -type f -exec sed -i "s/abc/123/g" {} \;
+</code></p>
+
+<p>我最后在~/.cshrc的配置文件中直接把查找关键字做成一个别名，如下：
+<code>bash
+alias f "find . \( -path '*.svn*' -o -path '*.fcgi*' -o -path '*tags*' -o -name '*.o' -o -name '*.so' -o -name '*.a' \) -p    rune -o -name .git -prune -o -print | xargs grep -in --color"
+</code>
+这样查找某个字符串的时候只需要输入如下指令即可
+<code>bash
+f '字符串'
 </code></p>
 ]]></content>
   </entry>

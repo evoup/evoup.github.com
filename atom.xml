@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T14:53:53+08:00</updated>
+  <updated>2013-10-11T15:03:41+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,58 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd下如何创建和使用Ctag]]></title>
-    <link href="http://evoupsight.com/blog/2013/10/11/freebsd-ctag/"/>
-    <updated>2013-10-11T14:48:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/10/11/freebsd-ctag</id>
-    <content type="html"><![CDATA[<p>以php语言为例</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在freebsd里面，我还是去<a href="http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags">http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags</a> -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了
-于是</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
-</span><span class='line'>/usr/bin/
-</span><span class='line'>mv ctags ctags.orig
-</span><span class='line'>ln -s /usr/local/bin/ctags ctags
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>对于c语言可能包含的h文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.*&quot;</span> -exec exctags <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>题外话，要将find到的文件移动到其他目录，可以这么干
-find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
-
-<p>彩色查找</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>替换全部代码中的abc为123，排除svn文件夹</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[erlang版的long2ip函数]]></title>
@@ -965,6 +913,73 @@ long2ip（3232290954).
 </pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
 </span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
 </span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下如何创建和使用Ctag]]></title>
+    <link href="http://evoupsight.com/blog/2010/07/23/freebsd-ctag/"/>
+    <updated>2010-07-23T14:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/07/23/freebsd-ctag</id>
+    <content type="html"><![CDATA[<p>以php语言为例</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了！</p>
+
+<p>于是就直接port安装了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
+</span><span class='line'>/usr/bin/
+</span><span class='line'>mv ctags ctags.orig
+</span><span class='line'>ln -s /usr/local/bin/ctags ctags
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于c语言可能包含的h文件的方法，我采用如下的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -regex <span class="s2">&quot;.*\.\(c\|h\)&quot;</span> -exec exctags <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>题外话，要将find到的文件移动到其他目录，可以这么干
+find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
+
+<p>彩色查找CM_MISC关键字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换全部代码中的abc为123，排除svn文件夹</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我最后在~/.cshrc的配置文件中直接把查找关键字做成一个别名，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">alias </span>f <span class="s2">&quot;find . \( -path &#39;*.svn*&#39; -o -path &#39;*.fcgi*&#39; -o -path &#39;*tags*&#39; -o -name &#39;*.o&#39; -o -name &#39;*.so&#39; -o -name &#39;*.a&#39; \) -p    rune -o -name .git -prune -o -print | xargs grep -in --color&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样查找某个字符串的时候只需要输入如下指令即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>f <span class="s1">&#39;字符串&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
