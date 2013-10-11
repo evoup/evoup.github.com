@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-10-11T13:34:39+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[遭遇nginx upstream sent too big header]]></title>
+    <link href="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header/"/>
+    <updated>2011-09-11T23:20:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header</id>
+    <content type="html"><![CDATA[<p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>nginx配置中要加以下2行
+<code>shell
+fastcgi_buffer_size 128k;
+fastcgi_buffers 8 128k;
+</code></p>
+
+<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+]]></content>
+  </entry>
+  
+</feed>
