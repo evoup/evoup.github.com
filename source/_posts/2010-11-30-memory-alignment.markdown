@@ -9,6 +9,8 @@ categories:     c-language
 
 按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：
 
+<!-- more -->
+
 对于
 ```c
 struct A {
