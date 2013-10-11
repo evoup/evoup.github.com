@@ -12,6 +12,6 @@ $num=mysql_num_rows($result);
 if ($num==0) return 0;
 for($i=0;$i<$num;$i++)
 {
-$row[]=mysql_fetch_array($result);
+    $row[]=mysql_fetch_array($result);
 }
 ```
