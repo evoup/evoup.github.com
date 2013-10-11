@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-10-11T13:59:11+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[C语言变参宏]]></title>
+    <link href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/"/>
+    <updated>2011-06-05T23:29:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define</id>
+    <content type="html"><![CDATA[<p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+
+<p><code>c
+buffer_copy_string_len(modules-&gt;key, CONST_STR_LEN("server.modules"));
+</code>
+而此参数声明的时候是这样的</p>
+
+<p><code>c
+int buffer_copy_string_len(buffer *b, const char *s, size_t s_len);
+</code>
+怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+
+<p>```c</p>
+
+<h1>define CONST_STR_LEN(x) x, x ? sizeof(x) &ndash; 1 : 0</h1>
+
+<p>```
+这不就成了三个参了？记一笔&hellip;</p>
+]]></content>
+  </entry>
+  
+</feed>
