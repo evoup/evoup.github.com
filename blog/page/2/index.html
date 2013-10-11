@@ -9,8 +9,13 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="以php语言为例 1
-find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags， &hellip;">
+  <meta name="description" content="制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
+编译静态库
+先找一下源文件 1
+2
+3
+4 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +71,98 @@ find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebs
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成中间文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>

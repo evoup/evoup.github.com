@@ -1006,6 +1006,68 @@ long2ip（3232290954).
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2010/12/15/header-file-variable-assign/">头文件中变量赋值方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-15T00:04:00+08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先看这段文字</p>
+
+<hr>
+
+
+<p>今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
+这里还涉及到另一个问题，需要提前说明，即使用预处理器避免多重包含。这里的多重包含指的是同一个文件直接或者间接的包含一个头文件多次，例如a.h包含 b.h，a.cpp同时包含a.h和b.h，a.cpp就两次包含了b.h。但由于b.h中具有避免多重包含的措施，a.cpp中还是只包含了b.h一 次。而包含的意思其实就是在预处理阶段用被包含文件的内容代替此包含语句。
+回到头文件定义变量的问题上，如果在头文件中定义了变量，避免多重包含的措施只能避免该头文件在同一个编译单元内被包含一次，在不同的编译单元内还是会被多次包含的，这样就造成了变量的重复定义。
+但是也有例外，如果const对象在编译时可以确定其值，可以将其放在头文件中定义。这么做是有原因的——const对象默认情况下是定义该变量的文件的 局部变量，这样即使此头文件被多个包含，都不会在包含这些文件中重复定义此变量，所有对于这个const对象的引用全都指向在头文件中定义的对象。如果在 const对象定义的时候声明extern，const对象就变得和普通非const对象一样，从而失去此特性（非const对象的默认属性为 extern）。
+C++中的很多用法都不是标准C++规定的，但是由于各种原因，已经是约定俗成或是惯常用法，至于原因以及除此之外的其他用法完全可以不必深究，否则很容易钻牛角尖！</p>
+
+<hr>
+
+
+<p>今天移植gamedev里文章讲到的一个例子的时候碰到了这个问题，要在头文件里给一个变量定义。</p>
+
+<p>最后这样就可以了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">//16Bit format for video card</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">PixelFormat</span> <span class="o">=</span> <span class="n">PF_555</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
+相应的在头文件里定义结构用typedef而不要去用struct！</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2010/11/30/memory-alignment/">目前看到的对内存对齐问题最好的解释</a></h1>
     
     
@@ -1147,98 +1209,6 @@ long2ip（3232290954).
 </span></code></pre></td></tr></table></div></figure>
 
 
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
-编译静态库
-先找一下源文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
-</span><span class='line'>./sfhashfcn.c
-</span><span class='line'>./test.c
-</span><span class='line'>./sfmemcap.c
-</span><span class='line'>./sfxhash.c
-</span><span class='line'>./sfprimetable.c
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成中间文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
-</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
-</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
-</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成静态库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
 
 </div>
   
