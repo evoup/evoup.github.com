@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>遭遇nginx upstream sent too big header - Evoup`s Blog</title>
+  <title>win32_c_call_python - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="遭遇nginx upstream sent too big header while reading response header from upstream 这个问题会导致输出502头信息。 nginx配置中要加以下2行 1
-2
-fastcgi_buffer_size 128k; &hellip;">
+  <meta name="description" content="工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ fastcgi_buffer_size 128k; &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header">
+  <link rel="canonical" href="http://evoupsight.com/blog/2009/10/06/win32-c-call-python">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -70,7 +68,7 @@ fastcgi_buffer_size 128k; &hellip;">
   
   <header>
     
-      <h1 class="entry-title">遭遇nginx Upstream Sent Too Big Header</h1>
+      <h1 class="entry-title">Win32_c_call_python</h1>
     
     
       <p class="meta">
@@ -86,27 +84,53 @@ fastcgi_buffer_size 128k; &hellip;">
   
 
 
-<time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
+<time datetime="2009-10-06T15:49:00+08:00" pubdate data-updated="true">Oct 6<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+<div class="entry-content"><p>工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe,然后直接通过python的capi，调用python脚本工作。后来发现非控制台程序的exe，嵌入python是会有这样那样的问题出现。参见《PyRun_SimpleString的无穷怨念》</p>
 
-<p>这个问题会导致输出502头信息。</p>
+<p><a href="http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx">http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx</a></p>
 
-<p>nginx配置中要加以下2行</p>
+<p>于是在dll里面去嵌入python，dll里面可以用win32线程来调度python脚本的执行状态。</p>
+
+<p>然后就涉及到发布的问题，先是这样子出现
+“由于应用程序配置不正确，应用程序未能启动。重新安装应用程序可能会纠正这个问题。”</p>
+
+<p>查了下资料,<a href="http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html">http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html</a>
+意思是python2.6是vc++2008编译的，所以要装Microsoft Visual C++ 2008 Redistributable Package。</p>
+
+<p>再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。</p>
+
+<p>这个过程大致如下</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
-</span><span class='line'>fastcgi_buffers 8 128k;
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># setup.py</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">py2exe</span>
+</span><span class='line'><span class="n">setup</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;hello.py&quot;</span><span class="p">])</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+<p>运行setup.py，记得要传一个参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">py2e</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>于是生成的dist文件夹里就是发布好的程序了。
+按照这个思路，解压library.zip里面的程序到dll目录也就可以运行了，试验发现如果是dll的话， w9xpopen.exe到是不必打包带进去了，这样我的dll连同这些文件都放到一个目录里，exe调用这个 dll就完成任务了。我的dll是Release版本的，因为我带的dll是python26.dll而不是python26_d.dll， 这样客户机再也不必安装python就可以运行带有python脚本的程序了。</p>
+
+<p>总结：这谁想出来的，搞得这么复杂，LUA就没有这么复杂，直接2个DLL就完事了，但是估计调用 库的话也是一样的。</p>
+
+<p>后记：其实非商业项目可以用selenium这类GUI自动化测试软件来干，也就是写写脚本。</p>
 </div>
 
 
@@ -129,12 +153,12 @@ fastcgi_buffer_size 128k; &hellip;">
   
 
 
-<time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
+<time datetime="2009-10-06T15:49:00+08:00" pubdate data-updated="true">Oct 6<span>th</span>, 2009</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/nginx/'>nginx</a>
+    <a class='category' href='/blog/categories/python/'>python</a>
   
 </span>
 
@@ -143,7 +167,7 @@ fastcgi_buffer_size 128k; &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header/" data-via="" data-counturl="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/10/06/win32-c-call-python/" data-via="" data-counturl="http://evoupsight.com/blog/2009/10/06/win32-c-call-python/" >Tweet</a>
   
   
   
@@ -159,10 +183,10 @@ fastcgi_buffer_size 128k; &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2011/07/30/freebsd-install-hbase/" title="Previous Post: freebsd下hbase安装">&laquo; freebsd下hbase安装</a>
+        <a class="basic-alignment left" href="/blog/2009/09/23/header-file-refered-by-each-other/" title="Previous Post: 关于头文件互相包含的解决方法">&laquo; 关于头文件互相包含的解决方法</a>
       
       
-        <a class="basic-alignment right" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Next Post: freebsd安装ganglia3.4">freebsd安装ganglia3.4 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2009/12/23/java-concurrentmodificationexception/" title="Next Post: java关于ConcurrentModificationException异常">java关于ConcurrentModificationException异常 &raquo;</a>
       
     </p>
   </footer>
