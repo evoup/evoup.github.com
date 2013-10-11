@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: vim | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/vim/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-10-11T14:53:53+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下如何创建和使用Ctag]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/11/freebsd-ctag/"/>
+    <updated>2013-10-11T14:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/11/freebsd-ctag</id>
+    <content type="html"><![CDATA[<p>以php语言为例
+<code>bash
+find . -name "*.php" -exec exctags --language-force=php {} +
+</code>
+在freebsd里面，我还是去<a href="http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags">http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags</a> -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了
+于是
+<code>bash
+pwd
+/usr/bin/
+mv ctags ctags.orig
+ln -s /usr/local/bin/ctags ctags
+</code></p>
+
+<p>对于c语言可能包含的h文件
+<code>bash
+find . -name "*.*" -exec exctags {} +
+</code></p>
+
+<p>题外话，要将find到的文件移动到其他目录，可以这么干
+find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
+
+<p>彩色查找
+<code>bash
+find . ! -path "*.svn*" -type f -exec grep -n --color CM_MISC {} \;
+</code></p>
+
+<p>替换全部代码中的abc为123，排除svn文件夹
+<code>bash
+find . ! -path "*.svn*" -type f -exec sed -i "s/abc/123/g" {} \;
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

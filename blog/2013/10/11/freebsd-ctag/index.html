@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C++实现crc32 - Evoup`s Blog</title>
+  <title>freebsd下如何创建和使用Ctag - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="直接参考如下连接
-http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boost、Crypto++
-">
+  <meta name="description" content="以php语言为例 1
+find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebsd里面，我还是去http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7% &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/26/crc32-cpp">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/10/11/freebsd-ctag">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -70,7 +69,7 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
   
   <header>
     
-      <h1 class="entry-title">C++实现crc32</h1>
+      <h1 class="entry-title">freebsd下如何创建和使用Ctag</h1>
     
     
       <p class="meta">
@@ -86,17 +85,57 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
   
 
 
-<time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
+<time datetime="2013-10-11T14:48:00+08:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>直接参考如下连接
-<a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
+<div class="entry-content"><p>以php语言为例</p>
 
-<p>或者boost、Crypto++</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在freebsd里面，我还是去<a href="http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags">http://ctags.sourceforge.net/%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E4%BA%86ctags%EF%BC%8C%E8%80%81%E5%AE%9E%E8%AF%B4freebsd%E8%87%AA%E5%B8%A6%E7%9A%84ctags%E4%B8%80%E7%82%B9%E4%B9%9F%E4%B8%8D%E5%A5%BD%E7%94%A8%EF%BC%8C%E9%99%A4%E4%BA%86%E4%B8%8D%E8%83%BD%E7%9B%B4%E6%8E%A5ctags</a> -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了
+于是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
+</span><span class='line'>/usr/bin/
+</span><span class='line'>mv ctags ctags.orig
+</span><span class='line'>ln -s /usr/local/bin/ctags ctags
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于c语言可能包含的h文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.*&quot;</span> -exec exctags <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>题外话，要将find到的文件移动到其他目录，可以这么干
+find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
+
+<p>彩色查找</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换全部代码中的abc为123，排除svn文件夹</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
@@ -119,12 +158,12 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
   
 
 
-<time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
+<time datetime="2013-10-11T14:48:00+08:00" pubdate data-updated="true">Oct 11<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
+    <a class='category' href='/blog/categories/vim/'>vim</a>
   
 </span>
 
@@ -133,7 +172,7 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/26/crc32-cpp/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/26/crc32-cpp/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/10/11/freebsd-ctag/" data-via="" data-counturl="http://evoupsight.com/blog/2013/10/11/freebsd-ctag/" >Tweet</a>
   
   
   
@@ -149,10 +188,8 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation 或者boos
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2010/11/25/typedef-summary/" title="Previous Post: typedef小结">&laquo; typedef小结</a>
+        <a class="basic-alignment left" href="/blog/2013/10/09/erlang-long2ip/" title="Previous Post: erlang版的long2ip函数">&laquo; erlang版的long2ip函数</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2010/11/30/memory-alignment/" title="Next Post: 目前看到的对内存对齐问题最好的解释">目前看到的对内存对齐问题最好的解释 &raquo;</a>
       
     </p>
   </footer>
