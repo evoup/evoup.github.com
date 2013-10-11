@@ -5,13 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C语言变参宏 - Evoup`s Blog</title>
+  <title>java关于ConcurrentModificationException异常 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句： 1
-buffer_copy_string_len(modules-&gt;key, CONST_STR_LEN(&quot;server.modules&quot;)); 而此参数声明的时候是这样的 1
-int &hellip;">
+  <meta name="description" content="如果出现java.util.ConcurrentModificationException 主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！
+">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +19,7 @@ int &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define">
+  <link rel="canonical" href="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -70,7 +69,7 @@ int &hellip;">
   
   <header>
     
-      <h1 class="entry-title">C语言变参宏</h1>
+      <h1 class="entry-title">java关于ConcurrentModificationException异常</h1>
     
     
       <p class="meta">
@@ -86,35 +85,16 @@ int &hellip;">
   
 
 
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<time datetime="2009-12-23T15:46:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+<div class="entry-content"><p>如果出现java.util.ConcurrentModificationException</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而此参数声明的时候是这样的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
+<p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
 </div>
 
 
@@ -137,12 +117,12 @@ int &hellip;">
   
 
 
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<time datetime="2009-12-23T15:46:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2009</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+    <a class='category' href='/blog/categories/java/'>java</a>
   
 </span>
 
@@ -151,7 +131,7 @@ int &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/" data-via="" data-counturl="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception/" data-via="" data-counturl="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception/" >Tweet</a>
   
   
   
@@ -167,10 +147,10 @@ int &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2011/01/16/c-common-define/" title="Previous Post: C语言宏定义技巧(常用宏定义)(转)">&laquo; C语言宏定义技巧(常用宏定义)(转)</a>
+        <a class="basic-alignment left" href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: call_user_func动态调用函数">&laquo; call_user_func动态调用函数</a>
       
       
-        <a class="basic-alignment right" href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/" title="Next Post: 遭遇nginx upstream sent too big header">遭遇nginx upstream sent too big header &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2010/06/21/singleton-c-language/" title="Next Post: 单例模式C语言版">单例模式C语言版 &raquo;</a>
       
     </p>
   </footer>
