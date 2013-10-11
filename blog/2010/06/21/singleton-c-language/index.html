@@ -5,12 +5,19 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>博客搬家到github - Evoup`s Blog</title>
+  <title>单例模式C语言版 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！
-">
+  <meta name="description" content="Tokyo Cabinet的源码看到的 1
+2
+3
+4
+5
+6
+7
+/* Get the global memory pool object. */
+TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +26,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/09/29/change-blog-to-github">
+  <link rel="canonical" href="http://evoupsight.com/blog/2010/06/21/singleton-c-language">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -69,7 +76,7 @@
   
   <header>
     
-      <h1 class="entry-title">博客搬家到github</h1>
+      <h1 class="entry-title">单例模式C语言版</h1>
     
     
       <p class="meta">
@@ -85,14 +92,42 @@
   
 
 
-<time datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
+<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
+<div class="entry-content"><p>Tokyo Cabinet的源码看到的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
+</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
+</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
 </div>
 
 
@@ -115,12 +150,12 @@
   
 
 
-<time datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
+<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+    <a class='category' href='/blog/categories/c-language/'>c-language</a>
   
 </span>
 
@@ -129,7 +164,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/" data-via="" data-counturl="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" data-via="" data-counturl="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" >Tweet</a>
   
   
   
@@ -145,10 +180,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Previous Post: freebsd install ganglia3.4">&laquo; freebsd install ganglia3.4</a>
+        <a class="basic-alignment left" href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: call_user_func动态调用函数">&laquo; call_user_func动态调用函数</a>
       
       
-        <a class="basic-alignment right" href="/blog/2013/10/09/erlang-long2ip/" title="Next Post: erlang版的long2ip函数">erlang版的long2ip函数 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2010/07/23/freebsd-ctag/" title="Next Post: freebsd下如何创建和使用Ctag">freebsd下如何创建和使用Ctag &raquo;</a>
       
     </p>
   </footer>

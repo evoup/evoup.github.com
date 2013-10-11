@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T15:03:41+08:00</updated>
+  <updated>2013-10-11T15:12:52+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -334,6 +334,35 @@ aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa</p>
 <code>c++
 xx * obj= (xx *)malloc(sizeof(xx));
 </code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[单例模式C语言版]]></title>
+    <link href="http://evoupsight.com/blog/2010/06/21/singleton-c-language/"/>
+    <updated>2010-06-21T07:38:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/06/21/singleton-c-language</id>
+    <content type="html"><![CDATA[<p>Tokyo Cabinet的源码看到的
+```c
+/<em> Get the global memory pool object. </em>/
+TCMPOOL *tcmpoolglobal(void){</p>
+
+<pre><code>if(tcglobalmemorypool) return tcglobalmemorypool;//如果有全局内存池对象就返回对象
+tcglobalmemorypool = tcmpoolnew();//如果没有就创建啊^_^
+atexit(tcmpooldelglobal);
+return tcglobalmemorypool;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>而这个tcglobalmemorypool，其实是写在全局的，有
+<code>c
+/* Global memory pool object. */
+TCMPOOL *tcglobalmemorypool = NULL;
+</code></p>
+
+<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
 ]]></content>
   </entry>
   

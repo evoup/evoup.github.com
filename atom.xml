@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T15:03:41+08:00</updated>
+  <updated>2013-10-11T15:12:52+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -982,6 +982,43 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>f <span class="s1">&#39;字符串&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[单例模式C语言版]]></title>
+    <link href="http://evoupsight.com/blog/2010/06/21/singleton-c-language/"/>
+    <updated>2010-06-21T07:38:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/06/21/singleton-c-language</id>
+    <content type="html"><![CDATA[<p>Tokyo Cabinet的源码看到的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
+</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
+</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
 ]]></content>
   </entry>
   
