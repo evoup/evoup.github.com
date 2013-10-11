@@ -5,12 +5,29 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>博客搬家到github - Evoup`s Blog</title>
+  <title>批量删除CVS目录的cmd - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！
-">
+  <meta name="description" content="windows下的bat的方法 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+@echo On
+@Rem 删除CVS版本控制目录
+@PROMPT [Com]#
+@echo Find CVS @for /r . %%a in (.) do @if exist &quot &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +36,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/09/29/change-blog-to-github">
+  <link rel="canonical" href="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -69,7 +86,7 @@
   
   <header>
     
-      <h1 class="entry-title">博客搬家到github</h1>
+      <h1 class="entry-title">批量删除CVS目录的cmd</h1>
     
     
       <p class="meta">
@@ -85,14 +102,72 @@
   
 
 
-<time datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
+<time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
+<div class="entry-content"><p>windows下的bat的方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
+</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
+</span><span class='line'><span class="p">@</span>PROMPT [Com]#
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
+</span><span class='line'>    <span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
+</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
+</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
@@ -115,12 +190,12 @@
   
 
 
-<time datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
+<time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
+    <a class='category' href='/blog/categories/shell/'>shell</a>
   
 </span>
 
@@ -129,7 +204,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/" data-via="" data-counturl="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/" data-via="" data-counturl="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/" >Tweet</a>
   
   
   
@@ -145,10 +220,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Previous Post: freebsd install ganglia3.4">&laquo; freebsd install ganglia3.4</a>
+        <a class="basic-alignment left" href="/blog/2008/05/23/parent-frame-location/" title="Previous Post: W3的父框架下另一子框架跳转">&laquo; W3的父框架下另一子框架跳转</a>
       
       
-        <a class="basic-alignment right" href="/blog/2013/10/09/erlang-long2ip/" title="Next Post: erlang版的long2ip函数">erlang版的long2ip函数 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Next Post: freebsd install ganglia3.4">freebsd install ganglia3.4 &raquo;</a>
       
     </p>
   </footer>

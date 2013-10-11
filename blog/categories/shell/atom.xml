@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-10-11T11:38:33+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[批量删除CVS目录的cmd]]></title>
+    <link href="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/"/>
+    <updated>2008-07-20T23:23:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2008/07/20/delete-cvs-dir</id>
+    <content type="html"><![CDATA[<p>windows下的bat的方法
+```bat
+@echo On
+@Rem 删除CVS版本控制目录
+@PROMPT [Com]#
+@echo Find CVS</p>
+
+<p>@for /r . %%a in (.) do @if exist &ldquo;%%a\CVS&rdquo; @echo &ldquo;%%a\CVS&rdquo;</p>
+
+<p>@echo Find CVS Dir&hellip;.OK
+@pause</p>
+
+<p>@for /r . %%a in (.) do @if exist &ldquo;%%a\CVS&rdquo; rd /s /q &ldquo;%%a\CVS&rdquo;</p>
+
+<p>@echo Clear CVS Dir Mission Completed</p>
+
+<p>@pause
+```</p>
+
+<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a>
+```bash</p>
+
+<h1>!/bin/sh</h1>
+
+<p>if [ -z &ldquo;$1&rdquo; ]; then</p>
+
+<pre><code>echo "Usage: $0 path"
+exit 1
+</code></pre>
+
+<p>fi</p>
+
+<p>find &ldquo;$1&rdquo; -name &lsquo;CVS&rsquo; -type d -print0 | xargs -0 rm -Rf</p>
+
+<h1>or find … -exec like you have, if you can&rsquo;t use -print0/xargs -0</h1>
+
+<h1>print0/xargs will be slightly faster.</h1>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>
