@@ -167,7 +167,7 @@ long2ip（3232290954).
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">Freebsd Install ganglia3.4</a></h1>
+      <h1 class="entry-title"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a></h1>
     
     
       <p class="meta">
@@ -282,55 +282,18 @@ long2ip（3232290954).
   </header>
 
 
-  <div class="entry-content"><p>安装JDK补遗,port中该文件已经无法获取，原因是版权。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+  <div class="entry-content"><p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
 
 <p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
 
 <p>下完就放到/usr/port/distfile</p>
 
-<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
-
-<p>再装jdk16/usr/port/java/jdk16</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
-</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
-
-<p>而且要有足够的SWAP空间！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>PATH我没有设置</p>
-
-<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
-
-<p>单个节点的启动方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
-</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>hshell的进入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/07/30/freebsd-install-base/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -442,274 +405,14 @@ long2ip（3232290954).
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>2，重新定义一些类型，防止由于各种平台和编译器的不同，而产生的类型字节数差异，方便移植。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">boolean</span><span class="p">;</span> <span class="cm">/* Boolean value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">uint32</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint16</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint8</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int32</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int16</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int8</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
-</span></code></pre></td></tr></table></div></figure>
 
-
-<p>//下面的不建议使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">byte</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">word</span><span class="p">;</span> <span class="cm">/* Unsinged 16 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">dword</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint1</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint2</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">uint4</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int1</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int2</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int4</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value type. */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="n">sint31</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">sint15</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
-</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">sint7</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>3，得到指定地址上的一个字节或字</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MEM_B( x ) ( *( (byte *) (x) ) ) </span>
-</span><span class='line'><span class="cp">#define MEM_W( x ) ( *( (word *) (x) ) ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>4，求最大值和最小值</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MAX( x, y ) ( ((x) &gt; (y)) ? (x) : (y) ) </span>
-</span><span class='line'><span class="cp">#define MIN( x, y ) ( ((x) &lt; (y)) ? (x) : (y) ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>5，得到一个field在结构体(struct)中的偏移量</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FPOS( type, field ) \ </span>
-</span><span class='line'>
-</span><span class='line'><span class="cm">/*lint -e545 */</span> <span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">((</span> <span class="n">type</span> <span class="o">*</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">field</span> <span class="p">)</span> <span class="cm">/*lint +e545 */</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>6,得到一个结构体中field所占用的字节数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FSIZ( type, field ) sizeof( ((type *) 0)-&gt;field ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>7，按照LSB格式把两个字节转化为一个Word</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLIPW( ray ) ( (((word) (ray)[0]) * 256) + (ray)[1] ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>8，按照LSB格式把一个Word转化为两个字节</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLOPW( ray, val ) \ </span>
-</span><span class='line'>
-</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mi">256</span><span class="p">);</span> <span class="err">\</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>9，得到一个变量的地址（word宽度）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define B_PTR( var ) ( (byte *) (void *) &amp;(var) ) </span>
-</span><span class='line'><span class="cp">#define W_PTR( var ) ( (word *) (void *) &amp;(var) ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>10，得到一个字的高位和低位字节</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define WORD_LO(xxx) ((byte) ((word)(xxx) &amp; 255)) </span>
-</span><span class='line'><span class="cp">#define WORD_HI(xxx) ((byte) ((word)(xxx) &gt;&gt; 8)) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>11，返回一个比X大的最接近的8的倍数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define RND8( x ) ((((x) + 7) / 8 ) * 8 ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>12，将一个字母转换为大写</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define UPCASE( c ) ( ((c) &gt;= &#39;a&#39; &amp;&amp; (c) &lt;= &#39;z&#39;) ? ((c) - 0x20) : (c) ) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>13，判断字符是不是10进值的数字</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define DECCHK( c ) ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>14，判断字符是不是16进值的数字</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define HEXCHK( c ) ( ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) ||\ </span>
-</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;A&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;F&#39;</span><span class="p">)</span> <span class="o">||</span><span class="err">\</span>
-</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;a&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;f&#39;</span><span class="p">)</span> <span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>15，防止溢出的一个方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define INC_SAT( val ) (val = ((val)+1 &gt; (val)) ? (val)+1 : (val)) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>16，返回数组元素的个数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define ARR_SIZE( a ) ( sizeof( (a) ) / sizeof( (a[0]) ) )</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>17，返回一个无符号数n尾的值MOD_BY_POWER_OF_TWO(X,n)=X%(2<sup>n</sup>)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MOD_BY_POWER_OF_TWO( val, mod_by ) \ </span>
-</span><span class='line'><span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)(</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dword</span><span class="p">)((</span><span class="n">mod_by</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>18，对于IO空间映射在存储空间的结构，输入输出处理</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define inp(port) (*((volatile byte *) (port))) </span>
-</span><span class='line'><span class="cp">#define inpw(port) (*((volatile word *) (port))) </span>
-</span><span class='line'><span class="cp">#define inpdw(port) (*((volatile dword *)(port))) </span>
-</span><span class='line'><span class="cp">#define outp(port, val) (*((volatile byte *) (port)) = ((byte) (val))) </span>
-</span><span class='line'><span class="cp">#define outpw(port, val) (*((volatile word *) (port)) = ((word) (val))) </span>
-</span><span class='line'><span class="cp">#define outpdw(port, val) (*((volatile dword *) (port)) = ((dword) (val))) </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>[2005-9-9添加]</p>
-
-<p>19,使用一些宏跟踪调试</p>
-
-<p>A N S I标准说明了五个预定义的宏名。它们是：</p>
-
-<p>_ L I N E _</p>
-
-<p>_ F I L E _</p>
-
-<p>_ D A T E _</p>
-
-<p>_ T I M E _</p>
-
-<p>_ S T D C _</p>
-
-<p>如果编译不是标准的，则可能仅支持以上宏名中的几个，或根本不支持。记住编译程序</p>
-
-<p>也许还提供其它预定义的宏名。</p>
-
-<p>_ L I N E <em>及</em> F I L E _宏指令在有关# l i n e的部分中已讨论，这里讨论其余的宏名。</p>
-
-<p>_ D AT E _宏指令含有形式为月/日/年的串，表示源文件被翻译到代码时的日期。</p>
-
-<p>源代码翻译到目标代码的时间作为串包含在<em> T I M E </em>中。串形式为时：分：秒。</p>
-
-<p>如果实现是标准的，则宏<em> S T D C </em>含有十进制常量1。如果它含有任何其它数，则实现是</p>
-
-<p>非标准的。</p>
-
-<p>可以定义宏，例如:</p>
-
-<p>当定义了_DEBUG，输出数据信息和所在文件所在行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifdef _DEBUG </span>
-</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) printf(msg);printf(“%d%d%d”,date,_LINE_,_FILE_) </span>
-</span><span class='line'><span class="cp">#else </span>
-</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) </span>
-</span><span class='line'><span class="cp">#endif </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>20，宏定义防止使用是错误</p>
-
-<p>用小括号包含。</p>
-
-<p>例如：#define ADD(a,b) （a+b）</p>
-
-<p>用do{}while(0)语句包含多语句防止错误</p>
-
-<p>例如：#difne DO(a,b) a+b;\</p>
-
-<p>a++;</p>
-
-<p>应用时：if(….)</p>
-
-<p>DO(a,b); //产生错误</p>
-
-<p>else</p>
-
-<p>解决方法: #difne DO(a,b) do{a+b;\</p>
-
-<p>a++;}while(0)</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/01/16/c-common-define/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -745,33 +448,12 @@ long2ip（3232290954).
 
   <div class="entry-content"><p>先看这段文字</p>
 
-<hr>
-
-
-<p>今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
-这里还涉及到另一个问题，需要提前说明，即使用预处理器避免多重包含。这里的多重包含指的是同一个文件直接或者间接的包含一个头文件多次，例如a.h包含 b.h，a.cpp同时包含a.h和b.h，a.cpp就两次包含了b.h。但由于b.h中具有避免多重包含的措施，a.cpp中还是只包含了b.h一 次。而包含的意思其实就是在预处理阶段用被包含文件的内容代替此包含语句。
-回到头文件定义变量的问题上，如果在头文件中定义了变量，避免多重包含的措施只能避免该头文件在同一个编译单元内被包含一次，在不同的编译单元内还是会被多次包含的，这样就造成了变量的重复定义。
-但是也有例外，如果const对象在编译时可以确定其值，可以将其放在头文件中定义。这么做是有原因的——const对象默认情况下是定义该变量的文件的 局部变量，这样即使此头文件被多个包含，都不会在包含这些文件中重复定义此变量，所有对于这个const对象的引用全都指向在头文件中定义的对象。如果在 const对象定义的时候声明extern，const对象就变得和普通非const对象一样，从而失去此特性（非const对象的默认属性为 extern）。
-C++中的很多用法都不是标准C++规定的，但是由于各种原因，已经是约定俗成或是惯常用法，至于原因以及除此之外的其他用法完全可以不必深究，否则很容易钻牛角尖！</p>
-
-<hr>
-
-
-<p>今天移植gamedev里文章讲到的一个例子的时候碰到了这个问题，要在头文件里给一个变量定义。</p>
-
-<p>最后这样就可以了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">//16Bit format for video card</span>
-</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">PixelFormat</span> <span class="o">=</span> <span class="n">PF_555</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
-相应的在头文件里定义结构用typedef而不要去用struct！</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/12/15/header-file-variable-assign/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -909,7 +591,7 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
       </li>
     
       <li class="post">
-        <a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">Freebsd Install ganglia3.4</a>
+        <a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a>
       </li>
     
       <li class="post">
