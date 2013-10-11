@@ -5,21 +5,17 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>mysql_fetch_array不使用while - Evoup`s Blog</title>
+  <title>gcc静态编译 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="原来mysql_fetch_array也可以直接就分配到一个array，不用while
-方法是 1
+  <meta name="description" content="制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
+编译静态库
+先找一下源文件 1
 2
 3
-4
-5
-6
-$num=mysql_num_rows($result);
-if ($num==0) return 0;
-for($i=0;$i&lt;$num;$i++)
-{ $row[]= &hellip;">
+4 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -28,7 +24,7 @@ for($i=0;$i&lt;$num;$i++)
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while">
+  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/18/gcc-static-compile">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -78,7 +74,7 @@ for($i=0;$i&lt;$num;$i++)
   
   <header>
     
-      <h1 class="entry-title">Mysql_fetch_array不使用while</h1>
+      <h1 class="entry-title">Gcc静态编译</h1>
     
     
       <p class="meta">
@@ -94,15 +90,17 @@ for($i=0;$i&lt;$num;$i++)
   
 
 
-<time datetime="2009-06-10T13:14:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
+<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
-方法是</p>
+<div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -110,11 +108,49 @@ for($i=0;$i&lt;$num;$i++)
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$num</span><span class="o">=</span><span class="nb">mysql_num_rows</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$num</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成中间文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
@@ -140,12 +176,12 @@ for($i=0;$i&lt;$num;$i++)
   
 
 
-<time datetime="2009-06-10T13:14:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
+<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/php/'>php</a>
+    <a class='category' href='/blog/categories/gcc/'>gcc</a>
   
 </span>
 
@@ -154,7 +190,7 @@ for($i=0;$i&lt;$num;$i++)
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while/" data-via="" data-counturl="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/" >Tweet</a>
   
   
   
@@ -170,10 +206,10 @@ for($i=0;$i&lt;$num;$i++)
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2008/07/20/delete-cvs-dir/" title="Previous Post: 批量删除CVS目录的cmd">&laquo; 批量删除CVS目录的cmd</a>
+        <a class="basic-alignment left" href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: call_user_func动态调用函数">&laquo; call_user_func动态调用函数</a>
       
       
-        <a class="basic-alignment right" href="/blog/2009/06/11/php-call-user-func/" title="Next Post: call_user_func动态调用函数">call_user_func动态调用函数 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2010/11/25/typedef-summary/" title="Next Post: typedef小结">typedef小结 &raquo;</a>
       
     </p>
   </footer>

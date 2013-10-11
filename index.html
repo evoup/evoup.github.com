@@ -1160,7 +1160,7 @@ long2ip（3232290954).
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/06/11/php-call-user-func/">Call_user_func动态调用函数</a></h1>
+      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
     
     
       <p class="meta">
@@ -1176,16 +1176,17 @@ long2ip（3232290954).
   
 
 
-<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
+<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
-做项目修改a2billing代码时发现了这个函数。
-在a2billing/Public/call-log-custoners.php的大约780行</p>
+  <div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1193,25 +1194,52 @@ long2ip（3232290954).
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
-</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
-</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
-</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="o">...</span>
-</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
-$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
-把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
-数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+<p>生成中间文件</p>
 
-<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
   
   
@@ -1259,7 +1287,7 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(4)</a>  <a href='/blog/categories/cplusplus' style='font-size: 115.0%'>Cplusplus(1)</a>  <a href='/blog/categories/erlang' style='font-size: 115.0%'>Erlang(1)</a>  <a href='/blog/categories/javascript' style='font-size: 145.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 115.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 115.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 130.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 115.0%'>Shell(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(4)</a>  <a href='/blog/categories/cplusplus' style='font-size: 115.0%'>Cplusplus(1)</a>  <a href='/blog/categories/erlang' style='font-size: 115.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 115.0%'>Gcc(1)</a>  <a href='/blog/categories/javascript' style='font-size: 145.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 115.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 115.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 130.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 115.0%'>Shell(1)</a> </span>
 </section>
 
 <section>
