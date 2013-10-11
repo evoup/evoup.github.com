@@ -3,7 +3,7 @@ layout: post
 title: "JS跳出框架"
 date: 2008-05-19 22:39
 comments: true
-categories: javascripts
+categories: javascript
 ---
 ```javascript
 <script language= "JavaScript">
