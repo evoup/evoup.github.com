@@ -12,7 +12,7 @@ categories:         nginx
 
  
 nginx配置中要加以下2行
-```shell
+```bash
 fastcgi_buffer_size 128k;
 fastcgi_buffers 8 128k;
 ```
