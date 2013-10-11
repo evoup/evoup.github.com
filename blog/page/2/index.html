@@ -405,6 +405,49 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2009/09/23/header-file-refered-by-each-other/">关于头文件互相包含的解决方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
+
+<p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2009/09/23/header-file-refered-by-each-other/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2009/06/11/php-call-user-func/">Call_user_func动态调用函数</a></h1>
     
     
@@ -649,81 +692,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2008/05/22/js-get-cookie/">Js获取cookie</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-05-22T16:31:00+08:00" pubdate data-updated="true">May 22<span>nd</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>直接参考网易的函数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
-</span><span class='line'>   <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">offset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="nx">offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>         <span class="nx">offset</span> <span class="o">+=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">length</span>
-</span><span class='line'>         <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>
-</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span>
-</span><span class='line'>         <span class="k">return</span> <span class="nx">unescape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">end</span><span class="p">))</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="k">else</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-</span><span class='line'>   <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<hr>
-
-
-<p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -766,7 +734,7 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 110.0%'>Cplusplus(1)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(2)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
 </section>
 
 <section>
