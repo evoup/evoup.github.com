@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T13:59:11+08:00</updated>
+  <updated>2013-10-11T14:15:07+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -482,6 +482,301 @@ long2ip（3232290954).
 
 
 <p>这不就成了三个参了？记一笔&hellip;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C语言宏定义技巧(常用宏定义)(转)]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/16/c-common-define/"/>
+    <updated>2011-01-16T13:43:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/16/c-common-define</id>
+    <content type="html"><![CDATA[<p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//头文件内容 </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2，重新定义一些类型，防止由于各种平台和编译器的不同，而产生的类型字节数差异，方便移植。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">boolean</span><span class="p">;</span> <span class="cm">/* Boolean value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">uint32</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint16</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint8</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int32</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int16</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int8</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//下面的不建议使用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">byte</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">word</span><span class="p">;</span> <span class="cm">/* Unsinged 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">dword</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint1</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint2</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">uint4</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int1</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int2</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int4</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="n">sint31</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">sint15</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">sint7</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3，得到指定地址上的一个字节或字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MEM_B( x ) ( *( (byte *) (x) ) ) </span>
+</span><span class='line'><span class="cp">#define MEM_W( x ) ( *( (word *) (x) ) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>4，求最大值和最小值</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MAX( x, y ) ( ((x) &gt; (y)) ? (x) : (y) ) </span>
+</span><span class='line'><span class="cp">#define MIN( x, y ) ( ((x) &lt; (y)) ? (x) : (y) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>5，得到一个field在结构体(struct)中的偏移量</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FPOS( type, field ) \ </span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/*lint -e545 */</span> <span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">((</span> <span class="n">type</span> <span class="o">*</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">field</span> <span class="p">)</span> <span class="cm">/*lint +e545 */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>6,得到一个结构体中field所占用的字节数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FSIZ( type, field ) sizeof( ((type *) 0)-&gt;field ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>7，按照LSB格式把两个字节转化为一个Word</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLIPW( ray ) ( (((word) (ray)[0]) * 256) + (ray)[1] ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>8，按照LSB格式把一个Word转化为两个字节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLOPW( ray, val ) \ </span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mi">256</span><span class="p">);</span> <span class="err">\</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>9，得到一个变量的地址（word宽度）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define B_PTR( var ) ( (byte *) (void *) &amp;(var) ) </span>
+</span><span class='line'><span class="cp">#define W_PTR( var ) ( (word *) (void *) &amp;(var) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>10，得到一个字的高位和低位字节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define WORD_LO(xxx) ((byte) ((word)(xxx) &amp; 255)) </span>
+</span><span class='line'><span class="cp">#define WORD_HI(xxx) ((byte) ((word)(xxx) &gt;&gt; 8)) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>11，返回一个比X大的最接近的8的倍数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define RND8( x ) ((((x) + 7) / 8 ) * 8 ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>12，将一个字母转换为大写</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define UPCASE( c ) ( ((c) &gt;= &#39;a&#39; &amp;&amp; (c) &lt;= &#39;z&#39;) ? ((c) - 0x20) : (c) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>13，判断字符是不是10进值的数字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define DECCHK( c ) ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>14，判断字符是不是16进值的数字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define HEXCHK( c ) ( ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) ||\ </span>
+</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;A&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;F&#39;</span><span class="p">)</span> <span class="o">||</span><span class="err">\</span>
+</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;a&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;f&#39;</span><span class="p">)</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>15，防止溢出的一个方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define INC_SAT( val ) (val = ((val)+1 &gt; (val)) ? (val)+1 : (val)) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>16，返回数组元素的个数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define ARR_SIZE( a ) ( sizeof( (a) ) / sizeof( (a[0]) ) )</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>17，返回一个无符号数n尾的值MOD_BY_POWER_OF_TWO(X,n)=X%(2<sup>n</sup>)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MOD_BY_POWER_OF_TWO( val, mod_by ) \ </span>
+</span><span class='line'><span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)(</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dword</span><span class="p">)((</span><span class="n">mod_by</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>18，对于IO空间映射在存储空间的结构，输入输出处理</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define inp(port) (*((volatile byte *) (port))) </span>
+</span><span class='line'><span class="cp">#define inpw(port) (*((volatile word *) (port))) </span>
+</span><span class='line'><span class="cp">#define inpdw(port) (*((volatile dword *)(port))) </span>
+</span><span class='line'><span class="cp">#define outp(port, val) (*((volatile byte *) (port)) = ((byte) (val))) </span>
+</span><span class='line'><span class="cp">#define outpw(port, val) (*((volatile word *) (port)) = ((word) (val))) </span>
+</span><span class='line'><span class="cp">#define outpdw(port, val) (*((volatile dword *) (port)) = ((dword) (val))) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>[2005-9-9添加]</p>
+
+<p>19,使用一些宏跟踪调试</p>
+
+<p>A N S I标准说明了五个预定义的宏名。它们是：</p>
+
+<p>_ L I N E _</p>
+
+<p>_ F I L E _</p>
+
+<p>_ D A T E _</p>
+
+<p>_ T I M E _</p>
+
+<p>_ S T D C _</p>
+
+<p>如果编译不是标准的，则可能仅支持以上宏名中的几个，或根本不支持。记住编译程序</p>
+
+<p>也许还提供其它预定义的宏名。</p>
+
+<p>_ L I N E <em>及</em> F I L E _宏指令在有关# l i n e的部分中已讨论，这里讨论其余的宏名。</p>
+
+<p>_ D AT E _宏指令含有形式为月/日/年的串，表示源文件被翻译到代码时的日期。</p>
+
+<p>源代码翻译到目标代码的时间作为串包含在<em> T I M E </em>中。串形式为时：分：秒。</p>
+
+<p>如果实现是标准的，则宏<em> S T D C </em>含有十进制常量1。如果它含有任何其它数，则实现是</p>
+
+<p>非标准的。</p>
+
+<p>可以定义宏，例如:</p>
+
+<p>当定义了_DEBUG，输出数据信息和所在文件所在行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifdef _DEBUG </span>
+</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) printf(msg);printf(“%d%d%d”,date,_LINE_,_FILE_) </span>
+</span><span class='line'><span class="cp">#else </span>
+</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) </span>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>20，宏定义防止使用是错误</p>
+
+<p>用小括号包含。</p>
+
+<p>例如：#define ADD(a,b) （a+b）</p>
+
+<p>用do{}while(0)语句包含多语句防止错误</p>
+
+<p>例如：#difne DO(a,b) a+b;\</p>
+
+<p>a++;</p>
+
+<p>应用时：if(….)</p>
+
+<p>DO(a,b); //产生错误</p>
+
+<p>else</p>
+
+<p>解决方法: #difne DO(a,b) do{a+b;\</p>
+
+<p>a++;}while(0)</p>
 ]]></content>
   </entry>
   

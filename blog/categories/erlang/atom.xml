@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T13:59:11+08:00</updated>
+  <updated>2013-10-11T14:15:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -20,26 +20,16 @@
     <id>http://evoupsight.com/blog/2013/10/09/erlang-long2ip</id>
     <content type="html"><![CDATA[<p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
-</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
-</span><span class='line'>    <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
-</span><span class='line'><span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock erlang代码片段 lang:erlang %}
+%%从整形转换为IP地址元组
+long2ip(IpInteger) &ndash;></p>
+
+<pre><code>Integer_to_ip=fun(Ip)-&gt; {Ip bsr 24, (Ip band 16711680) bsr 16, 
+    (Ip band 65280) bsr 8, Ip band 255} end,
+Integer_to_ip(IpInteger).
+</code></pre>
+
+<p>{% endcodeblock %}</p>
 
 <p>这样子使用
 long2ip（3232290954).

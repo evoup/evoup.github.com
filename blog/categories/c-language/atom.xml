@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T13:59:11+08:00</updated>
+  <updated>2013-10-11T14:15:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -36,6 +36,260 @@ int buffer_copy_string_len(buffer *b, const char *s, size_t s_len);
 
 <p>```
 这不就成了三个参了？记一笔&hellip;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C语言宏定义技巧(常用宏定义)(转)]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/16/c-common-define/"/>
+    <updated>2011-01-16T13:43:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/16/c-common-define</id>
+    <content type="html"><![CDATA[<p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含
+```c</p>
+
+<h1>ifndef COMDEF_H</h1>
+
+<h1>define COMDEF_H</h1>
+
+<p>//头文件内容</p>
+
+<h1>endif</h1>
+
+<p><code>
+2，重新定义一些类型，防止由于各种平台和编译器的不同，而产生的类型字节数差异，方便移植。
+</code>c
+typedef unsigned char boolean; /<em> Boolean value type. </em>/
+typedef unsigned long int uint32; /<em> Unsigned 32 bit value </em>/
+typedef unsigned short uint16; /<em> Unsigned 16 bit value </em>/
+typedef unsigned char uint8; /<em> Unsigned 8 bit value </em>/
+typedef signed long int int32; /<em> Signed 32 bit value </em>/
+typedef signed short int16; /<em> Signed 16 bit value </em>/
+typedef signed char int8; /<em> Signed 8 bit value </em>/
+```</p>
+
+<p>//下面的不建议使用
+<code>c
+typedef unsigned char byte; /* Unsigned 8 bit value type. */
+typedef unsigned short word; /* Unsinged 16 bit value type. */
+typedef unsigned long dword; /* Unsigned 32 bit value type. */
+typedef unsigned char uint1; /* Unsigned 8 bit value type. */
+typedef unsigned short uint2; /* Unsigned 16 bit value type. */
+typedef unsigned long uint4; /* Unsigned 32 bit value type. */
+typedef signed char int1; /* Signed 8 bit value type. */
+typedef signed short int2; /* Signed 16 bit value type. */
+typedef long int int4; /* Signed 32 bit value type. */
+typedef signed long sint31; /* Signed 32 bit value */
+typedef signed short sint15; /* Signed 16 bit value */
+typedef signed char sint7; /* Signed 8 bit value */
+</code></p>
+
+<p>3，得到指定地址上的一个字节或字
+```c</p>
+
+<h1>define MEM_B( x ) ( <em>( (byte </em>) (x) ) )</h1>
+
+<h1>define MEM_W( x ) ( <em>( (word </em>) (x) ) )</h1>
+
+<p>```</p>
+
+<p>4，求最大值和最小值
+```c</p>
+
+<h1>define MAX( x, y ) ( ((x) > (y)) ? (x) : (y) )</h1>
+
+<h1>define MIN( x, y ) ( ((x) &lt; (y)) ? (x) : (y) )</h1>
+
+<p>```</p>
+
+<p>5，得到一个field在结构体(struct)中的偏移量
+```c</p>
+
+<h1>define FPOS( type, field ) \</h1>
+
+<p>/<em>lint -e545 </em>/ ( (dword) &amp;(( type <em>) 0)&ndash;> field ) /</em>lint +e545 */
+```</p>
+
+<p>6,得到一个结构体中field所占用的字节数
+```c</p>
+
+<h1>define FSIZ( type, field ) sizeof( ((type *) 0)&ndash;>field )</h1>
+
+<p>```</p>
+
+<p>7，按照LSB格式把两个字节转化为一个Word
+```c</p>
+
+<h1>define FLIPW( ray ) ( (((word) (ray)[0]) * 256) + (ray)[1] )</h1>
+
+<p>```</p>
+
+<p>8，按照LSB格式把一个Word转化为两个字节
+```c</p>
+
+<h1>define FLOPW( ray, val ) \</h1>
+
+<p>(ray)[0] = ((val) / 256); \</p>
+
+<p>(ray)[1] = ((val) &amp; 0xFF)
+```</p>
+
+<p>9，得到一个变量的地址（word宽度）
+```c</p>
+
+<h1>define B_PTR( var ) ( (byte <em>) (void </em>) &amp;(var) )</h1>
+
+<h1>define W_PTR( var ) ( (word <em>) (void </em>) &amp;(var) )</h1>
+
+<p>```</p>
+
+<p>10，得到一个字的高位和低位字节
+```c</p>
+
+<h1>define WORD_LO(xxx) ((byte) ((word)(xxx) &amp; 255))</h1>
+
+<h1>define WORD_HI(xxx) ((byte) ((word)(xxx) >> 8))</h1>
+
+<p>```</p>
+
+<p>11，返回一个比X大的最接近的8的倍数
+```c</p>
+
+<h1>define RND8( x ) ((((x) + 7) / 8 ) * 8 )</h1>
+
+<p>```</p>
+
+<p>12，将一个字母转换为大写
+```c</p>
+
+<h1>define UPCASE( c ) ( (&copy; >= &lsquo;a&rsquo; &amp;&amp; &copy; &lt;= &lsquo;z&rsquo;) ? (&copy; &ndash; 0x20) : &copy; )</h1>
+
+<p>```</p>
+
+<p>13，判断字符是不是10进值的数字
+```c</p>
+
+<h1>define DECCHK( c ) (&copy; >= &lsquo;0&rsquo; &amp;&amp; &copy; &lt;= &lsquo;9&rsquo;)</h1>
+
+<p>```</p>
+
+<p>14，判断字符是不是16进值的数字
+```c</p>
+
+<h1>define HEXCHK( c ) ( (&copy; >= &lsquo;0&rsquo; &amp;&amp; &copy; &lt;= &lsquo;9&rsquo;) ||\</h1>
+
+<p>(&copy; >= &lsquo;A&rsquo; &amp;&amp; &copy; &lt;= &lsquo;F&rsquo;) ||\
+(&copy; >= &lsquo;a&rsquo; &amp;&amp; &copy; &lt;= &lsquo;f&rsquo;) )
+```</p>
+
+<p>15，防止溢出的一个方法
+```c</p>
+
+<h1>define INC_SAT( val ) (val = ((val)+1 > (val)) ? (val)+1 : (val))</h1>
+
+<p>```</p>
+
+<p>16，返回数组元素的个数
+```c</p>
+
+<h1>define ARR_SIZE( a ) ( sizeof( (a) ) / sizeof( (a[0]) ) )</h1>
+
+<p>```</p>
+
+<p>17，返回一个无符号数n尾的值MOD_BY_POWER_OF_TWO(X,n)=X%(2<sup>n</sup>)
+```c</p>
+
+<h1>define MOD_BY_POWER_OF_TWO( val, mod_by ) \</h1>
+
+<p>( (dword)(val) &amp; (dword)((mod_by)-1) )
+```</p>
+
+<p>18，对于IO空间映射在存储空间的结构，输入输出处理
+```c</p>
+
+<h1>define inp(port) (<em>((volatile byte </em>) (port)))</h1>
+
+<h1>define inpw(port) (<em>((volatile word </em>) (port)))</h1>
+
+<h1>define inpdw(port) (<em>((volatile dword </em>)(port)))</h1>
+
+<h1>define outp(port, val) (<em>((volatile byte </em>) (port)) = ((byte) (val)))</h1>
+
+<h1>define outpw(port, val) (<em>((volatile word </em>) (port)) = ((word) (val)))</h1>
+
+<h1>define outpdw(port, val) (<em>((volatile dword </em>) (port)) = ((dword) (val)))</h1>
+
+<p>```</p>
+
+<p>[2005-9-9添加]</p>
+
+<p>19,使用一些宏跟踪调试</p>
+
+<p>A N S I标准说明了五个预定义的宏名。它们是：</p>
+
+<p>_ L I N E _</p>
+
+<p>_ F I L E _</p>
+
+<p>_ D A T E _</p>
+
+<p>_ T I M E _</p>
+
+<p>_ S T D C _</p>
+
+<p>如果编译不是标准的，则可能仅支持以上宏名中的几个，或根本不支持。记住编译程序</p>
+
+<p>也许还提供其它预定义的宏名。</p>
+
+<p>_ L I N E <em>及</em> F I L E _宏指令在有关# l i n e的部分中已讨论，这里讨论其余的宏名。</p>
+
+<p>_ D AT E _宏指令含有形式为月/日/年的串，表示源文件被翻译到代码时的日期。</p>
+
+<p>源代码翻译到目标代码的时间作为串包含在<em> T I M E </em>中。串形式为时：分：秒。</p>
+
+<p>如果实现是标准的，则宏<em> S T D C </em>含有十进制常量1。如果它含有任何其它数，则实现是</p>
+
+<p>非标准的。</p>
+
+<p>可以定义宏，例如:</p>
+
+<p>当定义了_DEBUG，输出数据信息和所在文件所在行
+```c</p>
+
+<h1>ifdef _DEBUG</h1>
+
+<h1>define DEBUGMSG(msg,date) printf(msg);printf(“%d%d%d”,date,<em>LINE</em>,<em>FILE</em>)</h1>
+
+<h1>else</h1>
+
+<h1>define DEBUGMSG(msg,date)</h1>
+
+<h1>endif</h1>
+
+<p>```</p>
+
+<p>20，宏定义防止使用是错误</p>
+
+<p>用小括号包含。</p>
+
+<p>例如：#define ADD(a,b) （a+b）</p>
+
+<p>用do{}while(0)语句包含多语句防止错误</p>
+
+<p>例如：#difne DO(a,b) a+b;\</p>
+
+<p>a++;</p>
+
+<p>应用时：if(….)</p>
+
+<p>DO(a,b); //产生错误</p>
+
+<p>else</p>
+
+<p>解决方法: #difne DO(a,b) do{a+b;\</p>
+
+<p>a++;}while(0)</p>
 ]]></content>
   </entry>
   
