@@ -578,6 +578,55 @@ long2ip（3232290954).
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>nginx配置中要加以下2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
+</span><span class='line'>fastcgi_buffers 8 128k;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2009/06/11/php-call-user-func/">Call_user_func动态调用函数</a></h1>
     
     
@@ -630,6 +679,58 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
 
 <p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2009/06/10/php-mysql-fetch-array-without-while/">Mysql_fetch_array不使用while</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-06-10T13:14:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
+方法是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$num</span><span class="o">=</span><span class="nb">mysql_num_rows</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$num</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
   
   
@@ -919,11 +1020,11 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
       </li>
     
       <li class="post">
-        <a href="/blog/2009/06/11/php-call-user-func/">Call_user_func动态调用函数</a>
+        <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2008/07/20/delete-cvs-dir/">批量删除CVS目录的cmd</a>
+        <a href="/blog/2009/06/11/php-call-user-func/">Call_user_func动态调用函数</a>
       </li>
     
   </ul>
@@ -932,7 +1033,7 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/erlang' style='font-size: 120.0%'>Erlang(1)</a>  <a href='/blog/categories/javascript' style='font-size: 160.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 120.0%'>Monitor(1)</a>  <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(1)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/erlang' style='font-size: 120.0%'>Erlang(1)</a>  <a href='/blog/categories/javascript' style='font-size: 160.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 120.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 120.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 120.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 140.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(1)</a> </span>
 </section>
 
 <section>

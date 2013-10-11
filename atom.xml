@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T13:11:52+08:00</updated>
+  <updated>2013-10-11T13:38:10+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -434,6 +434,28 @@ long2ip（3232290954).
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[遭遇nginx upstream sent too big header]]></title>
+    <link href="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header/"/>
+    <updated>2011-09-11T23:20:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header</id>
+    <content type="html"><![CDATA[<p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>nginx配置中要加以下2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
+</span><span class='line'>fastcgi_buffers 8 128k;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[call_user_func动态调用函数]]></title>
     <link href="http://evoupsight.com/blog/2009/06/11/php-call-user-func/"/>
     <updated>2009-06-11T11:40:00+08:00</updated>
@@ -467,6 +489,31 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
 
 <p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mysql_fetch_array不使用while]]></title>
+    <link href="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while/"/>
+    <updated>2009-06-10T13:14:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while</id>
+    <content type="html"><![CDATA[<p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
+方法是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$num</span><span class="o">=</span><span class="nb">mysql_num_rows</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$num</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'><span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
