@@ -489,39 +489,12 @@ long2ip（3232290954).
 
 <p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
 
-<p>对于</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以int类型所占字节为位域，也就是4 然后，对于a，四个字节对于c，一个字节，后面三个字节不能用来存储b，因为b是四个，如果用这三个，那么必将剩余一个，根据原则，不可跨位域</p>
-
-<p>所以存放形式：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa
-</span><span class='line'>
-</span><span class='line'>cccccccc XXXXXXXX XXXXXXXX XXXXXXXX
-</span><span class='line'>
-</span><span class='line'>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
-</span></code></pre></td></tr></table></div></figure>
-
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/11/30/memory-alignment/">Read on &rarr;</a>
+    </footer>
   
 
 
