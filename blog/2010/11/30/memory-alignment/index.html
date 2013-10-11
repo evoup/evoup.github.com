@@ -5,11 +5,20 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: php - Evoup`s Blog</title>
+  <title>目前看到的对内存对齐问题最好的解释 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Category: php">
+  <meta name="description" content="简单的说，对于一个class或是struct： 按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如： 对于 1
+2
+3
+4
+5
+struct A {
+int a;
+char c;
+int b;
+} 以int类型所占字节为位域，也就是4 然后，对于a，四个字节对于c，一个字节， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +27,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.comblog/categories/php">
+  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/30/memory-alignment">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -64,49 +73,127 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Php</h1>
+    
+      <h1 class="entry-title">目前看到的对内存对齐问题最好的解释</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T12:14:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>简单的说，对于一个class或是struct：</p>
 
-  
-  <h2>2009</h2>
+<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
 
-<article>
-  
-<h1><a href="/blog/2009/06/11/php-call-user-func/">call_user_func动态调用函数</a></h1>
-<time datetime="2009-06-11T11:40:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>11</span> <span class='year'>2009</span></time>
+<p>对于</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/php/'>php</a></span>
-</footer>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2009/06/10/php-mysql-fetch-array-without-while/">mysql_fetch_array不使用while</a></h1>
-<time datetime="2009-06-10T13:14:00+08:00" pubdate><span class='month'>Jun</span> <span class='day'>10</span> <span class='year'>2009</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/php/'>php</a></span>
-</footer>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-</article>
+<p>以int类型所占字节为位域，也就是4 然后，对于a，四个字节对于c，一个字节，后面三个字节不能用来存储b，因为b是四个，如果用这三个，那么必将剩余一个，根据原则，不可跨位域</p>
+
+<p>所以存放形式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa
+</span><span class='line'>
+</span><span class='line'>cccccccc XXXXXXXX XXXXXXXX XXXXXXXX
+</span><span class='line'>
+</span><span class='line'>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T12:14:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/30/memory-alignment/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/30/memory-alignment/" >Tweet</a>
+  
+  
+  
+  
+  <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: call_user_func动态调用函数">&laquo; call_user_func动态调用函数</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/01/16/c-common-define/" title="Next Post: C语言宏定义技巧(常用宏定义)(转)">C语言宏定义技巧(常用宏定义)(转) &raquo;</a>
+      
+    </p>
+  </footer>
 </article>
 
 </div>
