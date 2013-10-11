@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "freebsd install ganglia3.4"
+title: "freebsd安装ganglia3.4"
 date: 2012-10-22 11:24
 comments: true
 categories:    monitor

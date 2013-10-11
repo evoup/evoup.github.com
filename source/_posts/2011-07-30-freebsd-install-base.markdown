@@ -5,11 +5,13 @@ date: 2011-07-30 21:51
 comments: true
 categories:           hbase
 ---
-安装JDK补遗,port中该文件已经无法获取，原因是版权。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz
+安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz
 
 http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2
 
 下完就放到/usr/port/distfile
+
+<!-- more -->
 
 进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。
 

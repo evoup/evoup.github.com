@@ -17,6 +17,10 @@ categories:      c-language
 
 #endif 
 ```
+
+<!-- more -->
+
+
 2，重新定义一些类型，防止由于各种平台和编译器的不同，而产生的类型字节数差异，方便移植。 
 ```c
 typedef unsigned char boolean; /* Boolean value type. */ 
