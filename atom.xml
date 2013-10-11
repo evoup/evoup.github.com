@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T15:30:47+08:00</updated>
+  <updated>2013-10-11T15:59:56+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -452,6 +452,61 @@ long2ip（3232290954).
 
 
 <p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下hbase安装]]></title>
+    <link href="http://evoupsight.com/blog/2011/07/30/freebsd-install-base/"/>
+    <updated>2011-07-30T21:51:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/07/30/freebsd-install-base</id>
+    <content type="html"><![CDATA[<p>安装JDK补遗,port中该文件已经无法获取，原因是版权。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+
+<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+
+<p>下完就放到/usr/port/distfile</p>
+
+<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
+
+<p>再装jdk16/usr/port/java/jdk16</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
+</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
+
+<p>而且要有足够的SWAP空间！</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>PATH我没有设置</p>
+
+<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
+
+<p>单个节点的启动方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
+</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hshell的进入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 ]]></content>
   </entry>
   
@@ -1252,28 +1307,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[JS跳出框架]]></title>
-    <link href="http://evoupsight.com/blog/2008/05/19/js-exit-frame/"/>
-    <updated>2008-05-19T22:39:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2008/05/19/js-exit-frame</id>
-    <content type="html"><![CDATA[<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">language</span><span class="o">=</span> <span class="s2">&quot;JavaScript&quot;</span><span class="o">&gt;</span>
-</span><span class='line'>  <span class="c">&lt;!--</span><span class="nx">Break</span> <span class="nx">out</span> <span class="nx">of</span> <span class="nx">frames</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>    <span class="nx">top</span><span class="p">.</span><span class="nx">location</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
-</span><span class='line'>  <span class="c1">//--&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>

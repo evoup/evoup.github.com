@@ -627,6 +627,88 @@ long2ip（3232290954).
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2011/07/30/freebsd-install-base/">Freebsd下hbase安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>安装JDK补遗,port中该文件已经无法获取，原因是版权。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+
+<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+
+<p>下完就放到/usr/port/distfile</p>
+
+<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
+
+<p>再装jdk16/usr/port/java/jdk16</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
+</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
+
+<p>而且要有足够的SWAP空间！</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>PATH我没有设置</p>
+
+<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
+
+<p>单个节点的启动方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
+</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hshell的进入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
     
     
@@ -1172,51 +1254,6 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2010/11/25/typedef-summary/">Typedef小结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-25T14:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
-
-<p>对于动态分配内存的时候也可以</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1248,7 +1285,7 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
       </li>
     
       <li class="post">
-        <a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a>
+        <a href="/blog/2011/07/30/freebsd-install-base/">Freebsd下hbase安装</a>
       </li>
     
   </ul>
@@ -1257,7 +1294,7 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 110.0%'>Cplusplus(1)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 110.0%'>Cplusplus(1)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
 </section>
 
 <section>
