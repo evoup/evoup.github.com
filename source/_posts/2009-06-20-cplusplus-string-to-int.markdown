@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "cplusplus string to int"
+title: "STL中string到int的类型转换"
 date: 2009-06-02 14:04
 comments: true
 categories:                cplusplus
