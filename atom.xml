@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-14T11:11:25+08:00</updated>
+  <updated>2013-10-14T11:32:47+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -54,7 +54,9 @@ long2ip（3232290954).
     <link href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/"/>
     <updated>2013-07-29T09:46:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone</id>
-    <content type="html"><![CDATA[<p>关于logerl报错之</p>
+    <content type="html"><![CDATA[<h2>问题症状：</h2>
+
+<p>项目遇到编译后运行的一个问题，logerl报错之</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -67,18 +69,23 @@ long2ip（3232290954).
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>** <span class="o">{</span>appender_died,
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">**</span> <span class="p">{</span><span class="n">appender_died</span><span class="p">,</span>
 </span><span class='line'>
-</span><span class='line'>       <span class="o">{</span><span class="s1">&#39;EXIT&#39;</span>,
+</span><span class='line'>       <span class="p">{</span><span class="n">&#39;EXIT&#39;</span><span class="p">,</span>
 </span><span class='line'>
-</span><span class='line'>           <span class="o">{</span>badarg,
+</span><span class='line'>           <span class="p">{</span><span class="n">badarg</span><span class="p">,</span>
 </span><span class='line'>
-</span><span class='line'>               <span class="o">[{</span>erlang,localtime_to_universaltime,
+</span><span class='line'>               <span class="p">[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">localtime_to_universaltime</span><span class="p">,</span>
 </span><span class='line'>
-</span><span class='line'>                    <span class="o">[{</span> <span class="o">{</span>2013,6,19<span class="o">}</span>,<span class="o">{</span>15,52,35<span class="o">}</span> <span class="o">}</span>,true<span class="o">]</span>,
+</span><span class='line'>                    <span class="p">[{</span> <span class="p">{</span><span class="mi">2013</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">},{</span><span class="mi">15</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">35</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">],</span>
 </span><span class='line'>
-</span><span class='line'>                    <span class="o">[]}</span>,
+</span><span class='line'>                    <span class="p">[]},</span>
 </span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
+
+<!-- more -->
 
 
 
@@ -98,44 +105,34 @@ long2ip（3232290954).
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nv">Eshell</span> <span class="nv">V5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">1</span>  <span class="p">(</span><span class="n">abort</span> <span class="n">with</span> <span class="err">^</span><span class="nv">G</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'>1&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'><span class="mi">1</span><span class="o">&gt;</span> <span class="nv">DateTime</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{</span><span class="mi">2008</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span> <span class="p">}.</span>
 </span><span class='line'>
-</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'><span class="p">{</span> <span class="p">{</span><span class="mi">2008</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'>2&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'><span class="mi">2</span><span class="o">&gt;</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">localtime_to_universaltime</span><span class="p">(</span><span class="nv">DateTime</span><span class="p">,</span> <span class="n">true</span><span class="p">).</span>
 </span><span class='line'>
-</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'><span class="o">**</span> <span class="n">exception</span> <span class="nn">error</span><span class="p">:</span> <span class="n">bad</span> <span class="n">argument</span>
 </span><span class='line'>
-</span><span class='line'>3&gt; <span class="nv">DateTime</span> <span class="o">=</span> <span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>.
+</span><span class='line'>     <span class="n">in</span> <span class="n">function</span>  <span class="nn">erlang</span><span class="p">:</span><span class="nb">localtime_to_universaltime</span><span class="o">/</span><span class="mi">2</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>
+</span><span class='line'>        <span class="n">called</span> <span class="n">as</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">localtime_to_universaltime</span><span class="p">({</span> <span class="p">{</span><span class="mi">2008</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">},{</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">)</span>
 </span><span class='line'>
-</span><span class='line'>4&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
-</span><span class='line'>
-</span><span class='line'>** exception error: bad argument
-</span><span class='line'>
-</span><span class='line'>     in <span class="k">function  </span>erlang:localtime_to_universaltime/2
-</span><span class='line'>
-</span><span class='line'>        called as erlang:localtime_to_universaltime<span class="o">({</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>,true<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>5&gt;
+</span><span class='line'><span class="mi">5</span><span class="o">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<p>看来是个log4erl遭遇了在freebsd下调用localtime_to_universaltime函数的bug，原因可能是作者没有考虑到下面的状况：
 <a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html" target=_BLANK><a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></a></p>
 
-<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK><a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></a></p>
+<h2>解决方法：</h2>
+
+<p>我的做法是使用sysinstall指令把时区从UTC调整到CST，之后运行居然就一切OK了。</p>
+
+<h2>时区调整：</h2>
+
+<p>关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK><a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></a></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-14T11:11:25+08:00</updated>
+  <updated>2013-10-14T11:32:47+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -52,9 +52,11 @@ long2ip（3232290954).
     <link href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/"/>
     <updated>2013-07-29T09:46:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone</id>
-    <content type="html"><![CDATA[<p>关于logerl报错之</p>
+    <content type="html"><![CDATA[<h2>问题症状：</h2>
 
-<p>```bash
+<p>项目遇到编译后运行的一个问题，logerl报错之</p>
+
+<p>```erlang
 ** {appender_died,</p>
 
 <pre><code>   {'EXIT',
@@ -68,30 +70,20 @@ long2ip（3232290954).
                 []},
 </code></pre>
 
-<p>```</p>
+<p>```
+看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
 
-<p>```bash
+<!-- more -->
+
+
+<p>```erlang
 Eshell V5.9.1  (abort with ^G)</p>
 
-<p>1> erlang:localtime_to_universaltime(DateTime, true).</p>
-
-<ul>
-<li>1: variable &lsquo;DateTime&rsquo; is unbound</li>
-</ul>
-
-
-<p>2> erlang:localtime_to_universaltime(DateTime, true).</p>
-
-<ul>
-<li>1: variable &lsquo;DateTime&rsquo; is unbound</li>
-</ul>
-
-
-<p>3> DateTime = { {2008,5,5},{1,1,1} }.</p>
+<p>1> DateTime = { {2008,5,5},{1,1,1} }.</p>
 
 <p>{ {2008,5,5},{1,1,1} }</p>
 
-<p>4> erlang:localtime_to_universaltime(DateTime, true).</p>
+<p>2> erlang:localtime_to_universaltime(DateTime, true).</p>
 
 <p>** exception error: bad argument</p>
 
@@ -103,10 +95,16 @@ Eshell V5.9.1  (abort with ^G)</p>
 <p>5>
 ```</p>
 
-<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<p>看来是个log4erl遭遇了在freebsd下调用localtime_to_universaltime函数的bug，原因可能是作者没有考虑到下面的状况：
 <a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html" target=_BLANK><a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></a></p>
 
-<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK><a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></a></p>
+<h2>解决方法：</h2>
+
+<p>我的做法是使用sysinstall指令把时区从UTC调整到CST，之后运行居然就一切OK了。</p>
+
+<h2>时区调整：</h2>
+
+<p>关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK><a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></a></p>
 
 <p><code>bash
  I - ISO format with universal GMT time (equivilant to "%jT%TZ").
