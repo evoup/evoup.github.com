@@ -5,20 +5,20 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>PHP之call_user_func动态调用函数 - Evoup`s Blog</title>
+  <title>cplusplus string to int - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
-做项目修改a2billing代码时发现了这个函数。 在a2billing/Public/call-log-custoners.php的大约780行 1
+  <meta name="description" content="STL的string转int的正确方法不是.data()
+应该是 1
+aoti(obj.c_str()); 或者用个别人的string2int函数 1
 2
 3
 4
 5
 6
-7
-8
-while... &hellip;">
+int string2int(const string &amp;s)
+{ int a; sscanf(s.c_str &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -27,7 +27,7 @@ while... &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/06/11/php-call-user-func">
+  <link rel="canonical" href="http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -77,7 +77,7 @@ while... &hellip;">
   
   <header>
     
-      <h1 class="entry-title">PHP之call_user_func动态调用函数</h1>
+      <h1 class="entry-title">Cplusplus String to Int</h1>
     
     
       <p class="meta">
@@ -93,20 +93,22 @@ while... &hellip;">
   
 
 
-<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
+<time datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
-做项目修改a2billing代码时发现了这个函数。</p>
+<div class="entry-content"><p>STL的string转int的正确方法不是.data()
+应该是</p>
 
-<!-- readmore -->
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">aoti</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
+<p>或者用个别人的string2int函数</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -114,25 +116,43 @@ while... &hellip;">
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
-</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
-</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
-</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">string2int</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'>   <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>   <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="o">...</span>
-</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
-$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
-把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
-数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+<p>然后int XX[];
+完全可以用vector来实现</p>
 
-<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>v[]一样可以的用的。</p>
+
+<p>下面有个类似的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">integer</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 </div>
 
 
@@ -155,12 +175,12 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   
 
 
-<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
+<time datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2009</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/php/'>php</a>
+    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
   
 </span>
 
@@ -169,7 +189,7 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/06/11/php-call-user-func/" data-via="" data-counturl="http://evoupsight.com/blog/2009/06/11/php-call-user-func/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int/" data-via="" data-counturl="http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int/" >Tweet</a>
   
   
   
@@ -185,10 +205,10 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2009/06/10/cplusplus-init-a-lot-of-objects/" title="Previous Post: 初始化一组C++对象">&laquo; 初始化一组C++对象</a>
+        <a class="basic-alignment left" href="/blog/2008/07/20/delete-cvs-dir/" title="Previous Post: 批量删除CVS目录的cmd">&laquo; 批量删除CVS目录的cmd</a>
       
       
-        <a class="basic-alignment right" href="/blog/2009/09/23/header-file-refered-by-each-other/" title="Next Post: 关于头文件互相包含的解决方法">关于头文件互相包含的解决方法 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2009/06/10/php-mysql-fetch-array-without-while/" title="Next Post: mysql_fetch_array不使用while">mysql_fetch_array不使用while &raquo;</a>
       
     </p>
   </footer>

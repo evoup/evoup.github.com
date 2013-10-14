@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cplusplus | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cplusplus/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-14T13:55:56+08:00</updated>
+  <updated>2013-10-14T14:12:39+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -174,7 +174,10 @@ new cls_enemy()
 
 <p>像这样初始化也太麻烦了吧，看看有什么对象链表之类的东西。</p>
 
-<p>在VC里可以用CStringArray和CStringList或者CPtrArray或者CPtrList来做，那么STL里是一样的。正确做法可以是push_back的元素用new XX()做参数
+<!-- more -->
+
+
+<p>在VC里可以用CStringArray和CStringList或者CPtrArray或者CPtrList来做，那么STL里是一样的。正确做法可以是push_back的元素用new XX()做参数,但是效果好像也差不多，放在容器里看起来好像容易管理一些。
 ```cpp
 vector&lt;cls_enemy*> ev;
 for (i=0;i&lt;7;i++) {</p>
@@ -186,6 +189,50 @@ for (i=0;i&lt;7;i++) {</p>
 ```</p>
 
 <p>需要注意vector是模板类型，可以放任何类型，但是基于效率的考虑，最好放对象指针。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cplusplus string to int]]></title>
+    <link href="http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int/"/>
+    <updated>2009-06-02T14:04:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int</id>
+    <content type="html"><![CDATA[<p>STL的string转int的正确方法不是.data()
+应该是
+<code>cpp
+aoti(obj.c_str());
+</code></p>
+
+<p>或者用个别人的string2int函数
+<code>cpp
+int string2int(const string &amp;s)
+{
+   int a;
+   sscanf(s.c_str(), "%d", &amp;a);
+   return a;
+}
+</code></p>
+
+<p>然后int XX[];
+完全可以用vector来实现</p>
+
+<p><code>cpp
+vector&lt;int &gt; v;
+</code>
+v[]一样可以的用的。</p>
+
+<p>下面有个类似的
+```cpp
+int integer(string &amp;s)
+{</p>
+
+<pre><code>int a;
+sscanf(s.c_str(), "%d", &amp;a);
+return a;
+</code></pre>
+
+<p>}
+```</p>
 ]]></content>
   </entry>
   
