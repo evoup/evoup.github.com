@@ -167,6 +167,132 @@ long2ip（3232290954).
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">关于log4erl的localtime_to_universaltime报错</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-29T09:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>关于logerl报错之</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>** <span class="o">{</span>appender_died,
+</span><span class='line'>
+</span><span class='line'>       <span class="o">{</span><span class="s1">&#39;EXIT&#39;</span>,
+</span><span class='line'>
+</span><span class='line'>           <span class="o">{</span>badarg,
+</span><span class='line'>
+</span><span class='line'>               <span class="o">[{</span>erlang,localtime_to_universaltime,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[{</span> <span class="o">{</span>2013,6,19<span class="o">}</span>,<span class="o">{</span>15,52,35<span class="o">}</span> <span class="o">}</span>,true<span class="o">]</span>,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[]}</span>,
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>1&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>2&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>3&gt; <span class="nv">DateTime</span> <span class="o">=</span> <span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>.
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>4&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>** exception error: bad argument
+</span><span class='line'>
+</span><span class='line'>     in <span class="k">function  </span>erlang:localtime_to_universaltime/2
+</span><span class='line'>
+</span><span class='line'>        called as erlang:localtime_to_universaltime<span class="o">({</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>,true<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>5&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></p>
+
+<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> I - ISO format with universal GMT <span class="nb">time</span> <span class="o">(</span>equivilant to <span class="s2">&quot;%jT%TZ&quot;</span><span class="o">)</span>.
+</span><span class='line'> S - ISO format with <span class="nb">local time </span>and <span class="nb">time </span>zone offset
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 也就是在配置中改成%S就可以了。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a></h1>
     
     
@@ -500,45 +626,6 @@ long2ip（3232290954).
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2010/11/26/crc32-cpp/">C++实现crc32</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>直接参考如下连接
-<a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
-
-<p>或者boost、Crypto++</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -562,15 +649,15 @@ long2ip（3232290954).
       </li>
     
       <li class="post">
+        <a href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">关于log4erl的localtime_to_universaltime报错</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a>
       </li>
     
       <li class="post">
         <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/07/30/freebsd-install-hbase/">Freebsd下hbase安装</a>
       </li>
     
   </ul>
@@ -579,7 +666,7 @@ long2ip（3232290954).
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(2)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/python' style='font-size: 110.0%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(2)</a>  <a href='/blog/categories/erlang' style='font-size: 120.0%'>Erlang(2)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/python' style='font-size: 110.0%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
 </section>
 
 <section>

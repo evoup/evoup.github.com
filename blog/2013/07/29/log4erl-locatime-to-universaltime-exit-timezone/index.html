@@ -5,17 +5,22 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>JS跳出框架 - Evoup`s Blog</title>
+  <title>关于log4erl的localtime_to_universaltime报错 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="1
+  <meta name="description" content="关于logerl报错之 1
 2
 3
 4
 5
 6
-&lt;script language= &quot;JavaScript&quot;&gt; &lt;!--Break out of frames if (top.frames.length &gt; 0) top.location=self.document. &hellip;">
+7
+8
+9
+10
+11
+** {appender_died, {&#39;EXIT&#39;, {badarg, [{erlang,localtime_to_universaltime, [{ {2013,6,19},{15,52,35} }, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -24,7 +29,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2008/05/19/js-exit-frame">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -74,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">JS跳出框架</h1>
+      <h1 class="entry-title">关于log4erl的localtime_to_universaltime报错</h1>
     
     
       <p class="meta">
@@ -90,27 +95,104 @@
   
 
 
-<time datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2008</time>
+<time datetime="2013-07-29T09:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<div class="entry-content"><p>关于logerl报错之</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">language</span><span class="o">=</span> <span class="s2">&quot;JavaScript&quot;</span><span class="o">&gt;</span>
-</span><span class='line'>  <span class="c">&lt;!--</span><span class="nx">Break</span> <span class="nx">out</span> <span class="nx">of</span> <span class="nx">frames</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>    <span class="nx">top</span><span class="p">.</span><span class="nx">location</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
-</span><span class='line'>  <span class="c1">//--&gt;</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>** <span class="o">{</span>appender_died,
+</span><span class='line'>
+</span><span class='line'>       <span class="o">{</span><span class="s1">&#39;EXIT&#39;</span>,
+</span><span class='line'>
+</span><span class='line'>           <span class="o">{</span>badarg,
+</span><span class='line'>
+</span><span class='line'>               <span class="o">[{</span>erlang,localtime_to_universaltime,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[{</span> <span class="o">{</span>2013,6,19<span class="o">}</span>,<span class="o">{</span>15,52,35<span class="o">}</span> <span class="o">}</span>,true<span class="o">]</span>,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[]}</span>,
 </span></code></pre></td></tr></table></div></figure>
 
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>1&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>2&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>3&gt; <span class="nv">DateTime</span> <span class="o">=</span> <span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>.
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>4&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>** exception error: bad argument
+</span><span class='line'>
+</span><span class='line'>     in <span class="k">function  </span>erlang:localtime_to_universaltime/2
+</span><span class='line'>
+</span><span class='line'>        called as erlang:localtime_to_universaltime<span class="o">({</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>,true<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>5&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></p>
+
+<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> I - ISO format with universal GMT <span class="nb">time</span> <span class="o">(</span>equivilant to <span class="s2">&quot;%jT%TZ&quot;</span><span class="o">)</span>.
+</span><span class='line'> S - ISO format with <span class="nb">local time </span>and <span class="nb">time </span>zone offset
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 也就是在配置中改成%S就可以了。</p>
 </div>
 
 
@@ -133,12 +215,12 @@
   
 
 
-<time datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2008</time>
+<time datetime="2013-07-29T09:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/javascript/'>javascript</a>
+    <a class='category' href='/blog/categories/erlang/'>erlang</a>
   
 </span>
 
@@ -147,7 +229,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2008/05/19/js-exit-frame/" data-via="" data-counturl="http://evoupsight.com/blog/2008/05/19/js-exit-frame/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/" data-via="" data-counturl="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/" >Tweet</a>
   
   
   
@@ -163,8 +245,10 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Previous Post: freebsd安装ganglia3.4">&laquo; freebsd安装ganglia3.4</a>
       
-        <a class="basic-alignment right" href="/blog/2008/05/22/js-get-cookie/" title="Next Post: js获取cookie">js获取cookie &raquo;</a>
+      
+        <a class="basic-alignment right" href="/blog/2013/09/29/change-blog-to-github/" title="Next Post: 博客搬家到github">博客搬家到github &raquo;</a>
       
     </p>
   </footer>

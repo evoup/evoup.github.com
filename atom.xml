@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T17:27:52+08:00</updated>
+  <updated>2013-10-14T11:07:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -46,6 +46,105 @@ long2ip（3232290954).
     <updated>2013-09-29T16:27:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/09/29/change-blog-to-github</id>
     <content type="html"><![CDATA[<p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于log4erl的localtime_to_universaltime报错]]></title>
+    <link href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/"/>
+    <updated>2013-07-29T09:46:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone</id>
+    <content type="html"><![CDATA[<p>关于logerl报错之</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>** <span class="o">{</span>appender_died,
+</span><span class='line'>
+</span><span class='line'>       <span class="o">{</span><span class="s1">&#39;EXIT&#39;</span>,
+</span><span class='line'>
+</span><span class='line'>           <span class="o">{</span>badarg,
+</span><span class='line'>
+</span><span class='line'>               <span class="o">[{</span>erlang,localtime_to_universaltime,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[{</span> <span class="o">{</span>2013,6,19<span class="o">}</span>,<span class="o">{</span>15,52,35<span class="o">}</span> <span class="o">}</span>,true<span class="o">]</span>,
+</span><span class='line'>
+</span><span class='line'>                    <span class="o">[]}</span>,
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>1&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>2&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>* 1: variable <span class="s1">&#39;DateTime&#39;</span> is unbound
+</span><span class='line'>
+</span><span class='line'>3&gt; <span class="nv">DateTime</span> <span class="o">=</span> <span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>.
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>4&gt; erlang:localtime_to_universaltime<span class="o">(</span>DateTime, <span class="nb">true</span><span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'>** exception error: bad argument
+</span><span class='line'>
+</span><span class='line'>     in <span class="k">function  </span>erlang:localtime_to_universaltime/2
+</span><span class='line'>
+</span><span class='line'>        called as erlang:localtime_to_universaltime<span class="o">({</span> <span class="o">{</span>2008,5,5<span class="o">}</span>,<span class="o">{</span>1,1,1<span class="o">}</span> <span class="o">}</span>,true<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>5&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></p>
+
+<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> I - ISO format with universal GMT <span class="nb">time</span> <span class="o">(</span>equivilant to <span class="s2">&quot;%jT%TZ&quot;</span><span class="o">)</span>.
+</span><span class='line'> S - ISO format with <span class="nb">local time </span>and <span class="nb">time </span>zone offset
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 也就是在配置中改成%S就可以了。</p>
 ]]></content>
   </entry>
   
@@ -1402,73 +1501,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 </span><span class='line'><span class="p">{</span>
 </span><span class='line'>    <span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[批量删除CVS目录的cmd]]></title>
-    <link href="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/"/>
-    <updated>2008-07-20T23:23:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2008/07/20/delete-cvs-dir</id>
-    <content type="html"><![CDATA[<p>windows下的bat的方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
-</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
-</span><span class='line'><span class="p">@</span>PROMPT [Com]#
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>
-</span><span class='line'>
-</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
-</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
-</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>

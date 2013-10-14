@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-11T17:27:52+08:00</updated>
+  <updated>2013-10-14T11:07:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -44,6 +44,75 @@
 <p>这样子使用
 long2ip（3232290954).
 {192,168,216,138}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于log4erl的localtime_to_universaltime报错]]></title>
+    <link href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/"/>
+    <updated>2013-07-29T09:46:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone</id>
+    <content type="html"><![CDATA[<p>关于logerl报错之</p>
+
+<p>```bash
+** {appender_died,</p>
+
+<pre><code>   {'EXIT',
+
+       {badarg,
+
+           [{erlang,localtime_to_universaltime,
+
+                [{ {2013,6,19},{15,52,35} },true],
+
+                []},
+</code></pre>
+
+<p>```</p>
+
+<p>```bash
+Eshell V5.9.1  (abort with ^G)</p>
+
+<p>1> erlang:localtime_to_universaltime(DateTime, true).</p>
+
+<ul>
+<li>1: variable &lsquo;DateTime&rsquo; is unbound</li>
+</ul>
+
+
+<p>2> erlang:localtime_to_universaltime(DateTime, true).</p>
+
+<ul>
+<li>1: variable &lsquo;DateTime&rsquo; is unbound</li>
+</ul>
+
+
+<p>3> DateTime = { {2008,5,5},{1,1,1} }.</p>
+
+<p>{ {2008,5,5},{1,1,1} }</p>
+
+<p>4> erlang:localtime_to_universaltime(DateTime, true).</p>
+
+<p>** exception error: bad argument</p>
+
+<pre><code> in function  erlang:localtime_to_universaltime/2
+
+    called as erlang:localtime_to_universaltime({ {2008,5,5},{1,1,1} },true)
+</code></pre>
+
+<p>5>
+```</p>
+
+<p>看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
+<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></p>
+
+<p>后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></p>
+
+<p><code>bash
+ I - ISO format with universal GMT time (equivilant to "%jT%TZ").
+ S - ISO format with local time and time zone offset
+</code>
+ 也就是在配置中改成%S就可以了。</p>
 ]]></content>
   </entry>
   

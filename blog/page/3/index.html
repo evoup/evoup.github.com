@@ -9,8 +9,25 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="1
-parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
+  <meta name="description" content="windows下的bat的方法 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+@echo On
+@Rem 删除CVS版本控制目录
+@PROMPT [Com]#
+@echo Find CVS @for /r . %%a in (.) do @if exist &quot &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +83,100 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2008/07/20/delete-cvs-dir/">批量删除CVS目录的cmd</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>windows下的bat的方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
+</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
+</span><span class='line'><span class="p">@</span>PROMPT [Com]#
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
+</span><span class='line'>    <span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
+</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
+</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -253,15 +364,15 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
       </li>
     
       <li class="post">
+        <a href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">关于log4erl的localtime_to_universaltime报错</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a>
       </li>
     
       <li class="post">
         <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/07/30/freebsd-install-hbase/">Freebsd下hbase安装</a>
       </li>
     
   </ul>
@@ -270,7 +381,7 @@ parent.window.frames[i].location.href=&quot;http://www.baidu.com&quot; ">
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(2)</a>  <a href='/blog/categories/erlang' style='font-size: 110.0%'>Erlang(1)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/python' style='font-size: 110.0%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(6)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(2)</a>  <a href='/blog/categories/erlang' style='font-size: 120.0%'>Erlang(2)</a>  <a href='/blog/categories/gcc' style='font-size: 110.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 110.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 130.0%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 110.0%'>Monitor(1)</a>  <a href='/blog/categories/nginx' style='font-size: 110.0%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 110.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(2)</a>  <a href='/blog/categories/python' style='font-size: 110.0%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(1)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(1)</a> </span>
 </section>
 
 <section>
