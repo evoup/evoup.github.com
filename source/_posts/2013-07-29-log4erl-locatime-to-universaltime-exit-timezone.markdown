@@ -52,10 +52,10 @@ Eshell V5.9.1  (abort with ^G)
  
 
 看来是个log4erl在freebsd下的bug，原因可能是作者没有考虑到下面的状况：
-http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html
+<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html" target=_BLANK>http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a>
 
 
-后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册https://github.com/ahmednawras/log4erl/blob/master/API.txt
+后记：我的做法是把时区从UTC调整到CST，之后居然就一切OK了，关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK>https://github.com/ahmednawras/log4erl/blob/master/API.txt</a>
 
 ```bash
  I - ISO format with universal GMT time (equivilant to "%jT%TZ").
