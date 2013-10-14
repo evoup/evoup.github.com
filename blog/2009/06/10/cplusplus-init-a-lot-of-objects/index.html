@@ -5,17 +5,26 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>gcc静态编译 - Evoup`s Blog</title>
+  <title>初始化一组C++对象 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
-编译静态库
-先找一下源文件 1
+  <meta name="description" content="今天要初始化一组对象 1
 2
 3
-4 &hellip;">
+4
+5
+6
+7
+8
+9
+cls_enemy * enemy0[]={
+new cls_enemy(),
+new cls_enemy(),
+new cls_enemy(),
+new cls_enemy(),
+new cls_enemy(),
+new &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -24,7 +33,7 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/18/gcc-static-compile">
+  <link rel="canonical" href="http://evoupsight.com/blog/2009/06/10/cplusplus-init-a-lot-of-objects">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -74,7 +83,7 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   
   <header>
     
-      <h1 class="entry-title">Gcc静态编译</h1>
+      <h1 class="entry-title">初始化一组C++对象</h1>
     
     
       <p class="meta">
@@ -90,17 +99,14 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   
 
 
-<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+<time datetime="2009-06-10T13:29:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
-编译静态库
-先找一下源文件</p>
+<div class="entry-content"><p>今天要初始化一组对象</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -108,52 +114,37 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
-</span><span class='line'>./sfhashfcn.c
-</span><span class='line'>./test.c
-</span><span class='line'>./sfmemcap.c
-</span><span class='line'>./sfxhash.c
-</span><span class='line'>./sfprimetable.c
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">cls_enemy</span> <span class="o">*</span> <span class="n">enemy0</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">()</span>
+</span><span class='line'><span class="p">};</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>生成中间文件</p>
+<p>像这样初始化也太麻烦了吧，看看有什么对象链表之类的东西。</p>
+
+<p>在VC里可以用CStringArray和CStringList或者CPtrArray或者CPtrList来做，那么STL里是一样的。正确做法可以是push_back的元素用new XX()做参数</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
-</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
-</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
-</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成静态库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="n">cls_enemy</span><span class="o">*&gt;</span> <span class="n">ev</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">ev</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">());</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>需要注意vector是模板类型，可以放任何类型，但是基于效率的考虑，最好放对象指针。</p>
 </div>
 
 
@@ -176,12 +167,12 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   
 
 
-<time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+<time datetime="2009-06-10T13:29:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/gcc/'>gcc</a>
+    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
   
 </span>
 
@@ -190,7 +181,7 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/06/10/cplusplus-init-a-lot-of-objects/" data-via="" data-counturl="http://evoupsight.com/blog/2009/06/10/cplusplus-init-a-lot-of-objects/" >Tweet</a>
   
   
   
@@ -206,10 +197,10 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2010/07/23/freebsd-ctag/" title="Previous Post: freebsd下如何创建和使用Ctag">&laquo; freebsd下如何创建和使用Ctag</a>
+        <a class="basic-alignment left" href="/blog/2009/06/10/php-mysql-fetch-array-without-while/" title="Previous Post: mysql_fetch_array不使用while">&laquo; mysql_fetch_array不使用while</a>
       
       
-        <a class="basic-alignment right" href="/blog/2010/11/25/typedef-summary/" title="Next Post: typedef小结">typedef小结 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2009/06/11/php-call-user-func/" title="Next Post: PHP之call_user_func动态调用函数">PHP之call_user_func动态调用函数 &raquo;</a>
       
     </p>
   </footer>

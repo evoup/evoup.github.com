@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-14T11:32:47+08:00</updated>
+  <updated>2013-10-14T13:55:56+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -1479,12 +1479,11 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[mysql_fetch_array不使用while]]></title>
-    <link href="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while/"/>
-    <updated>2009-06-10T13:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while</id>
-    <content type="html"><![CDATA[<p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
-方法是</p>
+    <title type="html"><![CDATA[初始化一组C++对象]]></title>
+    <link href="http://evoupsight.com/blog/2009/06/10/cplusplus-init-a-lot-of-objects/"/>
+    <updated>2009-06-10T13:29:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2009/06/10/cplusplus-init-a-lot-of-objects</id>
+    <content type="html"><![CDATA[<p>今天要初始化一组对象</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1492,14 +1491,37 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$num</span><span class="o">=</span><span class="nb">mysql_num_rows</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$num</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">cls_enemy</span> <span class="o">*</span> <span class="n">enemy0</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">()</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>像这样初始化也太麻烦了吧，看看有什么对象链表之类的东西。</p>
+
+<p>在VC里可以用CStringArray和CStringList或者CPtrArray或者CPtrList来做，那么STL里是一样的。正确做法可以是push_back的元素用new XX()做参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="n">cls_enemy</span><span class="o">*&gt;</span> <span class="n">ev</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">ev</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">());</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>需要注意vector是模板类型，可以放任何类型，但是基于效率的考虑，最好放对象指针。</p>
 ]]></content>
   </entry>
   
