@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-14T14:16:01+08:00</updated>
+  <updated>2013-10-15T14:48:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -20,26 +20,16 @@
     <id>http://evoupsight.com/blog/2013/10/09/erlang-long2ip</id>
     <content type="html"><![CDATA[<p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
-</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
-</span><span class='line'>    <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
-</span><span class='line'><span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock erlang代码片段 lang:erlang %}
+%%从整形转换为IP地址元组
+long2ip(IpInteger) &ndash;></p>
+
+<pre><code>Integer_to_ip=fun(Ip)-&gt; {Ip bsr 24, (Ip band 16711680) bsr 16, 
+    (Ip band 65280) bsr 8, Ip band 255} end,
+Integer_to_ip(IpInteger).
+</code></pre>
+
+<p>{% endcodeblock %}</p>
 
 <p>这样子使用
 long2ip（3232290954).
@@ -111,6 +101,212 @@ Eshell V5.9.1  (abort with ^G)</p>
  S - ISO format with local time and time zone offset
 </code>
  也就是在配置中改成%S就可以了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【How to】使用basho的erlang-protobuffs和PHP通讯]]></title>
+    <link href="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php/"/>
+    <updated>2013-05-27T13:49:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php</id>
+    <content type="html"><![CDATA[<p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+<!-- more -->
+
+
+<p>可以在这里下载，git://github.com/basho/erlang_protobuffs.git</p>
+
+<p>先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。</p>
+
+<p><code>bash
+cd erlang_protobuffs
+make all
+</code></p>
+
+<p>这样就可以使用了，接下来给出一个测试的protobuf文件</p>
+
+<p>{% codeblock lang:protobuf test.proto %}
+message test {
+   required string test1 = 1;
+}
+{% endcodeblock %}</p>
+
+<p>进入ebin目录准备生成
+<code>bash
+cd ebin  
+</code></p>
+
+<p>```erlang
+erl
+1> protobuffs_compile:generate_source(&ldquo;test.proto&rdquo;).</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing header file to &ldquo;test_pb.hrl&rdquo;</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing src file to &ldquo;test_pb.erl&rdquo;</p>
+
+<p>ok
+```
+这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。</p>
+
+<p>然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。</p>
+
+<p>{% codeblock lang:erlang server.erl start:51 mark:51,54-55 %}
+-module(server).</p>
+
+<p>-compile(export_all).</p>
+
+<p>-import(lists, [reverse/1]).</p>
+
+<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
+
+<p>start_nano_server() &ndash;></p>
+
+<p>   {ok, Listen} = gen_tcp:listen(2345, [binary, {packet, 4},</p>
+
+<pre><code>                {reuseaddr, true},
+
+                {active, true}]),
+</code></pre>
+
+<p>   {ok, Socket} = gen_tcp:accept(Listen),</p>
+
+<p>   gen_tcp:close(Listen),</p>
+
+<p>   loop(Socket).</p>
+
+<p>loop(Socket) &ndash;></p>
+
+<p>   receive</p>
+
+<p>   {tcp, Socket, Bin} &ndash;></p>
+
+<pre><code>   io:format("Server received binary = ~p~n",[Bin]),
+
+   Msg=test_pb:decode_test(Bin),
+
+   io:format("Server (unpacked)  ~p~n",[Msg]),
+
+   loop(Socket);
+</code></pre>
+
+<p>   {tcp_closed, Socket} &ndash;></p>
+
+<pre><code>   io:format("Server socket closed~n")
+</code></pre>
+
+<p>   end.
+{% endcodeblock %}</p>
+
+<p>client的代码</p>
+
+<p>{% codeblock lang:erlang client.erl %}
+-module(client).</p>
+
+<p>-compile(export_all).</p>
+
+<p>-import(lists, [reverse/1]).</p>
+
+<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
+
+<p>nano_client_eval() &ndash;></p>
+
+<p>   {ok, Socket} =</p>
+
+<p>   gen_tcp:connect(&ldquo;localhost&rdquo;, 2345,</p>
+
+<pre><code>   [binary, {packet, 4}]),
+</code></pre>
+
+<p>   Test=#test{test1=&ldquo;test1&rdquo;},</p>
+
+<p>   Str=test_pb:encode_test(Test),</p>
+
+<p>   ok = gen_tcp:send(Socket, Str),</p>
+
+<p>   gen_tcp:close(Socket).
+{% endcodeblock %}</p>
+
+<p>需要说明的是packet,4这个参数，代表每个数据包的前4个字节为消息头，该头标识了消息体的长度。这样互通是没有问题的，erlang自动为数据包的加上前4个字节的消息头。</p>
+
+<p>接下来难点是php作为客户端，要手工打包消息然后发送。
+首先是下载php版本的<a href="https://code.google.com/p/pb4php/">https://code.google.com/p/pb4php/</a>
+然后，解压得到protocolbuf，接着创建你的项目，把protocolbuf放到该项目文件夹的根目录下。一样要生成源代码。注意，pb4php不是很智能，如果直接.proto文件中=1没有空格，而不是写成xx = 1是会报错的！</p>
+
+<p>{% codeblock lang:php test.php %}  <br/>
+&lt;?php</p>
+
+<p>require_once(&ldquo;./protocolbuf/parser/pb_parser.php&rdquo;);</p>
+
+<p>$parser = new PBParser();</p>
+
+<p>$parser->parse(&ldquo;./test.proto&rdquo;);</p>
+
+<p>echo &ldquo;done\n&rdquo;;</p>
+
+<p>?>
+{% endcodeblock %}</p>
+
+<p>运行test.php后生成pb_proto_test.php</p>
+
+<p>php版本的client的代码</p>
+
+<p>{% codeblock lang:php client.php %}
+&lt;?php</p>
+
+<p>require_once(&ldquo;./protocolbuf/message/pb_message.php&rdquo;);</p>
+
+<p>require_once(&ldquo;./pb_proto_test.php&rdquo;);</p>
+
+<p>$test = new test();</p>
+
+<p>$test->set_test1(&ldquo;test php&rdquo;);</p>
+
+<p>$string = $test->SerializeToString();</p>
+
+<p>$sock=@socket_create(AF_INET, SOCK_STREAM, getprotobyname(&lsquo;tcp&rsquo;));</p>
+
+<p>if ($sock)
+{</p>
+
+<p>   socket_connect($sock, &ldquo;127.0.0.1&rdquo;, 2345);</p>
+
+<p>   $msg = pack_data($string);</p>
+
+<p>   file_put_contents(dirname(<strong>FILE</strong>).&lsquo;/resmessage&rsquo;,$msg);</p>
+
+<p>   $sent = @socket_write($sock, $msg, strlen($msg));
+}</p>
+
+<p>function pack_data ($data) {</p>
+
+<p>   $head =pack(&ldquo;H*&rdquo;, to_hex_str (strlen($data)));</p>
+
+<p>   $body=pack(&ldquo;A*&rdquo;,$data);</p>
+
+<p>   return $head.$body;</p>
+
+<p>}</p>
+
+<p>function to_hex_str ($num)
+{</p>
+
+<p>   $str = dechex($num);</p>
+
+<p>   $str = str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT);</p>
+
+<p>   return $str;</p>
+
+<p>}
+?>
+{% endcodeblock %}</p>
+
+<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
+
+<p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
 ]]></content>
   </entry>
   
