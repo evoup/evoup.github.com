@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-15T14:48:12+08:00</updated>
+  <updated>2013-10-16T18:30:31+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[linux下模拟df.c源码]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code/"/>
+    <updated>2013-10-16T18:09:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code</id>
+    <content type="html"><![CDATA[<p>主要实现df的基本不带参数的功能，连界面都不一样，凑活用。
+```c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;mntent.h></h1>
+
+<h1>include &lt;sys/vfs.h></h1>
+
+<p>int main(void)
+{
+ struct mntent <em>ent;
+ FILE </em>aFile;</p>
+
+<p> aFile = setmntent(&ldquo;/etc/mtab&rdquo;, &ldquo;r&rdquo;);
+ if (aFile == NULL) {
+   perror(&ldquo;setmntent&rdquo;);
+   exit(1);
+ }
+ struct statfs diskInfo;
+ unsigned long long blocksize;
+ unsigned long long totalsize;
+ unsigned long long freeDisk;
+ unsigned long long availsize;
+ unsigned long long used;
+ while (NULL != (ent = getmntent(aFile))) { //获取各挂载点的信息
+   printf(&ldquo;=========================================================================\
+==================================================\n&rdquo;);
+   //根据挂载点，确认磁盘空间
+   statfs(ent->mnt_dir,&amp;diskInfo);
+   blocksize = diskInfo.f_bsize; //每个block里面包含的字节数
+   totalsize = blocksize * diskInfo.f_blocks; //总的字节数
+   freeDisk = diskInfo.f_bfree<em>blocksize; //再计算下剩余的空间大小
+   availsize = diskInfo.f_bavail</em>blocksize;
+   //>10换算成KB
+   used=totalsize-freeDisk;
+   printf(&ldquo;FS == %s MOUNTPOINT == %s TOTAL_SIZE == %lu KB DISK_FREE == %ld KB USED ==\
+%ld KB avail == %ld KB\n&rdquo;, ent->mnt_fsname, ent->mnt_dir,(int)(totalsize>>10),
+(int)(freeDisk>>10),(int)(used>>10),(int)(availsize>>10));
+ }
+ endmntent(aFile);
+   printf(&ldquo;=========================================================================\
+==================================================\n&rdquo;);
+}
+```</p>
+
+<p>附一张运行截图
+<img src="/images/evoup/df.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[C语言变参宏]]></title>
@@ -363,20 +421,6 @@ aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa</p>
 
 <p>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
 ```</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[typedef小结]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/25/typedef-summary/"/>
-    <updated>2010-11-25T14:52:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/25/typedef-summary</id>
-    <content type="html"><![CDATA[<p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
-
-<p>对于动态分配内存的时候也可以
-<code>c++
-xx * obj= (xx *)malloc(sizeof(xx));
-</code></p>
 ]]></content>
   </entry>
   
