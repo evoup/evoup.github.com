@@ -65,4 +65,6 @@ ssh-copy-id '-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub yin@211.136.104.189'
 
 参考：
 http://mikegerwitz.com/ssh-copy-id-and-sshd-port/
+
 http://blogread.cn/it/article/6103
+
