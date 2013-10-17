@@ -3,7 +3,7 @@ layout: post
 title: "非常便捷的ssh信任制作脚本ssh-copy-id"
 date: 2013-10-17 17:29
 comments: true
-categories: 
+categories:           shell
 ---
 
 手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。
