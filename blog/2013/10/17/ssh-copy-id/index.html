@@ -5,13 +5,19 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C语言变参宏 - Evoup`s Blog</title>
+  <title>非常便捷的ssh信任制作脚本ssh-copy-id - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句： 1
-buffer_copy_string_len(modules-&gt;key, CONST_STR_LEN(&quot;server.modules&quot;)); 而此参数声明的时候是这样的 1
-int &hellip;">
+  <meta name="description" content="手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。 实验：hostA: 172.16.30.184:22 hostB:211.136.104.189:9999 1
+2
+3
+4
+5
+6
+7
+8
+9 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +26,7 @@ int &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/10/17/ssh-copy-id">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -70,7 +76,7 @@ int &hellip;">
   
   <header>
     
-      <h1 class="entry-title">C语言变参宏</h1>
+      <h1 class="entry-title">非常便捷的ssh信任制作脚本ssh-copy-id</h1>
     
     
       <p class="meta">
@@ -86,35 +92,123 @@ int &hellip;">
   
 
 
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<time datetime="2013-10-17T17:29:00+08:00" pubdate data-updated="true">Oct 17<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+<div class="entry-content"><p>手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+
+<!-- more -->
+
+
+<p>实验：hostA: 172.16.30.184:22  hostB:211.136.104.189:9999</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt;ssh-keygen -t rsa
+</span><span class='line'>
+</span><span class='line'>Generating public/private rsa key pair.
+</span><span class='line'>
+</span><span class='line'>Enter file in which to save the key <span class="o">(</span>/home/yin/.ssh/id_rsa<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>/home/yin/.ssh/id_rsa already exists.
+</span><span class='line'>
+</span><span class='line'>Overwrite <span class="o">(</span>y/n<span class="o">)</span>? y
+</span><span class='line'>
+</span><span class='line'>Enter passphrase <span class="o">(</span>empty <span class="k">for </span>no passphrase<span class="o">)</span>:
+</span><span class='line'>
+</span><span class='line'>Enter same passphrase again:
+</span><span class='line'>
+</span><span class='line'>Your identification has been saved in /home/yin/.ssh/id_rsa.
+</span><span class='line'>
+</span><span class='line'>Your public key has been saved in /home/yin/.ssh/id_rsa.pub.
+</span><span class='line'>
+</span><span class='line'>The key fingerprint is:
+</span><span class='line'>
+</span><span class='line'>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 yin@yin-arch.madhouse.cn
+</span><span class='line'>
+</span><span class='line'>The key<span class="err">&#39;</span>s randomart image is:
+</span><span class='line'>
+</span><span class='line'>+--<span class="o">[</span> RSA 2048<span class="o">]</span>----+
+</span><span class='line'>
+</span><span class='line'>|+<span class="o">==</span> . .o...o+.   |
+</span><span class='line'>
+</span><span class='line'>|oooO .  . .+.    |
+</span><span class='line'>
+</span><span class='line'>|ooE +   . o.     |
+</span><span class='line'>
+</span><span class='line'>| . o   . .       |
+</span><span class='line'>
+</span><span class='line'>|        S        |
+</span><span class='line'>
+</span><span class='line'>|                 |
+</span><span class='line'>
+</span><span class='line'>|                 |
+</span><span class='line'>
+</span><span class='line'>|                 |
+</span><span class='line'>
+</span><span class='line'>|                 |
+</span><span class='line'>
+</span><span class='line'>+-----------------+
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>而此参数声明的时候是这样的</p>
+<p>然后运行如下脚本，按照提示输入密码即可</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-copy-id <span class="s1">&#39;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub yin@211.136.104.189&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
+<p>参考：
+<a href="http://mikegerwitz.com/ssh-copy-id-and-sshd-port/">http://mikegerwitz.com/ssh-copy-id-and-sshd-port/</a>
+<a href="http://blogread.cn/it/article/6103">http://blogread.cn/it/article/6103</a></p>
 </div>
 
 
@@ -137,21 +231,15 @@ int &hellip;">
   
 
 
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<time datetime="2013-10-17T17:29:00+08:00" pubdate data-updated="true">Oct 17<span>th</span>, 2013</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/" data-via="" data-counturl="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/10/17/ssh-copy-id/" data-via="" data-counturl="http://evoupsight.com/blog/2013/10/17/ssh-copy-id/" >Tweet</a>
   
   
   
@@ -167,10 +255,8 @@ int &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2011/01/16/c-common-define/" title="Previous Post: C语言宏定义技巧(常用宏定义)(转)">&laquo; C语言宏定义技巧(常用宏定义)(转)</a>
+        <a class="basic-alignment left" href="/blog/2013/10/16/linux-df-source-c-code/" title="Previous Post: linux下模拟df.c源码">&laquo; linux下模拟df.c源码</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2011/07/30/freebsd-install-hbase/" title="Next Post: freebsd下hbase安装">freebsd下hbase安装 &raquo;</a>
       
     </p>
   </footer>
