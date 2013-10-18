@@ -5,7 +5,10 @@ date: 2013-10-16 18:09
 comments: true
 categories:              [c-language,monitor]
 ---
-主要实现df的基本不带参数的功能，连界面都不一样，凑活用。
+主要实现df的基本不带参数的功能，连界面都不一样，凑活用，见代码：
+
+<!-- code -->
+
 ```c
 #include <stdio.h>
 #include <stdlib.h>
