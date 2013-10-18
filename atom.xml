@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-17T17:47:16+08:00</updated>
+  <updated>2013-10-18T13:51:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -720,6 +720,147 @@ long2ip（3232290954).
 <p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
 
 <p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[erlang调用C库函数(NIF 方式)]]></title>
+    <link href="http://evoupsight.com/blog/2013/03/01/erlang-c-nif/"/>
+    <updated>2013-03-01T13:39:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/03/01/erlang-c-nif</id>
+    <content type="html"><![CDATA[<p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+
+<!-- more -->
+
+
+<p>参考了例子和这篇文章《Erlang NIF简析》<a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
+
+<p>终于实验成功。</p>
+
+<figure class='code'><figcaption><span>cgetloadavg.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;erl_nif.h&quot;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="n">ERL_NIF_TERM</span> <span class="nf">getloadavg_ex</span><span class="p">(</span><span class="n">ErlNifEnv</span><span class="o">*</span> <span class="n">env</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="n">ERL_NIF_TERM</span> <span class="n">argv</span><span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="kt">double</span> <span class="n">load</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span><span class='line'>   <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="n">getloadavg</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;%f&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>       <span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;%f&quot;</span><span class="p">,</span> <span class="n">load</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'>   <span class="k">return</span> <span class="n">enif_make_string</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">ERL_NIF_LATIN1</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">static</span> <span class="n">ErlNifFunc</span> <span class="n">nif_funcs</span><span class="p">[]</span> <span class="o">=</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="p">{</span><span class="s">&quot;getloadavg_ex&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">getloadavg_ex</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ERL_NIF_INIT</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">,</span><span class="n">nif_funcs</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以下写下简单的调用过程：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>还没有在app里试验，如果是标准app</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就可以生成供NIF调用的动态链接库</p>
+
+<p>然后是erlang的，调用很简单：</p>
+
+<figure class='code'><figcaption><span>getloadtest.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">).</span>
+</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">,</span> <span class="n">getloadavg_ex</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
+</span><span class='line'><span class="p">-</span><span class="ni">on_load</span><span class="p">(</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">init</span><span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class='line'>   <span class="nn">erlang</span><span class="p">:</span><span class="nf">load_nif</span><span class="p">(</span><span class="s">&quot;./getloadtest&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">getloadavg_ex</span><span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class='line'>   <span class="s">&quot;NIF library not loaded&quot;</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>1&gt; c<span class="o">(</span>getloadtest<span class="o">)</span>.
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span>ok,getloadtest<span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>2&gt; getloadtest:getloadavg_ex<span class="o">()</span>.
+</span><span class='line'>
+</span><span class='line'><span class="s2">&quot;2.263184&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>reference:</p>
+
+<p><a href="http://www.erlang.org/doc/tutorial/nif.html">http://www.erlang.org/doc/tutorial/nif.html</a></p>
+
+<p><a href="http://www.erlang.org/doc/man/erl_nif.html">http://www.erlang.org/doc/man/erl_nif.html</a></p>
+
+<p><a href="http://blog.csdn.net/d52787790/article/details/7103288">http://blog.csdn.net/d52787790/article/details/7103288</a></p>
+
+<p><a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
+
+<p><a href="http://www.freebsd.org/cgi/man.cgi?query=getloadavg">http://www.freebsd.org/cgi/man.cgi?query=getloadavg</a></p>
 ]]></content>
   </entry>
   
@@ -1813,57 +1954,6 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
     <content type="html"><![CDATA[<p>如果出现java.util.ConcurrentModificationException</p>
 
 <p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[关于win32程序调用python脚本的发布问题]]></title>
-    <link href="http://evoupsight.com/blog/2009/10/06/win32-c-call-python/"/>
-    <updated>2009-10-06T15:49:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/10/06/win32-c-call-python</id>
-    <content type="html"><![CDATA[<p>工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe,然后直接通过python的capi，调用python脚本工作。后来发现非控制台程序的exe，嵌入python是会有这样那样的问题出现。参见《PyRun_SimpleString的无穷怨念》</p>
-
-<!-- readmore -->
-
-
-<p><a href="http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx">http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx</a></p>
-
-<p>于是在dll里面去嵌入python，dll里面可以用win32线程来调度python脚本的执行状态。</p>
-
-<p>然后就涉及到发布的问题，先是这样子出现
-“由于应用程序配置不正确，应用程序未能启动。重新安装应用程序可能会纠正这个问题。”</p>
-
-<p>查了下资料,<a href="http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html">http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html</a>
-意思是python2.6是vc++2008编译的，所以要装Microsoft Visual C++ 2008 Redistributable Package。</p>
-
-<p>再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。</p>
-
-<p>这个过程大致如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># setup.py</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">py2exe</span>
-</span><span class='line'><span class="n">setup</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;hello.py&quot;</span><span class="p">])</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>运行setup.py，记得要传一个参数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">py2e</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>于是生成的dist文件夹里就是发布好的程序了。
-按照这个思路，解压library.zip里面的程序到dll目录也就可以运行了，试验发现如果是dll的话， w9xpopen.exe到是不必打包带进去了，这样我的dll连同这些文件都放到一个目录里，exe调用这个 dll就完成任务了。我的dll是Release版本的，因为我带的dll是python26.dll而不是python26_d.dll， 这样客户机再也不必安装python就可以运行带有python脚本的程序了。</p>
-
-<p>总结：这谁想出来的，搞得这么复杂，LUA就没有这么复杂，直接2个DLL就完事了，但是估计调用 库的话也是一样的。</p>
-
-<p>后记：其实非商业项目可以用selenium这类GUI自动化测试软件来干，也就是写写脚本。</p>
 ]]></content>
   </entry>
   

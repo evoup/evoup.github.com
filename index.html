@@ -435,6 +435,49 @@ long2ip（3232290954).
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-01T13:39:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/03/01/erlang-c-nif/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a></h1>
     
     
@@ -565,63 +608,6 @@ long2ip（3232290954).
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而此参数声明的时候是这样的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -662,7 +648,7 @@ long2ip（3232290954).
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 134.28571428571428%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 125.71428571428572%'>Erlang(3)</a>  <a href='/blog/categories/gcc' style='font-size: 108.57142857142857%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 108.57142857142857%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 125.71428571428572%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(2)</a>  <a href='/blog/categories/nginx' style='font-size: 108.57142857142857%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 108.57142857142857%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 125.71428571428572%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 108.57142857142857%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 117.14285714285714%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 108.57142857142857%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 160.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 134.28571428571428%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 134.28571428571428%'>Erlang(4)</a>  <a href='/blog/categories/gcc' style='font-size: 108.57142857142857%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 108.57142857142857%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 125.71428571428572%'>Javascript(3)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(2)</a>  <a href='/blog/categories/nginx' style='font-size: 108.57142857142857%'>Nginx(1)</a>  <a href='/blog/categories/octopress' style='font-size: 108.57142857142857%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 125.71428571428572%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 108.57142857142857%'>Python(1)</a>  <a href='/blog/categories/shell' style='font-size: 117.14285714285714%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 108.57142857142857%'>Vim(1)</a> </span>
 </section>
 
 <section>
