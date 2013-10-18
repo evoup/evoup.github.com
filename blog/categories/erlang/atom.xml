@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-18T13:51:31+08:00</updated>
+  <updated>2013-10-18T14:37:02+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -407,6 +407,214 @@ reference:</p>
 <p><a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
 
 <p><a href="http://www.freebsd.org/cgi/man.cgi?query=getloadavg">http://www.freebsd.org/cgi/man.cgi?query=getloadavg</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[[转]Erlang监测系统CPU、内存和磁盘]]></title>
+    <link href="http://evoupsight.com/blog/2013/02/27/erlang-monitor-cpu-memory-disk/"/>
+    <updated>2013-02-27T13:59:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/02/27/erlang-monitor-cpu-memory-disk</id>
+    <content type="html"><![CDATA[<p>os_mon
+Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
+
+<p><font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font></p>
+
+<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
+
+<p>disksup：监测磁盘（Unix、Windows）</p>
+
+<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
+
+<p>os_sup：监测系统日志（Solaris、Windows）</p>
+
+<p>使用os_mon进行监测先必须启动监测服务application:start(os_mon) ，因为os_mon服务依赖于sasl服务，先必须启
+动sasl服务，application:start(sasl) ，否则会返回{ error,{not_started,sasl} } 错误。os_mon提供的四种监测服
+务中默认会启动三种服务：cpu_sup、disksup和memsup，如果需要自己设置启动的监测服务，可以修改os_mon.app
+文件中的配置参数</p>
+
+<p>start_cpu_sup = bool()</p>
+
+<p>start_disksup = bool()</p>
+
+<p>start_memsup = bool()</p>
+
+<p>start_os_sup = bool()</p>
+
+<p>等于true时启动，等于false时不启动。os_mon.app文件在erlang的安装目录下../erl5.8.3/lib/os_mon-2.2.5
+/ebin 。</p>
+
+<p>cpu_sup</p>
+
+<p>cpu监测在5.8.3版本中只能用于Solaris和Linux操作系统，负载值与Unix进程运行前在队列中的排队时间成正比，
+因此值越大意味着负载越高，返回值除以256为rup和top命令中显示的值。avg1/0,avg5/0 和avg15/0 函数计算负载，
+util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/proc文件目录能被cpu_sup服务访问，如果不能监
+测服务会停止</p>
+
+<p>模块中的函数列表</p>
+
+<p>nprocs() &ndash;> UnixProcesses | {error, Reason}</p>
+
+<p>返回UNIX进程数</p>
+
+<p>avg1() &ndash;> SystemLoad | {error, Reason}</p>
+
+<p>返回最后1分钟系统的负载</p>
+
+<p>avg5() &ndash;> SystemLoad | {error, Reason}</p>
+
+<p>返回最后5分钟系统的负载</p>
+
+<p>avg15() &ndash;> SystemLoad | {error, Reason}</p>
+
+<p>返回最后15分钟系统的负载</p>
+
+<p>util() &ndash;> CpuUtil | {error, Reason}</p>
+
+<p>返回CPU使用率</p>
+
+<p>util(Opts) &ndash;> UtilSpec | {error, Reason}</p>
+
+<p>返回CPU使用率的详细信息</p>
+
+<p>调用这些函数取CPU监测数据时，如果前后两次调用，数值没有变化时显示为0，有点奇怪</p>
+
+<p>disksup</p>
+
+<p>disksup是一个用来监测磁盘空间的进程，适用于Unix和Windows系统。监测服务定期检查磁盘，对于每个磁盘或分
+区，在它使用超过一定的可用空间量，通过{ {disk_almost_full，MountedOn}，[] } 设置产生报警。在Unix下所有的
+本地磁盘都会被监测，包括存在的交换分区。在WIN32下所有类型为“FIXED_DISK”逻辑驱动器都会被检查。
+配置监控间隔时间和阀值</p>
+
+<p>disk_space_check_interval = int()>0</p>
+
+<p>监测间隔时间，单位为分钟，默认为30分钟。</p>
+
+<p>disk_almost_full_threshold = float()</p>
+
+<p>监测阀值，磁盘使用率达到多少时产生告警，默认为80，单位是百分比。</p>
+
+<p>模块中的函数列表</p>
+
+<p>get_disk_data() &ndash;> [DiskData]</p>
+
+<p>返回最后一次磁盘检查结果</p>
+
+<p>get_check_interval() &ndash;> MS</p>
+
+<p>获取监测间隔时间，单位是毫秒</p>
+
+<p>set_check_interval(Minutes) &ndash;> ok</p>
+
+<p>设置监测间隔时间，这个设置在下一次监测时生效，服务退出后，这个值会失效，重启服务后使用默认值</p>
+
+<p>get_almost_full_threshold() &ndash;> Percent</p>
+
+<p>获取监测阀值，为磁盘使用率</p>
+
+<p>set_almost_full_threshold(Float) &ndash;> ok</p>
+
+<p>设置监测阀值，服务重启后，设置失效，使用默认值</p>
+
+<p>memsup</p>
+
+<p>memsup用来监控系统内存和各个进程内存的使用率，适用于Unix、Windows和VxWorks系统，定时监测内存，如果内
+存使用超过系统分配的一定值，通过{system_memory_high_watermark, []} 设置产生告警。如果系统中任何Erlang
+进程使用内存超过在总内存中的一定百分比，通过设置{process_memory_high_watermark,Pid} 产生告警。</p>
+
+<p>配置监测间隔时间和阀值</p>
+
+<p>memory_check_interval = int()>0</p>
+
+<p>以分钟为刻度，默认为1分钟</p>
+
+<p>system_memory_high_watermark = float()</p>
+
+<p>内存使用阀值，默认为80，单位是百分比</p>
+
+<p>process_memory_high_watermark = float()</p>
+
+<p>单个Erlang进程使用阀值，默认为5，单位是百分比</p>
+
+<p>memsup_helper_timeout = int()>0</p>
+
+<p>等待监测结果的超时时间，默认为30秒</p>
+
+<p>memsup_system_only = bool()</p>
+
+<p>设置是否只监控系统内存使用率还是同时监测Erlang进程内存使用率，默认为false</p>
+
+<p>模块中的函数列表</p>
+
+<p>get_memory_data() &ndash;> {Total,Allocated,Worst}</p>
+
+<p>获取系统总内存，使用内存，每个Erlang进程的使用内存</p>
+
+<p>get_system_memory_data() &ndash;> MemDataList</p>
+
+<p>获取系统内存使用的详细信息</p>
+
+<p>get_os_wordsize() &ndash;> Wordsize</p>
+
+<p>获取操作系统的位数</p>
+
+<p>get_check_interval() &ndash;> MS</p>
+
+<p>获取监测间隔时间，单位毫秒</p>
+
+<p>set_check_interval(Minutes) &ndash;> ok</p>
+
+<p>设置监测间隔时间，单位分钟</p>
+
+<p>get_procmem_high_watermark() &ndash;> int()</p>
+
+<p>获取每一进程内存使用告警阀值</p>
+
+<p>set_procmem_high_watermark(Float) &ndash;> ok</p>
+
+<p>设置每一进程内存告警阀值</p>
+
+<p>get_sysmem_high_watermark() &ndash;> int()</p>
+
+<p>获取系统内存使用阀值</p>
+
+<p>set_sysmem_high_watermark(Float) &ndash;> ok</p>
+
+<p>设置系统内存使用阀值</p>
+
+<p>get_helper_timeout() &ndash;> Seconds</p>
+
+<p>获取监测数据返回等待时间</p>
+
+<p>set_helper_timeout(Seconds) &ndash;> ok</p>
+
+<p>设置监测数据返回等待时间</p>
+
+<p>从lib/megaco/src/tcp/megaco_tcp_connection.erl摘抄的代码, 挺详细的关于系统的信息:</p>
+
+<p>```erlang
+SchedId      = erlang:system_info(scheduler_id), <br/>
+SchedNum     = erlang:system_info(schedulers), <br/>
+ProcCount    = erlang:system_info(process_count), <br/>
+ProcLimit    = erlang:system_info(process_limit), <br/>
+ProcMemUsed  = erlang:memory(processes_used), <br/>
+ProcMemAlloc = erlang:memory(processes), <br/>
+MemTot       = erlang:memory(total), <br/>
+error_msg(&ldquo;abormal termination: &rdquo;</p>
+
+<pre><code>      "~n   Scheduler id:                         ~p"  
+      "~n   Num scheduler:                        ~p"  
+      "~n   Process count:                        ~p"  
+      "~n   Process limit:                        ~p"  
+      "~n   Memory used by erlang processes:      ~p"  
+      "~n   Memory allocated by erlang processes: ~p"  
+      "~n   The total amount of memory allocated: ~p"  
+      "~n~p",   
+      [SchedId, SchedNum, ProcCount, ProcLimit,   
+       ProcMemUsed, ProcMemAlloc, MemTot, Reason]),   
+</code></pre>
+
+<p>```</p>
 ]]></content>
   </entry>
   
