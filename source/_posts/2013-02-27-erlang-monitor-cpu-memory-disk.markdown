@@ -18,6 +18,8 @@ memsup：监测内存（Unix、Windows、VxWorks）
 
 os_sup：监测系统日志（Solaris、Windows）
 
+<!-- more -->
+
 使用os_mon进行监测先必须启动监测服务application:start(os_mon) ，因为os_mon服务依赖于sasl服务，先必须启
 动sasl服务，application:start(sasl) ，否则会返回{ error,{not_started,sasl} } 错误。os_mon提供的四种监测服
 务中默认会启动三种服务：cpu_sup、disksup和memsup，如果需要自己设置启动的监测服务，可以修改os_mon.app

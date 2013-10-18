@@ -7,7 +7,7 @@ categories:              [c-language,monitor]
 ---
 主要实现df的基本不带参数的功能，连界面都不一样，凑活用，见代码：
 
-<!-- code -->
+<!-- more -->
 
 ```c
 #include <stdio.h>
