@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-22T15:10:31+08:00</updated>
+  <updated>2013-10-22T15:41:54+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -1555,6 +1555,86 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[nginx反向代理mongodb的web页面]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb/"/>
+    <updated>2013-01-05T15:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb</id>
+    <content type="html"><![CDATA[<p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
+
+<!-- more -->
+
+
+<p><a href="http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface">http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface</a></p>
+
+<figure class='code'><figcaption><span>nginx配置文件 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>...
+</span><span class='line'>location / <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>       access_log /var/log/access.log access1;
+</span><span class='line'>
+</span><span class='line'>       proxy_redirect     off;
+</span><span class='line'>
+</span><span class='line'>       proxy_connect_timeout      90;
+</span><span class='line'>
+</span><span class='line'>       proxy_send_timeout         90;
+</span><span class='line'>
+</span><span class='line'>       proxy_read_timeout         90;
+</span><span class='line'>
+</span><span class='line'>       proxy_buffer_size          4k;
+</span><span class='line'>
+</span><span class='line'>       proxy_buffers              432k;
+</span><span class='line'>
+</span><span class='line'>       proxy_busy_buffers_size    64k;
+</span><span class='line'>
+</span><span class='line'>       proxy_temp_file_write_size 64k;
+</span><span class='line'>
+</span><span class='line'>       add_header Cache-Control no-cache;
+</span><span class='line'>
+</span><span class='line'>       proxy_pass http://172.16.30.184:28017;
+</span><span class='line'>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不足：只能从根目录进行代理,如需更加完善，需要装编译nginx的时候， &mdash;with-http_stub_status_module</p>
+
+<p>然后参考《nginx反代加替换傻瓜教程》进行配置</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[freebsd安装ganglia3.4]]></title>
     <link href="http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4/"/>
     <updated>2012-10-22T11:24:00+08:00</updated>
@@ -2446,24 +2526,6 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 <a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
 
 <p>或者boost、Crypto++</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[typedef小结]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/25/typedef-summary/"/>
-    <updated>2010-11-25T14:52:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/25/typedef-summary</id>
-    <content type="html"><![CDATA[<p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
-
-<p>对于动态分配内存的时候也可以</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
-  <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
+  <title><![CDATA[Category: mongodb | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/mongodb/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
   <updated>2013-10-22T15:42:15+08:00</updated>
   <id>http://evoupsight.com/</id>
@@ -60,25 +60,6 @@ location / {</p>
 不足：只能从根目录进行代理,如需更加完善，需要装编译nginx的时候， &mdash;with-http_stub_status_module</p>
 
 <p>然后参考《nginx反代加替换傻瓜教程》进行配置</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[遭遇nginx upstream sent too big header]]></title>
-    <link href="http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header/"/>
-    <updated>2011-09-11T23:20:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2011/09/11/nginx-upstream-sent-too-big-header</id>
-    <content type="html"><![CDATA[<p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
-
-<p>这个问题会导致输出502头信息。</p>
-
-<p>nginx配置中要加以下2行
-<code>bash
-fastcgi_buffer_size 128k;
-fastcgi_buffers 8 128k;
-</code></p>
-
-<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
 ]]></content>
   </entry>
   
