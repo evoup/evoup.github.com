@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-18T17:40:54+08:00</updated>
+  <updated>2013-10-22T15:04:45+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,99 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[局域网计算机和vmware虚拟机互ping]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan/"/>
+    <updated>2013-10-22T13:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan</id>
+    <content type="html"><![CDATA[<h2>情景描述</h2>
+
+<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。</p>
+
+<!-- more -->
+
+
+<h2>我的环境</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>  ,____________________
+</span><span class='line'>  |                   |  ,''''''''''''''''''|   ,------------------Y
+</span><span class='line'>  |   gateway         |  |   gateway        |   |   gateway        |
+</span><span class='line'>  |                   |__|                  |   |                  |
+</span><span class='line'>      172.16.27.38    |  |  172.16.27.1     |   |  172.16.30.254   |
+</span><span class='line'>  |                   |  |                  |   |                  |
+</span><span class='line'>  `.................../  L__________________|   |__________________J
+</span><span class='line'>           |                                              |
+</span><span class='line'>           |                                              |
+</span><span class='line'>           |                                              |
+</span><span class='line'>           |                                              |
+</span><span class='line'>           |                                              |
+</span><span class='line'>           |                                              |
+</span><span class='line'>   ,_______|______                                        |
+</span><span class='line'>   |             |        ,''''''''''''''`.        ,'''''''''''''`.
+</span><span class='line'>   |             |        |               |        |              |
+</span><span class='line'>   | WIN7        |        |   freebsd8    |        |   freebsd9   |
+</span><span class='line'>   |             |        |               |        |              |
+</span><span class='line'>   | VMWARE Host |        | VMWARE client |        |              |
+</span><span class='line'>   |             |'''''''''               |        |              |
+</span><span class='line'>   |             |        |     server    |        |    client    |
+</span><span class='line'>   | 172.16.27.37|        |192.168.216.145|        |172.16.30.184 |
+</span><span class='line'>   |             |        |               |        |              |
+</span><span class='line'>   |             |        |               |        |              |
+</span><span class='line'>   |             |        |               |        |              |
+</span><span class='line'>   '`'''''''''''''        `---------------'        '`''''''''''''''</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A）WIN7 vmware所在宿主机的网卡，地址为172.16.27.37/24(24代表子网掩码为255.255.255.0),默认网关172.16.27.38</p>
+
+<p>B）freebsd8 服务器所在的vmware上原有一块NAT网卡em0，地址为192.168.216.145,一开始采用DHCP配置</p>
+
+<p>C）freebsd9 客户端上只有一块网卡epair38b,地址为172.16.30.184,默认网关为172.16.30.254</p>
+
+<p>记录：</p>
+
+<h2>实现A和B互通</h2>
+
+<p>A到B，VMWARE直接就实现了。
+B到A，需要添加一块bridge方式的网卡em0。使用sysinstall添加后，配置为172.16.27.59/24,默认网关172.16.27.38</p>
+
+<h2>实现A和C互通</h2>
+
+<p>A到C，网络规划的时候直接就通了，不在同一网关，在win7的网卡属性TCP/IPv4属性的高级TCP/IP设置中，选IP设置选项卡，然后在默认网关中添加C所在的网关172.16.30.254
+C到A，网络规划的时候指定了，/etc/resolv.conf中nameserver 172.16.27.1，另一个网关也直接能通到A，只需要打开WIN7的ping防火墙即可，可以google之。</p>
+
+<h2>实现B和C互通</h2>
+
+<p>B到C，经过以上操作已经可以了。
+C到B，同上。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[非常便捷的ssh信任制作脚本ssh-copy-id]]></title>
@@ -2370,71 +2463,6 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 </span></code></pre></td></tr></table></div></figure>
 
 
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[gcc静态编译]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/"/>
-    <updated>2010-11-18T16:50:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/18/gcc-static-compile</id>
-    <content type="html"><![CDATA[<p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
-编译静态库
-先找一下源文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
-</span><span class='line'>./sfhashfcn.c
-</span><span class='line'>./test.c
-</span><span class='line'>./sfmemcap.c
-</span><span class='line'>./sfxhash.c
-</span><span class='line'>./sfprimetable.c
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成中间文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
-</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
-</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
-</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>生成静态库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
