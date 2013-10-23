@@ -19,6 +19,8 @@ rrdtool是专门为了保存和出图设计的数据库。它的全称为round r
 
 ##创建RRD数据库
 
+<!-- more -->
+
 然后我们参考下开源监控软件ganglia的load_one数据库结构：
 
 
