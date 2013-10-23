@@ -18,7 +18,7 @@ rrdtool是专门为了保存和出图设计的数据库。它的全称为round r
 
 
 ##准备工作
-在freebsd上好rrdtool1.2以上的版本
+在freebsd上安装rrdtool1.2以上的版本
 <!-- more -->
 ```bash
 cd /usr/port/databases/rrdtool12
@@ -99,6 +99,8 @@ rel/reltool.config对应位置中加入第13、30行的内容
            {copy, "files/vm.args", "releases/\{\{rel_vsn\}\}/vm.args"}
           ]}.
 {% endcodeblock %}
+这样就算安装完成了（需要注意项目使用了rebar）
+
 
 ##创建RRD数据库
 
