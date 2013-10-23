@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T17:22:47+08:00</updated>
+  <updated>2013-10-23T17:48:55+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -26,14 +26,56 @@
 
 <p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
 
-<h2>创建RRD数据库</h2>
+<h2>准备工作</h2>
 
-<!-- more -->
+<p>在freebsd上好rrdtool1.2以上的版本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/port/databases/rrdtool12
+</span><span class='line'>sudo make install clean
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+<p>erlang对应接口的安装</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>在项目中rebar.conf对应位置中加入8-11行的内容</p>
+
+<figure class='code'><figcaption><span>rebar.conf start:0 mark:8-11 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}</span> <span class="p">}},</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">&#39;rrdtool&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/Vagabond/erlang-rrdtool.git&quot;</span><span class="p">,</span>
+</span><span class='line'>                <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">}</span>
+</span><span class='line'>    <span class="p">]}.</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;apps/monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;rel&quot;</span><span class="p">]}.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以及
+rel/reltool.config对应位置中加入第13、30行的内容</p>
+
+<figure class='code'><figcaption><span>rebar.conf start:0 mark:13,30 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -64,37 +106,152 @@
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
 <span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rrdtool info load_one.rrd
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">erts</span><span class="p">,</span> <span class="p">[{</span><span class="n">mod_cond</span><span class="p">,</span> <span class="n">derived</span><span class="p">},</span> <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">[</span>
+</span><span class='line'>         <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">stdlib</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">sasl</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">inets</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">crypto</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">mochiweb</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">rrdtool</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">monitorserver2</span>
+</span><span class='line'>        <span class="p">]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;start_clean&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">[</span>
+</span><span class='line'>         <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>         <span class="n">stdlib</span>
+</span><span class='line'>        <span class="p">]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">boot_rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">profile</span><span class="p">,</span> <span class="n">embedded</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">exclude</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">excl_archive_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;.*&quot;</span><span class="p">]},</span> <span class="c">%% Do not archive built libs</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">excl_sys_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;^bin/.*&quot;</span><span class="p">,</span> <span class="s">&quot;^erts.*/bin/(dialyzer|typer)&quot;</span><span class="p">,</span>
+</span><span class='line'>                           <span class="s">&quot;^erts.*/(doc|info|include|lib|man|src)&quot;</span><span class="p">]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">excl_app_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;</span><span class="err">\</span><span class="s">.gitignore&quot;</span><span class="p">]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">rrdtool</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">stdlib</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mnesia</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">xmerl</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">monitorserver2</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]}</span>
+</span><span class='line'>      <span class="p">]}.</span>
 </span><span class='line'>
-</span><span class='line'>filename = "load_one.rrd"
-</span><span class='line'>rrd_version = "0003"
-</span><span class='line'>step = 15
-</span><span class='line'>last_update = 1382507991
-</span><span class='line'>ds[sum].type = "GAUGE"
-</span><span class='line'>ds[sum].minimal_heartbeat = 120
-</span><span class='line'>ds[sum].min = NaN
-</span><span class='line'>ds[sum].max = NaN
-</span><span class='line'>ds[sum].last_ds = "0.10"
-</span><span class='line'>ds[sum].value = 6.0000000000e-01
-</span><span class='line'>ds[sum].unknown_sec = 0
-</span><span class='line'>rra[0].cf = "AVERAGE"
-</span><span class='line'>rra[0].rows = 5856
-</span><span class='line'>rra[0].pdp_per_row = 1
-</span><span class='line'>rra[0].xff = 5.0000000000e-01
-</span><span class='line'>rra[0].cdp_prep[0].value = NaN
-</span><span class='line'>rra[0].cdp_prep[0].unknown_datapoints = 0
-</span><span class='line'>rra[1].cf = "AVERAGE"
-</span><span class='line'>rra[1].rows = 20160
-</span><span class='line'>rra[1].pdp_per_row = 4
-</span><span class='line'>rra[1].xff = 5.0000000000e-01
-</span><span class='line'>rra[1].cdp_prep[0].value = 3.3266666667e-01
-</span><span class='line'>rra[1].cdp_prep[0].unknown_datapoints = 0
-</span><span class='line'>rra[2].cf = "AVERAGE"
-</span><span class='line'>rra[2].rows = 52704
-</span><span class='line'>rra[2].pdp_per_row = 40
-</span><span class='line'>rra[2].xff = 5.0000000000e-01
-</span><span class='line'>rra[2].cdp_prep[0].value = 2.2742000000e+01
-</span><span class='line'>rra[2].cdp_prep[0].unknown_datapoints = 14</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="p">{</span><span class="n">target_dir</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">}.</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="n">overlay</span><span class="p">,</span> <span class="p">[</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">mkdir</span><span class="p">,</span> <span class="s">&quot;log/sasl&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/erl&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/erl&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/nodetool&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/nodetool&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/start_erl.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/start_erl.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/install_upgrade.escript&quot;</span><span class="p">,</span> <span class="s">&quot;bin/install_upgrade.escript&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/sys.config&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/sys.config&quot;</span><span class="p">},</span>
+</span><span class='line'>           <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/vm.args&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/vm.args&quot;</span><span class="p">}</span>
+</span><span class='line'>          <span class="p">]}.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>创建RRD数据库</h2>
+
+<!-- more -->
+
+
+<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>rrdtool info load_one.rrd
+</span><span class='line'>
+</span><span class='line'><span class="nv">filename</span> <span class="o">=</span> <span class="s2">&quot;load_one.rrd&quot;</span>
+</span><span class='line'><span class="nv">rrd_version</span> <span class="o">=</span> <span class="s2">&quot;0003&quot;</span>
+</span><span class='line'><span class="nv">step</span> <span class="o">=</span> 15
+</span><span class='line'><span class="nv">last_update</span> <span class="o">=</span> 1382507991
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.type <span class="o">=</span> <span class="s2">&quot;GAUGE&quot;</span>
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.minimal_heartbeat <span class="o">=</span> 120
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.min <span class="o">=</span> NaN
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.max <span class="o">=</span> NaN
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.last_ds <span class="o">=</span> <span class="s2">&quot;0.10&quot;</span>
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.value <span class="o">=</span> 6.0000000000e-01
+</span><span class='line'>ds<span class="o">[</span>sum<span class="o">]</span>.unknown_sec <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.rows <span class="o">=</span> 5856
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.pdp_per_row <span class="o">=</span> 1
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> NaN
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.rows <span class="o">=</span> 20160
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.pdp_per_row <span class="o">=</span> 4
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 3.3266666667e-01
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.rows <span class="o">=</span> 52704
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.pdp_per_row <span class="o">=</span> 40
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 2.2742000000e+01
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 14
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>熟悉一下它的结构，数据库的名字叫做load_one.rrd，rrd的版本为3，步长step为15秒，即15秒之内的数据不能再次被写入，为一个最小单位。

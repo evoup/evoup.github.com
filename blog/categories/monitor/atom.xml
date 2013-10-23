@@ -4,7 +4,7 @@
   <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T17:22:47+08:00</updated>
+  <updated>2013-10-23T17:48:55+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -25,6 +25,170 @@
 <p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
 
 <p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+
+<h2>准备工作</h2>
+
+<p>在freebsd上好rrdtool1.2以上的版本
+<code>bash
+cd /usr/port/databases/rrdtool12
+sudo make install clean
+</code>
+erlang对应接口的安装</p>
+
+<p>在项目中rebar.conf对应位置中加入8-11行的内容
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:8-11 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}</span> <span class="p">}},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;rrdtool&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/Vagabond/erlang-rrdtool.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">apps</span><span class="o">/</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">rel</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;]}.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>以及
+rel/reltool.config对应位置中加入第13、30行的内容
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:13,30 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">erts</span><span class="p">,</span> <span class="p">[{</span><span class="n">mod_cond</span><span class="p">,</span> <span class="n">derived</span><span class="p">},</span> <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">sasl</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">inets</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">crypto</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">mochiweb</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">rrdtool</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">monitorserver2</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;start_clean&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">boot_rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">profile</span><span class="p">,</span> <span class="n">embedded</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">exclude</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_archive_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;.*&quot;</span><span class="p">]},</span> <span class="c">%% Do not archive built libs</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_sys_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;^bin/.*&quot;</span><span class="p">,</span> <span class="s">&quot;^erts.*/bin/(dialyzer|typer)&quot;</span><span class="p">,</span>
+</span><span class='line'>                       <span class="s">&quot;^erts.*/(doc|info|include|lib|man|src)&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_app_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;</span><span class="err">\</span><span class="s">.gitignore&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">rrdtool</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">stdlib</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mnesia</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">xmerl</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">monitorserver2</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]}</span>
+</span><span class='line'>  <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">target_dir</span><span class="p">,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;}.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">overlay</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>       <span class="p">{</span><span class="n">mkdir</span><span class="p">,</span> <span class="s">&quot;log/sasl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/erl&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/erl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/nodetool&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/nodetool&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/start_erl.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/start_erl.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/install_upgrade.escript&quot;</span><span class="p">,</span> <span class="s">&quot;bin/install_upgrade.escript&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/sys.config&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/sys.config&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/vm.args&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/vm.args&quot;</span><span class="p">}</span>
+</span><span class='line'>      <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h2>创建RRD数据库</h2>
 
