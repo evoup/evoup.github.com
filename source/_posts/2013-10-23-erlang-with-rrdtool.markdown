@@ -151,7 +151,7 @@ rrdtool dump load_one.rrd > load_one.xml
 
 于是我有了我的load数据库
 
-{% codeblock  foo.erl %}
+{% codeblock  foo.erl lang:erlang %}
 {ok,PidRrdtool}=rrdtool:start(),
 rrdtool:create(PidRrdtool, "load.rrd", [{"load", 'GAUGE', [120, 0, 100]}],
     [{'AVERAGE', 0.5, 1, 5856}, {'AVERAGE', 0.5, 4, 20160}, {'AVERAGE', 0.5, 40, 52704}
