@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rrdtool | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/rrdtool/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T15:43:44+08:00</updated>
+  <updated>2013-10-23T15:45:41+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -27,6 +27,9 @@
 <p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
 
 <h2>创建RRD数据库</h2>
+
+<!-- more -->
+
 
 <p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
 
@@ -74,15 +77,24 @@ rrdtool dump load_one.rrd > load_one.xml
 
 <p>于是我有了我的load数据库</p>
 
-<p>{% codeblock  foo.erl %}
-{ok,PidRrdtool}=rrdtool:start(),
-rrdtool:create(PidRrdtool, &ldquo;load.rrd&rdquo;, [{&ldquo;load&rdquo;, &lsquo;GAUGE&rsquo;, [120, 0, 100]}],</p>
-
-<pre><code>[{'AVERAGE', 0.5, 1, 5856}, {'AVERAGE', 0.5, 4, 20160}, {'AVERAGE', 0.5, 40, 52704}
-],[{step,15}]).
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>foo.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">{ok,PidRrdtool}=rrdtool:start(),</span>
+</span><span class='line'><span class="go">rrdtool:create(PidRrdtool, &amp;ldquo;load.rrd&amp;rdquo;, [{&amp;ldquo;load&amp;rdquo;, &amp;lsquo;GAUGE&amp;rsquo;, [120, 0, 100]}],&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;pre&gt;&lt;code&gt;[{&#39;AVERAGE&#39;, 0.5, 1, 5856}, {&#39;AVERAGE&#39;, 0.5, 4, 20160}, {&#39;AVERAGE&#39;, 0.5, 40, 52704}</span>
+</span><span class='line'><span class="go">],[{step,15}]).</span>
+</span><span class='line'><span class="go">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在
  才调用rrdtool:create函数创建数据库。</p>
@@ -101,21 +113,38 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
 <h2>简单的绘图</h2>
 
 <p>这里用最原始的方法，rrdtool graph来画图
-{% codeblock  make_graph.sh %}</p>
-
-<h1>!/bin/sh</h1>
-
-<p>rrdtool graph  myLoad.png                    \</p>
-
-<pre><code>  --start 1382508875 --end 1382512874         \
-  --title "Load Average yin-arch_ac101eb8"   \
-  --v "Load Average"                          \
-  DEF:load=load.rrd:load:AVERAGE              \
-  HRULE:1#ff0000:"warning value"             \
-  AREA:load#4A4A4A:load\ average\
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>make_graph.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/bin/sh&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;rrdtool graph  myLoad.png                    <span class="se">\&lt;</span>/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;  --start 1382508875 --end 1382512874         <span class="se">\</span>
+</span><span class='line'>  --title <span class="s2">&quot;Load Average yin-arch_ac101eb8&quot;</span>   <span class="se">\</span>
+</span><span class='line'>  --v <span class="s2">&quot;Load Average&quot;</span>                          <span class="se">\</span>
+</span><span class='line'>  DEF:load<span class="o">=</span>load.rrd:load:AVERAGE              <span class="se">\</span>
+</span><span class='line'>  HRULE:1#ff0000:<span class="s2">&quot;warning value&quot;</span>             <span class="se">\</span>
+</span><span class='line'>  AREA:load#4A4A4A:load<span class="se">\ </span>average<span class="se">\</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>运行该脚本，最后绘图效果见此:</p>
 
