@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T18:14:57+08:00</updated>
+  <updated>2013-10-23T18:21:47+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -1707,6 +1707,66 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[erlang自带日志写文件的方法]]></title>
+    <link href="http://evoupsight.com/blog/2013/02/04/erlang-self-log-to-file/"/>
+    <updated>2013-02-04T18:19:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/02/04/erlang-self-log-to-file</id>
+    <content type="html"><![CDATA[<p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">x</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">define</span><span class="p">(</span><span class="no">LogsLoaction</span><span class="p">,</span><span class="s">&quot;/tmp/&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">start</span><span class="p">()</span><span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">FileName</span> <span class="o">=</span> <span class="o">?</span><span class="nv">LogsLoaction</span><span class="o">++</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">file</span><span class="p">:</span><span class="nf">write_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">,</span> <span class="o">&lt;&lt;</span><span class="s">&quot;start to record&quot;</span><span class="o">&gt;&gt;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">error_logger</span><span class="p">:</span><span class="nf">logfile</span><span class="p">({</span><span class="n">open</span><span class="p">,</span><span class="nv">FileName</span><span class="p">}),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">info</span><span class="p">(</span><span class="s">&quot;[init] log start </span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[log4erl 安装使用]]></title>
     <link href="http://evoupsight.com/blog/2013/02/04/log4erl-install-using/"/>
     <updated>2013-02-04T16:57:00+08:00</updated>
@@ -2788,52 +2848,6 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 
 <p>之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
 相应的在头文件里定义结构用typedef而不要去用struct！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[目前看到的对内存对齐问题最好的解释]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/30/memory-alignment/"/>
-    <updated>2010-11-30T12:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/30/memory-alignment</id>
-    <content type="html"><![CDATA[<p>简单的说，对于一个class或是struct：</p>
-
-<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
-
-<!-- more -->
-
-
-<p>对于</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">struct</span> <span class="n">A</span> <span class="p">{</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="kt">char</span> <span class="n">c</span><span class="p">;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以int类型所占字节为位域，也就是4 然后，对于a，四个字节对于c，一个字节，后面三个字节不能用来存储b，因为b是四个，如果用这三个，那么必将剩余一个，根据原则，不可跨位域</p>
-
-<p>所以存放形式：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa
-</span><span class='line'>
-</span><span class='line'>cccccccc XXXXXXXX XXXXXXXX XXXXXXXX
-</span><span class='line'>
-</span><span class='line'>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
-</span></code></pre></td></tr></table></div></figure>
-
 ]]></content>
   </entry>
   
