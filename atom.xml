@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-22T17:18:59+08:00</updated>
+  <updated>2013-10-23T15:43:26+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,164 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[如何在erlang中使用rrdtool进行监控数据的保存]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool/"/>
+    <updated>2013-10-23T15:12:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
+
+<p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
+
+<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+
+<h2>创建RRD数据库</h2>
+
+<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rrdtool info load_one.rrd
+</span><span class='line'>
+</span><span class='line'>filename = "load_one.rrd"
+</span><span class='line'>rrd_version = "0003"
+</span><span class='line'>step = 15
+</span><span class='line'>last_update = 1382507991
+</span><span class='line'>ds[sum].type = "GAUGE"
+</span><span class='line'>ds[sum].minimal_heartbeat = 120
+</span><span class='line'>ds[sum].min = NaN
+</span><span class='line'>ds[sum].max = NaN
+</span><span class='line'>ds[sum].last_ds = "0.10"
+</span><span class='line'>ds[sum].value = 6.0000000000e-01
+</span><span class='line'>ds[sum].unknown_sec = 0
+</span><span class='line'>rra[0].cf = "AVERAGE"
+</span><span class='line'>rra[0].rows = 5856
+</span><span class='line'>rra[0].pdp_per_row = 1
+</span><span class='line'>rra[0].xff = 5.0000000000e-01
+</span><span class='line'>rra[0].cdp_prep[0].value = NaN
+</span><span class='line'>rra[0].cdp_prep[0].unknown_datapoints = 0
+</span><span class='line'>rra[1].cf = "AVERAGE"
+</span><span class='line'>rra[1].rows = 20160
+</span><span class='line'>rra[1].pdp_per_row = 4
+</span><span class='line'>rra[1].xff = 5.0000000000e-01
+</span><span class='line'>rra[1].cdp_prep[0].value = 3.3266666667e-01
+</span><span class='line'>rra[1].cdp_prep[0].unknown_datapoints = 0
+</span><span class='line'>rra[2].cf = "AVERAGE"
+</span><span class='line'>rra[2].rows = 52704
+</span><span class='line'>rra[2].pdp_per_row = 40
+</span><span class='line'>rra[2].xff = 5.0000000000e-01
+</span><span class='line'>rra[2].cdp_prep[0].value = 2.2742000000e+01
+</span><span class='line'>rra[2].cdp_prep[0].unknown_datapoints = 14</span></code></pre></td></tr></table></div></figure>
+
+
+<p>熟悉一下它的结构，数据库的名字叫做load_one.rrd，rrd的版本为3，步长step为15秒，即15秒之内的数据不能再次被写入，为一个最小单位。
+然后last_update为最后一次更新的时间戳，数据类型为GAUGE，这是一种直接写入不做平均计算的数据类型。minimal_heartbeat为120秒，意思是120秒内没有数据被更新，系统认为状态未知。
+min max为最大和最小。last_ds最后的ds为0.10，最后被写入的数据为6.0000000000e-01，就是0.6，未知的时间为0。
+接下来CF的第一个AVERAGE的每行（row）有1个pdp（ Primary Data Point），共有5856个pdp,我们算下代表的时间跨度，15<em>1</em>5856=87840秒，为24.4小时。为啥有0.4小时，估计是出图的时候，为了更好看吧，可以不去管它。这里废话一句：也可以通过如下命令查看实际的时间跨度：
+rrdtool dump load_one.rrd > load_one.xml
+进去可以看一下是不是时间跨度规划正确。
+<img src="http://evoupsight.com/images/evoup/rrdtool_dump.png" alt="Alt text" /></p>
+
+<p>于是我有了我的load数据库</p>
+
+<figure class='code'><figcaption><span>foo.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">{ok,PidRrdtool}=rrdtool:start(),</span>
+</span><span class='line'><span class="go">rrdtool:create(PidRrdtool, &quot;load.rrd&quot;, [{&quot;load&quot;, &#39;GAUGE&#39;, [120, 0, 100]}],</span>
+</span><span class='line'><span class="go">    [{&#39;AVERAGE&#39;, 0.5, 1, 5856}, {&#39;AVERAGE&#39;, 0.5, 4, 20160}, {&#39;AVERAGE&#39;, 0.5, 40, 52704}</span>
+</span><span class='line'><span class="go">    ],[{step,15}]).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在
+ 才调用rrdtool:create函数创建数据库。</p>
+
+<p> 其中最后一个参数为创建选项，可以传{step,15}，代表创建步长为15的数据库。</p>
+
+<h2>更新数据库</h2>
+
+<p>这个比较简单了，就是update</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%写入rrd数据库</span>
+</span><span class='line'><span class="c">%%Load为客户端上传的监控到的load数值</span>
+</span><span class='line'><span class="nn">rrdtool</span><span class="p">:</span><span class="nf">update</span><span class="p">(</span><span class="nv">PidRrdtool</span><span class="p">,</span> <span class="s">&quot;load.rrd&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="s">&quot;load&quot;</span><span class="p">,</span> <span class="nb">list_to_float</span><span class="p">(</span><span class="nv">Load</span><span class="p">)}],</span> <span class="n">now</span><span class="p">()).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>简单的绘图</h2>
+
+<p>这里用最原始的方法，rrdtool graph来画图</p>
+
+<figure class='code'><figcaption><span>make_graph.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>rrdtool graph  myLoad.png                    <span class="se">\</span>
+</span><span class='line'>      --start 1382508875 --end 1382512874         <span class="se">\</span>
+</span><span class='line'>      --title <span class="s2">&quot;Load Average yin-arch_ac101eb8&quot;</span>   <span class="se">\</span>
+</span><span class='line'>      --v <span class="s2">&quot;Load Average&quot;</span>                          <span class="se">\</span>
+</span><span class='line'>      DEF:load<span class="o">=</span>load.rrd:load:AVERAGE              <span class="se">\</span>
+</span><span class='line'>      HRULE:1#ff0000:<span class="s2">&quot;warning value&quot;</span>             <span class="se">\</span>
+</span><span class='line'>      AREA:load#4A4A4A:load<span class="se">\ </span>average<span class="se">\</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行该脚本，最后绘图效果见此:</p>
+
+<p><img src="http://evoupsight.com/images/evoup/rrdtool_load_graph.png" alt="Alt text" /></p>
+
+<p>其他参考资料：
+<a href="http://oss.oetiker.ch/rrdtool/">http://oss.oetiker.ch/rrdtool/</a></p>
+
+<p><a href="https://github.com/Vagabond/erlang-rrdtool">https://github.com/Vagabond/erlang-rrdtool</a></p>
+
+<p><a href="http://blog.sina.com.cn/s/blog_79d1f5e00100test.html">http://blog.sina.com.cn/s/blog_79d1f5e00100test.html</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[局域网计算机和vmware虚拟机互ping]]></title>
@@ -2514,18 +2672,6 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
 </span><span class='line'>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
 </span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[C++实现crc32]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/26/crc32-cpp/"/>
-    <updated>2010-11-26T19:07:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/26/crc32-cpp</id>
-    <content type="html"><![CDATA[<p>直接参考如下连接
-<a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
-
-<p>或者boost、Crypto++</p>
 ]]></content>
   </entry>
   
