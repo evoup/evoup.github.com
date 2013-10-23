@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T17:54:11+08:00</updated>
+  <updated>2013-10-23T17:57:54+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -28,7 +28,7 @@
 
 <h2>准备工作</h2>
 
-<p>在freebsd上好rrdtool1.2以上的版本</p>
+<p>在freebsd上安装rrdtool1.2以上的版本</p>
 
 <!-- more -->
 
@@ -40,85 +40,160 @@ sudo make install clean
 erlang对应接口的安装</p>
 
 <p>在项目中rebar.conf对应位置中加入8-11行的内容
-{% codeblock rebar.conf lang:erlang start:0 mark:8-11 %}
-{deps, [</p>
-
-<pre><code>{mochiweb, "1.5.1",
-    {git, "git://github.com/mochi/mochiweb.git",
-        {tag, "1.5.1"} }},
-    {'log4erl', ".*",
-        {git, "git://github.com/ahmednawras/log4erl.git",
-            "master"} },
-    {'rrdtool', ".*",
-        {git, "git://github.com/Vagabond/erlang-rrdtool.git",
-            "master"} }
-]}.
-</code></pre>
-
-<p>{sub_dirs, [&ldquo;apps/monitorserver2&rdquo;, &ldquo;rel&rdquo;]}.
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:8-11 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}</span> <span class="p">}},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;rrdtool&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/Vagabond/erlang-rrdtool.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">apps</span><span class="o">/</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">rel</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;]}.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>以及
 rel/reltool.config对应位置中加入第13、30行的内容
-{% codeblock rebar.conf lang:erlang start:0 mark:13,30 %}
-{sys, [</p>
-
-<pre><code>   {lib_dirs, ["../apps", "../deps"]},
-   {erts, [{mod_cond, derived}, {app_file, strip}]},
-   {app_file, strip},
-   {rel, "monitorserver2", "1",
-    [
-     kernel,
-     stdlib,
-     sasl,
-     inets,
-     crypto,
-     mochiweb,
-     rrdtool,
-     monitorserver2
-    ]},
-   {rel, "start_clean", "",
-    [
-     kernel,
-     stdlib
-    ]},
-   {boot_rel, "monitorserver2"},
-   {profile, embedded},
-   {incl_cond, exclude},
-   {excl_archive_filters, [".*"]}, %% Do not archive built libs
-   {excl_sys_filters, ["^bin/.*", "^erts.*/bin/(dialyzer|typer)",
-                       "^erts.*/(doc|info|include|lib|man|src)"]},
-   {excl_app_filters, ["\.gitignore"]},
-   {app, sasl,   [{incl_cond, include}]},
-   {app, mochiweb,   [{incl_cond, include}]},
-   {app, rrdtool,   [{incl_cond, include}]},
-   {app, crypto,   [{incl_cond, include}]},
-   {app, inets,   [{incl_cond, include}]},
-   {app, stdlib, [{incl_cond, include}]},
-   {app, kernel, [{incl_cond, include}]},
-   {app, mnesia, [{incl_cond, include}]},
-   {app, xmerl, [{incl_cond, include}]},
-   {app, monitorserver2, [{incl_cond, include}]}
-  ]}.
-</code></pre>
-
-<p>{target_dir, &ldquo;monitorserver2&rdquo;}.</p>
-
-<p>{overlay, [</p>
-
-<pre><code>       {mkdir, "log/sasl"},
-       {copy, "files/erl", "\{\{erts_vsn\}\}/bin/erl"},
-       {copy, "files/nodetool", "\{\{erts_vsn\}\}/bin/nodetool"},
-       {copy, "files/monitorserver2", "bin/monitorserver2"},
-       {copy, "files/monitorserver2.cmd", "bin/monitorserver2.cmd"},
-       {copy, "files/start_erl.cmd", "bin/start_erl.cmd"},
-       {copy, "files/install_upgrade.escript", "bin/install_upgrade.escript"},
-       {copy, "files/sys.config", "releases/\{\{rel_vsn\}\}/sys.config"},
-       {copy, "files/vm.args", "releases/\{\{rel_vsn\}\}/vm.args"}
-      ]}.
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:13,30 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">erts</span><span class="p">,</span> <span class="p">[{</span><span class="n">mod_cond</span><span class="p">,</span> <span class="n">derived</span><span class="p">},</span> <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">sasl</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">inets</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">crypto</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">mochiweb</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">rrdtool</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">monitorserver2</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;start_clean&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">boot_rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">profile</span><span class="p">,</span> <span class="n">embedded</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">exclude</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_archive_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;.*&quot;</span><span class="p">]},</span> <span class="c">%% Do not archive built libs</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_sys_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;^bin/.*&quot;</span><span class="p">,</span> <span class="s">&quot;^erts.*/bin/(dialyzer|typer)&quot;</span><span class="p">,</span>
+</span><span class='line'>                       <span class="s">&quot;^erts.*/(doc|info|include|lib|man|src)&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_app_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;</span><span class="err">\</span><span class="s">.gitignore&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">rrdtool</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">stdlib</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mnesia</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">xmerl</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">monitorserver2</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]}</span>
+</span><span class='line'>  <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">target_dir</span><span class="p">,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;}.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">overlay</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>       <span class="p">{</span><span class="n">mkdir</span><span class="p">,</span> <span class="s">&quot;log/sasl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/erl&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/erl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/nodetool&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/nodetool&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/start_erl.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/start_erl.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/install_upgrade.escript&quot;</span><span class="p">,</span> <span class="s">&quot;bin/install_upgrade.escript&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/sys.config&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/sys.config&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/vm.args&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/vm.args&quot;</span><span class="p">}</span>
+</span><span class='line'>      <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+这样就算安装完成了（需要注意项目使用了rebar）</p>
 
 <h2>创建RRD数据库</h2>
 
@@ -168,15 +243,24 @@ rrdtool dump load_one.rrd > load_one.xml
 
 <p>于是我有了我的load数据库</p>
 
-<p>{% codeblock  foo.erl %}
-{ok,PidRrdtool}=rrdtool:start(),
-rrdtool:create(PidRrdtool, &ldquo;load.rrd&rdquo;, [{&ldquo;load&rdquo;, &lsquo;GAUGE&rsquo;, [120, 0, 100]}],</p>
-
-<pre><code>[{'AVERAGE', 0.5, 1, 5856}, {'AVERAGE', 0.5, 4, 20160}, {'AVERAGE', 0.5, 40, 52704}
-],[{step,15}]).
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>foo.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">{ok,PidRrdtool}=rrdtool:start(),</span>
+</span><span class='line'><span class="go">rrdtool:create(PidRrdtool, &amp;ldquo;load.rrd&amp;rdquo;, [{&amp;ldquo;load&amp;rdquo;, &amp;lsquo;GAUGE&amp;rsquo;, [120, 0, 100]}],&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;pre&gt;&lt;code&gt;[{&#39;AVERAGE&#39;, 0.5, 1, 5856}, {&#39;AVERAGE&#39;, 0.5, 4, 20160}, {&#39;AVERAGE&#39;, 0.5, 40, 52704}</span>
+</span><span class='line'><span class="go">],[{step,15}]).</span>
+</span><span class='line'><span class="go">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在
  才调用rrdtool:create函数创建数据库。</p>
@@ -195,21 +279,38 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
 <h2>简单的绘图</h2>
 
 <p>这里用最原始的方法，rrdtool graph来画图
-{% codeblock  make_graph.sh %}</p>
-
-<h1>!/bin/sh</h1>
-
-<p>rrdtool graph  myLoad.png                    \</p>
-
-<pre><code>  --start 1382508875 --end 1382512874         \
-  --title "Load Average yin-arch_ac101eb8"   \
-  --v "Load Average"                          \
-  DEF:load=load.rrd:load:AVERAGE              \
-  HRULE:1#ff0000:"warning value"             \
-  AREA:load#4A4A4A:load\ average\
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>make_graph.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/bin/sh&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;rrdtool graph  myLoad.png                    <span class="se">\&lt;</span>/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;  --start 1382508875 --end 1382512874         <span class="se">\</span>
+</span><span class='line'>  --title <span class="s2">&quot;Load Average yin-arch_ac101eb8&quot;</span>   <span class="se">\</span>
+</span><span class='line'>  --v <span class="s2">&quot;Load Average&quot;</span>                          <span class="se">\</span>
+</span><span class='line'>  DEF:load<span class="o">=</span>load.rrd:load:AVERAGE              <span class="se">\</span>
+</span><span class='line'>  HRULE:1#ff0000:<span class="s2">&quot;warning value&quot;</span>             <span class="se">\</span>
+</span><span class='line'>  AREA:load#4A4A4A:load<span class="se">\ </span>average<span class="se">\</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>运行该脚本，最后绘图效果见此:</p>
 
@@ -231,16 +332,26 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
     <id>http://evoupsight.com/blog/2013/10/09/erlang-long2ip</id>
     <content type="html"><![CDATA[<p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
 
-<p>{% codeblock erlang代码片段 lang:erlang %}
-%%从整形转换为IP地址元组
-long2ip(IpInteger) &ndash;></p>
-
-<pre><code>Integer_to_ip=fun(Ip)-&gt; {Ip bsr 24, (Ip band 16711680) bsr 16, 
-    (Ip band 65280) bsr 8, Ip band 255} end,
-Integer_to_ip(IpInteger).
-</code></pre>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
+</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
+</span><span class='line'><span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这样子使用
 long2ip（3232290954).
@@ -336,11 +447,14 @@ make all
 
 <p>这样就可以使用了，接下来给出一个测试的protobuf文件</p>
 
-<p>{% codeblock lang:protobuf test.proto %}
-message test {
-   required string test1 = 1;
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.proto </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='protobuf'><span class='line'><span class="kd">message</span> <span class="nc">test</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">required</span> <span class="kt">string</span> <span class="na">test1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>进入ebin目录准备生成
 <code>bash
@@ -365,81 +479,149 @@ erl
 
 <p>然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。</p>
 
-<p>{% codeblock lang:erlang server.erl start:51 mark:51,54-55 %}
--module(server).</p>
-
-<p>-compile(export_all).</p>
-
-<p>-import(lists, [reverse/1]).</p>
-
-<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
-
-<p>start_nano_server() &ndash;></p>
-
-<p>   {ok, Listen} = gen_tcp:listen(2345, [binary, {packet, 4},</p>
-
-<pre><code>                {reuseaddr, true},
-
-                {active, true}]),
-</code></pre>
-
-<p>   {ok, Socket} = gen_tcp:accept(Listen),</p>
-
-<p>   gen_tcp:close(Listen),</p>
-
-<p>   loop(Socket).</p>
-
-<p>loop(Socket) &ndash;></p>
-
-<p>   receive</p>
-
-<p>   {tcp, Socket, Bin} &ndash;></p>
-
-<pre><code>   io:format("Server received binary = ~p~n",[Bin]),
-
-   Msg=test_pb:decode_test(Bin),
-
-   io:format("Server (unpacked)  ~p~n",[Msg]),
-
-   loop(Socket);
-</code></pre>
-
-<p>   {tcp_closed, Socket} &ndash;></p>
-
-<pre><code>   io:format("Server socket closed~n")
-</code></pre>
-
-<p>   end.
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>server.erl start:51 mark:51,54-55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">server</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">include</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test_pb</span><span class="p">.</span><span class="n">hrl</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start_nano_server</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Listen</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">listen</span><span class="p">(</span><span class="mi">2345</span><span class="p">,</span> <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>                <span class="p">{</span><span class="n">reuseaddr</span><span class="p">,</span> <span class="n">true</span><span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="p">{</span><span class="n">active</span><span class="p">,</span> <span class="n">true</span><span class="p">}]),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">accept</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">)</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">tcp</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">,</span> <span class="nv">Bin</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server received binary = </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Bin</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">Msg</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">decode_test</span><span class="p">(</span><span class="nv">Bin</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server (unpacked)  </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Msg</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">tcp_closed</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server socket closed</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="k">end</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>client的代码</p>
 
-<p>{% codeblock lang:erlang client.erl %}
--module(client).</p>
-
-<p>-compile(export_all).</p>
-
-<p>-import(lists, [reverse/1]).</p>
-
-<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
-
-<p>nano_client_eval() &ndash;></p>
-
-<p>   {ok, Socket} =</p>
-
-<p>   gen_tcp:connect(&ldquo;localhost&rdquo;, 2345,</p>
-
-<pre><code>   [binary, {packet, 4}]),
-</code></pre>
-
-<p>   Test=#test{test1=&ldquo;test1&rdquo;},</p>
-
-<p>   Str=test_pb:encode_test(Test),</p>
-
-<p>   ok = gen_tcp:send(Socket, Str),</p>
-
-<p>   gen_tcp:close(Socket).
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>client.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">client</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">include</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test_pb</span><span class="p">.</span><span class="n">hrl</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">nano_client_eval</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">connect</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">localhost</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="mi">2345</span><span class="p">,</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">}]),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nv">Test</span><span class="o">=</span><span class="nl">#test</span><span class="p">{</span><span class="n">test1</span><span class="o">=</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test1</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;},</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nv">Str</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">encode_test</span><span class="p">(</span><span class="nv">Test</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="n">ok</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nb">send</span><span class="p">(</span><span class="nv">Socket</span><span class="p">,</span> <span class="nv">Str</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>需要说明的是packet,4这个参数，代表每个数据包的前4个字节为消息头，该头标识了消息体的长度。这样互通是没有问题的，erlang自动为数据包的加上前4个字节的消息头。</p>
 
@@ -447,73 +629,133 @@ erl
 首先是下载php版本的<a href="https://code.google.com/p/pb4php/">https://code.google.com/p/pb4php/</a>
 然后，解压得到protocolbuf，接着创建你的项目，把protocolbuf放到该项目文件夹的根目录下。一样要生成源代码。注意，pb4php不是很智能，如果直接.proto文件中=1没有空格，而不是写成xx = 1是会报错的！</p>
 
-<p>{% codeblock lang:php test.php %}  <br/>
-&lt;?php</p>
-
-<p>require_once(&ldquo;./protocolbuf/parser/pb_parser.php&rdquo;);</p>
-
-<p>$parser = new PBParser();</p>
-
-<p>$parser->parse(&ldquo;./test.proto&rdquo;);</p>
-
-<p>echo &ldquo;done\n&rdquo;;</p>
-
-<p>?>
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'>  <span class="o">&lt;</span><span class="nx">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">protocolbuf</span><span class="o">/</span><span class="nx">parser</span><span class="o">/</span><span class="nx">pb_parser</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PBParser</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$parser</span><span class="o">-&gt;</span><span class="na">parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">test</span><span class="o">.</span><span class="nx">proto</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">echo</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">done\n</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>运行test.php后生成pb_proto_test.php</p>
 
 <p>php版本的client的代码</p>
 
-<p>{% codeblock lang:php client.php %}
-&lt;?php</p>
-
-<p>require_once(&ldquo;./protocolbuf/message/pb_message.php&rdquo;);</p>
-
-<p>require_once(&ldquo;./pb_proto_test.php&rdquo;);</p>
-
-<p>$test = new test();</p>
-
-<p>$test->set_test1(&ldquo;test php&rdquo;);</p>
-
-<p>$string = $test->SerializeToString();</p>
-
-<p>$sock=@socket_create(AF_INET, SOCK_STREAM, getprotobyname(&lsquo;tcp&rsquo;));</p>
-
-<p>if ($sock)
-{</p>
-
-<p>   socket_connect($sock, &ldquo;127.0.0.1&rdquo;, 2345);</p>
-
-<p>   $msg = pack_data($string);</p>
-
-<p>   file_put_contents(dirname(<strong>FILE</strong>).&lsquo;/resmessage&rsquo;,$msg);</p>
-
-<p>   $sent = @socket_write($sock, $msg, strlen($msg));
-}</p>
-
-<p>function pack_data ($data) {</p>
-
-<p>   $head =pack(&ldquo;H*&rdquo;, to_hex_str (strlen($data)));</p>
-
-<p>   $body=pack(&ldquo;A*&rdquo;,$data);</p>
-
-<p>   return $head.$body;</p>
-
-<p>}</p>
-
-<p>function to_hex_str ($num)
-{</p>
-
-<p>   $str = dechex($num);</p>
-
-<p>   $str = str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT);</p>
-
-<p>   return $str;</p>
-
-<p>}
-?>
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>client.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">protocolbuf</span><span class="o">/</span><span class="nx">message</span><span class="o">/</span><span class="nx">pb_message</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">pb_proto_test</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">test</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$test</span><span class="o">-&gt;</span><span class="na">set_test1</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">test</span> <span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$string</span> <span class="o">=</span> <span class="nv">$test</span><span class="o">-&gt;</span><span class="na">SerializeToString</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$sock</span><span class="o">=@</span><span class="nb">socket_create</span><span class="p">(</span><span class="nx">AF_INET</span><span class="p">,</span> <span class="nx">SOCK_STREAM</span><span class="p">,</span> <span class="nx">getprotobyname</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">tcp</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;));</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="nv">$sock</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nb">socket_connect</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="mi">2345</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$msg</span> <span class="o">=</span> <span class="nx">pack_data</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nb">file_put_contents</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">strong</span><span class="o">&gt;</span><span class="nx">FILE</span><span class="o">&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span><span class="p">)</span><span class="o">.&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">resmessage</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span><span class="nv">$msg</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$sent</span> <span class="o">=</span> <span class="o">@</span><span class="nb">socket_write</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="nv">$msg</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$msg</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">function</span> <span class="nf">pack_data</span> <span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$head</span> <span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">H</span><span class="o">*&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="nx">to_hex_str</span> <span class="p">(</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$data</span><span class="p">)));</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$body</span><span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">A</span><span class="o">*&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="nv">$data</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="k">return</span> <span class="nv">$head</span><span class="o">.</span><span class="nv">$body</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">function</span> <span class="nf">to_hex_str</span> <span class="p">(</span><span class="nv">$num</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">dechex</span><span class="p">(</span><span class="nv">$num</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">str_pad</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="nx">STR_PAD_LEFT</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
 
