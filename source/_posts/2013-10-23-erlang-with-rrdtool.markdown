@@ -17,6 +17,88 @@ rrdtool是专门为了保存和出图设计的数据库。它的全称为round r
 关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html
 
 
+##准备工作
+在freebsd上好rrdtool1.2以上的版本
+```bash
+cd /usr/port/databases/rrdtool12
+sudo make install clean
+```
+erlang对应接口的安装
+
+在项目中rebar.conf对应位置中加入8-11行的内容
+{% codeblock rebar.conf lang:erlang start:0 mark:8-11 %}
+{deps, [
+    {mochiweb, "1.5.1",
+        {git, "git://github.com/mochi/mochiweb.git",
+            {tag, "1.5.1"} }},
+        {'log4erl', ".*",
+            {git, "git://github.com/ahmednawras/log4erl.git",
+                "master"} },
+        {'rrdtool', ".*",
+            {git, "git://github.com/Vagabond/erlang-rrdtool.git",
+                "master"} }
+    ]}.
+
+{sub_dirs, ["apps/monitorserver2", "rel"]}.
+{% endcodeblock %}
+
+以及
+rel/reltool.config对应位置中加入第13、30行的内容
+{% codeblock rebar.conf lang:erlang start:0 mark:13,30 %}
+{sys, [
+       {lib_dirs, ["../apps", "../deps"]},
+       {erts, [{mod_cond, derived}, {app_file, strip}]},
+       {app_file, strip},
+       {rel, "monitorserver2", "1",
+        [
+         kernel,
+         stdlib,
+         sasl,
+         inets,
+         crypto,
+         mochiweb,
+         rrdtool,
+         monitorserver2
+        ]},
+       {rel, "start_clean", "",
+        [
+         kernel,
+         stdlib
+        ]},
+       {boot_rel, "monitorserver2"},
+       {profile, embedded},
+       {incl_cond, exclude},
+       {excl_archive_filters, [".*"]}, %% Do not archive built libs
+       {excl_sys_filters, ["^bin/.*", "^erts.*/bin/(dialyzer|typer)",
+                           "^erts.*/(doc|info|include|lib|man|src)"]},
+       {excl_app_filters, ["\.gitignore"]},
+       {app, sasl,   [{incl_cond, include}]},
+       {app, mochiweb,   [{incl_cond, include}]},
+       {app, rrdtool,   [{incl_cond, include}]},
+       {app, crypto,   [{incl_cond, include}]},
+       {app, inets,   [{incl_cond, include}]},
+       {app, stdlib, [{incl_cond, include}]},
+       {app, kernel, [{incl_cond, include}]},
+       {app, mnesia, [{incl_cond, include}]},
+       {app, xmerl, [{incl_cond, include}]},
+       {app, monitorserver2, [{incl_cond, include}]}
+      ]}.
+
+{target_dir, "monitorserver2"}.
+
+{overlay, [
+           {mkdir, "log/sasl"},
+           {copy, "files/erl", "\{\{erts_vsn\}\}/bin/erl"},
+           {copy, "files/nodetool", "\{\{erts_vsn\}\}/bin/nodetool"},
+           {copy, "files/monitorserver2", "bin/monitorserver2"},
+           {copy, "files/monitorserver2.cmd", "bin/monitorserver2.cmd"},
+           {copy, "files/start_erl.cmd", "bin/start_erl.cmd"},
+           {copy, "files/install_upgrade.escript", "bin/install_upgrade.escript"},
+           {copy, "files/sys.config", "releases/\{\{rel_vsn\}\}/sys.config"},
+           {copy, "files/vm.args", "releases/\{\{rel_vsn\}\}/vm.args"}
+          ]}.
+{% endcodeblock %}
+
 ##创建RRD数据库
 
 <!-- more -->
