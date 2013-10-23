@@ -19,6 +19,7 @@ rrdtool是专门为了保存和出图设计的数据库。它的全称为round r
 
 ##准备工作
 在freebsd上好rrdtool1.2以上的版本
+<!-- more -->
 ```bash
 cd /usr/port/databases/rrdtool12
 sudo make install clean
@@ -100,8 +101,6 @@ rel/reltool.config对应位置中加入第13、30行的内容
 {% endcodeblock %}
 
 ##创建RRD数据库
-
-<!-- more -->
 
 然后我们参考下开源监控软件ganglia的load_one数据库结构：
 
