@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "如何在erlang中使用rrdtool进行监控数据的保存"
+title: "[How to]在erlang中使用rrdtool进行监控数据的保存"
 date: 2013-10-23 15:12
 comments: true
 categories:          [erlang,rrdtool,monitor]
