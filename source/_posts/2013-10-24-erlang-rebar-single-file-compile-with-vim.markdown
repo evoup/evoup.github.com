@@ -19,14 +19,16 @@ map bd :call CompileErlDeploy()<CR>
 func! CompileErlDeploy()
   exec "w"
   exec "!erlc -o /tmp %"
-  exec "`pwd`/rel/`ls apps/`/bin/`ls apps/` stop"
-  exec "set foo = \"`pwd`\" && set bar = \"`basename $foo`\" && mv /tmp/`basename %<.beam` rel/`ls apps/`/lib/`ls apps/`-`grep vsn apps/$bar/src/$bar.app.src | sed 's/{vsn, \"//g' | sed 's/\"},//g'`/ebin/"
+  exec "!set bar = \"`ls apps/`\""
+  exec "!mv /tmp/`basename %<.beam` rel/`ls apps/`/lib/`ls apps/`-`grep vsn apps/`ls apps/`/src/`ls apps/`.app.src | sed 's/{vsn, \"//g' | sed 's/\"},//g'`/ebin/"
+  exec "!`pwd`/rel/`ls apps/`/bin/`ls apps/` stop"
 endfunc
 
 map bf :call RunErl()<CR>
 func! RunErl()
   exec "!`pwd`/rel/`ls apps/`/bin/`ls apps/` start"
 endfunct
+
 ```
 基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。
 
@@ -37,7 +39,7 @@ endfunct
 map bd :call CompileErlDeploy()<CR>
 func! CompileErlDeploy()
   exec "w"
-  exec "!erlc -o /tmp % && `pwd`/rel/`ls apps/`/bin/`ls apps/` stop && set foo = \"`pwd`\" && set bar = \"`basename $foo`\" && mv /tmp/`basename %<.beam` rel/`ls apps/`/lib/`ls apps/`-`grep vsn apps/$bar/src/$bar.app.src | sed 's/{vsn, \"//g' | sed 's/\"},//g'`/ebin/"
+  exec "!erlc -o /tmp % && set bar = \"`ls apps/`\" && mv /tmp/`basename %<.beam` rel/`ls apps/`/lib/`ls apps/`-`grep vsn apps/{$bar}/src/{$bar}.app.src | sed 's/{vsn, \"//g' | sed 's/\"},//g'`/ebin/ && `pwd`/rel/`ls apps/`/bin/`ls apps/` stop"
 endfunc
 
 map bf :call RunErl()<CR>
@@ -48,6 +50,7 @@ endfunct
 ###使用的方法
 进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
 随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
+需要注意的是，至少要rebar generate成功生成一次rel目录的文件，否则替换啥呢：）
 
 ###参考链接
 <a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a>
