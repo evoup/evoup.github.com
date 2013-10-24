@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vim | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/vim/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T18:21:47+08:00</updated>
+  <updated>2013-10-24T13:03:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,65 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[编译rebar项目中单个文件的vim脚本]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/"/>
+    <updated>2013-10-24T12:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim</id>
+    <content type="html"><![CDATA[<p>用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
+方法也很EZ
+<code>bash
+erlc -o ./ebin foo.erl
+</code></p>
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp %"
+  exec "</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/<code>stop"
+  exec "set foo = \"</code>pwd<code>\" &amp;&amp; set bar = \"</code>basename $foo<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/$bar/src/$bar.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'`/ebin/&ldquo;
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct
+```
+基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp % &amp;&amp;</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/<code>stop &amp;&amp; set foo = \"</code>pwd<code>\" &amp;&amp; set bar = \"</code>basename $foo<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/$bar/src/$bar.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'`/ebin/&ldquo;
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct
+```</p>
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[freebsd下如何创建和使用Ctag]]></title>

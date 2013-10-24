@@ -5,29 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>批量删除CVS目录的cmd - Evoup`s Blog</title>
+  <title>编译rebar项目中单个文件的vim脚本 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="windows下的bat的方法 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-@echo On
-@Rem 删除CVS版本控制目录
-@PROMPT [Com]#
-@echo Find CVS @for /r . %%a in (.) do @if exist &quot &hellip;">
+  <meta name="description" content="用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -36,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -86,7 +68,7 @@
   
   <header>
     
-      <h1 class="entry-title">批量删除CVS目录的cmd</h1>
+      <h1 class="entry-title">编译rebar项目中单个文件的vim脚本</h1>
     
     
       <p class="meta">
@@ -102,14 +84,24 @@
   
 
 
-<time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
+<time datetime="2013-10-24T12:41:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>windows下的bat的方法</p>
+<div class="entry-content"><p>用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
+方法也很EZ</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>erlc -o ./ebin foo.erl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -124,27 +116,27 @@
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
-</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
-</span><span class='line'><span class="p">@</span>PROMPT [Com]#
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp %<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
 </span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
+<p>基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -156,18 +148,29 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp % <span class="o">&amp;&amp;</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
 </span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>
-</span><span class='line'>
-</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
-</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
-</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
 </div>
 
 
@@ -190,12 +193,12 @@
   
 
 
-<time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
+<time datetime="2013-10-24T12:41:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/shell/'>shell</a>
+    <a class='category' href='/blog/categories/erlang/'>erlang</a>, <a class='category' href='/blog/categories/vim/'>vim</a>
   
 </span>
 
@@ -204,7 +207,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/" data-via="" data-counturl="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/" data-via="" data-counturl="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/" >Tweet</a>
   
   
   
@@ -220,10 +223,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2008/05/23/parent-frame-location/" title="Previous Post: W3的父框架下另一子框架跳转">&laquo; W3的父框架下另一子框架跳转</a>
+        <a class="basic-alignment left" href="/blog/2013/10/23/erlang-with-rrdtool/" title="Previous Post: [How to]在erlang中使用rrdtool进行监控数据的保存">&laquo; [How to]在erlang中使用rrdtool进行监控数据的保存</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2009/06/02/cplusplus-string-to-int/" title="Next Post: STL中string到int的类型转换">STL中string到int的类型转换 &raquo;</a>
       
     </p>
   </footer>

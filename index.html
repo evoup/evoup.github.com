@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="概述 项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。 rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。 关于如何创建rrd数据库的文章可以看这里http://www. &hellip;">
+  <meta name="description" content="用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,121 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个文件的vim脚本</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-24T12:41:00+08:00" pubdate data-updated="true">Oct 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
+方法也很EZ</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>erlc -o ./ebin foo.erl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp %<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp % <span class="o">&amp;&amp;</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -486,49 +601,6 @@ long2ip（3232290954).
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-03-01T13:39:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
-
-<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/03/01/erlang-c-nif/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -542,6 +614,10 @@ long2ip（3232290954).
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个文件的vim脚本</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/10/23/erlang-with-rrdtool/">[How To]在erlang中使用rrdtool进行监控数据的保存</a>
@@ -559,17 +635,13 @@ long2ip（3232290954).
         <a href="/blog/2013/10/16/linux-df-source-c-code/">linux下模拟df.c源码</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/09/erlang-long2ip/">Erlang版的long2ip函数</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 146.66666666666666%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 126.66666666666667%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(9)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.66666666666667%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.66666666666667%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.66666666666667%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.66666666666667%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 120.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.66666666666667%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 120.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 113.33333333333333%'>Nginx(2)</a>  <a href='/blog/categories/octopress' style='font-size: 106.66666666666667%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 120.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.66666666666667%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 106.66666666666667%'>Rrdtool(1)</a>  <a href='/blog/categories/shell' style='font-size: 113.33333333333333%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 106.66666666666667%'>Vim(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 142.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 124.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(10)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 118.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 118.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 112.0%'>Nginx(2)</a>  <a href='/blog/categories/octopress' style='font-size: 106.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 118.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 106.0%'>Rrdtool(1)</a>  <a href='/blog/categories/shell' style='font-size: 112.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 112.0%'>Vim(2)</a> </span>
 </section>
 
 <section>

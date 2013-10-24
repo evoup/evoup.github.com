@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-23T18:21:47+08:00</updated>
+  <updated>2013-10-24T13:03:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,94 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[编译rebar项目中单个文件的vim脚本]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/"/>
+    <updated>2013-10-24T12:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim</id>
+    <content type="html"><![CDATA[<p>用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
+方法也很EZ</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>erlc -o ./ebin foo.erl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp %<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span><span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="s2">&quot;编译当前erlang文件且部署到rebar项目的rel目录的对应位置</span>
+</span><span class='line'><span class="s2">map bd :call CompileErlDeploy()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! CompileErlDeploy()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp % <span class="o">&amp;&amp;</span> <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">foo</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">set </span><span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>basename <span class="nv">$foo</span><span class="sb">`</span><span class="se">\&quot;</span> <span class="o">&amp;&amp;</span> mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="nv">$bar</span>/src/<span class="nv">$bar</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">endfunc</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">map bf :call RunErl()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2">func! RunErl()</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> start<span class="err">&quot;</span>
+</span><span class='line'>endfunct
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[How to]在erlang中使用rrdtool进行监控数据的保存]]></title>
@@ -2808,46 +2896,6 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 <p>解决方法: #difne DO(a,b) do{a+b;\</p>
 
 <p>a++;}while(0)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[头文件中变量赋值方法]]></title>
-    <link href="http://evoupsight.com/blog/2010/12/15/header-file-variable-assign/"/>
-    <updated>2010-12-15T00:04:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/12/15/header-file-variable-assign</id>
-    <content type="html"><![CDATA[<p>先看这段文字</p>
-
-<!-- more -->
-
-
-
-
-<hr>
-
-
-<p>今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
-这里还涉及到另一个问题，需要提前说明，即使用预处理器避免多重包含。这里的多重包含指的是同一个文件直接或者间接的包含一个头文件多次，例如a.h包含 b.h，a.cpp同时包含a.h和b.h，a.cpp就两次包含了b.h。但由于b.h中具有避免多重包含的措施，a.cpp中还是只包含了b.h一 次。而包含的意思其实就是在预处理阶段用被包含文件的内容代替此包含语句。
-回到头文件定义变量的问题上，如果在头文件中定义了变量，避免多重包含的措施只能避免该头文件在同一个编译单元内被包含一次，在不同的编译单元内还是会被多次包含的，这样就造成了变量的重复定义。
-但是也有例外，如果const对象在编译时可以确定其值，可以将其放在头文件中定义。这么做是有原因的——const对象默认情况下是定义该变量的文件的 局部变量，这样即使此头文件被多个包含，都不会在包含这些文件中重复定义此变量，所有对于这个const对象的引用全都指向在头文件中定义的对象。如果在 const对象定义的时候声明extern，const对象就变得和普通非const对象一样，从而失去此特性（非const对象的默认属性为 extern）。
-C++中的很多用法都不是标准C++规定的，但是由于各种原因，已经是约定俗成或是惯常用法，至于原因以及除此之外的其他用法完全可以不必深究，否则很容易钻牛角尖！</p>
-
-<hr>
-
-
-<p>今天移植gamedev里文章讲到的一个例子的时候碰到了这个问题，要在头文件里给一个变量定义。</p>
-
-<p>最后这样就可以了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">//16Bit format for video card</span>
-</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">PixelFormat</span> <span class="o">=</span> <span class="n">PF_555</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
-相应的在头文件里定义结构用typedef而不要去用struct！</p>
 ]]></content>
   </entry>
   
