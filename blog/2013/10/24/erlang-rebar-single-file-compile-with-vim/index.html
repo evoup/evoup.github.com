@@ -127,7 +127,7 @@
 </span><span class='line'><span class="s2">  exec &quot;</span>w<span class="s2">&quot;</span>
 </span><span class='line'><span class="s2">  exec &quot;</span>!erlc -o /tmp %<span class="s2">&quot;</span>
 </span><span class='line'><span class="s2">  exec &quot;</span>!set <span class="nv">bar</span> <span class="o">=</span> <span class="se">\&quot;</span><span class="sb">`</span>ls apps/<span class="sb">`</span><span class="se">\&quot;</span><span class="s2">&quot;</span>
-</span><span class='line'><span class="s2">  exec &quot;</span>!mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="o">{</span><span class="nv">$bar</span><span class="o">}</span>/src/<span class="o">{</span><span class="nv">$bar</span><span class="o">}</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">  exec &quot;</span>!mv /tmp/<span class="sb">`</span>basename %&lt;.beam<span class="sb">`</span> rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/lib/<span class="sb">`</span>ls apps/<span class="sb">`</span>-<span class="sb">`</span>grep vsn apps/<span class="sb">`</span>ls apps/<span class="sb">`</span>/src/<span class="sb">`</span>ls apps/<span class="sb">`</span>.app.src | sed <span class="s1">&#39;s/{vsn, \&quot;//g&#39;</span> | sed <span class="s1">&#39;s/\&quot;},//g&#39;</span><span class="sb">`</span>/ebin/<span class="s2">&quot;</span>
 </span><span class='line'><span class="s2">  exec &quot;</span>!<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/rel/<span class="sb">`</span>ls apps/<span class="sb">`</span>/bin/<span class="sb">`</span>ls apps/<span class="sb">`</span> stop<span class="s2">&quot;</span>
 </span><span class='line'><span class="s2">endfunc</span>
 </span><span class='line'>
@@ -172,7 +172,8 @@
 <h3>使用的方法</h3>
 
 <p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
-随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。</p>
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
+需要注意的是，至少要rebar generate成功生成一次rel目录的文件，否则替换啥呢：）</p>
 
 <h3>参考链接</h3>
 
