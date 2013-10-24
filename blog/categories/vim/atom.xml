@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vim | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/vim/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-24T13:07:56+08:00</updated>
+  <updated>2013-10-24T16:25:28+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -37,15 +37,17 @@ map bd :call CompileErlDeploy()&lt;CR&gt;
 func! CompileErlDeploy()
   exec "w"
   exec "!erlc -o /tmp %"
-  exec "</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/<code>stop"
-  exec "set foo = \"</code>pwd<code>\" &amp;&amp; set bar = \"</code>basename $foo<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/$bar/src/$bar.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'`/ebin/&ldquo;
+  exec "!set bar = \"</code>ls apps/<code>\""
+  exec "!mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/{$bar}/src/{$bar}.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/"
+  exec "!</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
 endfunc</p>
 
 <p>map bf :call RunErl()<CR>
 func! RunErl()
   exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
-endfunct
-```
+endfunct</p>
+
+<p>```
 基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
 
 <h3>进一步优化</h3>
@@ -56,7 +58,7 @@ endfunct
 map bd :call CompileErlDeploy()&lt;CR&gt;
 func! CompileErlDeploy()
   exec "w"
-  exec "!erlc -o /tmp % &amp;&amp;</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/<code>stop &amp;&amp; set foo = \"</code>pwd<code>\" &amp;&amp; set bar = \"</code>basename $foo<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/$bar/src/$bar.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'`/ebin/&ldquo;
+  exec "!erlc -o /tmp % &amp;&amp; set bar = \"</code>ls apps/<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/{$bar}/src/{$bar}.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/ &amp;&amp;</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
 endfunc</p>
 
 <p>map bf :call RunErl()<CR>

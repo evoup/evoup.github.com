@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mongodb | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mongodb/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-24T13:07:56+08:00</updated>
+  <updated>2013-10-24T16:25:28+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -25,38 +25,68 @@
 
 <p><a href="http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface">http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface</a></p>
 
-<p>{% codeblock nginx配置文件 lang:bash %}
-&hellip;
-location / {</p>
-
-<pre><code>   access_log /var/log/access.log access1;
-
-   proxy_redirect     off;
-
-   proxy_connect_timeout      90;
-
-   proxy_send_timeout         90;
-
-   proxy_read_timeout         90;
-
-   proxy_buffer_size          4k;
-
-   proxy_buffers              432k;
-
-   proxy_busy_buffers_size    64k;
-
-   proxy_temp_file_write_size 64k;
-
-   add_header Cache-Control no-cache;
-
-   proxy_pass http://172.16.30.184:28017;
-</code></pre>
-
-<p>   }</p>
-
-<p>}
-&hellip;
-{% endcodeblock %}
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>nginx配置文件 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&amp;hellip;
+</span><span class='line'>location / <span class="o">{</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;   access_log /var/log/access.log access1;
+</span><span class='line'>
+</span><span class='line'>   proxy_redirect     off;
+</span><span class='line'>
+</span><span class='line'>   proxy_connect_timeout      90;
+</span><span class='line'>
+</span><span class='line'>   proxy_send_timeout         90;
+</span><span class='line'>
+</span><span class='line'>   proxy_read_timeout         90;
+</span><span class='line'>
+</span><span class='line'>   proxy_buffer_size          4k;
+</span><span class='line'>
+</span><span class='line'>   proxy_buffers              432k;
+</span><span class='line'>
+</span><span class='line'>   proxy_busy_buffers_size    64k;
+</span><span class='line'>
+</span><span class='line'>   proxy_temp_file_write_size 64k;
+</span><span class='line'>
+</span><span class='line'>   add_header Cache-Control no-cache;
+</span><span class='line'>
+</span><span class='line'>   proxy_pass http://172.16.30.184:28017;
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;   <span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;<span class="o">}</span>
+</span><span class='line'>&amp;hellip;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 不足：只能从根目录进行代理,如需更加完善，需要装编译nginx的时候， &mdash;with-http_stub_status_module</p>
 
 <p>然后参考《nginx反代加替换傻瓜教程》进行配置</p>
