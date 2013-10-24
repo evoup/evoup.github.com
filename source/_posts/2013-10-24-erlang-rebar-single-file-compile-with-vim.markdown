@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "编译rebar项目中单个文件的vim脚本"
+title: "编译rebar项目中单个erlang源文件的vim脚本"
 date: 2013-10-24 12:41
 comments: true
 categories: [erlang,vim] 
@@ -51,6 +51,9 @@ endfunct
 进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
 随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
 需要注意的是，至少要rebar generate成功生成一次rel目录的文件，否则替换啥呢：）
+
+###后续
+如果能再加入热部署，整个过程就更加轻松了
 
 ###参考链接
 <a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a>
