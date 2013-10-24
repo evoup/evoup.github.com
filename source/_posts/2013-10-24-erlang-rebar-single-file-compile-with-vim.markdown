@@ -5,7 +5,7 @@ date: 2013-10-24 12:41
 comments: true
 categories: [erlang,vim] 
 ---
-用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
+本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
 <!-- more -->
 方法也很EZ
 ```bash
