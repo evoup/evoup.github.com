@@ -29,6 +29,8 @@ categories: [rrdtool,nginx]
 ```html
 <IMG SRC=/rrdgraph/load.png WIDTH=786 HEIGHT=324 >
 ```
+首先在webroot下创建一个软连接rrdgraph，成的图片的src所指向rrdgraph文件夹，其实是个软连接，指向路径为/services/cgi-bin/
+这么做是为了在nginx配置方便。
 
 要怎么在shell中直接验证能出图呢？
 ```bash
@@ -99,6 +101,11 @@ fastcgi_param  REDIRECT_STATUS    200;
 
 最后的cgi站点配置：
 ```bash
+        location / {
+            root   /webroot;
+            index  index.html index.htm;
+        }
+
         location ~ ^/cgi-bin/.*\.cgi$
         {
             fastcgi_index  index.cgi;
