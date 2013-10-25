@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。 &hellip;">
+  <meta name="description" content="rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,49 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/04/rebar-build-erlang-project/">[How To]使用rebar构建erlang 项目</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-04T14:41:00+08:00" pubdate data-updated="true">May 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的，在这里记一下，我只是用了绕过的方法不是很好，因为时间不允许，这里先SORRY一下。我这里的环境为freebsd9.0 amd64 (elrang5.9.1 R15B01),erlang的其他版本，请参看wiki的Release-handling部分调整生成环节的命令。</p>
+
+<p>1）第一步要获取rebar程序，两种方法：自己编译和直接下载。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/04/rebar-build-erlang-project/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -522,68 +565,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/01/16/c-common-define/">C语言宏定义技巧(常用宏定义)(转)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
-
-<p>1，防止一个头文件被重复包含</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#define COMDEF_H </span>
-</span><span class='line'>
-</span><span class='line'><span class="c1">//头文件内容 </span>
-</span><span class='line'>
-</span><span class='line'><span class="cp">#endif </span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2011/01/16/c-common-define/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -601,6 +582,10 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/25/nginx-with-rrdcgi/">Nginx With Rrdcgi</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个erlang源文件的vim脚本</a>
       </li>
     
@@ -616,17 +601,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
         <a href="/blog/2013/10/17/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/16/linux-df-source-c-code/">linux下模拟df.c源码</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 142.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 124.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(10)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 118.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 118.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 112.0%'>Nginx(2)</a>  <a href='/blog/categories/octopress' style='font-size: 106.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 118.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 106.0%'>Rrdtool(1)</a>  <a href='/blog/categories/shell' style='font-size: 112.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 112.0%'>Vim(2)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 142.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 124.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(10)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 118.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 118.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 118.0%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 106.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 118.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 112.0%'>Rrdtool(2)</a>  <a href='/blog/categories/shell' style='font-size: 112.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 112.0%'>Vim(2)</a> </span>
 </section>
 
 <section>
