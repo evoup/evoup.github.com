@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-25T18:13:34+08:00</updated>
+  <updated>2013-10-25T18:37:58+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -58,6 +58,9 @@
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;IMG</span> <span class="na">SRC=</span><span class="s">/rrdgraph/load.png</span> <span class="na">WIDTH=</span><span class="s">786</span> <span class="na">HEIGHT=</span><span class="s">324</span> <span class="nt">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>首先在webroot下创建一个软连接rrdgraph，成的图片的src所指向rrdgraph文件夹，其实是个软连接，指向路径为/services/cgi-bin/
+这么做是为了在nginx配置方便。</p>
 
 <p>要怎么在shell中直接验证能出图呢？</p>
 
@@ -187,7 +190,17 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>    location ~ ^/cgi-bin/.*<span class="se">\.</span>cgi<span class="err">$</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>    location / <span class="o">{</span>
+</span><span class='line'>        root   /webroot;
+</span><span class='line'>        index  index.html index.htm;
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    location ~ ^/cgi-bin/.*<span class="se">\.</span>cgi<span class="err">$</span>
 </span><span class='line'>    <span class="o">{</span>
 </span><span class='line'>        fastcgi_index  index.cgi;
 </span><span class='line'>        fastcgi_param  SCRIPT_FILENAME    /services<span class="nv">$fastcgi_script_name</span>;
