@@ -1,12 +1,14 @@
 ---
 layout: post
-title: "nginx with rrdcgi"
+title: "配置nginx支持rrdcgi"
 date: 2013-10-25 17:27
 comments: true
 categories: [rrdtool,nginx] 
 ---
 
 开始在web界面上加载监控图表了，用rrdrool graph生成图，但是发现只能够生成。于是想当然地试了一下rrdcgi，本以为能够出图，结果还是创建图片，html来加载图片。最后发现ganglia的图表中居然也是先提取在临时目录生成好的图片，然后用php来生成头，最后再删除图片。不过顺便把nginx下配置CGI程序的知识学会了，权且记一笔。
+
+<!-- more -->
 
 ###RRDCGI的使用
 首先是编写graph.cgi
