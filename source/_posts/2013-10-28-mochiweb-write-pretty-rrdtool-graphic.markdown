@@ -6,7 +6,7 @@ comments: true
 categories:       [erlang,rrdtool]
 ---
 
-今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minite load开始。通过mochiweb在restful接口直接出图。
+今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minute load开始。通过mochiweb在restful接口直接出图。
 <!-- more -->
 ```erlang
 -module(webapi_func_graph).

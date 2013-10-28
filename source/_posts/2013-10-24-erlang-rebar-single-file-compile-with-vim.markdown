@@ -50,7 +50,7 @@ endfunct
 ###使用的方法
 进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
 随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
-需要注意的是，至少要rebar generate成功生成一次rel目录的文件，否则替换啥呢：）
+需要注意的是，至少要rebar generate成功生成一次rel目录的文件，对于新建文件时尤其要做这一步，否则替换啥呢：）
 
 ###后续
 如果能再加入热部署，整个过程就更加轻松了
