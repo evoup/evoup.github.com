@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的， &hellip;">
+  <meta name="description" content="这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,47 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/27/erlang-protobuffs-with-php/">【How to】使用basho的erlang-protobuffs和PHP通讯</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-27T13:49:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/27/erlang-protobuffs-with-php/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -508,63 +549,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而此参数声明的时候是这样的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -582,6 +566,10 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/">Mochiweb下调用rrdtool Graph命令绘制类似ganglia的load的图表</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/25/nginx-with-rrdcgi/">配置nginx支持rrdcgi</a>
       </li>
     
@@ -597,17 +585,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
         <a href="/blog/2013/10/22/vmware-ping-in-lan/">局域网计算机和vmware虚拟机互ping</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/17/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 142.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 124.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(10)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 118.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 118.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 118.0%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 106.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 118.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 112.0%'>Rrdtool(2)</a>  <a href='/blog/categories/shell' style='font-size: 112.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 112.0%'>Vim(2)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 138.1818181818182%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 121.81818181818181%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(11)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.45454545454545%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.45454545454545%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.45454545454545%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 105.45454545454545%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 116.36363636363636%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.45454545454545%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.36363636363636%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 116.36363636363636%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.45454545454545%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 116.36363636363636%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.45454545454545%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 116.36363636363636%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.9090909090909%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.9090909090909%'>Vim(2)</a> </span>
 </section>
 
 <section>

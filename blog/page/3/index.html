@@ -9,14 +9,9 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。 1，防止一个头文件被重复包含 1
-2
-3
-4
-5
-6
-7
-#ifndef COMDEF_H #define COMDEF_H //头文件内容 #endif ">
+  <meta name="description" content="研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句： 1
+buffer_copy_string_len(modules-&gt;key, CONST_STR_LEN(&quot;server.modules&quot;)); 而此参数声明的时候是这样的 1
+int &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,6 +67,63 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而此参数声明的时候是这样的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这不就成了三个参了？记一笔&hellip;</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -591,84 +643,6 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2009/10/06/win32-c-call-python/">关于win32程序调用python脚本的发布问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2009-10-06T15:49:00+08:00" pubdate data-updated="true">Oct 6<span>th</span>, 2009</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe,然后直接通过python的capi，调用python脚本工作。后来发现非控制台程序的exe，嵌入python是会有这样那样的问题出现。参见《PyRun_SimpleString的无穷怨念》</p>
-
-<!-- readmore -->
-
-
-<p><a href="http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx">http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx</a></p>
-
-<p>于是在dll里面去嵌入python，dll里面可以用win32线程来调度python脚本的执行状态。</p>
-
-<p>然后就涉及到发布的问题，先是这样子出现
-“由于应用程序配置不正确，应用程序未能启动。重新安装应用程序可能会纠正这个问题。”</p>
-
-<p>查了下资料,<a href="http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html">http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html</a>
-意思是python2.6是vc++2008编译的，所以要装Microsoft Visual C++ 2008 Redistributable Package。</p>
-
-<p>再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。</p>
-
-<p>这个过程大致如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># setup.py</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">py2exe</span>
-</span><span class='line'><span class="n">setup</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;hello.py&quot;</span><span class="p">])</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>运行setup.py，记得要传一个参数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">py2e</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>于是生成的dist文件夹里就是发布好的程序了。
-按照这个思路，解压library.zip里面的程序到dll目录也就可以运行了，试验发现如果是dll的话， w9xpopen.exe到是不必打包带进去了，这样我的dll连同这些文件都放到一个目录里，exe调用这个 dll就完成任务了。我的dll是Release版本的，因为我带的dll是python26.dll而不是python26_d.dll， 这样客户机再也不必安装python就可以运行带有python脚本的程序了。</p>
-
-<p>总结：这谁想出来的，搞得这么复杂，LUA就没有这么复杂，直接2个DLL就完事了，但是估计调用 库的话也是一样的。</p>
-
-<p>后记：其实非商业项目可以用selenium这类GUI自动化测试软件来干，也就是写写脚本。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -686,6 +660,10 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/">Mochiweb下调用rrdtool Graph命令绘制类似ganglia的load的图表</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/25/nginx-with-rrdcgi/">配置nginx支持rrdcgi</a>
       </li>
     
@@ -701,17 +679,13 @@ find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
         <a href="/blog/2013/10/22/vmware-ping-in-lan/">局域网计算机和vmware虚拟机互ping</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/17/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 142.0%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 124.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(10)</a>  <a href='/blog/categories/freebsd' style='font-size: 106.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 106.0%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 106.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 106.0%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 118.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 106.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 118.0%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 118.0%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 106.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 118.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 106.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 112.0%'>Rrdtool(2)</a>  <a href='/blog/categories/shell' style='font-size: 112.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 112.0%'>Vim(2)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 138.1818181818182%'>C-language(7)</a>  <a href='/blog/categories/cplusplus' style='font-size: 121.81818181818181%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(11)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.45454545454545%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.45454545454545%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.45454545454545%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 105.45454545454545%'>Java(1)</a>  <a href='/blog/categories/javascript' style='font-size: 116.36363636363636%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.45454545454545%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.36363636363636%'>Monitor(3)</a>  <a href='/blog/categories/nginx' style='font-size: 116.36363636363636%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.45454545454545%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 116.36363636363636%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.45454545454545%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 116.36363636363636%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.9090909090909%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.9090909090909%'>Vim(2)</a> </span>
 </section>
 
 <section>

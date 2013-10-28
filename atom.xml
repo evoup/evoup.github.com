@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-25T18:37:58+08:00</updated>
+  <updated>2013-10-28T17:19:30+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mochiweb下调用rrdtool graph命令绘制类似ganglia的load的图表]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/"/>
+    <updated>2013-10-28T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic</id>
+    <content type="html"><![CDATA[<p>今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minite load开始。通过mochiweb在restful接口直接出图。</p>
+
+<!-- more -->
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">webapi_func_graph</span><span class="p">).</span>
+</span><span class='line'><span class="p">-</span><span class="ni">include</span><span class="p">(</span><span class="s">&quot;include/inc.hrl&quot;</span><span class="p">).</span>
+</span><span class='line'><span class="p">-</span><span class="ni">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">get</span><span class="p">(</span><span class="nv">Selector</span><span class="p">,</span><span class="nv">Req</span><span class="p">,</span><span class="nv">Key</span><span class="p">)</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nv">Method</span><span class="o">=</span><span class="nv">Req</span><span class="p">:</span><span class="nb">get</span><span class="p">(</span><span class="n">method</span><span class="p">),</span>
+</span><span class='line'>    <span class="nv">QueryStringData</span> <span class="o">=</span> <span class="nv">Req</span><span class="p">:</span><span class="nf">parse_qs</span><span class="p">(),</span>
+</span><span class='line'>    <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;[req:</span><span class="si">~p</span><span class="s">][qsd:</span><span class="si">~p</span><span class="s">]</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Req</span><span class="p">,</span><span class="nv">QueryStringData</span><span class="p">]),</span>
+</span><span class='line'>    <span class="nv">StartTs</span> <span class="o">=</span> <span class="nn">proplists</span><span class="p">:</span><span class="nf">get_value</span><span class="p">(</span><span class="s">&quot;start&quot;</span><span class="p">,</span> <span class="nv">QueryStringData</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nv">EndTs</span> <span class="o">=</span> <span class="nn">proplists</span><span class="p">:</span><span class="nf">get_value</span><span class="p">(</span><span class="s">&quot;end&quot;</span><span class="p">,</span> <span class="nv">QueryStringData</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nv">Width</span> <span class="o">=</span> <span class="nn">proplists</span><span class="p">:</span><span class="nf">get_value</span><span class="p">(</span><span class="s">&quot;w&quot;</span><span class="p">,</span> <span class="nv">QueryStringData</span><span class="p">,</span> <span class="s">&quot;705&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nv">Height</span> <span class="o">=</span> <span class="nn">proplists</span><span class="p">:</span><span class="nf">get_value</span><span class="p">(</span><span class="s">&quot;h&quot;</span><span class="p">,</span> <span class="nv">QueryStringData</span><span class="p">,</span> <span class="s">&quot;245&quot;</span><span class="p">),</span>
+</span><span class='line'>    <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;[M:</span><span class="si">~p</span><span class="s">][F:get][A:</span><span class="si">~p</span><span class="s">][M:</span><span class="si">~p</span><span class="s">][K:</span><span class="si">~p</span><span class="s">][start:</span><span class="si">~p</span><span class="s">][end:</span><span class="si">~p</span><span class="s">][width:</span><span class="si">~p</span><span class="s">][height:</span><span class="si">~p</span><span class="s">]</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span><span class="nv">Selector</span><span class="p">,</span><span class="nv">Method</span><span class="p">,</span><span class="nv">Key</span><span class="p">,</span><span class="nv">StartTs</span><span class="p">,</span><span class="nv">EndTs</span><span class="p">,</span><span class="nv">Width</span><span class="p">,</span><span class="nv">Height</span><span class="p">]),</span>
+</span><span class='line'>    <span class="k">case</span> <span class="nv">Selector</span> <span class="k">of</span>
+</span><span class='line'>        <span class="s">&quot;@self&quot;</span> <span class="o">-&gt;</span>
+</span><span class='line'>            <span class="nv">FileName</span><span class="o">=</span><span class="s">&quot;/tmp/myLoad_&quot;</span><span class="o">++</span><span class="nb">integer_to_list</span><span class="p">(</span><span class="nn">erlang</span><span class="p">:</span><span class="nb">phash2</span><span class="p">(</span><span class="n">make_ref</span><span class="p">()))</span><span class="o">++</span><span class="s">&quot;.png&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nv">AvgLoad</span><span class="o">=</span> <span class="nn">os</span><span class="p">:</span><span class="nf">cmd</span><span class="p">(</span><span class="s">&quot;/usr/local/bin/rrdtool fetch /services/rrds/&quot;</span><span class="o">++</span><span class="nv">Key</span><span class="o">++</span><span class="s">&quot;/load.rrd AVERAGE --start &quot;</span><span class="o">++</span><span class="nv">StartTs</span><span class="o">++</span><span class="s">&quot; --end &quot;</span><span class="o">++</span>
+</span><span class='line'>                <span class="nv">EndTs</span><span class="o">++</span><span class="s">&quot; | awk &#39;BEGIN {ORS=</span><span class="se">\&quot;\&quot;</span><span class="s">} {sum+=$2} END {print sum/NR}&#39;&quot;</span><span class="p">),</span>
+</span><span class='line'>            <span class="nv">AverageLoad</span><span class="o">=</span><span class="nb">list_to_float</span><span class="p">(</span><span class="nv">AvgLoad</span><span class="p">),</span>
+</span><span class='line'>            <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;[average load:</span><span class="si">~p</span><span class="s">]</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">AverageLoad</span><span class="p">]),</span>
+</span><span class='line'>            <span class="k">case</span> <span class="nv">AverageLoad</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">of</span>
+</span><span class='line'>                <span class="n">true</span> <span class="o">-&gt;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="nv">AverageLoad</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">of</span>
+</span><span class='line'>                        <span class="n">true</span> <span class="o">-&gt;</span>
+</span><span class='line'>                            <span class="nv">BColor</span><span class="o">=</span><span class="s">&quot;FF9966&quot;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="n">false</span> <span class="o">-&gt;</span>
+</span><span class='line'>                            <span class="nv">BColor</span><span class="o">=</span><span class="s">&quot;E2ECFF&quot;</span>
+</span><span class='line'>                    <span class="k">end</span><span class="p">;</span>
+</span><span class='line'>                <span class="p">_</span> <span class="o">-&gt;</span>
+</span><span class='line'>                    <span class="nv">BColor</span><span class="o">=</span><span class="s">&quot;CCFF99&quot;</span>
+</span><span class='line'>            <span class="k">end</span><span class="p">,</span>
+</span><span class='line'>            <span class="nn">os</span><span class="p">:</span><span class="nf">cmd</span><span class="p">(</span><span class="s">&quot;/usr/local/bin/rrdtool graph &quot;</span><span class="o">++</span><span class="nv">FileName</span><span class="o">++</span><span class="s">&quot; --lazy --start &quot;</span><span class="o">++</span><span class="nv">StartTs</span><span class="o">++</span><span class="s">&quot; --end &quot;</span><span class="o">++</span><span class="nv">EndTs</span><span class="o">++</span><span class="s">&quot;  --title </span><span class="se">\&quot;</span><span class="s">One Minute Load Average &quot;</span><span class="o">++</span><span class="nv">Key</span><span class="o">++</span><span class="s">&quot; last hour</span><span class="se">\&quot;</span><span class="s"> --width &quot;</span><span class="o">++</span><span class="nv">Width</span><span class="o">++</span><span class="s">&quot; --height &quot;</span><span class="o">++</span><span class="nv">Height</span><span class="o">++</span><span class="s">&quot; DEF:load=/services/rrds/&quot;</span><span class="o">++</span><span class="nv">Key</span><span class="o">++</span><span class="s">&quot;/load.rrd:load:AVERAGE AREA:load#4A4A4A:load GPRINT:load:LAST:</span><span class="se">\&quot;</span><span class="s"> Current</span><span class="se">\\</span><span class="s">:%8.2lf %s</span><span class="se">\&quot;</span><span class="s">  GPRINT:load:AVERAGE:</span><span class="se">\&quot;</span><span class="s">Average</span><span class="se">\\</span><span class="s">:%8.2lf %s</span><span class="se">\\</span><span class="s">n</span><span class="se">\&quot;</span><span class="s">  GPRINT:load:MAX:</span><span class="se">\&quot;</span><span class="s">Maximum</span><span class="se">\\</span><span class="s">:%8.2lf %s</span><span class="se">\&quot;</span><span class="s"> GPRINT:load:MIN:</span><span class="se">\&quot;</span><span class="s">Minimum</span><span class="se">\\</span><span class="s">:%8.2lf %s</span><span class="se">\&quot;</span><span class="s"> -c BACK#&quot;</span><span class="o">++</span><span class="nv">BColor</span><span class="p">),</span>
+</span><span class='line'>            <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Data</span><span class="p">}</span> <span class="o">=</span> <span class="nn">file</span><span class="p">:</span><span class="nf">read_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">),</span>
+</span><span class='line'>            <span class="nn">file</span><span class="p">:</span><span class="nf">delete</span><span class="p">(</span><span class="nv">FileName</span><span class="p">),</span>
+</span><span class='line'>            <span class="p">{</span><span class="s">&quot;Content-type: image/png&quot;</span><span class="p">,</span><span class="nv">Data</span><span class="p">};</span>
+</span><span class='line'>        <span class="p">_</span> <span class="o">-&gt;</span>
+</span><span class='line'>            <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;[other]</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意点，我没有使用rrdcgi这个东西是因为，手册上没有说可以直接输出二进制文件流，第二即使可以用，mochiweb也没有cgi的接口可以对接。
+访问我的restful接口<a href="http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141">http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141</a></p>
+
+<p>最后出图像下面一样的图了。当平均load大于10背景呈现红色（代表严重），大于2为蓝色，其余绿色。计算平均load我使用了rrdtoo fetch这个指令，此外还要注意在/tmp目录生成好随机名图片，用完了之后得删除，这个也是惯用方法。其余的请参阅rrdtool graph和rrdtool fetch命令的说明。
+<img src="http://evoupsight.com/images/evoup/yin-arch_ac101eb8_load.png" alt="Alt text" /></p>
+
+<p>参考链接：
+<a href="http://man.lupaworld.com/content/manage/ringkee/awk.htm">http://man.lupaworld.com/content/manage/ringkee/awk.htm</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[配置nginx支持rrdcgi]]></title>
@@ -2788,36 +2888,6 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[C语言变参宏]]></title>
-    <link href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/"/>
-    <updated>2011-06-05T23:29:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define</id>
-    <content type="html"><![CDATA[<p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而此参数声明的时候是这样的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
 ]]></content>
   </entry>
   
