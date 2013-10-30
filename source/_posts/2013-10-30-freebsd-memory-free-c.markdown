@@ -3,7 +3,7 @@ layout: post
 title: "Freebsd版linux下free指令实现"
 date: 2013-10-30 16:41
 comments: true
-categories: c-language 
+categories: [c-language,monitor] 
 ---
 监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。
 <!-- more -->
@@ -138,3 +138,5 @@ main(int argc, char *argv[])
 }
 ```
 
+###项目位置
+https://github.com/evoup/free
