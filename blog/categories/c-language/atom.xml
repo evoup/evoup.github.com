@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-29T14:18:14+08:00</updated>
+  <updated>2013-10-30T17:39:20+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,162 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Freebsd版linux下free指令实现]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c/"/>
+    <updated>2013-10-30T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c</id>
+    <content type="html"><![CDATA[<p>监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。</p>
+
+<!-- more -->
+
+
+<p>直接贴代码了，除了mem_total之外基本都正确。total的部分，先用sysctl -a | grep realmem解决
+```c
+/<em>
+ * free.c &ndash; Display FreeBSD memory information
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#118;&#x69;&#x6e;&#111;&#100;&#x40;&#x73;&#x65;&#103;&#102;&#97;&#x75;&#108;&#116;&#46;&#x69;&#110;">&#118;&#105;&#x6e;&#111;&#100;&#x40;&#x73;&#101;&#103;&#102;&#x61;&#117;&#108;&#116;&#46;&#x69;&#110;</a>
+ * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
+ </em>/</p>
+
+<h1>include &lt;sys/types.h></h1>
+
+<h1>include &lt;sys/sysctl.h></h1>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>const char *version = &ldquo;$Id: free,v 0.1.3 2008/11/26 19:34:54 IST vinod $&rdquo;;</p>
+
+<p>int
+get_sysctl(char *name)
+{</p>
+
+<pre><code>    int mib[4], value, i;
+    size_t len, miblen = 1;
+
+    for(i = 0; name[i] != '\0'; i++) 
+            if(name[i] == '.')
+                    miblen++;
+    len = miblen;
+    sysctlnametomib(name, mib, &amp;len);
+    len = sizeof(value);
+    sysctl(mib, miblen, &amp;value, &amp;len, NULL, 0);
+
+    return value;
+</code></pre>
+
+<p>}</p>
+
+<p>void
+usage(void)
+{</p>
+
+<pre><code>    fprintf(stderr, "usage: free [-b|-k|-m|-g] [-t] [-v]\n" \
+    "  -b,-k,-m,-g show output in bytes, KB, MB, or GB\n" \
+    "  -t display logical summary for RAM\n" \
+    "  -v display version information and exit\n");
+</code></pre>
+
+<p>}</p>
+
+<p>int
+main(int argc, char *argv[])
+{</p>
+
+<pre><code>    int c, vflag = 0, tflag = 0;
+    int factor = 1;
+    long int physmem, realmem;
+    long int vmactive, vminactive, vmfree, vmcache, vmpage, vmwire;
+    long int memfree, memused;
+    long int pagesize;
+
+    opterr = 0;
+
+    while ((c = getopt(argc, argv, "bghkmtv")) != -1) {
+            switch (c) {
+                    case 'b':
+                            factor = 1;
+                            break;
+                    case 'g':
+                            factor = 1024*1024*1024;
+
+                    case 'h':
+                            usage();
+                            exit(EXIT_SUCCESS);
+                    case 'k':
+                            factor = 1024;
+                            break;
+                    case 'm':
+                            factor = 1024*1024;
+                            break;
+                    case 't':
+                            tflag = 1;
+                            break;
+                    case 'v':
+                            vflag = 1;
+                            break;
+                    case '?':
+                    default:
+                            fprintf(stderr, "%s: invalid option -- %c\n", argv[0], optopt);
+                            usage();
+                            exit(EXIT_FAILURE);
+            }
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    if(vflag) {
+            fprintf(stderr, "%s\nbuilt %s %s\n", version,
+                            __DATE__, __TIME__);
+            exit(EXIT_SUCCESS);
+    }
+
+    physmem    = labs(get_sysctl("hw.physmem"));
+    realmem    = labs(get_sysctl("hw.realmem"));
+    pagesize   = labs(get_sysctl("hw.pagesize"));
+
+    vmpage     = labs(get_sysctl("vm.stats.vm.v_page_count") * pagesize);
+    vmwire     = labs(get_sysctl("vm.stats.vm.v_wire_count") * pagesize);
+    vmactive   = labs(get_sysctl("vm.stats.vm.v_active_count") * pagesize);
+    vminactive = labs(get_sysctl("vm.stats.vm.v_inactive_count") * pagesize);
+    vmcache    = labs(get_sysctl("vm.stats.vm.v_cache_count") * pagesize);
+    vmfree     = labs(get_sysctl("vm.stats.vm.v_free_count") * pagesize);
+
+    printf("         %15s %15s %15s %15s %15s %15s\n", "total", "active", "free", "inactive", "wire", "cached");
+    printf("Memory:  %15ld %15ld %15ld %15ld %15ld %15ld\n",
+                    realmem/factor,
+                    vmactive/factor,
+                    vmfree/factor,
+                    vminactive/factor,
+                    vmwire/factor,
+                    vmcache/factor);
+
+    /*
+     * logical summary
+     */
+    if(tflag) {
+            memfree = vminactive + vmfree + vmcache;
+            memused        = realmem - memfree;
+
+            printf("Summary: %15ld %15ld %15ld\n",
+                            realmem/factor,
+                            memused/factor,
+                            memfree/factor);
+    }
+
+    return (EXIT_SUCCESS);
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[linux下模拟df.c源码]]></title>
@@ -392,39 +548,6 @@ const int PixelFormat = PF_555;
 </code>
 之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
 相应的在头文件里定义结构用typedef而不要去用struct！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[目前看到的对内存对齐问题最好的解释]]></title>
-    <link href="http://evoupsight.com/blog/2010/11/30/memory-alignment/"/>
-    <updated>2010-11-30T12:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/11/30/memory-alignment</id>
-    <content type="html"><![CDATA[<p>简单的说，对于一个class或是struct：</p>
-
-<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
-
-<!-- more -->
-
-
-<p>对于
-<code>c
-struct A {
-int a;
-char c;
-int b;
-}
-</code>
-以int类型所占字节为位域，也就是4 然后，对于a，四个字节对于c，一个字节，后面三个字节不能用来存储b，因为b是四个，如果用这三个，那么必将剩余一个，根据原则，不可跨位域</p>
-
-<p>所以存放形式：
-```bash
-aaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaa</p>
-
-<p>cccccccc XXXXXXXX XXXXXXXX XXXXXXXX</p>
-
-<p>bbbbbbbb bbbbbbbb bbbbbbbb bbbbbbbb
-```</p>
 ]]></content>
   </entry>
   
