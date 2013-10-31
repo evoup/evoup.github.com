@@ -9,15 +9,8 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Tokyo Cabinet的源码看到的 1
-2
-3
-4
-5
-6
-7
-/* Get the global memory pool object. */
-TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
+  <meta name="description" content="以php语言为例 1
+find . -name &quot;*.php&quot; -exec exctags --language-force=php {} + 在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,6 +66,100 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/07/23/freebsd-ctag/">freebsd下如何创建和使用Ctag</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-23T14:48:00+08:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以php语言为例</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在freebsd里面，一开始我还是去ctags.sourceforge.net下载编译安装了ctags，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了！</p>
+
+<p>于是就直接port安装了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
+</span><span class='line'>/usr/bin/
+</span><span class='line'>mv ctags ctags.orig
+</span><span class='line'>ln -s /usr/local/bin/ctags ctags
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于c语言可能包含的h文件的方法，我采用如下的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -regex <span class="s2">&quot;.*\.\(c\|h\)&quot;</span> -exec exctags <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>题外话，要将find到的文件移动到其他目录，可以这么干
+find . -name &ldquo;*.h&rdquo; -exec mv {} temp/ \;</p>
+
+<p>彩色查找CM_MISC关键字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec grep -n --color CM_MISC <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换全部代码中的abc为123，排除svn文件夹</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -type f -exec sed -i <span class="s2">&quot;s/abc/123/g&quot;</span> <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我最后在~/.cshrc的配置文件中直接把查找关键字做成一个别名，如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">alias </span>f <span class="s2">&quot;find . \( -path &#39;*.svn*&#39; -o -path &#39;*.fcgi*&#39; -o -path &#39;*tags*&#39; -o -name &#39;*.o&#39; -o -name &#39;*.so&#39; -o -name &#39;*.a&#39; \) -p    rune -o -name .git -prune -o -print | xargs grep -in --color&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样查找某个字符串的时候只需要输入如下指令即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>f <span class="s1">&#39;字符串&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -663,45 +750,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2008/05/23/parent-frame-location/">W3的父框架下另一子框架跳转</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2008-05-23T21:15:00+08:00" pubdate data-updated="true">May 23<span>rd</span>, 2008</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">parent</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s2">&quot;http://www.baidu.com&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -719,6 +767,10 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">用haproxy分1个端口到多个服务器应用</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/30/freebsd-memory-free-c/">Freebsd版linux下free指令实现</a>
       </li>
     
@@ -734,17 +786,13 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
         <a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个erlang源文件的vim脚本</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/23/erlang-with-rrdtool/">[How To]在erlang中使用rrdtool进行监控数据的保存</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 143.63636363636363%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 121.81818181818181%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(11)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.45454545454545%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.45454545454545%'>Gcc(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.45454545454545%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.9090909090909%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 116.36363636363636%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.45454545454545%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 121.81818181818181%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 116.36363636363636%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.45454545454545%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 116.36363636363636%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.45454545454545%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 116.36363636363636%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.9090909090909%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.9090909090909%'>Vim(2)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 143.63636363636363%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 121.81818181818181%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(11)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.45454545454545%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.45454545454545%'>Gcc(1)</a>  <a href='/blog/categories/haproxy' style='font-size: 105.45454545454545%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.45454545454545%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.9090909090909%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 116.36363636363636%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.45454545454545%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 121.81818181818181%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 116.36363636363636%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.45454545454545%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 116.36363636363636%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.45454545454545%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 116.36363636363636%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.9090909090909%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.9090909090909%'>Vim(2)</a> </span>
 </section>
 
 <section>
