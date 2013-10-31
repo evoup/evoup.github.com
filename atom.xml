@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-31T11:27:03+08:00</updated>
+  <updated>2013-10-31T11:40:42+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,18 +14,29 @@
 
   
   <entry>
-    <title type="html"><![CDATA[用haproxy分1个端口到多个服务器应用]]></title>
+    <title type="html"><![CDATA[用haproxy分单个端口到多个应用]]></title>
     <link href="http://evoupsight.com/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/"/>
     <updated>2013-10-31T10:57:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers</id>
-    <content type="html"><![CDATA[<p>今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。我只有一个</p>
+    <content type="html"><![CDATA[<p>今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。如果要对多种协议进行负载均衡的路由到不同的server，haproxy非常合适了。</p>
 
-<p>haproxy的安装
-wget <a href="http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz">http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz</a>
-tar xzf haproxy-1.4.24.tar.gz
-cd haproxy-1.4.24
-gmake TARGET=freebsd
-sudo gmake install</p>
+<!-- more -->
+
+
+<h3>haproxy的安装</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz
+</span><span class='line'>tar xzf haproxy-1.4.24.tar.gz
+</span><span class='line'><span class="nb">cd </span>haproxy-1.4.24
+</span><span class='line'>gmake <span class="nv">TARGET</span><span class="o">=</span>freebsd
+</span><span class='line'>sudo gmake install
+</span></code></pre></td></tr></table></div></figure>
+
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

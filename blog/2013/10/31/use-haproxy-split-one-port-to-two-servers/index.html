@@ -5,13 +5,16 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>用haproxy分1个端口到多个服务器应用 - Evoup`s Blog</title>
+  <title>用haproxy分单个端口到多个应用 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。我只有一个 haproxy的安装
-wget http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz
-tar xzf haproxy-1.4.24.tar &hellip;">
+  <meta name="description" content="今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。如果要对多种协议进行负载均衡的路由到不同的server，haproxy非常合适了。 haproxy的安装 1
+2
+3
+4
+5
+wget http://haproxy.1wt.eu/download/1.4/src/ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -70,7 +73,7 @@ tar xzf haproxy-1.4.24.tar &hellip;">
   
   <header>
     
-      <h1 class="entry-title">用haproxy分1个端口到多个服务器应用</h1>
+      <h1 class="entry-title">用haproxy分单个端口到多个应用</h1>
     
     
       <p class="meta">
@@ -93,14 +96,25 @@ tar xzf haproxy-1.4.24.tar &hellip;">
   </header>
 
 
-<div class="entry-content"><p>今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。我只有一个</p>
+<div class="entry-content"><p>今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。如果要对多种协议进行负载均衡的路由到不同的server，haproxy非常合适了。</p>
 
-<p>haproxy的安装
-wget <a href="http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz">http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz</a>
-tar xzf haproxy-1.4.24.tar.gz
-cd haproxy-1.4.24
-gmake TARGET=freebsd
-sudo gmake install</p>
+<!-- more -->
+
+
+<h3>haproxy的安装</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz
+</span><span class='line'>tar xzf haproxy-1.4.24.tar.gz
+</span><span class='line'><span class="nb">cd </span>haproxy-1.4.24
+</span><span class='line'>gmake <span class="nv">TARGET</span><span class="o">=</span>freebsd
+</span><span class='line'>sudo gmake install
+</span></code></pre></td></tr></table></div></figure>
+
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -234,7 +248,7 @@ sudo gmake install</p>
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">用haproxy分1个端口到多个服务器应用</a>
+        <a href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">用haproxy分单个端口到多个应用</a>
       </li>
     
       <li class="post">
