@@ -18,6 +18,8 @@ cd haproxy-1.4.24
 gmake TARGET=freebsd
 sudo gmake install
 ```
+
+配置
 ```bash
 
 global
