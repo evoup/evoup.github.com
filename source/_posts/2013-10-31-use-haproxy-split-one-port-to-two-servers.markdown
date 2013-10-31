@@ -1,18 +1,23 @@
 ---
 layout: post
-title: "用haproxy分1个端口到多个服务器应用"
+title: "用haproxy分单个端口到多个应用"
 date: 2013-10-31 10:57
 comments: true
 categories: haproxy
 ---
-今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。我只有一个
+今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。如果要对多种协议进行负载均衡的路由到不同的server，haproxy非常合适了。
 
-haproxy的安装
+<!-- more -->
+
+###haproxy的安装
+
+```bash
 wget http://haproxy.1wt.eu/download/1.4/src/haproxy-1.4.24.tar.gz
 tar xzf haproxy-1.4.24.tar.gz
 cd haproxy-1.4.24
 gmake TARGET=freebsd
 sudo gmake install
+```
 ```bash
 
 global
