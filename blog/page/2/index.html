@@ -9,8 +9,13 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！
-">
+  <meta name="description" content="工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。 erlang代码片段 1
+2
+3
+4
+5
+%%从整形转换为IP地址元组
+long2ip(IpInteger) -&gt; Integer_to_ip=fun(Ip)-&gt; {Ip bsr 24, (Ip band &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -66,6 +71,60 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/09/erlang-long2ip/">Erlang版的long2ip函数</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-09T17:56:00+08:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
+
+<figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
+</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
+</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样子使用
+long2ip（3232290954).
+{192,168,216,138}</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -696,47 +755,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">Nginx反向代理mongodb的web页面</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-01-05T15:32:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -754,6 +772,10 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/04/erlang-open-port-error-enoent/">Erlang Open_port 错误之error Enoent</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">用haproxy分单个端口到多个应用</a>
       </li>
     
@@ -769,17 +791,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
         <a href="/blog/2013/10/25/nginx-with-rrdcgi/">配置nginx支持rrdcgi</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个erlang源文件的vim脚本</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 143.63636363636363%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 121.81818181818181%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(11)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.45454545454545%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.45454545454545%'>Gcc(1)</a>  <a href='/blog/categories/haproxy' style='font-size: 105.45454545454545%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.45454545454545%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.9090909090909%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 116.36363636363636%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.45454545454545%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 121.81818181818181%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 116.36363636363636%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.45454545454545%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 116.36363636363636%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.45454545454545%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 116.36363636363636%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.9090909090909%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.9090909090909%'>Vim(2)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 140.0%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 120.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(12)</a>  <a href='/blog/categories/freebsd' style='font-size: 105.0%'>Freebsd(1)</a>  <a href='/blog/categories/gcc' style='font-size: 105.0%'>Gcc(1)</a>  <a href='/blog/categories/haproxy' style='font-size: 105.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 105.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 110.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 105.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 120.0%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 115.0%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 105.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 115.0%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 105.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 115.0%'>Rrdtool(3)</a>  <a href='/blog/categories/shell' style='font-size: 110.0%'>Shell(2)</a>  <a href='/blog/categories/vim' style='font-size: 110.0%'>Vim(2)</a> </span>
 </section>
 
 <section>

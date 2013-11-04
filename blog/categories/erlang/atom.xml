@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-10-31T11:49:04+08:00</updated>
+  <updated>2013-11-04T11:43:16+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,106 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[erlang open_port 错误之error enoent]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/"/>
+    <updated>2013-11-04T11:04:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent</id>
+    <content type="html"><![CDATA[<p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
+
+<h3>问题重现：</h3>
+
+<!-- more -->
+
+
+<p>在open_port处，查看日志报错如下：
+```erlang
+[rrddir ok]^
+[ResRrd:{error,{enoent,[{erlang,open_port,</p>
+
+<pre><code>                            [{spawn_executable,"/usr/local/bin/rrdtool"},^
+                             [{line,1024},{args,["-"]}]],^
+                            []},^M
+                    {rrdtool,init,1,[{file,"src/rrdtool.erl"},{line,83}]},
+                    {gen_server,init_it,6,^M
+                                [{file,"gen_server.erl"},{line,304}]},
+                    {proc_lib,init_p_do_apply,3,
+                              [{file,"proc_lib.erl"},{line,227}]}]}}]
+</code></pre>
+
+<p>```
+怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">%% @hidden</span>
+</span><span class='line'><span class="go">init([RRDTool]) &amp;ndash;&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;pre&gt;&lt;code&gt;Port = open_port({spawn_executable, RRDTool}, [{line, 1024}, {args, [&quot;-&quot;]}]),</span>
+</span><span class='line'><span class="go">{ok, Port}.</span>
+</span><span class='line'><span class="go">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>再定位到上层看gen_server的start函数
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">start() &amp;ndash;&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;pre&gt;&lt;code&gt;gen_server:start(?MODULE, [os:find_executable(&quot;rrdtool&quot;)], []).</span>
+</span><span class='line'><span class="go">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="go">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回
+```bash
+RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#116;&#x6f;&#x62;&#105;&#64;&#x6f;&#101;&#116;&#105;&#x6b;&#101;&#x72;&#x2e;&#99;&#x68;">&#x74;&#111;&#98;&#105;&#64;&#x6f;&#101;&#x74;&#x69;&#107;&#x65;&#x72;&#46;&#99;&#104;</a></p>
+
+<pre><code>           Compiled Oct 22 2012 11:33:26
+</code></pre>
+
+<p>Usage: rrdtool [options] command command_options
+Valid commands: create, update, updatev, graph, graphv,  dump, restore,</p>
+
+<pre><code>            last, lastupdate, first, info, fetch, tune,
+            resize, xport, flushcached
+</code></pre>
+
+<p>RRDtool is distributed under the Terms of the GNU General
+Public License Version 2. (www.gnu.org/copyleft/gpl.html)</p>
+
+<p>For more information read the RRD manpages
+<code>
+已经装好了啊？那为什么还要报错，难道是做了alias
+</code>bash
+[yin@yin-arch monitorserver2]>alias rrdtool
+/usr/lib64/rrdtool/bin/rrdtool
+```
+果不其然</p>
+
+<h3>解决方法</h3>
+
+<p>在/usr/local/bin/目录下做一个软连接
+<code>bash
+sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
+</code>
+再次运行，enoent问题解决。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mochiweb下调用rrdtool graph命令绘制类似ganglia的load的图表]]></title>
@@ -490,73 +590,6 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
 <p>这样子使用
 long2ip（3232290954).
 {192,168,216,138}</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[关于log4erl的localtime_to_universaltime报错]]></title>
-    <link href="http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/"/>
-    <updated>2013-07-29T09:46:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone</id>
-    <content type="html"><![CDATA[<h2>问题症状：</h2>
-
-<p>项目遇到编译后运行的一个问题，logerl报错之</p>
-
-<p>```erlang
-** {appender_died,</p>
-
-<pre><code>   {'EXIT',
-
-       {badarg,
-
-           [{erlang,localtime_to_universaltime,
-
-                [{ {2013,6,19},{15,52,35} },true],
-
-                []},
-</code></pre>
-
-<p>```
-看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
-
-<!-- more -->
-
-
-<p>```erlang
-Eshell V5.9.1  (abort with ^G)</p>
-
-<p>1> DateTime = { {2008,5,5},{1,1,1} }.</p>
-
-<p>{ {2008,5,5},{1,1,1} }</p>
-
-<p>2> erlang:localtime_to_universaltime(DateTime, true).</p>
-
-<p>** exception error: bad argument</p>
-
-<pre><code> in function  erlang:localtime_to_universaltime/2
-
-    called as erlang:localtime_to_universaltime({ {2008,5,5},{1,1,1} },true)
-</code></pre>
-
-<p>5>
-```</p>
-
-<p>看来是个log4erl遭遇了在freebsd下调用localtime_to_universaltime函数的bug，原因可能是作者没有考虑到下面的状况：
-<a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html" target=_BLANK><a href="http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html">http://erlang.org/pipermail/erlang-bugs/2008-May/000787.html</a></a></p>
-
-<h2>解决方法：</h2>
-
-<p>我的做法是使用sysinstall指令把时区从UTC调整到CST，之后运行居然就一切OK了。</p>
-
-<h2>时区调整：</h2>
-
-<p>关于log4erl如何调整时区到本地时间，查看手册<a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt" target=_BLANK><a href="https://github.com/ahmednawras/log4erl/blob/master/API.txt">https://github.com/ahmednawras/log4erl/blob/master/API.txt</a></a></p>
-
-<p><code>bash
- I - ISO format with universal GMT time (equivilant to "%jT%TZ").
- S - ISO format with local time and time zone offset
-</code>
- 也就是在配置中改成%S就可以了。</p>
 ]]></content>
   </entry>
   

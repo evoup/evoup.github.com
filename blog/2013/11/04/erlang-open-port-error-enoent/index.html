@@ -5,11 +5,22 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>关于头文件互相包含的解决方法 - Evoup`s Blog</title>
+  <title>erlang open_port 错误之error enoent - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。 我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define &hellip;">
+  <meta name="description" content="今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。 问题重现： 在open_port处，查看日志报错如下： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+[rrddir ok]^
+[ResRrd:{error,{enoent,[{ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +29,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/09/23/header-file-refered-by-each-other">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -68,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">关于头文件互相包含的解决方法</h1>
+      <h1 class="entry-title">Erlang Open_port 错误之error Enoent</h1>
     
     
       <p class="meta">
@@ -84,66 +95,21 @@
   
 
 
-<time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<time datetime="2013-11-04T11:04:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
+<div class="entry-content"><p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
 
-<p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
+<h3>问题重现：</h3>
 
 <!-- more -->
 
 
-
-
-<hr>
-
-
-<p>不要在.h里互相包含头文件.</p>
-
-<p>可以在另一个A的.h里声明一下class B,然后用B的指针就可以.包头文件放在A的cpp里包含就可以了.
-</hr>
-声明的时候只要在cls_enemy.h里面加上一句class class_player;就可以了。这样cls_enemy.h里就不要去包含cls_player.h了，而cls_player.h则照旧包含cls_enemy.h。但是在设计的时候发现还不行。</p>
-
-<p>总结，如果2个类是差不多的类，最好放在一个文件里。</p>
-
-<p>java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
-这样子大概会这么写</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">cls_player</span><span class="o">.</span><span class="na">java</span>
-</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">...</span>
-</span><span class='line'><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
-</span><span class='line'>   <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后看搜到了这篇文章
-<a href="http://topic.csdn.net/t/20051106/18/4375160.html">http://topic.csdn.net/t/20051106/18/4375160.html</a></p>
-
-<p><a href="http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4">http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4</a></p>
-
-<hr>
-
-
-<h2>正解</h2>
-
-<p>现在我总结一下问题的解决过程和方法：</p>
-
-<p>方法一：利用友元类</p>
-
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>在open_port处，查看日志报错如下：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -153,84 +119,95 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">rrddir</span> <span class="n">ok</span><span class="p">]</span><span class="err">^</span>
+</span><span class='line'><span class="p">[</span><span class="nv">ResRrd</span><span class="p">:{</span><span class="n">error</span><span class="p">,{</span><span class="n">enoent</span><span class="p">,[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">open_port</span><span class="p">,</span>
+</span><span class='line'>                                <span class="p">[{</span><span class="n">spawn_executable</span><span class="p">,</span><span class="s">&quot;/usr/local/bin/rrdtool&quot;</span><span class="p">},</span><span class="err">^</span>
+</span><span class='line'>                                 <span class="p">[{</span><span class="n">line</span><span class="p">,</span><span class="mi">1024</span><span class="p">},{</span><span class="n">args</span><span class="p">,[</span><span class="s">&quot;-&quot;</span><span class="p">]}]],</span><span class="err">^</span>
+</span><span class='line'>                                <span class="p">[]},</span><span class="err">^</span><span class="nv">M</span>
+</span><span class='line'>                        <span class="p">{</span><span class="n">rrdtool</span><span class="p">,</span><span class="n">init</span><span class="p">,</span><span class="mi">1</span><span class="p">,[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;src/rrdtool.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">83</span><span class="p">}]},</span>
+</span><span class='line'>                        <span class="p">{</span><span class="n">gen_server</span><span class="p">,</span><span class="n">init_it</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="err">^</span><span class="nv">M</span>
+</span><span class='line'>                                    <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;gen_server.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">304</span><span class="p">}]},</span>
+</span><span class='line'>                        <span class="p">{</span><span class="n">proc_lib</span><span class="p">,</span><span class="n">init_p_do_apply</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span>
+</span><span class='line'>                                  <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;proc_lib.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">227</span><span class="p">}]}]}}]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题</p>
+
+<figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">%% @hidden</span>
+</span><span class='line'><span class="go">init([RRDTool]) -&gt;</span>
+</span><span class='line'><span class="go">    Port = open_port({spawn_executable, RRDTool}, [{line, 1024}, {args, [&quot;-&quot;]}]),</span>
+</span><span class='line'><span class="go">    {ok, Port}.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再定位到上层看gen_server的start函数</p>
+
+<figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='erl'><span class='line'><span class="go">start() -&gt;</span>
+</span><span class='line'><span class="go">    gen_server:start(?MODULE, [os:find_executable(&quot;rrdtool&quot;)], []).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker &lt;tobi@oetiker.ch&gt;
+</span><span class='line'>               Compiled Oct 22 2012 11:33:26
 </span><span class='line'>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+</span><span class='line'>Usage: rrdtool <span class="o">[</span>options<span class="o">]</span> <span class="nb">command </span>command_options
+</span><span class='line'>Valid commands: create, update, updatev, graph, graphv,  dump, restore,
+</span><span class='line'>                last, lastupdate, first, info, fetch, tune,
+</span><span class='line'>                resize, xport, flushcached
+</span><span class='line'>
+</span><span class='line'>RRDtool is distributed under the Terms of the GNU General
+</span><span class='line'>Public License Version 2. <span class="o">(</span>www.gnu.org/copyleft/gpl.html<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>For more information <span class="nb">read </span>the RRD manpages
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在另一个类中可以这样声明:</p>
+<p>已经装好了啊？那为什么还要报错，难道是做了alias</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;A.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yin@yin-arch monitorserver2<span class="o">]</span>&gt;alias rrdtool
+</span><span class='line'>/usr/lib64/rrdtool/bin/rrdtool
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
+<p>果不其然</p>
 
-<p>方法二：</p>
+<h3>解决方法</h3>
 
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>在/usr/local/bin/目录下做一个软连接</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在另一个类中可以这样声明:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在cb.cpp文件中包含头文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;ca.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
+<p>再次运行，enoent问题解决。</p>
 </div>
 
 
@@ -253,12 +230,12 @@
   
 
 
-<time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<time datetime="2013-11-04T11:04:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
+    <a class='category' href='/blog/categories/erlang/'>erlang</a>
   
 </span>
 
@@ -267,7 +244,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2009/09/23/header-file-refered-by-each-other/" data-via="" data-counturl="http://evoupsight.com/blog/2009/09/23/header-file-refered-by-each-other/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/" data-via="" data-counturl="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/" >Tweet</a>
   
   
   
@@ -283,10 +260,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: PHP之call_user_func动态调用函数">&laquo; PHP之call_user_func动态调用函数</a>
+        <a class="basic-alignment left" href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/" title="Previous Post: 用haproxy分单个端口到多个应用">&laquo; 用haproxy分单个端口到多个应用</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2009/10/06/win32-c-call-python/" title="Next Post: 关于win32程序调用python脚本的发布问题">关于win32程序调用python脚本的发布问题 &raquo;</a>
       
     </p>
   </footer>
