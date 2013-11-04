@@ -3,7 +3,7 @@ layout: post
 title: "erlang open_port 错误之error enoent"
 date: 2013-11-04 11:04
 comments: true
-categories: erlang 
+categories: [erlang,rrdtool] 
 ---
 今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。
 
