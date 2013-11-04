@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "HADOOP完全分布式搭建"
+title: "HADOOP完全分布式搭建(VMware版)"
 date: 2013-11-04 15:28
 comments: true
 categories:          hadoop
@@ -51,6 +51,9 @@ java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
 ```
 
 freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）
+
+hadoop所有操作都是用hadoop帐号，下面添加
+
 ```bash
 linux:# groupadd hadoop
 freebsd:# pw groupadd hadoop
@@ -183,7 +186,15 @@ vi  hadoop
 sudo /etc/init.d/iptables stop
 sudo /sbin/chkconfig iptables off
 ```
-
+启动：
+```bash
+bin/start-all.sh
+```
+或者只启动dfs和mapreduce
+```bash
+bin/start-dfs.sh
+bin/start-mapred.sh
+```
 最后发一个jps的进程图
 
 ![Alt text](/images/evoup/hadoop_vmware01.png)
