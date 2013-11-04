@@ -9,8 +9,6 @@ categories:          hadoop
 vmware版本8.0.4 build-744019
 首先准备3台虚拟机
 
- <!-- more -->
- 
 ![Alt text](/images/evoup/hadoop_vmware.png)
 
 ```
@@ -28,6 +26,8 @@ vmware版本8.0.4 build-744019
  |             |                  |                                   |
   '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ```
+
+ <!-- more -->
 
 Ps:
 为节省资源关闭点不必要的服务
