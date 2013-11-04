@@ -23,7 +23,7 @@ categories: erlang
                                   [{file,"proc_lib.erl"},{line,227}]}]}}]
 ```
 怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题
-{% codeblock  rrdtool.erl start:81 %}
+{% codeblock  rrdtool.erl lang:erlang start:81 %}
 %% @hidden
 init([RRDTool]) ->
     Port = open_port({spawn_executable, RRDTool}, [{line, 1024}, {args, ["-"]}]),
@@ -31,7 +31,7 @@ init([RRDTool]) ->
 {% endcodeblock %}
 
 再定位到上层看gen_server的start函数
-{% codeblock  rrdtool.erl start:55 %}
+{% codeblock  rrdtool.erl lang:erlang start:55 %}
 start() ->
     gen_server:start(?MODULE, [os:find_executable("rrdtool")], []).
 {% endcodeblock %}
