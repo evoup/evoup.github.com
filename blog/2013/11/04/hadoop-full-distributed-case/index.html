@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>HADOOP完全分布式搭建 - Evoup`s Blog</title>
+  <title>HADOOP完全分布式搭建(VMware版) - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -81,7 +81,7 @@
   
   <header>
     
-      <h1 class="entry-title">HADOOP完全分布式搭建</h1>
+      <h1 class="entry-title">HADOOP完全分布式搭建(VMware版)</h1>
     
     
       <p class="meta">
@@ -172,6 +172,8 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 
 
 <p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
+
+<p>hadoop所有操作都是用hadoop帐号，下面添加</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -384,6 +386,22 @@ vi  hadoop
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>启动：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-all.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者只启动dfs和mapreduce</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-dfs.sh
+</span><span class='line'>bin/start-mapred.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
 <p>最后发一个jps的进程图</p>
 
 <p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
@@ -455,7 +473,7 @@ vi  hadoop
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/11/04/hadoop-full-distributed-case/">HADOOP完全分布式搭建</a>
+        <a href="/blog/2013/11/04/hadoop-full-distributed-case/">HADOOP完全分布式搭建(VMware版)</a>
       </li>
     
       <li class="post">

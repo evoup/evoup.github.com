@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-04T16:10:05+08:00</updated>
+  <updated>2013-11-04T16:20:43+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[HADOOP完全分布式搭建]]></title>
+    <title type="html"><![CDATA[HADOOP完全分布式搭建(VMware版)]]></title>
     <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
     <updated>2013-11-04T15:28:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
@@ -70,8 +70,11 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 
 <p>```</p>
 
-<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）
-```bash
+<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
+
+<p>hadoop所有操作都是用hadoop帐号，下面添加</p>
+
+<p>```bash
 linux:# groupadd hadoop
 freebsd:# pw groupadd hadoop
 linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
@@ -211,9 +214,17 @@ vi  hadoop
 <code>bash
 sudo /etc/init.d/iptables stop
 sudo /sbin/chkconfig iptables off
-</code></p>
-
-<p>最后发一个jps的进程图</p>
+</code>
+启动：
+<code>bash
+bin/start-all.sh
+</code>
+或者只启动dfs和mapreduce
+<code>bash
+bin/start-dfs.sh
+bin/start-mapred.sh
+</code>
+最后发一个jps的进程图</p>
 
 <p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
 ]]></content>
