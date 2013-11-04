@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-04T16:20:43+08:00</updated>
+  <updated>2013-11-04T16:39:41+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,14 +14,193 @@
 
   
   <entry>
+    <title type="html"><![CDATA[HBASE完全分布式搭建(VMware版)]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case/"/>
+    <updated>2013-11-04T16:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a></p>
+
+<p>参考 <a href="http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html">http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html</a></p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /u01/app
+</span><span class='line'>tar xzf hbase-0.90.6.tgz
+</span><span class='line'>ln -s hbase-0.90.6 hbase
+</span><span class='line'><span class="nb">cd </span>hbase/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑hbase-env.sh</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HBASE_OPTS</span><span class="o">=</span><span class="s2">&quot;-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode&quot;</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_29
+</span><span class='line'><span class="nb">export </span><span class="nv">HBASE_MANAGES_ZK</span><span class="o">=</span><span class="nb">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。</p>
+
+<p>编辑hbase-site.xml</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
+</span><span class='line'><span class="c">&lt;!--</span>
+</span><span class='line'><span class="c">/**</span>
+</span><span class='line'><span class="c"> * Copyright 2010 The Apache Software Foundation</span>
+</span><span class='line'><span class="c"> *</span>
+</span><span class='line'><span class="c"> * Licensed to the Apache Software Foundation (ASF) under one</span>
+</span><span class='line'><span class="c"> * or more contributor license agreements.  See the NOTICE file</span>
+</span><span class='line'><span class="c"> * distributed with this work for additional information</span>
+</span><span class='line'><span class="c"> * regarding copyright ownership.  The ASF licenses this file</span>
+</span><span class='line'><span class="c"> * to you under the Apache License, Version 2.0 (the</span>
+</span><span class='line'><span class="c"> * &quot;License&quot;); you may not use this file except in compliance</span>
+</span><span class='line'><span class="c"> * with the License.  You may obtain a copy of the License at</span>
+</span><span class='line'><span class="c"> *</span>
+</span><span class='line'><span class="c"> *     http://www.apache.org/licenses/LICENSE-2.0</span>
+</span><span class='line'><span class="c"> *</span>
+</span><span class='line'><span class="c"> * Unless required by applicable law or agreed to in writing, software</span>
+</span><span class='line'><span class="c"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+</span><span class='line'><span class="c"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+</span><span class='line'><span class="c"> * See the License for the specific language governing permissions and</span>
+</span><span class='line'><span class="c"> * limitations under the License.</span>
+</span><span class='line'><span class="c"> */</span>
+</span><span class='line'><span class="c">--&gt;</span>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.rootdir<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>hdfs://mdn2.net:9024/hbase<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.cluster.distributed<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.master<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn2.net:60000<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.zookeeper.quorum<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn2.net,mdn2_datanode1.net,mdn2_datanode2.net<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意点：
+ 1.其中首先需要注意hdfs://mdn2.net:9024/hbase这里，必须与你的Hadoop集群的core-site.xml文件配置保持完全一致才行，如果你Hadoop的hdfs使用了其它端口，请在这里也修改。再者就是Hbase该项并不识别机器IP，只能使用机器hostname才可行，即若使用IP是会抛出java错误。
+ 2.hbase.zookeeper.quorum 的个数必须是奇数。</p>
+
+<p>修改regionservers文件（同hadoop的slaves文件）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
+</span><span class='line'>mdn2_datanode2.net
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后分发到各点，就可以启动了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start hbase
+</span><span class='line'>bin/hbase shell
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报错
+ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to connect to ZooKeeper but the connection closes immediately. This could be a sign that the server has too many connections (30 is the default). Consider inspecting your ZK server logs for that error and then make sure you are reusing HBaseConfiguration as often as you can. See HTable&rsquo;s javadoc for more information.
+看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑~/.profile,加入关于zk环境变量的设置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span><span class="s2">&quot;/u01/app/zookeeper/&quot;</span>
+</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ZOOKEEPER_HOME</span>/bin:<span class="nv">$PATH</span>
+</span><span class='line'><span class="nb">export </span>PATH
+</span><span class='line'><span class="nb">cd</span> /u01/app/zookeeper/conf
+</span><span class='line'>cp zoo_sample.cfg zoo.cfg
+</span><span class='line'><span class="nb">cd</span> ../bin
+</span><span class='line'>./zkServer.sh start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/hbase_vmware.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[HADOOP完全分布式搭建(VMware版)]]></title>
     <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
     <updated>2013-11-04T15:28:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
     <content type="html"><![CDATA[<p>vmware版本8.0.4 build-744019
 首先准备3台虚拟机</p>
-
-<p> <!-- more --></p>
 
 <p><img src="http://evoupsight.com/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
 
@@ -52,6 +231,8 @@
 </span><span class='line'> |             |                  |                                   |
 </span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
 
+
+<p> <!-- more --></p>
 
 <p>Ps:
 为节省资源关闭点不必要的服务</p>
@@ -2965,174 +3146,6 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 
 <p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[log4erl 安装使用]]></title>
-    <link href="http://evoupsight.com/blog/2013/02/04/log4erl-install-using/"/>
-    <updated>2013-02-04T16:57:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/02/04/log4erl-install-using</id>
-    <content type="html"><![CDATA[<p>目前项目急需一套可记录到文件并能自动轮询的机制的日志系统，考虑良久，最后置自带gen_event和标准日志函数于不顾，决定用log4erl。</p>
-
-<!-- more -->
-
-
-<p>支持多日志</p>
-
-<p>当前文件Appender仅支持基于大小的日志文件滚动</p>
-
-<p>支持默认Logger,未指定Logger时系统提供默认Logger</p>
-
-<p>5个预定义的日志级别(debug, info, warn, error, fatal)</p>
-
-<p>一个error_logger的日志处理器</p>
-
-<p>支持用户指定日志级别</p>
-
-<p>支持日志格式化</p>
-
-<p>支持控制台日志</p>
-
-<p>支持smtp formatter</p>
-
-<p>支持XML格式的日志</p>
-
-<p>支持syslog</p>
-
-<p>支持在运行时改变Appender的格式和级别.</p>
-
-<p>下载地址：<a href="https://github.com/ahmednawras/log4erl">https://github.com/ahmednawras/log4erl</a></p>
-
-<p>官方手册：<a href="http://code.google.com/p/log4erl/wiki/Log4erl_Manual_2">http://code.google.com/p/log4erl/wiki/Log4erl_Manual_2</a></p>
-
-<p>安装log4erl</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>log4erl
-</span><span class='line'>make
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装的过程中会要求mochiweb的库文件也被安装 Dependency not available: mochiweb-1.5.1</p>
-
-<p>只需要先make depends就可以了。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>log4erl
-</span><span class='line'>erl
-</span><span class='line'>&gt; make:all<span class="o">([{</span>outdir,<span class="s2">&quot;../ebin&quot;</span><span class="o">}])</span>.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后安装到erlang的库文件中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>cp -Rf log4erl /usr/local/lib/erlang/lib/log4erl
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>进入erl应用目录后</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>erl
-</span><span class='line'>&gt; application:start<span class="o">(</span>log4erl<span class="o">)</span>.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后创建好应用的log配置文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">&gt;</span> <span class="nn">log4erl</span><span class="p">:</span><span class="nf">conf</span><span class="p">(</span><span class="s">&quot;priv/log4erl.conf&quot;</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这里说一句，这是在log4erl的目录，如果是自己的应用，到priv目录下创建log4erl.conf就可以了。log4j默认提供了2个配置文件，可以根据需要自己选择一个进行修改，文章最后提供了这2个文件。</p>
-
-<p>或者可以使用编程方式来动态配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">&gt;</span> <span class="nn">log4erl</span><span class="p">:</span><span class="nf">add_logger</span><span class="p">(</span><span class="n">messages_log</span><span class="p">).</span>
-</span><span class='line'><span class="o">&gt;</span> <span class="nn">log4erl</span><span class="p">:</span><span class="nf">add_console_appender</span><span class="p">(</span><span class="n">messages_log</span><span class="p">,</span> <span class="n">cmd_logs</span><span class="p">,</span> <span class="p">{</span><span class="n">warn</span><span class="p">,</span> <span class="s">&quot;[%L] %l%n&quot;</span><span class="p">}).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>API的使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">&gt;</span> <span class="nn">log4erl</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s">&quot;Information message&quot;</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>日志的等级</p>
-
-<p>all = debug  &lt; info &lt; warn &lt; error &lt; fatal &lt; none</p>
-
-<p>shell下的测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">erl</span>
-</span><span class='line'><span class="o">&gt;</span><span class="nn">application</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="n">log4erl</span><span class="p">).</span>
-</span><span class='line'><span class="o">&gt;</span><span class="nn">log4erl_conf</span><span class="p">:</span><span class="nf">conf</span><span class="p">(</span><span class="s">&quot;/path/to/conf/file&quot;</span><span class="p">).</span>
-</span><span class='line'><span class="o">&gt;</span><span class="nn">log4erl</span><span class="p">:</span><span class="nf">log</span><span class="p">(</span><span class="n">warn</span><span class="p">,</span><span class="s">&quot;log something&quot;</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr>
-
-
-<p>最后提供1个默认配置文件，可以结合官方文档进行设置。一般log4erl_conf:conf只接收其中之一的文件路径。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% Default logger</span>
-</span><span class='line'><span class="c">%% it includes a file appender and a console appender</span>
-</span><span class='line'><span class="n">logger</span><span class="p">{</span>
-</span><span class='line'>        <span class="n">file_appender</span> <span class="n">app2</span><span class="p">{</span>
-</span><span class='line'>                <span class="n">dir</span> <span class="o">=</span> <span class="s">&quot;/tmp/&quot;</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">level</span> <span class="o">=</span> <span class="n">info</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">file</span> <span class="o">=</span> <span class="n">madmonitor2</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">type</span> <span class="o">=</span> <span class="n">time</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">max</span> <span class="o">=</span> <span class="mi">600</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">suffix</span> <span class="o">=</span> <span class="n">log</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">rotation</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">format</span> <span class="o">=</span> <span class="n">&#39;[%L]: %S, %l%n&#39;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">console_appender</span> <span class="n">app1</span><span class="p">{</span>
-</span><span class='line'>                <span class="n">level</span> <span class="o">=</span> <span class="n">warn</span><span class="p">,</span>
-</span><span class='line'>                <span class="n">format</span> <span class="o">=</span> <span class="n">&#39;%T %j [%L] %l%n&#39;</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其他注意：使用记录到文件的方式，不支持中文！事先最好全部转换到英文格式。</p>
 ]]></content>
   </entry>
   
