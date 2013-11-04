@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-04T11:57:22+08:00</updated>
+  <updated>2013-11-04T16:10:05+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,297 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[HADOOP完全分布式搭建]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
+    <updated>2013-11-04T15:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>vmware版本8.0.4 build-744019
+首先准备3台虚拟机</p>
+
+<p> <!-- more --></p>
+
+<p><img src="http://evoupsight.com/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> |    usage    |        IP        |             Hostname              |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | namenode    | 192.168.174.132  |           mdn2.net                |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ps:
+为节省资源关闭点不必要的服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
+</span><span class='line'><span class="k">for </span>SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
+</span><span class='line'><span class="k">do</span> /sbin/chkconfig <span class="k">${</span><span class="nv">SERVICES</span><span class="k">}</span> off;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>准备工作</h3>
+
+<p>先安装JDK1.6
+linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#rpm -qa | grep jdk</span>
+</span><span class='line'>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+</span><span class='line'><span class="c">#rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</span>
+</span><span class='line'><span class="c">#sudo chmod +x jdk-6u35-linux-x64-rpm.bin</span>
+</span><span class='line'><span class="c">#./jdk-6u35-linux-x64-rpm.bin</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>linux:# groupadd hadoop
+</span><span class='line'>freebsd:# pw groupadd hadoop
+</span><span class='line'>linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
+</span><span class='line'>freebsd:# pw adduser hadoop -g hadoop -d /home/hadoop -m -s /bin/bash
+</span><span class='line'>
+</span><span class='line'>all:# mkdir -p /u01/app
+</span><span class='line'>all:# chgrp -R hadoop /u01/app
+</span><span class='line'>all:# chown -R hadoop /u01/app
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>环境变量</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span>vi ~/.profile
+</span><span class='line'>all:export <span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
+</span><span class='line'>all:export <span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>进行免密码的ssh登录设置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
+</span><span class='line'>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+</span><span class='line'>chmod 600 ~/.ssh/authorized_keys
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>到此准备工作完成</p>
+
+<p>安装Hadoop</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span><span class="nb">cd</span> /u01/app
+</span><span class='line'>all:<span class="nv">$ </span>tar zxf hadoop-0.20.203.0rc1.tar.gz
+</span><span class='line'>all:<span class="nv">$ </span>ln -s hadoop-0.20.203.0 hadoop
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>正式开始</h3>
+
+<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
+(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Do not remove the following line, or various programs</span>
+</span><span class='line'><span class="c"># that require network functionality will fail.</span>
+</span><span class='line'>
+</span><span class='line'>127.0.0.1       localhost.localdomain localhost
+</span><span class='line'>::1             localhost6.localdomain6 localhost6
+</span><span class='line'>192.168.174.132 mdn2.net
+</span><span class='line'>192.168.174.135 mdn2_datanode1.net
+</span><span class='line'>192.168.174.136 mdn2_datanode2.net
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
+</span><span class='line'><span class="nb">export </span><span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/:$PATH&quot;</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_37/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再编辑core-site.xml</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>fs.default.name<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>hdfs://mdn2.net:9024<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hadoopTmp<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
+
+<p>再编辑hdfs-site.xml</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>1<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.data.dir<span class="nt">&lt;/name&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hdfsdata<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
+</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录</p>
+
+<p>master里</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2.net
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>slaves里</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
+</span><span class='line'>mdn2_datanode2.net
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意点：
+修改hadoop-0.20.203.0/bin下的hadoop.
+vi  hadoop
+查找 –jvm . vi 下的命令模式： :/-jvm
+将-jvm server改成 –server .
+因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
+
+<p>到namenode上格式化hdfs</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/bin/hadoop namenode -format
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/init.d/iptables stop
+</span><span class='line'>sudo /sbin/chkconfig iptables off
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后发一个jps的进程图</p>
+
+<p><img src="http://evoupsight.com/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[erlang open_port 错误之error enoent]]></title>
@@ -2824,195 +3115,6 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 
 <p>其他注意：使用记录到文件的方式，不支持中文！事先最好全部转换到英文格式。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[apache Mina 使用小记]]></title>
-    <link href="http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world/"/>
-    <updated>2013-01-14T14:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world</id>
-    <content type="html"><![CDATA[<p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME <span class="s2">&quot;/usr/local/diablo-jdk1.6.0/&quot;</span>
-</span><span class='line'>setenv JAVA_BIN <span class="s2">&quot;/usr/local/bin/&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>下载mina</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/home/evoup/monsrvd-2.1/test/
-</span><span class='line'>fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz
-</span><span class='line'>tar xzf apache-mina-2.0.7-bin.tar.gz
-</span><span class='line'>cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
-</span><span class='line'>cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>除此之外还需要slf4j这个是mina需要使用的日志库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
-</span><span class='line'>tar xzf slf4j-1.7.2.tar.gz
-</span><span class='line'>cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
-</span><span class='line'>cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>设置好JAVA的CLASSPATH</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv CLASSPATH <span class="s2">&quot;/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:.&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>   <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
-</span><span class='line'>   <span class="o">{</span>
-</span><span class='line'>       <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
-</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
-</span><span class='line'>   <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span> <span class="o">{</span>
-</span><span class='line'>    <span class="kd">static</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">TimeServerHandler</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-</span><span class='line'>   <span class="c1">//static Logger logger = Logger.getLogger(TimeServerHandler.class);</span>
-</span><span class='line'>   <span class="c1">//异常处理</span>
-</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-</span><span class='line'>       <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
-</span><span class='line'>   <span class="o">}</span>
-</span><span class='line'>   <span class="c1">//对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期</span>
-</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-</span><span class='line'>       <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
-</span><span class='line'>       <span class="k">if</span> <span class="o">(</span><span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">))</span> <span class="o">{</span>
-</span><span class='line'>           <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
-</span><span class='line'>           <span class="k">return</span><span class="o">;</span>
-</span><span class='line'>       <span class="o">}</span>
-</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Rec:&quot;</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
-</span><span class='line'>       <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
-</span><span class='line'>       <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
-</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
-</span><span class='line'>   <span class="o">}</span>
-</span><span class='line'>   <span class="c1">//当连接空闲时的处理</span>
-</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
-</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span><span class="n">status</span><span class="o">));</span>
-</span><span class='line'>   <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">[</span><span class="n">evoup</span><span class="nd">@myhost</span><span class="o">]&gt;</span><span class="n">telnet</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span> <span class="mi">9123</span>
-</span><span class='line'><span class="n">Trying</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">...</span>
-</span><span class='line'><span class="n">Connected</span> <span class="n">to</span> <span class="n">localhost</span><span class="o">.</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">Escape</span> <span class="n">character</span> <span class="n">is</span> <span class="err">&#39;</span><span class="o">^]</span><span class="err">&#39;</span><span class="o">.</span>
-</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
-</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
-</span></code></pre></td></tr></table></div></figure>
-
 ]]></content>
   </entry>
   

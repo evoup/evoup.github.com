@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-11-04T16:10:05+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HADOOP完全分布式搭建]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
+    <updated>2013-11-04T15:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>vmware版本8.0.4 build-744019
+首先准备3台虚拟机</p>
+
+<p> <!-- more --></p>
+
+<p><img src="/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
+
+<p><code>
+ ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
+ |    usage    |        IP        |             Hostname              |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | namenode    | 192.168.174.132  |           mdn2.net                |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+ |             |                  |                                   |
+  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</code></p>
+
+<p>Ps:
+为节省资源关闭点不必要的服务
+```bash</p>
+
+<h1>!/bin/bash</h1>
+
+<p>for SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
+do /sbin/chkconfig ${SERVICES} off;
+done
+```</p>
+
+<h3>准备工作</h3>
+
+<p>先安装JDK1.6
+linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
+```bash</p>
+
+<h1>rpm -qa | grep jdk</h1>
+
+<p>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</p>
+
+<h1>rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</h1>
+
+<h1>sudo chmod +x jdk-6u35-linux-x64-rpm.bin</h1>
+
+<h1>./jdk-6u35-linux-x64-rpm.bin</h1>
+
+<p>```</p>
+
+<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）
+```bash
+linux:# groupadd hadoop
+freebsd:# pw groupadd hadoop
+linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
+freebsd:# pw adduser hadoop -g hadoop -d /home/hadoop -m -s /bin/bash</p>
+
+<p>all:# mkdir -p /u01/app
+all:# chgrp -R hadoop /u01/app
+all:# chown -R hadoop /u01/app
+```</p>
+
+<p>环境变量
+<code>bash
+all:$ vi ~/.profile
+all:export HADOOP_HOME=/u01/app/hadoop
+all:export HBASE_HOME=/u01/app/hbase
+</code></p>
+
+<p>进行免密码的ssh登录设置
+<code>bash
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+</code>
+到此准备工作完成</p>
+
+<p>安装Hadoop
+<code>bash
+all:$ cd /u01/app
+all:$ tar zxf hadoop-0.20.203.0rc1.tar.gz
+all:$ ln -s hadoop-0.20.203.0 hadoop
+</code></p>
+
+<h3>正式开始</h3>
+
+<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
+(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
+
+<p>```bash</p>
+
+<h1>Do not remove the following line, or various programs</h1>
+
+<h1>that require network functionality will fail.</h1>
+
+<p>127.0.0.1       localhost.localdomain localhost
+::1             localhost6.localdomain6 localhost6
+192.168.174.132 mdn2.net
+192.168.174.135 mdn2_datanode1.net
+192.168.174.136 mdn2_datanode2.net
+```</p>
+
+<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码
+<code>bash
+export HADOOP_HOME=/u01/app/hadoop
+export HBASE_HOME=/u01/app/hbase
+export PATH="/usr/java/jdk1.6.0_37/bin/:$PATH"
+export JAVA_HOME="/usr/java/jdk1.6.0_37/bin/"
+</code></p>
+
+<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录
+<code>bash
+export JAVA_HOME=/usr/java/jdk1.6.0_37/
+</code></p>
+
+<p>再编辑core-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;fs.default.name&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn2.net:9024&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+    &lt;value&gt;/u01/app/hadoopTmp&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
+
+<p>再编辑hdfs-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;1&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.data.dir&lt;/name&gt;
+    &lt;value&gt;/u01/app/hdfsdata&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录</p>
+
+<p>master里
+<code>bash
+mdn2.net
+</code></p>
+
+<p>slaves里
+<code>bash
+mdn2_datanode1.net
+mdn2_datanode2.net
+</code></p>
+
+<p>注意点：
+修改hadoop-0.20.203.0/bin下的hadoop.
+vi  hadoop
+查找 –jvm . vi 下的命令模式： :/-jvm
+将-jvm server改成 –server .
+因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
+
+<p>到namenode上格式化hdfs
+<code>bash
+/bin/hadoop namenode -format
+</code>
+注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭
+<code>bash
+sudo /etc/init.d/iptables stop
+sudo /sbin/chkconfig iptables off
+</code></p>
+
+<p>最后发一个jps的进程图</p>
+
+<p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+</feed>
