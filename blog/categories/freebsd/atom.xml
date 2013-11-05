@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-04T17:49:53+08:00</updated>
+  <updated>2013-11-05T14:11:02+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,87 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装vmware-tool]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/"/>
+    <updated>2013-11-05T13:22:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool</id>
+    <content type="html"><![CDATA[<p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+
+<!-- more -->
+
+
+<h3>消极的方法</h3>
+
+<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
+
+<p>在crontab内加入
+<code>bash
+*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
+</code>
+以及在/etc/rc.conf中
+<code>bash
+ntpdate_enable="YES"
+</code></p>
+
+<h3>积极的方法</h3>
+
+<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
+首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
+vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
+```bash
+cd /usr/port/dist
+sudo fetch <a href="ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz">ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz</a>
+sudo pkg_add compat6x-amd64.tbz</p>
+
+<hr />
+
+<ul>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>Do not forget to add COMPAT_FREEBSD6 into                                   *</li>
+<li>your kernel configuration (enabled by default).                             *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>To configure and recompile your kernel see:                                 *</li>
+<li><a href="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html">http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html</a> *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+</ul>
+
+
+<hr />
+
+<p><code>
+安装依赖库后，切换到root后，执行如下指令：
+</code>bash
+mount /cdrom
+cd /tmp
+tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
+cd vmware-tools-distrib
+./vmware-install.pl
+<code>
+这样vmware-tool就搞定了。
+最后为了保险起先，关闭系统后，编辑.vmx文件
+加上下面的时间同步的代码
+</code>bash
+tools.syncTime = &ldquo;TRUE&rdquo;
+time.synchronize.continue = &ldquo;TRUE&rdquo;
+time.synchronize.restore = &ldquo;TRUE&rdquo;
+time.synchronize.resume.disk = &ldquo;TRUE&rdquo;
+time.synchronize.shrink = &ldquo;TRUE&rdquo;
+time.synchronize.tools.startup = &ldquo;TRUE&rdquo;
+time.synchronize.tools.enable = &ldquo;TRUE&rdquo;
+time.synchronize.resume.host = &ldquo;TRUE&rdquo;
+```</p>
+
+<p>参考链接</p>
+
+<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
+<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[局域网计算机和vmware虚拟机互ping]]></title>
