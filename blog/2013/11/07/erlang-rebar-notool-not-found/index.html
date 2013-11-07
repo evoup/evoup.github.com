@@ -5,12 +5,18 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>头文件中变量赋值方法 - Evoup`s Blog</title>
+  <title>rebar生成发布包后找不到noodtool - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="先看这段文字 今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
-这里还涉及到另一个问题，需要提前说明， &hellip;">
+  <meta name="description" content="今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告 1
+2
+3
+4
+5
+6
+[evoup@host63i386 erlang]&gt;sudo rel/madmonitor2/bin/madmonitor2 start
+current node: madmonitor2@192. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +25,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/12/15/header-file-variable-assign">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -69,7 +75,7 @@
   
   <header>
     
-      <h1 class="entry-title">头文件中变量赋值方法</h1>
+      <h1 class="entry-title">Rebar生成发布包后找不到noodtool</h1>
     
     
       <p class="meta">
@@ -85,45 +91,55 @@
   
 
 
-<time datetime="2010-12-15T00:04:00+08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2010</time>
+<time datetime="2013-11-07T15:08:00+08:00" pubdate data-updated="true">Nov 7<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>先看这段文字</p>
+<div class="entry-content"><p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">evoup</span><span class="p">@</span><span class="n">host63i386</span> <span class="n">erlang</span><span class="p">]</span><span class="o">&gt;</span><span class="n">sudo</span> <span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">madmonitor2</span> <span class="n">start</span>
+</span><span class='line'><span class="n">current</span> <span class="nb">node</span><span class="p">:</span> <span class="n">madmonitor2</span><span class="p">@</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">216</span><span class="p">.</span><span class="mi">165</span>
+</span><span class='line'><span class="n">release</span> <span class="n">vm</span><span class="p">.</span><span class="n">args</span> <span class="n">file</span> <span class="n">empty</span><span class="p">,</span><span class="n">recopy</span>
+</span><span class='line'><span class="nn">escript</span><span class="p">:</span> <span class="nv">Failed</span> <span class="n">to</span> <span class="n">open</span> <span class="nn">file</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">evoup</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">nodetool</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <!-- more -->
 
 
-
-
-<hr>
-
-
-<p>今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
-这里还涉及到另一个问题，需要提前说明，即使用预处理器避免多重包含。这里的多重包含指的是同一个文件直接或者间接的包含一个头文件多次，例如a.h包含 b.h，a.cpp同时包含a.h和b.h，a.cpp就两次包含了b.h。但由于b.h中具有避免多重包含的措施，a.cpp中还是只包含了b.h一 次。而包含的意思其实就是在预处理阶段用被包含文件的内容代替此包含语句。
-回到头文件定义变量的问题上，如果在头文件中定义了变量，避免多重包含的措施只能避免该头文件在同一个编译单元内被包含一次，在不同的编译单元内还是会被多次包含的，这样就造成了变量的重复定义。
-但是也有例外，如果const对象在编译时可以确定其值，可以将其放在头文件中定义。这么做是有原因的——const对象默认情况下是定义该变量的文件的 局部变量，这样即使此头文件被多个包含，都不会在包含这些文件中重复定义此变量，所有对于这个const对象的引用全都指向在头文件中定义的对象。如果在 const对象定义的时候声明extern，const对象就变得和普通非const对象一样，从而失去此特性（非const对象的默认属性为 extern）。
-C++中的很多用法都不是标准C++规定的，但是由于各种原因，已经是约定俗成或是惯常用法，至于原因以及除此之外的其他用法完全可以不必深究，否则很容易钻牛角尖！</p>
-
-<hr>
-
-
-<p>今天移植gamedev里文章讲到的一个例子的时候碰到了这个问题，要在头文件里给一个变量定义。</p>
-
-<p>最后这样就可以了</p>
+<p>原来是少一个nodetool文件，进到目录一看发现有2个erts
+一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
+删除之前的剩余文件</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="c1">//16Bit format for video card</span>
-</span><span class='line'><span class="k">const</span> <span class="kt">int</span> <span class="n">PixelFormat</span> <span class="o">=</span> <span class="n">PF_555</span><span class="p">;</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
-相应的在头文件里定义结构用typedef而不要去用struct！</p>
+<p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
+都给删除了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">6</span><span class="p">.</span><span class="mi">5</span><span class="o">/</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次编译，问题解决,收工:)</p>
 </div>
 
 
@@ -146,12 +162,12 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
   
 
 
-<time datetime="2010-12-15T00:04:00+08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2010</time>
+<time datetime="2013-11-07T15:08:00+08:00" pubdate data-updated="true">Nov 7<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+    <a class='category' href='/blog/categories/erlang/'>erlang</a>
   
 </span>
 
@@ -160,7 +176,7 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/12/15/header-file-variable-assign/" data-via="" data-counturl="http://evoupsight.com/blog/2010/12/15/header-file-variable-assign/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/" data-via="" data-counturl="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/" >Tweet</a>
   
   
   
@@ -176,10 +192,8 @@ C++中的很多用法都不是标准C++规定的，但是由于各种原因，�
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2010/11/30/memory-alignment/" title="Previous Post: 目前看到的对内存对齐问题最好的解释">&laquo; 目前看到的对内存对齐问题最好的解释</a>
+        <a class="basic-alignment left" href="/blog/2013/11/05/erl-crash-webtool-usage/" title="Previous Post: 使用webtool查看erl_crash.dump">&laquo; 使用webtool查看erl_crash.dump</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2011/01/16/c-common-define/" title="Next Post: C语言宏定义技巧(常用宏定义)(转)">C语言宏定义技巧(常用宏定义)(转) &raquo;</a>
       
     </p>
   </footer>

@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-05T14:26:59+08:00</updated>
+  <updated>2013-11-07T15:15:25+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,56 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[rebar生成发布包后找不到noodtool]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/"/>
+    <updated>2013-11-07T15:08:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found</id>
+    <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">evoup</span><span class="p">@</span><span class="n">host63i386</span> <span class="n">erlang</span><span class="p">]</span><span class="o">&gt;</span><span class="n">sudo</span> <span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">madmonitor2</span> <span class="n">start</span>
+</span><span class='line'><span class="n">current</span> <span class="nb">node</span><span class="p">:</span> <span class="n">madmonitor2</span><span class="p">@</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">216</span><span class="p">.</span><span class="mi">165</span>
+</span><span class='line'><span class="n">release</span> <span class="n">vm</span><span class="p">.</span><span class="n">args</span> <span class="n">file</span> <span class="n">empty</span><span class="p">,</span><span class="n">recopy</span>
+</span><span class='line'><span class="nn">escript</span><span class="p">:</span> <span class="nv">Failed</span> <span class="n">to</span> <span class="n">open</span> <span class="nn">file</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">evoup</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">nodetool</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
+
+
+<p>原来是少一个nodetool文件，进到目录一看发现有2个erts
+一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
+删除之前的剩余文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
+都给删除了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">6</span><span class="p">.</span><span class="mi">5</span><span class="o">/</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次编译，问题解决,收工:)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用webtool查看erl_crash.dump]]></title>
@@ -2849,147 +2899,6 @@ rebar.config的内容如下</p>
 <p><a href="http://cryolite.iteye.com/blog/1159448">http://cryolite.iteye.com/blog/1159448</a>  (rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧)</p>
 
 <p><a href="http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7">http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[erlang调用C库函数(NIF 方式)]]></title>
-    <link href="http://evoupsight.com/blog/2013/03/01/erlang-c-nif/"/>
-    <updated>2013-03-01T13:39:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/03/01/erlang-c-nif</id>
-    <content type="html"><![CDATA[<p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
-
-<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
-
-<!-- more -->
-
-
-<p>参考了例子和这篇文章《Erlang NIF简析》<a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
-
-<p>终于实验成功。</p>
-
-<figure class='code'><figcaption><span>cgetloadavg.c </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;erl_nif.h&quot;</span>
-</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">static</span> <span class="n">ERL_NIF_TERM</span> <span class="nf">getloadavg_ex</span><span class="p">(</span><span class="n">ErlNifEnv</span><span class="o">*</span> <span class="n">env</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="n">ERL_NIF_TERM</span> <span class="n">argv</span><span class="p">[])</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="kt">double</span> <span class="n">load</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
-</span><span class='line'>   <span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
-</span><span class='line'>   <span class="k">if</span> <span class="p">(</span><span class="n">getloadavg</span><span class="p">(</span><span class="n">load</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>       <span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;%f&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-</span><span class='line'>   <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>       <span class="n">sprintf</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="s">&quot;%f&quot;</span><span class="p">,</span> <span class="n">load</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>   <span class="k">return</span> <span class="n">enif_make_string</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">ERL_NIF_LATIN1</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">static</span> <span class="n">ErlNifFunc</span> <span class="n">nif_funcs</span><span class="p">[]</span> <span class="o">=</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="p">{</span><span class="s">&quot;getloadavg_ex&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">getloadavg_ex</span><span class="p">}</span>
-</span><span class='line'><span class="p">};</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">ERL_NIF_INIT</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">,</span><span class="n">nif_funcs</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以下写下简单的调用过程：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>还没有在app里试验，如果是标准app</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>就可以生成供NIF调用的动态链接库</p>
-
-<p>然后是erlang的，调用很简单：</p>
-
-<figure class='code'><figcaption><span>getloadtest.erl </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">).</span>
-</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">,</span> <span class="n">getloadavg_ex</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
-</span><span class='line'><span class="p">-</span><span class="ni">on_load</span><span class="p">(</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">init</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class='line'>   <span class="nn">erlang</span><span class="p">:</span><span class="nf">load_nif</span><span class="p">(</span><span class="s">&quot;./getloadtest&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">getloadavg_ex</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class='line'>   <span class="s">&quot;NIF library not loaded&quot;</span><span class="p">.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>1&gt; c<span class="o">(</span>getloadtest<span class="o">)</span>.
-</span><span class='line'>
-</span><span class='line'><span class="o">{</span>ok,getloadtest<span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>2&gt; getloadtest:getloadavg_ex<span class="o">()</span>.
-</span><span class='line'>
-</span><span class='line'><span class="s2">&quot;2.263184&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>reference:</p>
-
-<p><a href="http://www.erlang.org/doc/tutorial/nif.html">http://www.erlang.org/doc/tutorial/nif.html</a></p>
-
-<p><a href="http://www.erlang.org/doc/man/erl_nif.html">http://www.erlang.org/doc/man/erl_nif.html</a></p>
-
-<p><a href="http://blog.csdn.net/d52787790/article/details/7103288">http://blog.csdn.net/d52787790/article/details/7103288</a></p>
-
-<p><a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
-
-<p><a href="http://www.freebsd.org/cgi/man.cgi?query=getloadavg">http://www.freebsd.org/cgi/man.cgi?query=getloadavg</a></p>
 ]]></content>
   </entry>
   
