@@ -6,7 +6,7 @@ comments: true
 categories: version_control 
 ---
 
-由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。
+由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。
 
 <!-- more -->
 
@@ -38,6 +38,7 @@ yum install cvs
 groupadd cvs
 useradd -g cvs cvsroot
 passwd cvsroot
+```
 这样帐号就配置好了。
 
 ####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver
