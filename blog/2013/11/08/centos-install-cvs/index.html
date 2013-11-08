@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。 在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端 &hellip;">
+  <meta name="description" content="由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。 在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件-> &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -91,7 +91,7 @@
   </header>
 
 
-<div class="entry-content"><p>由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
+<div class="entry-content"><p>由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
 
 <!-- more -->
 
@@ -135,78 +135,78 @@ cvs-1.11.23-15.el6.x86_64
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd cvs
 </span><span class='line'>useradd -g cvs cvsroot
 </span><span class='line'>passwd cvsroot
-</span><span class='line'>这样帐号就配置好了。
-</span><span class='line'>
-</span><span class='line'><span class="c">####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash</p>
+<p>这样帐号就配置好了。</p>
 
-<h1>default: off</h1>
-
-<h1>description: The CVS service can record the history of your source \</h1>
-
-<h1>files. CVS stores all the versions of a file in a single \</h1>
-
-<h1>file in a clever way that only stores the differences \</h1>
-
-<h1>between versions.</h1>
-
-<p>service cvspserver
-{</p>
-
-<pre><code>    disable                 = no
-    port                    = 2401
-    socket_type             = stream
-    protocol                = tcp
-    wait                    = no
-    user                    = root
-    passenv                 = PATH
-    server                  = /usr/bin/cvs
-    env                     = HOME=/home/cvsroot
-    server_args             = -f --allow-root=/home/cvsroot pserver
-</code></pre>
-
-<h1>bind                    = 127.0.0.1</h1>
-
-<p>}</p>
+<h4>4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="c">####5.初始化和启动</span>
-</span><span class='line'>初始化项目仓库的命令为
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># default: off</span>
+</span><span class='line'><span class="c"># description: The CVS service can record the history of your source \</span>
+</span><span class='line'><span class="c">#              files. CVS stores all the versions of a file in a single \</span>
+</span><span class='line'><span class="c">#              file in a clever way that only stores the differences \</span>
+</span><span class='line'><span class="c">#              between versions.</span>
+</span><span class='line'>service cvspserver
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>        <span class="nv">disable</span>                 <span class="o">=</span> no
+</span><span class='line'>        <span class="nv">port</span>                    <span class="o">=</span> 2401
+</span><span class='line'>        <span class="nv">socket_type</span>             <span class="o">=</span> stream
+</span><span class='line'>        <span class="nv">protocol</span>                <span class="o">=</span> tcp
+</span><span class='line'>        <span class="nb">wait</span>                    <span class="o">=</span> no
+</span><span class='line'>        <span class="nv">user</span>                    <span class="o">=</span> root
+</span><span class='line'>        <span class="nv">passenv</span>                 <span class="o">=</span> PATH
+</span><span class='line'>        <span class="nv">server</span>                  <span class="o">=</span> /usr/bin/cvs
+</span><span class='line'>        <span class="nv">env</span>                     <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot
+</span><span class='line'>        <span class="nv">server_args</span>             <span class="o">=</span> -f --allow-root<span class="o">=</span>/home/cvsroot pserver
+</span><span class='line'><span class="c">#       bind                    = 127.0.0.1</span>
+</span><span class='line'><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash
-cvs -d /home/cvsroot init</p>
+<p>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。</p>
+
+<h4>5.初始化和启动</h4>
+
+<p>初始化项目仓库的命令为</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>就是在刚才配置的env <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot目录长噢乖创建代码仓库
-</span><span class='line'>
-</span><span class='line'>接下来重启xinetd
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cvs -d /home/cvsroot init
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash
-/etc/rc.d/init.d/xinetd restart
-&#8220;`
-测试cvs是否存在
+<p>就是在刚才配置的env = HOME=/home/cvsroot目录长噢乖创建代码仓库</p>
+
+<p>接下来重启xinetd</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/etc/rc.d/init.d/xinetd restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试cvs是否存在
 lsof -p 2401
 或者
 netstat -l | grep csv
