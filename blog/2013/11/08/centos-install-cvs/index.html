@@ -5,19 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>单例模式C语言版 - Evoup`s Blog</title>
+  <title>centos下CVS服务器的配置 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Tokyo Cabinet的源码看到的 1
-2
-3
-4
-5
-6
-7
-/* Get the global memory pool object. */
-TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
+  <meta name="description" content="由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。 在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -26,7 +18,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/06/21/singleton-c-language">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/08/centos-install-cvs">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -76,7 +68,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
   <header>
     
-      <h1 class="entry-title">单例模式C语言版</h1>
+      <h1 class="entry-title">centos下CVS服务器的配置</h1>
     
     
       <p class="meta">
@@ -92,14 +84,37 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
 
 
-<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
+<time datetime="2013-11-08T13:20:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Tokyo Cabinet的源码看到的</p>
+<div class="entry-content"><p>由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
+
+<!-- more -->
+
+
+<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端</p>
+
+<h4>1.安装xinetd</h4>
+
+<p>rpm -q xinetd
+没有安装的话
+yum install xinetd</p>
+
+<h4>2.安装cvs</h4>
+
+<p>rpm -q cvs
+我的系统显示
+cvs-1.11.23-15.el6.x86_64
+如果没有安装的话可以
+yum install cvs</p>
+
+<h4>3.配置帐号</h4>
+
+<p>切换到root，执行：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -107,27 +122,85 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
-</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
-</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd cvs
+</span><span class='line'>useradd -g cvs cvsroot
+</span><span class='line'>passwd cvsroot
+</span><span class='line'>这样帐号就配置好了。
+</span><span class='line'>
+</span><span class='line'><span class="c">####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
+<h1>default: off</h1>
+
+<h1>description: The CVS service can record the history of your source \</h1>
+
+<h1>files. CVS stores all the versions of a file in a single \</h1>
+
+<h1>file in a clever way that only stores the differences \</h1>
+
+<h1>between versions.</h1>
+
+<p>service cvspserver
+{</p>
+
+<pre><code>    disable                 = no
+    port                    = 2401
+    socket_type             = stream
+    protocol                = tcp
+    wait                    = no
+    user                    = root
+    passenv                 = PATH
+    server                  = /usr/bin/cvs
+    env                     = HOME=/home/cvsroot
+    server_args             = -f --allow-root=/home/cvsroot pserver
+</code></pre>
+
+<h1>bind                    = 127.0.0.1</h1>
+
+<p>}</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">####5.初始化和启动</span>
+</span><span class='line'>初始化项目仓库的命令为
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
+<p>bash
+cvs -d /home/cvsroot init</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>就是在刚才配置的env <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot目录长噢乖创建代码仓库
+</span><span class='line'>
+</span><span class='line'>接下来重启xinetd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+/etc/rc.d/init.d/xinetd restart
+&#8220;`
+测试cvs是否存在
+lsof -p 2401
+或者
+netstat -l | grep csv
+不能使用ps aux | grep cvs，因为这是在xinetd下！</p>
+
+<p>安装就完成了。</p>
+
+<p>接下来还要提一下客户端tortoise cvs使用的问题，需要把cvs.exe的路径加到环境变量PATH中方可使用或者把cvsnt这款软件的cvs.exe拷贝到tortoise cvs安装目录中，否则会报句柄错误。</p>
+
+<h4>参考链接：</h4>
+
+<p><a href="http://blog.csdn.net/lidongtang/article/details/8165574">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
 </div>
 
 
@@ -150,12 +223,12 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
 
 
-<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
+<time datetime="2013-11-08T13:20:00+08:00" pubdate data-updated="true">Nov 8<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+    <a class='category' href='/blog/categories/ban-ben-kong-zhi/'>版本控制</a>
   
 </span>
 
@@ -164,7 +237,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" data-via="" data-counturl="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/11/08/centos-install-cvs/" data-via="" data-counturl="http://evoupsight.com/blog/2013/11/08/centos-install-cvs/" >Tweet</a>
   
   
   
@@ -180,10 +253,8 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2009/12/23/java-concurrentmodificationexception/" title="Previous Post: java关于ConcurrentModificationException异常">&laquo; java关于ConcurrentModificationException异常</a>
+        <a class="basic-alignment left" href="/blog/2013/11/07/erlang-rebar-notool-not-found/" title="Previous Post: rebar生成发布包后找不到noodtool">&laquo; rebar生成发布包后找不到noodtool</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2010/07/23/freebsd-ctag/" title="Next Post: freebsd下如何创建和使用Ctag">freebsd下如何创建和使用Ctag &raquo;</a>
       
     </p>
   </footer>

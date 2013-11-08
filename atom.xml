@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-07T17:47:43+08:00</updated>
+  <updated>2013-11-08T14:17:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,124 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[centos下CVS服务器的配置]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/08/centos-install-cvs/"/>
+    <updated>2013-11-08T13:20:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/08/centos-install-cvs</id>
+    <content type="html"><![CDATA[<p>由于需要回顾以前的在自己的cvs上建设的一些项目把有用的部门放到github上，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
+
+<!-- more -->
+
+
+<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端</p>
+
+<h4>1.安装xinetd</h4>
+
+<p>rpm -q xinetd
+没有安装的话
+yum install xinetd</p>
+
+<h4>2.安装cvs</h4>
+
+<p>rpm -q cvs
+我的系统显示
+cvs-1.11.23-15.el6.x86_64
+如果没有安装的话可以
+yum install cvs</p>
+
+<h4>3.配置帐号</h4>
+
+<p>切换到root，执行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd cvs
+</span><span class='line'>useradd -g cvs cvsroot
+</span><span class='line'>passwd cvsroot
+</span><span class='line'>这样帐号就配置好了。
+</span><span class='line'>
+</span><span class='line'><span class="c">####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>default: off</h1>
+
+<h1>description: The CVS service can record the history of your source \</h1>
+
+<h1>files. CVS stores all the versions of a file in a single \</h1>
+
+<h1>file in a clever way that only stores the differences \</h1>
+
+<h1>between versions.</h1>
+
+<p>service cvspserver
+{</p>
+
+<pre><code>    disable                 = no
+    port                    = 2401
+    socket_type             = stream
+    protocol                = tcp
+    wait                    = no
+    user                    = root
+    passenv                 = PATH
+    server                  = /usr/bin/cvs
+    env                     = HOME=/home/cvsroot
+    server_args             = -f --allow-root=/home/cvsroot pserver
+</code></pre>
+
+<h1>bind                    = 127.0.0.1</h1>
+
+<p>}</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="c">####5.初始化和启动</span>
+</span><span class='line'>初始化项目仓库的命令为
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+cvs -d /home/cvsroot init</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>就是在刚才配置的env <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot目录长噢乖创建代码仓库
+</span><span class='line'>
+</span><span class='line'>接下来重启xinetd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+/etc/rc.d/init.d/xinetd restart
+&#8220;`
+测试cvs是否存在
+lsof -p 2401
+或者
+netstat -l | grep csv
+不能使用ps aux | grep cvs，因为这是在xinetd下！</p>
+
+<p>安装就完成了。</p>
+
+<p>接下来还要提一下客户端tortoise cvs使用的问题，需要把cvs.exe的路径加到环境变量PATH中方可使用或者把cvsnt这款软件的cvs.exe拷贝到tortoise cvs安装目录中，否则会报句柄错误。</p>
+
+<h4>参考链接：</h4>
+
+<p><a href="http://blog.csdn.net/lidongtang/article/details/8165574">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[rebar生成发布包后找不到noodtool]]></title>
@@ -2703,202 +2821,6 @@ long2ip（3232290954).
 <p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
 
 <p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[How to]使用rebar构建erlang 项目]]></title>
-    <link href="http://evoupsight.com/blog/2013/05/04/rebar-build-erlang-project/"/>
-    <updated>2013-05-04T14:41:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/05/04/rebar-build-erlang-project</id>
-    <content type="html"><![CDATA[<p>rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的，在这里记一下，我只是用了绕过的方法不是很好，因为时间不允许，这里先SORRY一下。我这里的环境为freebsd9.0 amd64 (elrang5.9.1 R15B01),erlang的其他版本，请参看wiki的Release-handling部分调整生成环节的命令。</p>
-
-<p>1）第一步要获取rebar程序，两种方法：自己编译和直接下载。</p>
-
-<!-- more -->
-
-
-<p>自己编译：
-<a href="https://github.com/rebar/rebar">https://github.com/rebar/rebar</a>
-直接按照README.md的方法编译出一个rebar。</p>
-
-<p>直接下载：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个就直接可用了。</p>
-
-<p>无论哪种方式搞定之后，进入自己项目的根目录都要chmod +x rebar给它可执行权限。</p>
-
-<p>2）创建项目</p>
-
-<p>在项目的根目录</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/exemplar <span class="nv">$ </span>mkdir -p apps/exemplar
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span><span class="nb">cd </span>apps/exemplar
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span>rebar create-app <span class="nv">appid</span><span class="o">=</span>exemplar
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样就在项目根目录下得到了app文件夹，该文件夹下的src文件夹中默认有三个项目源文件，一个src文件，一个主文件，一个监督者文件。接下来就像往常一样的编写erlang代码。（甚至我当初直接在该目录用Emakefile的方式进行调试也是可以的，只是路径稍有变化，这里只带过）</p>
-
-<p>3）生成发布版</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/exemplar <span class="nv">$ </span>mkdir rel
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span><span class="nb">cd </span>rel
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>接下来非常怂的问题来了，编辑reltool.config时wiki上说把</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[]},</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其实还需要加上依赖的路径</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样才对。</p>
-
-<p>然后还有在  {rel, &ldquo;exemplar&rdquo;, &ldquo;1&rdquo;,</p>
-
-<p>后面一段，生成发布的时候还会提醒要求带上sasl、inet、crypto
-而在 {excl_app_filters, [&ldquo;.gitignore&rdquo;]},后面
-依次相应要带上</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>     <br/>
-到这里reltool.config的麻烦才告一段落。
-最后回到根目录
-rebar.config的内容如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>    <span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
-</span><span class='line'>            <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}}},</span>
-</span><span class='line'>        <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
-</span><span class='line'>            <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&quot;master&quot;</span><span class="p">}}</span>
-</span><span class='line'><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;apps/exemplar&quot;</span><span class="p">,</span> <span class="s">&quot;rel&quot;</span><span class="p">]}.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好了，rebar.config，我这里也不多说，反正我是试了各种版本，要么生成的so变成了exemplar_drv.so，要么干脆就无法生成。我最后放到Makefile里一并解决了。
-下面是这个Makefile的内容，其中make.sh是自行生成erlang的NIF外围C/C++程序扩展so的编译脚本，这个要注意一下(我没有创建apps/c_src这个文件夹，而是在apps文件夹下又放了个files文件，里面是c的源文件，这样make.sh的内容就大概是gcc -Wall -o $APP_PREFIX/priv/nif.so -fpic -shared -I $ERL_LIB/erts-$ERL_VER/include/ apps/files/nif.c 这样子，反正还是要生成到priv路径就对了)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">cat</span> <span class="err">Makefile</span>
-</span><span class='line'><span class="nf">all</span><span class="o">:</span> <span class="m">compile</span>
-</span><span class='line'><span class="nf">depends</span><span class="o">:</span>
-</span><span class='line'>        ./rebar get-deps
-</span><span class='line'>        ./rebar update-deps
-</span><span class='line'><span class="nf">compile</span><span class="o">:</span>
-</span><span class='line'>        ./rebar compile
-</span><span class='line'>        ./make.sh
-</span><span class='line'><span class="nf">clean</span><span class="o">:</span>
-</span><span class='line'>        ./rebar clean
-</span><span class='line'><span class="nf">release</span><span class="o">:</span>
-</span><span class='line'>        ./rebar generate
-</span><span class='line'>        mkdir ./rel/exemplar/priv
-</span><span class='line'>        cp -r ./apps/exemplar/priv/* ./rel/exemplar/priv/
-</span><span class='line'>        chmod +x ./rel/exemplar/bin/exemplar
-</span><span class='line'><span class="nf">.PHONY</span><span class="o">:</span> <span class="m">all depends compile</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>做Makefile的方法，也是我参考了github上一些开源erlang项目的想到的办法。
-所有这一切做完按照如下方式就可以生成发布了。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>make clean
-</span><span class='line'>make depends
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<pre><code>编辑./deps/log4erl/src/log4erl.app.src文件，把{vsn, "0.9.0"}修改为{vsn, ""}，新版本的没试过，可能版本号不一致，请自行修改！
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>make release
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>基本上要注意的就是这些，以下为参考链接：</p>
-
-<p><a href="https://github.com/rebar/rebar/wiki">https://github.com/rebar/rebar/wiki</a></p>
-
-<p><a href="https://github.com/rebar/rebar/wiki/Release-handling">https://github.com/rebar/rebar/wiki/Release-handling</a></p>
-
-<p><a href="http://cryolite.iteye.com/blog/1159448">http://cryolite.iteye.com/blog/1159448</a>  (rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧)</p>
-
-<p><a href="http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7">http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7</a></p>
 ]]></content>
   </entry>
   
