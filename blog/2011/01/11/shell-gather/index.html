@@ -109,15 +109,7 @@ awk &#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4) &hellip;">
 
 <p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
 
-<p>find最后改成了这样</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . <span class="se">\(</span> -path <span class="s1">&#39;*.svn*&#39;</span> -o -path <span class="s1">&#39;*.fcgi*&#39;</span> -o -path <span class="s1">&#39;*tags*&#39;</span> <span class="se">\)</span> -prune -o -print | xargs grep -i
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>sh里面没有set,而linux下则是链接到了bash
-下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
+<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
@@ -147,19 +139,99 @@ awk &#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4) &hellip;">
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># nc -l -p 1234 | dd of=/dev/sda</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
 <p>整个文件夹内替换字符串</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>AWK的入门</p>
+
+<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
+
+<p>AWK高级用法</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
+
+<p>AWK一句话手册</p>
+
+<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
+
+<p>可以用得到的shell的脚本</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
+
+<p>cshell参考</p>
+
+<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
+
+<p>数组的定义</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">array</span><span class="o">=(</span>a b c d<span class="o">)</span>
+</span><span class='line'>居然下标是从1开始
+</span><span class='line'><span class="nb">echo</span> <span class="k">${</span><span class="nv">A</span><span class="p">[1]</span><span class="k">}</span>
+</span><span class='line'>a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash下实现的伪多进程(实际是用了&amp;后台执行)
+　实例二：“多进程”实现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>　　#!/bin/bash
+</span><span class='line'>
+</span><span class='line'>　　for <span class="o">((</span><span class="nv">i</span><span class="o">=</span>0;i&lt;5;i++<span class="o">))</span>;<span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    　　sleep 3;echo 1&gt;&gt;aa <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;done!&quot;</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">}</span> &amp;
+</span><span class='line'>
+</span><span class='line'>　　done
+</span><span class='line'>
+</span><span class='line'>　　wait
+</span><span class='line'>
+</span><span class='line'>　　cat aa|wc -l
+</span><span class='line'>
+</span><span class='line'>　　rm aa
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的fifo实现的多线程</p>
+
+<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+
+<p>多线程的实现是采用了有名管道mkfifo</p>
+
+<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
+
+<p>shell判断文件是否存在</p>
+
+<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
 </div>
 
 

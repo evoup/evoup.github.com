@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-12T15:05:34+08:00</updated>
+  <updated>2013-11-12T15:14:52+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -46,7 +46,7 @@
 
 <p>The key fingerprint is:</p>
 
-<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x79;&#x69;&#110;&#64;&#121;&#x69;&#x6e;&#45;&#97;&#x72;&#x63;&#x68;&#x2e;&#x6d;&#x61;&#100;&#104;&#x6f;&#x75;&#x73;&#x65;&#46;&#99;&#110;">&#x79;&#105;&#x6e;&#64;&#121;&#105;&#110;&#x2d;&#x61;&#114;&#x63;&#104;&#x2e;&#x6d;&#x61;&#100;&#104;&#x6f;&#x75;&#115;&#101;&#46;&#99;&#110;</a></p>
+<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#97;&#x69;&#108;&#116;&#111;&#58;&#121;&#x69;&#110;&#64;&#121;&#105;&#x6e;&#x2d;&#x61;&#114;&#x63;&#x68;&#x2e;&#109;&#x61;&#100;&#x68;&#x6f;&#117;&#x73;&#x65;&#46;&#x63;&#110;">&#x79;&#105;&#110;&#64;&#x79;&#x69;&#x6e;&#45;&#97;&#114;&#99;&#104;&#46;&#x6d;&#x61;&#100;&#x68;&#x6f;&#117;&#x73;&#x65;&#x2e;&#99;&#110;</a></p>
 
 <p>The key&rsquo;s randomart image is:</p>
 
@@ -74,7 +74,7 @@
 <code>
 然后运行如下脚本，按照提示输入密码即可
 </code>bash
-ssh-copy-id &lsquo;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub <a href="&#x6d;&#x61;&#105;&#108;&#116;&#x6f;&#58;&#121;&#x69;&#110;&#64;&#50;&#49;&#x31;&#x2e;&#49;&#51;&#x36;&#46;&#49;&#48;&#52;&#x2e;&#x31;&#x38;&#x39;">&#x79;&#105;&#x6e;&#64;&#x32;&#49;&#49;&#46;&#49;&#51;&#54;&#x2e;&#x31;&#x30;&#52;&#x2e;&#x31;&#56;&#57;</a>&rsquo;
+ssh-copy-id &lsquo;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#121;&#105;&#x6e;&#x40;&#50;&#49;&#x31;&#x2e;&#49;&#51;&#x36;&#46;&#x31;&#48;&#52;&#46;&#49;&#x38;&#x39;">&#121;&#x69;&#x6e;&#x40;&#x32;&#x31;&#49;&#46;&#x31;&#51;&#54;&#46;&#x31;&#48;&#x34;&#x2e;&#x31;&#x38;&#x39;</a>&rsquo;
 ```</p>
 
 <p>参考：</p>
@@ -101,13 +101,7 @@ awk '{v1="###\n\呵呵呵";if (NR==4)print v1;print}' file &gt; file_translated
 </code>
 参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
 
-<p>find最后改成了这样
-<code>sh
-find . \( -path '*.svn*' -o -path '*.fcgi*' -o -path '*tags*' \) -prune -o -print | xargs grep -i
-</code></p>
-
-<p>sh里面没有set,而linux下则是链接到了bash
-下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行
+<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行
 <code>awk
 awk '/(error|fail)/ { print; }' syslog.log
 </code></p>
@@ -128,17 +122,74 @@ find . ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=0}{sum=sum+$1}END{print su
 ifconfig | awk '{if(NR==5) print $2}'
 </code></p>
 
-<p>server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务
-```sh</p>
-
-<h1>nc -l -p 1234 | dd of=/dev/sda</h1>
-
-<p>```</p>
-
 <p>整个文件夹内替换字符串
 <code>sh
 find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
 </code></p>
+
+<p>AWK的入门</p>
+
+<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
+
+<p>AWK高级用法</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
+
+<p>AWK一句话手册</p>
+
+<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
+
+<p>可以用得到的shell的脚本</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
+
+<p>cshell参考</p>
+
+<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
+
+<p>数组的定义
+<code>bash
+set array=(a b c d)
+居然下标是从1开始
+echo ${A[1]}  
+a
+</code>
+bash下实现的伪多进程(实际是用了&amp;后台执行)
+　实例二：“多进程”实现
+```bash
+　　#!/bin/bash</p>
+
+<p>　　for ((i=0;i&lt;5;i++));do</p>
+
+<p>　　{</p>
+
+<pre><code>　　sleep 3;echo 1&gt;&gt;aa &amp;&amp; echo "done!"
+</code></pre>
+
+<p>　　} &amp;</p>
+
+<p>　　done</p>
+
+<p>　　wait</p>
+
+<p>　　cat aa|wc -l</p>
+
+<p>　　rm aa
+```</p>
+
+<p>bash的fifo实现的多线程</p>
+
+<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+
+<p>多线程的实现是采用了有名管道mkfifo</p>
+
+<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
+
+<p>shell判断文件是否存在</p>
+
+<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
 ]]></content>
   </entry>
   
