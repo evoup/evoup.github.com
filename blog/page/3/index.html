@@ -9,7 +9,7 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的， &hellip;">
+  <meta name="description" content="这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,47 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/27/erlang-protobuffs-with-php/">【How to】使用basho的erlang-protobuffs和PHP通讯</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-27T13:49:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2013/05/27/erlang-protobuffs-with-php/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -689,55 +730,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
-
-<p>这个问题会导致输出502头信息。</p>
-
-<p>nginx配置中要加以下2行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
-</span><span class='line'>fastcgi_buffers 8 128k;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -755,6 +747,10 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/12/gvim-unreadable-codes/">解决gvim菜单乱码问题</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/11/08/centos-install-cvs/">centos下CVS服务器的配置</a>
       </li>
     
@@ -770,17 +766,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
         <a href="/blog/2013/11/05/freebsd-install-vmware-tool/">Freebsd下安装vmware-tool</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/11/04/hbase-full-distributed-case/">HBASE完全分布式搭建(VMware版)</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 134.28571428571428%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 117.14285714285714%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(14)</a>  <a href='/blog/categories/freebsd' style='font-size: 108.57142857142857%'>Freebsd(2)</a>  <a href='/blog/categories/gcc' style='font-size: 104.28571428571429%'>Gcc(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.57142857142857%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.28571428571429%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.28571428571429%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.28571428571429%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 112.85714285714286%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 104.28571428571429%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 112.85714285714286%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 104.28571428571429%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 117.14285714285714%'>Rrdtool(4)</a>  <a href='/blog/categories/shell' style='font-size: 108.57142857142857%'>Shell(2)</a>  <a href='/blog/categories/version-control' style='font-size: 104.28571428571429%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 112.85714285714286%'>Vim(3)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 134.28571428571428%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 117.14285714285714%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(14)</a>  <a href='/blog/categories/freebsd' style='font-size: 108.57142857142857%'>Freebsd(2)</a>  <a href='/blog/categories/gcc' style='font-size: 104.28571428571429%'>Gcc(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.57142857142857%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.28571428571429%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.28571428571429%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.28571428571429%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 112.85714285714286%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 104.28571428571429%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 112.85714285714286%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 104.28571428571429%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 117.14285714285714%'>Rrdtool(4)</a>  <a href='/blog/categories/shell' style='font-size: 108.57142857142857%'>Shell(2)</a>  <a href='/blog/categories/version-control' style='font-size: 104.28571428571429%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 117.14285714285714%'>Vim(4)</a> </span>
 </section>
 
 <section>
