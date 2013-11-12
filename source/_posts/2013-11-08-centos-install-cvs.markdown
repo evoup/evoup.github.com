@@ -14,7 +14,7 @@ categories: 版本控制
 
 ####1.安装xinetd
 ```bash
-rpm -q xinetd
+rpm -q xinetd 
 ```
 没有安装的话
 ```bash 
