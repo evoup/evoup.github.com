@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-12T14:31:41+08:00</updated>
+  <updated>2013-11-12T15:01:24+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -46,7 +46,7 @@
 
 <p>The key fingerprint is:</p>
 
-<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#x79;&#x69;&#110;&#x40;&#x79;&#x69;&#110;&#45;&#x61;&#x72;&#99;&#x68;&#x2e;&#109;&#x61;&#x64;&#104;&#x6f;&#x75;&#x73;&#x65;&#46;&#x63;&#x6e;">&#x79;&#x69;&#x6e;&#64;&#x79;&#105;&#110;&#x2d;&#x61;&#114;&#x63;&#x68;&#46;&#x6d;&#x61;&#100;&#x68;&#x6f;&#x75;&#x73;&#101;&#x2e;&#99;&#x6e;</a></p>
+<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#121;&#x69;&#x6e;&#x40;&#121;&#105;&#x6e;&#x2d;&#x61;&#x72;&#x63;&#x68;&#x2e;&#109;&#97;&#x64;&#104;&#x6f;&#117;&#115;&#101;&#x2e;&#x63;&#110;">&#x79;&#105;&#x6e;&#64;&#x79;&#x69;&#110;&#x2d;&#x61;&#114;&#99;&#104;&#46;&#109;&#97;&#x64;&#104;&#x6f;&#x75;&#x73;&#101;&#46;&#x63;&#110;</a></p>
 
 <p>The key&rsquo;s randomart image is:</p>
 
@@ -74,7 +74,7 @@
 <code>
 然后运行如下脚本，按照提示输入密码即可
 </code>bash
-ssh-copy-id &lsquo;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#58;&#121;&#105;&#x6e;&#x40;&#50;&#x31;&#x31;&#x2e;&#49;&#51;&#x36;&#46;&#x31;&#48;&#x34;&#x2e;&#x31;&#56;&#57;">&#121;&#105;&#110;&#x40;&#50;&#49;&#49;&#x2e;&#x31;&#51;&#54;&#46;&#x31;&#48;&#52;&#46;&#x31;&#56;&#57;</a>&rsquo;
+ssh-copy-id &lsquo;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub <a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#x79;&#105;&#110;&#x40;&#50;&#x31;&#49;&#46;&#x31;&#51;&#x36;&#x2e;&#49;&#x30;&#52;&#46;&#49;&#x38;&#57;">&#x79;&#x69;&#x6e;&#x40;&#50;&#x31;&#x31;&#x2e;&#49;&#51;&#x36;&#46;&#x31;&#48;&#52;&#x2e;&#x31;&#x38;&#x39;</a>&rsquo;
 ```</p>
 
 <p>参考：</p>
@@ -82,6 +82,63 @@ ssh-copy-id &lsquo;-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub <a href="&#109;&#x61
 <p><a href="http://mikegerwitz.com/ssh-copy-id-and-sshd-port/">http://mikegerwitz.com/ssh-copy-id-and-sshd-port/</a></p>
 
 <p><a href="http://blogread.cn/it/article/6103">http://blogread.cn/it/article/6103</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[shell gather]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/11/shell-gather/"/>
+    <updated>2011-01-11T12:11:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/11/shell-gather</id>
+    <content type="html"><![CDATA[<p>取得fb6的网卡mac
+<code>sh
+ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
+</code></p>
+
+<p>在第三行之后插入指定数据
+<code>awk
+awk '{v1="###\n\呵呵呵";if (NR==4)print v1;print}' file &gt; file_translated
+</code>
+参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
+
+<p>find最后改成了这样
+<code>sh
+find . \( -path '*.svn*' -o -path '*.fcgi*' -o -path '*tags*' \) -prune -o -print | xargs grep -i
+</code></p>
+
+<p>sh里面没有set,而linux下则是链接到了bash
+下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行
+<code>awk
+awk '/(error|fail)/ { print; }' syslog.log
+</code></p>
+
+<p>统计源码总行数
+<code>sh
+find . -exec wc -l {} \; | awk '{print $1}'
+find . -type f ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=sum+$1}END{print sum }'
+</code></p>
+
+<p>如果要给sum来个初值，那么
+<code>sh
+find . ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=0}{sum=sum+$1}END{print sum }'
+</code></p>
+
+<p>打印某网卡信息
+<code>sh
+ifconfig | awk '{if(NR==5) print $2}'
+</code></p>
+
+<p>server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务
+```sh</p>
+
+<h1>nc -l -p 1234 | dd of=/dev/sda</h1>
+
+<p>```</p>
+
+<p>整个文件夹内替换字符串
+<code>sh
+find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
+</code></p>
 ]]></content>
   </entry>
   

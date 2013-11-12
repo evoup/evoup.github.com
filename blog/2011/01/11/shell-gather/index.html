@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd下hbase安装 - Evoup`s Blog</title>
+  <title>shell gather - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe- &hellip;">
+  <meta name="description" content="取得fb6的网卡mac 1
+ifconfig lo0 | grep &#39;[0-9a-f]\{8\}&#39; | awk &#39;{print $4}&#39; 在第三行之后插入指定数据 1
+awk &#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4) &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase">
+  <link rel="canonical" href="http://evoupsight.com/blog/2011/01/11/shell-gather">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -68,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">Freebsd下hbase安装</h1>
+      <h1 class="entry-title">Shell Gather</h1>
     
     
       <p class="meta">
@@ -84,62 +86,79 @@
   
 
 
-<time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+<div class="entry-content"><p>取得fb6的网卡mac</p>
 
-<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<!-- more -->
+
+<p>在第三行之后插入指定数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4)print v1;print}&#39;</span> <span class="nx">file</span> <span class="o">&gt;</span> <span class="nx">file_translated</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>下完就放到/usr/port/distfile</p>
+<p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
 
-<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
+<p>find最后改成了这样</p>
 
-<p>再装jdk16/usr/port/java/jdk16</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . <span class="se">\(</span> -path <span class="s1">&#39;*.svn*&#39;</span> -o -path <span class="s1">&#39;*.fcgi*&#39;</span> -o -path <span class="s1">&#39;*tags*&#39;</span> <span class="se">\)</span> -prune -o -print | xargs grep -i
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>sh里面没有set,而linux下则是链接到了bash
+下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>统计源码总行数</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
-</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{print $1}&#39;</span>
+</span><span class='line'>find . -type f ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=sum+$1}END{print sum }&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
-
-<p>而且要有足够的SWAP空间！</p>
+<p>如果要给sum来个初值，那么</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=0}{sum=sum+$1}END{print sum }&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>PATH我没有设置</p>
-
-<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
-
-<p>单个节点的启动方法</p>
+<p>打印某网卡信息</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
-</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig | awk <span class="s1">&#39;{if(NR==5) print $2}&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>hshell的进入</p>
+<p>server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># nc -l -p 1234 | dd of=/dev/sda</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>整个文件夹内替换字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
 
 </div>
 
@@ -163,12 +182,12 @@
   
 
 
-<time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/hbase/'>hbase</a>
+    <a class='category' href='/blog/categories/shell/'>shell</a>
   
 </span>
 
@@ -177,7 +196,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase/" data-via="" data-counturl="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2011/01/11/shell-gather/" data-via="" data-counturl="http://evoupsight.com/blog/2011/01/11/shell-gather/" >Tweet</a>
   
   
   
@@ -193,10 +212,10 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2011/06/05/lighttpd-change-parameter-define/" title="Previous Post: C语言变参宏">&laquo; C语言变参宏</a>
+        <a class="basic-alignment left" href="/blog/2010/12/15/header-file-variable-assign/" title="Previous Post: 头文件中变量赋值方法">&laquo; 头文件中变量赋值方法</a>
       
       
-        <a class="basic-alignment right" href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/" title="Next Post: 遭遇nginx upstream sent too big header">遭遇nginx upstream sent too big header &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2011/01/16/c-common-define/" title="Next Post: C语言宏定义技巧(常用宏定义)(转)">C语言宏定义技巧(常用宏定义)(转) &raquo;</a>
       
     </p>
   </footer>

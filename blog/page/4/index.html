@@ -382,6 +382,108 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2011/01/11/shell-gather/">Shell Gather</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>取得fb6的网卡mac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在第三行之后插入指定数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4)print v1;print}&#39;</span> <span class="nx">file</span> <span class="o">&gt;</span> <span class="nx">file_translated</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
+
+<p>find最后改成了这样</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . <span class="se">\(</span> -path <span class="s1">&#39;*.svn*&#39;</span> -o -path <span class="s1">&#39;*.fcgi*&#39;</span> -o -path <span class="s1">&#39;*tags*&#39;</span> <span class="se">\)</span> -prune -o -print | xargs grep -i
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>sh里面没有set,而linux下则是链接到了bash
+下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>统计源码总行数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{print $1}&#39;</span>
+</span><span class='line'>find . -type f ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果要给sum来个初值，那么</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=0}{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打印某网卡信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig | awk <span class="s1">&#39;{if(NR==5) print $2}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># nc -l -p 1234 | dd of=/dev/sda</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>整个文件夹内替换字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2010/12/15/header-file-variable-assign/">头文件中变量赋值方法</a></h1>
     
     
@@ -500,51 +602,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2010/11/25/typedef-summary/">Typedef小结</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-11-25T14:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
-
-<p>对于动态分配内存的时候也可以</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -587,7 +644,7 @@
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 134.28571428571428%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 117.14285714285714%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(14)</a>  <a href='/blog/categories/freebsd' style='font-size: 108.57142857142857%'>Freebsd(2)</a>  <a href='/blog/categories/gcc' style='font-size: 104.28571428571429%'>Gcc(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.57142857142857%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.28571428571429%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.28571428571429%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.28571428571429%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 112.85714285714286%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 104.28571428571429%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 112.85714285714286%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 104.28571428571429%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 117.14285714285714%'>Rrdtool(4)</a>  <a href='/blog/categories/shell' style='font-size: 108.57142857142857%'>Shell(2)</a>  <a href='/blog/categories/version-control' style='font-size: 104.28571428571429%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 125.71428571428572%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 134.28571428571428%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 117.14285714285714%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(14)</a>  <a href='/blog/categories/freebsd' style='font-size: 108.57142857142857%'>Freebsd(2)</a>  <a href='/blog/categories/gcc' style='font-size: 104.28571428571429%'>Gcc(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.57142857142857%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.28571428571429%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.28571428571429%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.28571428571429%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 112.85714285714286%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 104.28571428571429%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 112.85714285714286%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 104.28571428571429%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 117.14285714285714%'>Rrdtool(4)</a>  <a href='/blog/categories/shell' style='font-size: 112.85714285714286%'>Shell(3)</a>  <a href='/blog/categories/version-control' style='font-size: 104.28571428571429%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 125.71428571428572%'>Vim(6)</a> </span>
 </section>
 
 <section>
