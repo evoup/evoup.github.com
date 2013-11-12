@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "shell gather"
+title: "shell收集"
 date: 2011-1-11 12:11
 comments: true
 categories: shell 
