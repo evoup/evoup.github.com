@@ -3,7 +3,7 @@ layout: post
 title: "centos下CVS服务器的配置"
 date: 2013-11-08 13:20
 comments: true
-categories: version_control
+categories: 版本控制 
 ---
 
 由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。
