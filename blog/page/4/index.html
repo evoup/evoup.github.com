@@ -1,0 +1,650 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Evoup`s Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="Ganglia是什么? 简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。 ">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/page/4">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Evoup`s Blog</a></h1>
+  
+    <h2>Life is an endless fighting</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:evoupsight.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-22T11:24:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Ganglia是什么?</h2>
+
+<p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/11/06/vim-sudo-use-vimrc-env/">Vim在sudo下的使用当前用户的配置文件</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-06T15:15:00+08:00" pubdate data-updated="true">Nov 6<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>部门配备了freebsd做为统一的开发环境，大家登上各自的jail进行软件开发任务。但是发现执行sudo vim之后，居然使用的是root的vim配置文件。</p>
+
+<p>那么有什么办法能够使用自己的配置文件呢？其实再简单不过,使用-E参数</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>   -E  The -E (preserve environment) option will override the env_reset
+</span><span class='line'>       option in sudoers(5)).  It is only available when either the match-
+</span><span class='line'>       ing command has the SETENV tag or the setenv option is set in sudo-
+</span><span class='line'>       ers(5).</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo -E vim file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后就可以使用自己的配置文件了。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx Upstream Sent Too Big Header</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>nginx配置中要加以下2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
+</span><span class='line'>fastcgi_buffers 8 128k;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/07/30/freebsd-install-hbase/">Freebsd下hbase安装</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+
+<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/07/30/freebsd-install-hbase/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而此参数声明的时候是这样的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这不就成了三个参了？记一笔&hellip;</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/01/16/c-common-define/">C语言宏定义技巧(常用宏定义)(转)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//头文件内容 </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2011/01/16/c-common-define/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/15/header-file-variable-assign/">头文件中变量赋值方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-15T00:04:00+08:00" pubdate data-updated="true">Dec 15<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先看这段文字</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/12/15/header-file-variable-assign/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/30/memory-alignment/">目前看到的对内存对齐问题最好的解释</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-30T12:14:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>简单的说，对于一个class或是struct：</p>
+
+<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/11/30/memory-alignment/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/26/crc32-cpp/">C++实现crc32</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>直接参考如下连接
+<a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
+
+<p>或者boost、Crypto++</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/25/typedef-summary/">Typedef小结</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-25T14:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
+
+<p>对于动态分配内存的时候也可以</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/5/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/3/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/12/gvim-unable-to-open-swap-file/">Gvim无法打开交换文件</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/08/centos-install-cvs/">centos下CVS服务器的配置</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/07/erlang-rebar-notool-not-found/">Rebar生成发布包后找不到noodtool</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/05/erl-crash-webtool-usage/">使用webtool查看erl_crash.dump</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/05/freebsd-install-vmware-tool/">Freebsd下安装vmware-tool</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 134.28571428571428%'>C-language(8)</a>  <a href='/blog/categories/cplusplus' style='font-size: 117.14285714285714%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(14)</a>  <a href='/blog/categories/freebsd' style='font-size: 108.57142857142857%'>Freebsd(2)</a>  <a href='/blog/categories/gcc' style='font-size: 104.28571428571429%'>Gcc(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.57142857142857%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.28571428571429%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.28571428571429%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.57142857142857%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.28571428571429%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 117.14285714285714%'>Monitor(4)</a>  <a href='/blog/categories/nginx' style='font-size: 112.85714285714286%'>Nginx(3)</a>  <a href='/blog/categories/octopress' style='font-size: 104.28571428571429%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 112.85714285714286%'>Php(3)</a>  <a href='/blog/categories/python' style='font-size: 104.28571428571429%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 117.14285714285714%'>Rrdtool(4)</a>  <a href='/blog/categories/shell' style='font-size: 108.57142857142857%'>Shell(2)</a>  <a href='/blog/categories/version-control' style='font-size: 104.28571428571429%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 125.71428571428572%'>Vim(6)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
