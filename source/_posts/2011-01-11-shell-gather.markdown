@@ -18,12 +18,6 @@ awk '{v1="###\n\呵呵呵";if (NR==4)print v1;print}' file > file_translated
 参考这里http://club.topsage.com/thread-357787-1-1.html
 
 
-find最后改成了这样
-```sh
-find . \( -path '*.svn*' -o -path '*.fcgi*' -o -path '*tags*' \) -prune -o -print | xargs grep -i
-```
-
-sh里面没有set,而linux下则是链接到了bash 
 下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行
 ```awk
 awk '/(error|fail)/ { print; }' syslog.log
@@ -45,12 +39,70 @@ find . ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=0}{sum=sum+$1}END{print su
 ifconfig | awk '{if(NR==5) print $2}'
 ```
 
-server1上执行传输，即可完成从server1克隆sda硬盘到server2的任务
-```sh
-# nc -l -p 1234 | dd of=/dev/sda
-```
-
 整个文件夹内替换字符串
 ```sh
 find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
 ```
+
+AWK的入门
+
+http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html
+
+http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx
+
+AWK高级用法
+
+http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx
+
+AWK一句话手册
+
+http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx
+
+可以用得到的shell的脚本
+
+http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx
+
+cshell参考
+
+http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm
+
+数组的定义
+```bash
+set array=(a b c d)
+居然下标是从1开始
+echo ${A[1]}  
+a
+```
+bash下实现的伪多进程(实际是用了&后台执行)
+　实例二：“多进程”实现
+```bash
+　　#!/bin/bash
+
+　　for ((i=0;i<5;i++));do
+
+　　{
+
+    　　sleep 3;echo 1>>aa && echo "done!"
+
+　　} &
+
+　　done
+
+　　wait
+
+　　cat aa|wc -l
+
+　　rm aa
+```
+
+bash的fifo实现的多线程
+
+http://www.examda.com/linux/fudao/20101011/132107473.html
+
+多线程的实现是采用了有名管道mkfifo
+
+http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx
+
+shell判断文件是否存在
+
+http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html
