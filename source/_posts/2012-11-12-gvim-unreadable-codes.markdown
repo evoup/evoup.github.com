@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "解决gvim菜单乱码问题"
-date: 2013-12-12 11:15
+date: 2012-11-12 11:15
 comments: true
 categories: vim 
 ---
