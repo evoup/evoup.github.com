@@ -15,7 +15,7 @@ http://cn.php.net/distributions/php-4.4.9.tar.bz2
 
 装之前别忘为--enable的几个找下pecl
 编译php4（先不打补丁）的时候先使用这样的参数
-```sh
+```makefile
 ./configure --prefix=/usr/local/php4_admin --enable-versioning --enable-memory-limit --with-layout=GNU --with-config-file-scan-dir=/usr/local/php4_admin/etc/php --with-mysql=/usr/local -enable-mbstring --enable-ctype --with-gd=/usr/local --with-freetype-dir=/usr/local --enable-ftp --with-mcrypt=/usr/local --enable-memcache --enable-apc --enable-xml --with-pcre-regex --enable-bcompiler --with-bz2 --with-zlib --enable-fastcgi --enable-fpm
 
 make
@@ -28,7 +28,7 @@ make install
 gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
 ```
 再次
-```sh
+```makefile
 ./configure --prefix=/usr/local/php4_admin --enable-versioning --enable-memory-limit --with-layout=GNU --with-config-file-scan-dir=/usr/local/php4_admin/etc/php --enable-force-cgi-redirect --with-mysql=/usr/local -enable-mbstring --enable-ctype --with-gd=/usr/local --with-freetype-dir=/usr/local --enable-ftp --with-mcrypt=/usr/local --enable-memcache --enable-apc --enable-xml --with-pcre-regex --enable-bcompiler --with-bz2 --with-zlib --enable-fastcgi --enable-fpm
 
 make
