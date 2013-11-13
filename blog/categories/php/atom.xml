@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-13T15:04:24+08:00</updated>
+  <updated>2013-11-13T15:21:53+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -347,6 +347,67 @@ erl
 <p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
 
 <p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装nginx+php4.4.9的方法]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/18/nginx-php4/"/>
+    <updated>2011-01-18T15:10:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/18/nginx-php4</id>
+    <content type="html"><![CDATA[<p>首先是php4.4
+<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
+
+<!-- more -->
+
+
+<p>（ps:更老的版本可以到museum.php.net去找。）</p>
+
+<p>装之前别忘为&mdash;enable的几个找下pecl
+编译php4（先不打补丁）的时候先使用这样的参数
+```sh
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>然后打补丁
+同时候准备好补丁文件，<a href="http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz">http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz</a>
+<code>sh
+gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
+</code>
+再次
+```sh
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;enable-force-cgi-redirect &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>这个php-fpm.conf要改的
+<code>sh
+ 62             Unix user of processes
+ 63         &lt;!--    &lt;value name="user"&gt;nobody&lt;/value&gt;       --&gt;
+ 64
+ 65             Unix group of processes
+ 66         &lt;!--    &lt;value name="group"&gt;nobody&lt;/value&gt;      --&gt;
+</code></p>
+
+<p>换成
+<code>sh
+ 62             Unix user of processes
+ 63             &lt;value name="user"&gt;www&lt;/value&gt;
+ 64
+ 65             Unix group of processes
+ 66             &lt;value name="group"&gt;www&lt;/value&gt;
+</code></p>
+
+<p>然后到目录sbin下试一试
+<code>sh
+sudo /usr/local/php4_admin/sbin/php-fpm start
+</code>
+看到就可以了，收工。</p>
 ]]></content>
   </entry>
   
