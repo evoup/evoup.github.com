@@ -11,6 +11,30 @@ categories: shell
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
 ```
 
+获取文本的第三行
+```sh
+sed -n '3p' file 
+```
+
+截取字符串
+```sh
+echo "abcd" | cut -b 1-3
+```
+
+获取当前时间戳
+```sh
+date "+%s"
+```
+
+把时间戳转换成系统时间
+```sh
+#linux版本的
+date -d '1970-01-01 UTC 946684800 seconds' +"%Y-%m-%d %T %z"
+#freebsd版本的
+date -r 1384499085 +"%Y-%m-%d %T %z"
+```
+
+
 在第三行之后插入指定数据
 ```awk
 awk '{v1="###\n\呵呵呵";if (NR==4)print v1;print}' file > file_translated
