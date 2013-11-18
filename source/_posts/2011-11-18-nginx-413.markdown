@@ -1,0 +1,18 @@
+---
+layout: post
+title: "nginx报错413问题的解决"
+date: 2011-11-18 15:11
+comments: true
+categories: nginx 
+---
+今天遇到php myadmin上传文件的2048k限制，页面报错413 Request Entity Too Large
+其实只要在任意section加上以下的配置即可。
+```bash
+client_max_body_size 500m;
+```
+
+同时针对php.ini加上以下的配置，如果有必要重启php-fpm
+```bash
+file_uploads = On ;打开文件上传选项
+upload_max_filesize = 500M ;上传文件上限
+```
