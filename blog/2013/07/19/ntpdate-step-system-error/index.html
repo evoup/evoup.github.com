@@ -5,19 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>单例模式C语言版 - Evoup`s Blog</title>
+  <title>使用ntpdate同步时间报错: step-systime: Operation not permitted - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="Tokyo Cabinet的源码看到的 1
+  <meta name="description" content="今天有台虚拟机进行时间的同步报错 1
 2
 3
-4
-5
-6
-7
-/* Get the global memory pool object. */
-TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
+ntpdate ntp.sjtu.edu.cn 19 Nov 15:38:54 ntpdate[93376]: step-systime: Operation not permitted 搜索一把，许多VPS分给用户的虚拟机也存在类似症状， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -26,7 +21,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/06/21/singleton-c-language">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -76,7 +71,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
   <header>
     
-      <h1 class="entry-title">单例模式C语言版</h1>
+      <h1 class="entry-title">使用ntpdate同步时间报错: Step-systime: Operation Not Permitted</h1>
     
     
       <p class="meta">
@@ -92,42 +87,25 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
 
 
-<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
+<time datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Tokyo Cabinet的源码看到的</p>
+<div class="entry-content"><p>今天有台虚拟机进行时间的同步报错</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
-</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
-</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ntpdate ntp.sjtu.edu.cn
+</span><span class='line'>
+</span><span class='line'>19 Nov 15:38:54 ntpdate<span class="o">[</span>93376<span class="o">]</span>: step-systime: Operation not permitted
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
+<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
 </div>
 
 
@@ -150,12 +128,12 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
   
 
 
-<time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
+<time datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>
   
 </span>
 
@@ -164,7 +142,7 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" data-via="" data-counturl="http://evoupsight.com/blog/2010/06/21/singleton-c-language/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error/" data-via="" data-counturl="http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error/" >Tweet</a>
   
   
   
@@ -180,10 +158,10 @@ TCMPOOL *tcmpoolglobal(void){ if(tcglobalmemorypool) return &hellip;">
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2009/12/23/java-concurrentmodificationexception/" title="Previous Post: java关于ConcurrentModificationException异常">&laquo; java关于ConcurrentModificationException异常</a>
+        <a class="basic-alignment left" href="/blog/2013/06/19/erlang-r15b01-install-bugfix/" title="Previous Post: erlang R15B01安装问题">&laquo; erlang R15B01安装问题</a>
       
       
-        <a class="basic-alignment right" href="/blog/2010/07/23/freebsd-ctag/" title="Next Post: freebsd下如何创建和使用Ctag">freebsd下如何创建和使用Ctag &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/" title="Next Post: 关于log4erl的localtime_to_universaltime报错">关于log4erl的localtime_to_universaltime报错 &raquo;</a>
       
     </p>
   </footer>
