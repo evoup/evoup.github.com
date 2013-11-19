@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-19T16:01:45+08:00</updated>
+  <updated>2013-11-19T18:18:40+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,220 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[如何正确地把带参数的C语言main程序改成so]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/19/change-c-program-to-so/"/>
+    <updated>2013-11-19T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/19/change-c-program-to-so</id>
+    <content type="html"><![CDATA[<p>首先有些标题党吧，不过个人体会修改程序的过程中遇到未知的坑还是比较阴险的，所以整理一下写个博客。</p>
+
+<p>之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了机会之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。</p>
+
+<!-- more -->
+
+
+<p>先看准备被改成动态库的原代码
+```c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>int main(int argc, char **argv) {</p>
+
+<pre><code>int ch;
+const char *opts="a:b::cd";
+while ((ch = getopt(argc, argv, opts)) != -1) {
+    switch (ch) {
+    case 'a':
+        printf("option a:'%s'\n",optarg);
+        break;
+    case 'b':
+        printf("option b:'%s'\n",optarg);
+        break;
+    case 'c':
+        printf("option c:'%s'\n",optarg);
+        break;
+    case 'd':
+        printf("option d:'%s'\n",optarg);
+        break;
+    default:
+        printf("other option:%c\n",ch);
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p><code>c
+gcc -Wall test.c -o test
+</code>
+测试：
+<code>sh
+./test -a1 -b1 -c -d
+option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
+</code>
+稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
+其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。</p>
+
+<p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。
+```c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>int dlmain(int, char <strong>);
+int main(int argc, char </strong>argv) {</p>
+
+<pre><code>char *cmdStr[2]={"","-a1\0"};
+dlmain(2,cmdStr);
+return 1;
+</code></pre>
+
+<p>}
+int dlmain(int argc, char **argv) {</p>
+
+<pre><code>int ch;
+const char *opts="a:b::cd";
+while ((ch = getopt(argc, argv, opts)) != -1) {
+    switch (ch) {
+    case 'a':
+        printf("option a:'%s'\n",optarg);
+        break;
+    case 'b':
+        printf("option b:'%s'\n",optarg);
+        break;
+    case 'c':
+        printf("option c:'%s'\n",optarg);
+        break;
+    case 'd':
+        printf("option d:'%s'\n",optarg);
+        break;
+    default:
+        printf("other option:%c\n",ch);
+    }
+}
+printf("in dll\n");
+return 1;
+</code></pre>
+
+<p>}
+<code>
+先测试一下
+</code>sh
+gcc -Wall plug.c -o plug
+./plug
+option a:&lsquo;1&rsquo;
+in dll
+<code>
+ok，没有问题，直接转换成动态库
+</code>c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>int d_plug ();
+int dlmain(int, char **);
+int d_plug () {</p>
+
+<pre><code>char *cmdStr[2]={"","-a1\0"};
+dlmain(2,cmdStr);
+return 1;
+</code></pre>
+
+<p>}
+int dlmain(int argc, char **argv) {</p>
+
+<pre><code>int ch;
+const char *opts="a:b::cd";
+while ((ch = getopt(argc, argv, opts)) != -1) {
+    switch (ch) {
+    case 'a':
+        printf("option a:'%s'\n",optarg);
+        break;
+    case 'b':
+        printf("option b:'%s'\n",optarg);
+        break;
+    case 'c':
+        printf("option c:'%s'\n",optarg);
+        break;
+    case 'd':
+        printf("option d:'%s'\n",optarg);
+        break;
+    default:
+        printf("other option:%c\n",ch);
+    }
+}
+printf("in dll\n");
+return 1;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>编译动态连接库
+<code>sh
+gcc -shared -o plug.so plug.c -fpic
+</code>
+这样就得到了plug.so</p>
+
+<p>接下来写主调程序，用它直接调用已经通过改两行代码就封装好的动态库。
+```c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;dlfcn.h></h1>
+
+<p>int (*d_plug) ();
+int main(int argc,char **argv) {</p>
+
+<pre><code>void *dp;
+dp=dlopen("./plug.so",RTLD_LAZY);
+d_plug=dlsym(dp,"d_plug");
+d_plug();
+dlclose(dp);
+return 1;
+</code></pre>
+
+<p>}
+<code>
+编译执行看结果
+</code>sh
+gcc main.c -lc -fpic -o main
+option a:&lsquo;1&rsquo;
+in dll
+```</p>
+
+<h3>其他注意事项：</h3>
+
+<p>其实除了optarg，还存在全局变量optind、opterror和optopt。三者的作用</p>
+
+<p>optarg：非常明了，就是指程序的参数，是个字符串指针</p>
+
+<p>optind：是下一次调用getopt的时，从optind存储的位置处重新开始检查选项</p>
+
+<p>opterr：当opterr=0时，getopt不向stderr输出错误信息</p>
+
+<p>optopt: 当命令行选项字符不包括在optstring中或者选项缺少必要的参数时，该选项存储在optopt 中，getopt返回'？’</p>
+
+<h3>问题解决</h3>
+
+<p>写erlang的NIF扩展时optind需要重置为0，否则就导致了每次结果不变，因为就我所知erlang目前版本的NIF是没有unload功能的。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Freebsd版linux下free指令实现]]></title>
@@ -27,7 +241,7 @@
 ```c
 /<em>
  * free.c &ndash; Display FreeBSD memory information
- * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#118;&#x69;&#110;&#111;&#100;&#64;&#x73;&#101;&#103;&#102;&#x61;&#117;&#108;&#116;&#46;&#x69;&#110;">&#118;&#105;&#110;&#111;&#100;&#x40;&#x73;&#101;&#x67;&#102;&#x61;&#117;&#108;&#116;&#x2e;&#x69;&#x6e;</a>
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#97;&#x69;&#108;&#x74;&#x6f;&#58;&#118;&#x69;&#110;&#111;&#100;&#x40;&#x73;&#101;&#x67;&#x66;&#97;&#117;&#x6c;&#116;&#46;&#105;&#x6e;">&#x76;&#x69;&#x6e;&#x6f;&#x64;&#x40;&#x73;&#101;&#103;&#x66;&#x61;&#x75;&#x6c;&#x74;&#x2e;&#x69;&#110;</a>
  * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
  </em>/</p>
 
@@ -516,42 +730,6 @@ typedef signed char sint7; /* Signed 8 bit value */
 <p>解决方法: #difne DO(a,b) do{a+b;\</p>
 
 <p>a++;}while(0)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[头文件中变量赋值方法]]></title>
-    <link href="http://evoupsight.com/blog/2010/12/15/header-file-variable-assign/"/>
-    <updated>2010-12-15T00:04:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/12/15/header-file-variable-assign</id>
-    <content type="html"><![CDATA[<p>先看这段文字</p>
-
-<!-- more -->
-
-
-
-
-<hr>
-
-
-<p>今天看C++ Primer关于头文件定义的一节，其中说到，头文件应用于声明而不是用于定义。其实，C++标准并没有规定头文件中不能定义 变量，只不过如果在头文件中定义变量，而该头文件又被多次包含的话，会造成变量的重新定义。
-这里还涉及到另一个问题，需要提前说明，即使用预处理器避免多重包含。这里的多重包含指的是同一个文件直接或者间接的包含一个头文件多次，例如a.h包含 b.h，a.cpp同时包含a.h和b.h，a.cpp就两次包含了b.h。但由于b.h中具有避免多重包含的措施，a.cpp中还是只包含了b.h一 次。而包含的意思其实就是在预处理阶段用被包含文件的内容代替此包含语句。
-回到头文件定义变量的问题上，如果在头文件中定义了变量，避免多重包含的措施只能避免该头文件在同一个编译单元内被包含一次，在不同的编译单元内还是会被多次包含的，这样就造成了变量的重复定义。
-但是也有例外，如果const对象在编译时可以确定其值，可以将其放在头文件中定义。这么做是有原因的——const对象默认情况下是定义该变量的文件的 局部变量，这样即使此头文件被多个包含，都不会在包含这些文件中重复定义此变量，所有对于这个const对象的引用全都指向在头文件中定义的对象。如果在 const对象定义的时候声明extern，const对象就变得和普通非const对象一样，从而失去此特性（非const对象的默认属性为 extern）。
-C++中的很多用法都不是标准C++规定的，但是由于各种原因，已经是约定俗成或是惯常用法，至于原因以及除此之外的其他用法完全可以不必深究，否则很容易钻牛角尖！</p>
-
-<hr>
-
-
-<p>今天移植gamedev里文章讲到的一个例子的时候碰到了这个问题，要在头文件里给一个变量定义。</p>
-
-<p>最后这样就可以了
-<code>c
-//16Bit format for video card
-const int PixelFormat = PF_555;
-</code>
-之前有些程序把一些库的变量定义都放到了主文件中，搞得非常难看，这下搞定了。
-相应的在头文件里定义结构用typedef而不要去用struct！</p>
 ]]></content>
   </entry>
   
