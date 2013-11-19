@@ -8,7 +8,9 @@ categories: c-language
 
 首先有些标题党吧，不过个人体会修改程序的过程中遇到未知的坑还是比较阴险的，所以整理一下写个博客。
 
-之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了机会之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。
+之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了一会儿之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。
+
+话说回来，先看怎么把带参main程序改成动态链接库。
 
 <!-- more -->
 
@@ -62,8 +64,8 @@ option d:'(null)'
 #include <unistd.h>
 int dlmain(int, char **);
 int main(int argc, char **argv) {
-    char *cmdStr[2]={"","-a1\0"};
-    dlmain(2,cmdStr);
+    char *cmdStr[5]={"","-a1","-b1","-c","-d\0"};
+    dlmain(5,cmdStr);
     return 1;
 }
 int dlmain(int argc, char **argv) {
@@ -91,11 +93,14 @@ int dlmain(int argc, char **argv) {
     return 1;
 }
 ```
-先测试一下
+测试一下
 ```sh
 gcc -Wall plug.c -o plug
 ./plug
 option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
 in dll
 ```
 ok，没有问题，直接转换成动态库
@@ -106,8 +111,8 @@ ok，没有问题，直接转换成动态库
 int d_plug ();
 int dlmain(int, char **);
 int d_plug () {
-    char *cmdStr[2]={"","-a1\0"};
-    dlmain(2,cmdStr);
+    char *cmdStr[5]={"","-a1","-b1","-c","-d\0"};
+    dlmain(5,cmdStr);
     return 1;
 }
 int dlmain(int argc, char **argv) {
@@ -159,7 +164,11 @@ int main(int argc,char **argv) {
 编译执行看结果
 ```sh
 gcc main.c -lc -fpic -o main
+./main
 option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
 in dll
 ```
 
