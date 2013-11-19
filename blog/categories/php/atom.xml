@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-19T15:39:37+08:00</updated>
+  <updated>2013-11-19T16:01:45+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -408,6 +408,45 @@ make install
 sudo /usr/local/php4_admin/sbin/php-fpm start
 </code>
 看到就可以了，收工。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php myadmin1045 error]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/19/php-myadmin1045-error/"/>
+    <updated>2010-11-19T15:58:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/19/php-myadmin1045-error</id>
+    <content type="html"><![CDATA[<p>今天遇到phpMyAdmin错误 #1045 &ndash; Access denied for user@localhost的错误</p>
+
+<p>记得在./libraries/config.default.php
+已经制定好了需要的变量。
+<code>php
+ 57 $cfg['Servers'][$i]['host']          = '172.16.27.55'; // MySQL hostname or IP address
+ 58 $cfg['Servers'][$i]['port']          = '3306';          // MySQL port - leave blank for default port
+ 59 $cfg['Servers'][$i]['socket']        = '';          // Path to the socket - leave blank for default socket
+ 60 $cfg['Servers'][$i]['connect_type']  = 'tcp';       // How to connect to MySQL server ('tcp' or 'socket')
+ 61 $cfg['Servers'][$i]['extension']     = 'mysql';     // The php MySQL extension to use ('mysql' or 'mysqli')
+ 62 $cfg['Servers'][$i]['compress']      = FALSE;       // Use compressed protocol for the MySQL connection
+ 63                                                     // (requires PHP &gt;= 4.3.0)
+ 64 $cfg['Servers'][$i]['controluser']   = '';          // MySQL control user settings
+ 65                                                     // (this user must have read-only
+ 66 $cfg['Servers'][$i]['controlpass']   = '';          // access to the "mysql/user"
+ 72 $cfg['Servers'][$i]['user']          = 'user';      // MySQL user
+ 73 $cfg['Servers'][$i]['password']      = '%**';          // MySQL password (only needed
+</code></p>
+
+<p>同时
+<code>php
+ 40  * The 'cookie' auth_type uses blowfish algorithm to encrypt the password. If
+ 41  * at least one server configuration uses 'cookie' auth_type, enter here a
+ 42  * passphrase that will be used by blowfish. The maximum length seems to be 46
+ 43  * characters.
+ 44  */
+ 45 $cfg['blowfish_secret'] = 's#$dcrnm^9fk2';
+</code>
+这部分也指定完毕。</p>
+
+<p>但是还是会报告1045，最后清除浏览器缓存，终于搞定。</p>
 ]]></content>
   </entry>
   
