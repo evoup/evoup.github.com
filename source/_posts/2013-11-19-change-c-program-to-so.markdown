@@ -15,8 +15,7 @@ categories: c-language
 <!-- more -->
 
 先看准备被改成动态库的原代码
-```c
-{% codeblock test.c lang=c %}
+{% codeblock test.c lang:c %}
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -43,9 +42,8 @@ int main(int argc, char **argv) {
     }
 }
 {% endcodeblock %}
-```
 
-```c
+```makefile
 gcc -Wall test.c -o test
 ```
 测试：
@@ -60,7 +58,7 @@ option d:'(null)'
 其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。
 
 接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。
-```c
+{% codeblock plug.c lang:c %}
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -94,9 +92,10 @@ int dlmain(int argc, char **argv) {
     printf("in dll\n");
     return 1;
 }
-```
+{% endcodeblock %}
+
 测试一下
-```sh
+```makefile
 gcc -Wall plug.c -o plug
 ./plug
 option a:'1'
@@ -106,7 +105,7 @@ option d:'(null)'
 in dll
 ```
 ok，没有问题，直接转换成动态库
-```c
+{% codeblock plug.c lang:c %}
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -141,16 +140,16 @@ int dlmain(int argc, char **argv) {
     printf("in dll\n");
     return 1;
 }
-```
+{% endcodeblock %}
 
 编译动态连接库
-```sh
+```makefile
 gcc -shared -o plug.so plug.c -fpic
 ```
 这样就得到了plug.so
 
 接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
-```c
+{% codeblock main.c lang:c %}
 #include <stdio.h>
 #include <dlfcn.h>
 int (*d_plug) ();
@@ -162,9 +161,9 @@ int main(int argc,char **argv) {
     dlclose(dp);
     return 1;
 }
-```
+{% endcodeblock %}
 编译执行看结果
-```sh
+```makefile
 gcc main.c -lc -fpic -o main
 ./main
 option a:'1'
@@ -186,6 +185,6 @@ opterr：当opterr=0时，getopt不向stderr输出错误信息
 optopt: 当命令行选项字符不包括在optstring中或者选项缺少必要的参数时，该选项存储在optopt 中，getopt返回'？’
 
 
-###问题解决
+###问题解决:
 写erlang的NIF扩展时optind需要重置为0，否则就导致了每次结果不变，因为就我所知erlang目前版本的NIF是没有unload功能的。
 
