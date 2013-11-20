@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-20T10:06:42+08:00</updated>
+  <updated>2013-11-20T10:22:38+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -29,7 +29,8 @@
 
 <p>先看准备被改成动态库的原代码</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>test.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -54,13 +55,10 @@
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
 <span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="p">{</span><span class="o">%</span> <span class="n">codeblock</span> <span class="n">test</span><span class="p">.</span><span class="n">c</span> <span class="n">lang</span><span class="o">=</span><span class="n">c</span> <span class="o">%</span><span class="p">}</span>
-</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
 </span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
 </span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
-</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
 </span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
 </span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
 </span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
@@ -82,14 +80,13 @@
 </span><span class='line'>        <span class="p">}</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="p">{</span><span class="o">%</span> <span class="n">endcodeblock</span> <span class="o">%</span><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">gcc</span> <span class="o">-</span><span class="n">Wall</span> <span class="n">test</span><span class="p">.</span><span class="n">c</span> <span class="o">-</span><span class="n">o</span> <span class="n">test</span>
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-Wall</span> <span class="err">test.c</span> <span class="err">-o</span> <span class="err">test</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -113,7 +110,8 @@
 
 <p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -191,19 +189,20 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gcc -Wall plug.c -o plug
-</span><span class='line'>./plug
-</span><span class='line'>option a:<span class="s1">&#39;1&#39;</span>
-</span><span class='line'>option b:<span class="s1">&#39;1&#39;</span>
-</span><span class='line'>option c:<span class="s1">&#39;(null)&#39;</span>
-</span><span class='line'>option d:<span class="s1">&#39;(null)&#39;</span>
-</span><span class='line'>in dll
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-Wall</span> <span class="err">plug.c</span> <span class="err">-o</span> <span class="err">plug</span>
+</span><span class='line'><span class="err">./plug</span>
+</span><span class='line'><span class="nf">option a</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option b</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option c</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="nf">option d</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="err">in</span> <span class="err">dll</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>ok，没有问题，直接转换成动态库</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -277,7 +276,7 @@
 <p>编译动态连接库</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gcc -shared -o plug.so plug.c -fpic
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-shared</span> <span class="err">-o</span> <span class="err">plug.so</span> <span class="err">plug.c</span> <span class="err">-fpic</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -285,7 +284,8 @@
 
 <p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>main.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -319,13 +319,13 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gcc main.c -lc -fpic -o main
-</span><span class='line'>./main
-</span><span class='line'>option a:<span class="s1">&#39;1&#39;</span>
-</span><span class='line'>option b:<span class="s1">&#39;1&#39;</span>
-</span><span class='line'>option c:<span class="s1">&#39;(null)&#39;</span>
-</span><span class='line'>option d:<span class="s1">&#39;(null)&#39;</span>
-</span><span class='line'>in dll
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">main.c</span> <span class="err">-lc</span> <span class="err">-fpic</span> <span class="err">-o</span> <span class="err">main</span>
+</span><span class='line'><span class="err">./main</span>
+</span><span class='line'><span class="nf">option a</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option b</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option c</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="nf">option d</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="err">in</span> <span class="err">dll</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
