@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-19T18:26:27+08:00</updated>
+  <updated>2013-11-20T10:06:42+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -28,39 +28,75 @@
 
 
 <p>先看准备被改成动态库的原代码
-```c</p>
-
-<h1>include &lt;stdio.h></h1>
-
-<h1>include &lt;stdlib.h></h1>
-
-<h1>include &lt;unistd.h></h1>
-
-<p>int main(int argc, char **argv) {</p>
-
-<pre><code>int ch;
-const char *opts="a:b::cd";
-while ((ch = getopt(argc, argv, opts)) != -1) {
-    switch (ch) {
-    case 'a':
-        printf("option a:'%s'\n",optarg);
-        break;
-    case 'b':
-        printf("option b:'%s'\n",optarg);
-        break;
-    case 'c':
-        printf("option c:'%s'\n",optarg);
-        break;
-    case 'd':
-        printf("option d:'%s'\n",optarg);
-        break;
-    default:
-        printf("other option:%c\n",ch);
-    }
-}
-</code></pre>
-
-<p>}
+```c
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.c lang=c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="nl">default:</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 ```</p>
 
 <p><code>c
@@ -187,7 +223,7 @@ gcc -shared -o plug.so plug.c -fpic
 </code>
 这样就得到了plug.so</p>
 
-<p>接下来写主调程序，用它直接调用已经通过改两行代码就封装好的动态库。
+<p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
 ```c</p>
 
 <h1>include &lt;stdio.h></h1>
@@ -250,7 +286,7 @@ in dll
 ```c
 /<em>
  * free.c &ndash; Display FreeBSD memory information
- * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#118;&#105;&#110;&#111;&#x64;&#x40;&#115;&#101;&#x67;&#x66;&#x61;&#x75;&#x6c;&#x74;&#46;&#105;&#110;">&#x76;&#105;&#x6e;&#111;&#x64;&#x40;&#x73;&#101;&#103;&#102;&#97;&#117;&#x6c;&#116;&#x2e;&#x69;&#110;</a>
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#x3a;&#118;&#105;&#x6e;&#111;&#100;&#64;&#x73;&#101;&#x67;&#x66;&#x61;&#117;&#108;&#116;&#46;&#x69;&#x6e;">&#118;&#105;&#110;&#111;&#x64;&#x40;&#x73;&#101;&#x67;&#102;&#x61;&#117;&#108;&#116;&#x2e;&#105;&#x6e;</a>
  * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
  </em>/</p>
 
