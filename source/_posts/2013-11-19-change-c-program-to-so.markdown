@@ -16,6 +16,7 @@ categories: c-language
 
 先看准备被改成动态库的原代码
 ```c
+{% codeblock test.c lang=c %}
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
         }
     }
 }
+{% endcodeblock %}
 ```
 
 ```c
@@ -147,7 +149,7 @@ gcc -shared -o plug.so plug.c -fpic
 ```
 这样就得到了plug.so
 
-接下来写主调程序，用它直接调用已经通过改两行代码就封装好的动态库。
+接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
 ```c
 #include <stdio.h>
 #include <dlfcn.h>
