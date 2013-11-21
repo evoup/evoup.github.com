@@ -257,7 +257,30 @@ int &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>取得fb6的网卡mac</p>
+  <div class="entry-content"><p>批量拷贝文件到服务器bash版</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/local/bin/bash</span>
+</span><span class='line'><span class="k">for </span>hosts in <span class="sb">`</span>cat host.list<span class="sb">`</span> ;
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;将处理&quot;</span><span class="nv">$hosts</span> ;
+</span><span class='line'>    scp /services/monitor_deal/madmonitor.current root@<span class="nv">$hosts</span>:/services/monitor_deal/ ;
+</span><span class='line'>    scp /services/monitor_deal/libphp5.so root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libmysqlclient.so.16 root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libz.so.6 root@<span class="nv">$hosts</span>:/usr/lib/ ;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>取得fb6的网卡mac</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
