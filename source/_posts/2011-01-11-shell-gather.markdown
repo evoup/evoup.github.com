@@ -6,6 +6,20 @@ comments: true
 categories: shell 
 ---
 
+批量拷贝文件到服务器bash版
+```bash
+#!/usr/local/bin/bash
+for hosts in `cat host.list` ;
+do
+    echo "将处理"$hosts ;
+    scp /services/monitor_deal/madmonitor.current root@$hosts:/services/monitor_deal/ ;
+    scp /services/monitor_deal/libphp5.so root@$hosts:/usr/local/lib/ ;
+    scp /services/monitor_deal/libmysqlclient.so.16 root@$hosts:/usr/local/lib/ ;
+    scp /services/monitor_deal/libz.so.6 root@$hosts:/usr/lib/ ;
+done
+
+```
+
 取得fb6的网卡mac
 ```sh
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
