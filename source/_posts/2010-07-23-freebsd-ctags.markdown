@@ -6,6 +6,9 @@ comments: true
 categories:                  [freebsd,vim]
 ---
 用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。
+
+<!-- more -->
+
 在freebsd里面，可以去ctags.sourceforge.net下载编译安装了ctags，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了。
 
 其实可以直接port安装了,装完之后这个软件其实叫做exctags。
