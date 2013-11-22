@@ -82,6 +82,11 @@ ifconfig | awk '{if(NR==5) print $2}'
 find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
 ```
 
+找到的c头文件放到temp目录下
+```sh
+find . -name "*.h" -exec mv {} temp/ \;
+```
+
 AWK的入门
 
 http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html
