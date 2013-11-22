@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-22T17:58:53+08:00</updated>
+  <updated>2013-11-22T18:02:47+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -422,12 +422,20 @@ sudo /usr/local/php4_admin/sbin/php-fpm start
 
 
 <p>```php
-$encode = mb_detect_encoding($temstr,&ldquo;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&rdquo;);
-if ($encode!=&ldquo;UTF-8&rdquo;) {</p>
+$allFiles=array(&lsquo;/path/to/file0&rsquo;,&lsquo;/path/to/file1&rsquo;);
+foreach($allFiles as $file) {</p>
 
-<pre><code>echo "{$file}文件编码从{$encode}转换为UTF-8\n";
-$temstr=mb_convert_encoding($temstr, "UTF-8", $encode);
-file_put_contents($file,$temstr);
+<pre><code>$temstr=file_get_contents($file);
+if (!function_exists('mb_detect_encoding')) {
+    echo "请安装mb函数集\n";
+    exit;
+}
+$encode = mb_detect_encoding($temstr,"ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW");
+if ($encode!="UTF-8") {
+    echo "{$file}文件编码从{$encode}转换为UTF-8\n";
+    $temstr=mb_convert_encoding($temstr, "UTF-8", $encode);
+    file_put_contents($file,$temstr);
+}
 </code></pre>
 
 <p>}

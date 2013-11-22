@@ -15,8 +15,16 @@
 4
 5
 6
-$encode = mb_detect_encoding($temstr,&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;);
-if ($ &hellip;">
+7
+8
+9
+10
+11
+12
+13
+14
+$allFiles=array(&#39;/path/to/file0&#39;,&#39;/path/to/file1&#39;);
+foreach($ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -109,11 +117,27 @@ if ($ &hellip;">
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$encode</span> <span class="o">=</span> <span class="nb">mb_detect_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span><span class="s2">&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$encode</span><span class="o">!=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">{</span><span class="nv">$file</span><span class="si">}</span><span class="s2">文件编码从</span><span class="si">{</span><span class="nv">$encode</span><span class="si">}</span><span class="s2">转换为UTF-8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>    <span class="nv">$temstr</span><span class="o">=</span><span class="nb">mb_convert_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="nv">$encode</span><span class="p">);</span>
-</span><span class='line'>    <span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span><span class="nv">$temstr</span><span class="p">);</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$allFiles</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;/path/to/file0&#39;</span><span class="p">,</span><span class="s1">&#39;/path/to/file1&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$allFiles</span> <span class="k">as</span> <span class="nv">$file</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$temstr</span><span class="o">=</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;mb_detect_encoding&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;请安装mb函数集</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">exit</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nv">$encode</span> <span class="o">=</span> <span class="nb">mb_detect_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span><span class="s2">&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$encode</span><span class="o">!=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">{</span><span class="nv">$file</span><span class="si">}</span><span class="s2">文件编码从</span><span class="si">{</span><span class="nv">$encode</span><span class="si">}</span><span class="s2">转换为UTF-8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$temstr</span><span class="o">=</span><span class="nb">mb_convert_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="nv">$encode</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span><span class="nv">$temstr</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
