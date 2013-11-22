@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-21T16:06:29+08:00</updated>
+  <updated>2013-11-22T15:17:44+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -234,6 +234,25 @@ cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[解决nginx upstream send too big header]]></title>
+    <link href="http://evoupsight.com/blog/2012/11/22/nginx-upstream-send-too-big-header/"/>
+    <updated>2012-11-22T15:01:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/11/22/nginx-upstream-send-too-big-header</id>
+    <content type="html"><![CDATA[<p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>加以下2行
+<code>sh
+fastcgi_buffer_size 128k;
+fastcgi_buffers 8 128k;
+</code></p>
+
+<p>原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，调试的时候再去做了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[nginx报错413问题的解决]]></title>
     <link href="http://evoupsight.com/blog/2011/11/18/nginx-413/"/>
     <updated>2011-11-18T15:11:00+08:00</updated>
@@ -274,67 +293,6 @@ fastcgi_buffers 8 128k;
 </code></p>
 
 <p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd下安装nginx+php4.4.9的方法]]></title>
-    <link href="http://evoupsight.com/blog/2011/01/18/nginx-php4/"/>
-    <updated>2011-01-18T15:10:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2011/01/18/nginx-php4</id>
-    <content type="html"><![CDATA[<p>首先是php4.4
-<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
-
-<!-- more -->
-
-
-<p>（ps:更老的版本可以到museum.php.net去找。）</p>
-
-<p>装之前别忘为&mdash;enable的几个找下pecl
-编译php4（先不打补丁）的时候先使用这样的参数
-```makefile
-./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
-
-<p>make
-make install
-```</p>
-
-<p>然后打补丁
-同时候准备好补丁文件，<a href="http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz">http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz</a>
-<code>sh
-gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
-</code>
-再次
-```makefile
-./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;enable-force-cgi-redirect &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
-
-<p>make
-make install
-```</p>
-
-<p>这个php-fpm.conf要改的
-<code>sh
- 62             Unix user of processes
- 63         &lt;!--    &lt;value name="user"&gt;nobody&lt;/value&gt;       --&gt;
- 64
- 65             Unix group of processes
- 66         &lt;!--    &lt;value name="group"&gt;nobody&lt;/value&gt;      --&gt;
-</code></p>
-
-<p>换成
-<code>sh
- 62             Unix user of processes
- 63             &lt;value name="user"&gt;www&lt;/value&gt;
- 64
- 65             Unix group of processes
- 66             &lt;value name="group"&gt;www&lt;/value&gt;
-</code></p>
-
-<p>然后到目录sbin下试一试
-<code>sh
-sudo /usr/local/php4_admin/sbin/php-fpm start
-</code>
-看到就可以了，收工。</p>
 ]]></content>
   </entry>
   
