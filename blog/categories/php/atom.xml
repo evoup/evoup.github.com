@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-22T16:09:59+08:00</updated>
+  <updated>2013-11-22T17:58:53+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -412,6 +412,30 @@ sudo /usr/local/php4_admin/sbin/php-fpm start
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[php转换文件编码]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/"/>
+    <updated>2010-11-22T17:56:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/22/php-convert-encoding</id>
+    <content type="html"><![CDATA[<p>工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```php
+$encode = mb_detect_encoding($temstr,&ldquo;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&rdquo;);
+if ($encode!=&ldquo;UTF-8&rdquo;) {</p>
+
+<pre><code>echo "{$file}文件编码从{$encode}转换为UTF-8\n";
+$temstr=mb_convert_encoding($temstr, "UTF-8", $encode);
+file_put_contents($file,$temstr);
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[php myadmin1045 error]]></title>
     <link href="http://evoupsight.com/blog/2010/11/19/php-myadmin1045-error/"/>
     <updated>2010-11-19T15:58:00+08:00</updated>
@@ -480,27 +504,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
 
 <p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[mysql_fetch_array不使用while]]></title>
-    <link href="http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while/"/>
-    <updated>2009-06-10T13:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/06/10/php-mysql-fetch-array-without-while</id>
-    <content type="html"><![CDATA[<p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
-方法是
-```php
-$num=mysql_num_rows($result);
-if ($num==0) return 0;
-for($i=0;$i&lt;$num;$i++)
-{</p>
-
-<pre><code>$row[]=mysql_fetch_array($result);
-</code></pre>
-
-<p>}
-```</p>
 ]]></content>
   </entry>
   

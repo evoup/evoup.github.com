@@ -5,12 +5,18 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd下安装vmware-tool - Evoup`s Blog</title>
+  <title>php转换文件编码 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？ 消极的方法 首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。 在crontab内加入 1
-*/15 * * * * * root &hellip;">
+  <meta name="description" content="工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了 1
+2
+3
+4
+5
+6
+$encode = mb_detect_encoding($temstr,&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;);
+if ($ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +25,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool">
+  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/22/php-convert-encoding">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
@@ -69,7 +75,7 @@
   
   <header>
     
-      <h1 class="entry-title">Freebsd下安装vmware-tool</h1>
+      <h1 class="entry-title">Php转换文件编码</h1>
     
     
       <p class="meta">
@@ -85,111 +91,34 @@
   
 
 
-<time datetime="2013-11-05T13:22:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2013</time>
+<time datetime="2010-11-22T17:56:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+<div class="entry-content"><p>工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了</p>
 
 <!-- more -->
 
 
-<h3>消极的方法</h3>
-
-<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
-
-<p>在crontab内加入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以及在/etc/rc.conf中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ntpdate_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>积极的方法</h3>
-
-<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
-首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
-vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。</p>
-
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/port/dist
-</span><span class='line'>sudo fetch ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz
-</span><span class='line'>sudo pkg_add compat6x-amd64.tbz
-</span><span class='line'>*******************************************************************************
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* Do not forget to add COMPAT_FREEBSD6 into                                   *
-</span><span class='line'>* your kernel configuration <span class="o">(</span>enabled by default<span class="o">)</span>.                             *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* To configure and recompile your kernel see:                                 *
-</span><span class='line'>* http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>*******************************************************************************
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$encode</span> <span class="o">=</span> <span class="nb">mb_detect_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span><span class="s2">&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$encode</span><span class="o">!=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">{</span><span class="nv">$file</span><span class="si">}</span><span class="s2">文件编码从</span><span class="si">{</span><span class="nv">$encode</span><span class="si">}</span><span class="s2">转换为UTF-8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$temstr</span><span class="o">=</span><span class="nb">mb_convert_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="nv">$encode</span><span class="p">);</span>
+</span><span class='line'>    <span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span><span class="nv">$temstr</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>安装依赖库后，切换到root后，执行如下指令：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mount /cdrom
-</span><span class='line'><span class="nb">cd</span> /tmp
-</span><span class='line'>tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
-</span><span class='line'><span class="nb">cd </span>vmware-tools-distrib
-</span><span class='line'>./vmware-install.pl
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样vmware-tool就搞定了。
-最后为了保险起先，关闭系统后，编辑.vmx文件
-加上下面的时间同步的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tools.syncTime <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.continue <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.restore <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.disk <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.shrink <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.startup <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.enable <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.host <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>参考链接</p>
-
-<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
-<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
 </div>
 
 
@@ -212,12 +141,12 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
   
 
 
-<time datetime="2013-11-05T13:22:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2013</time>
+<time datetime="2010-11-22T17:56:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2010</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>
+    <a class='category' href='/blog/categories/php/'>php</a>
   
 </span>
 
@@ -226,7 +155,7 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/" data-via="" data-counturl="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/" >Tweet</a>
   
   
   
@@ -242,10 +171,10 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/11/04/hbase-full-distributed-case/" title="Previous Post: HBASE完全分布式搭建(VMware版)">&laquo; HBASE完全分布式搭建(VMware版)</a>
+        <a class="basic-alignment left" href="/blog/2010/11/19/php-myadmin1045-error/" title="Previous Post: php myadmin1045 error">&laquo; php myadmin1045 error</a>
       
       
-        <a class="basic-alignment right" href="/blog/2013/11/05/erl-crash-webtool-usage/" title="Next Post: 使用webtool查看erl_crash.dump">使用webtool查看erl_crash.dump &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2010/11/25/typedef-summary/" title="Next Post: typedef小结">typedef小结 &raquo;</a>
       
     </p>
   </footer>
