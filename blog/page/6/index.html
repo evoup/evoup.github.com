@@ -192,44 +192,14 @@ http://www.adp-gmbh.ch/cpp/gcc/create_lib.html
   </header>
 
 
-  <div class="entry-content"><p>用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。
-在freebsd里面，可以去ctags.sourceforge.net下载编译安装了ctags，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了。</p>
-
-<p>其实可以直接port安装了,装完之后这个软件其实叫做exctags。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>whereis ctags
-</span><span class='line'>/usr/ports/devel/ctags
-</span><span class='line'><span class="nb">cd</span> /usr/ports/devel/ctags
-</span><span class='line'>sudo make install clean
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以php语言为例</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec exctags --language-force<span class="o">=</span>php <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>对于c语言可能包含的h文件的方法，我采用如下的方式：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -regex <span class="s2">&quot;.*\.\(c\|h\)&quot;</span> -exec exctags <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果没有限制想把全部源码递归生成到一个tag文件则</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /root/repos/httpd <span class="o">&amp;&amp;</span> exctags -R　*
-</span></code></pre></td></tr></table></div></figure>
+  <div class="entry-content"><p>用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。</p>
 
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2010/07/23/freebsd-ctags/">Read on &rarr;</a>
+    </footer>
   
 
 
