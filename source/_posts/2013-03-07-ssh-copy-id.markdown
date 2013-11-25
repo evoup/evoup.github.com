@@ -62,6 +62,11 @@ The key's randomart image is:
 ```bash
 ssh-copy-id '-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub yin@211.136.104.189'
 ```
+更加简单的使用方法，不带i参数，默认使用用户的id_rsa.pub公钥
+```bash
+ssh-copy-id yin@211.136.104.189
+```
+这样子就可以了。
 
 参考：
 
