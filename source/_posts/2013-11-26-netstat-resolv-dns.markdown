@@ -19,4 +19,4 @@ categories: shell
            cally.
 ```
 这个参数是说netstat以数字的方式展现网络地址和端口。而不加该参数时netstat会尝试去解析地址和端口，然后采用象征方式呈现。至于究竟啥叫象征方式，其实就是如果你的hostname是localhost,它就会显示localhost，而不是127.0.0.1的方式。
-经过参数修改，netstat调用正常了。
+最后判断应该是本机的出站通讯没有加上dns协议的53端口导致的，经过参数修改，netstat调用正常了。
