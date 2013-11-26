@@ -72,6 +72,11 @@ find . -type f ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=sum+$1}END{print s
 find . ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=0}{sum=sum+$1}END{print sum }'
 ```
 
+寻找全部process开头的rrd文件，删除前确认
+```sh
+find . -name "process*.rrd" -ok rm {} \;
+```
+
 打印某网卡信息
 ```sh
 ifconfig | awk '{if(NR==5) print $2}'
