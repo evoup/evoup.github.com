@@ -16,9 +16,9 @@ categories:           shell
 
 Generating public/private rsa key pair.
 
-Enter file in which to save the key (/home/yin/.ssh/id_rsa):
+Enter file in which to save the key (/home/user/.ssh/id_rsa):
 
-/home/yin/.ssh/id_rsa already exists.
+/home/user/.ssh/id_rsa already exists.
 
 Overwrite (y/n)? y
 
@@ -26,13 +26,13 @@ Enter passphrase (empty for no passphrase):
 
 Enter same passphrase again:
 
-Your identification has been saved in /home/yin/.ssh/id_rsa.
+Your identification has been saved in /home/user/.ssh/id_rsa.
 
-Your public key has been saved in /home/yin/.ssh/id_rsa.pub.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
 
 The key fingerprint is:
 
-74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 yin@yin-arch.madhouse.cn
+74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 user@user-arch.madhouse.cn
 
 The key's randomart image is:
 
@@ -60,13 +60,19 @@ The key's randomart image is:
 ```
 然后运行如下脚本，按照提示输入密码即可
 ```bash
-ssh-copy-id '-p 9999 -i /usr/home/yin/.ssh/id_rsa.pub yin@211.136.104.189'
+ssh-copy-id '-p 9999 -i /usr/home/user/.ssh/id_rsa.pub user@211.136.104.189'
 ```
-更加简单的使用方法，不带i参数，默认使用用户的id_rsa.pub公钥
+更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥
 ```bash
-ssh-copy-id yin@211.136.104.189
+ssh-copy-id user@211.136.104.189
 ```
 这样子就可以了。
+
+如果要建立非22端口的信任。
+例：建立到211.136.221.207的信任，ssh的端口为8887，用户名为user
+```bash
+ssh-copy-id "-p8887 user@211.136.221.207"
+```
 
 参考：
 
