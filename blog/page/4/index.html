@@ -437,7 +437,7 @@
 
 <h3>第一种：使用phpmyadmin选择文件上传</h3>
 
-<p>此种方式很直观，只是要注意选择正确的换行符。假设我们采用如下方式先导出数据</p>
+<p>此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -469,7 +469,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>第三种：程序解析后插入</h3>
+<h3>第三种：php程序解析后插入</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -502,7 +502,10 @@
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
 <span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">echo</span> <span class="s2">&quot;开始导入csv数据到工作表</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;开始导入csv数据到工作表</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="k">echo</span> <span class="s2">&quot;导入test_info...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$mysql_host</span><span class="o">=</span><span class="s2">&quot;172.16.27.55&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$mysql_user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">;</span>
@@ -533,6 +536,7 @@
 </span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
 </span></code></pre></td></tr></table></div></figure>
 
 

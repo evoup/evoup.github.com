@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-26T10:48:11+08:00</updated>
+  <updated>2013-11-26T10:52:49+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -22,7 +22,7 @@
 
 <h3>第一种：使用phpmyadmin选择文件上传</h3>
 
-<p>此种方式很直观，只是要注意选择正确的换行符。假设我们采用如下方式先导出数据
+<p>此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据
 <code>sql
 select * from test_info
 into outfile '/tmp/test_info.csv'
@@ -46,9 +46,10 @@ lines terminated by '\r\n';
 
 <p>```</p>
 
-<h3>第三种：程序解析后插入</h3>
+<h3>第三种：php程序解析后插入</h3>
 
 <p><code>``php
+&lt;?php
 echo "开始导入csv数据到工作表\n";
 echo "导入test_info...\n";
 $mysql_host="172.16.27.55";
@@ -82,6 +83,7 @@ if (!($result=$link-&gt;query($query))) {
 <p>$query=&ldquo;insert into <code>test_info</code> (<code>字段1</code>,<code>字段2</code>) values (&rdquo;;</p>
 
 <p>}
+?>
 ```
 需要注意如果fgetcsv出错和到了行尾都是会返回false的。</p>
 ]]></content>
