@@ -9,7 +9,7 @@ categories: mysql
 有几种方法，这里一一列举：
 
 ###第一种：使用phpmyadmin选择文件上传
-此种方式很直观，只是要注意选择正确的换行符。假设我们采用如下方式先导出数据
+此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据
 ```sql
 select * from test_info
 into outfile '/tmp/test_info.csv'
@@ -28,8 +28,9 @@ load data infile '/tmp/test_info.csv'
 	fields terminated by ','  optionally enclosed by '"' escaped by '"'
 	lines terminated by '\r\n';
 ```
-###第三种：程序解析后插入
+###第三种：php程序解析后插入
 ```php
+<?php
 echo "开始导入csv数据到工作表\n";
 echo "导入test_info...\n";
 $mysql_host="172.16.27.55";
@@ -61,5 +62,6 @@ while ($data = fgetcsv ($handle)) {
 $query="insert into `test_info` (`字段1`,`字段2`) values (";  
 
 }
+?>
 ```
 需要注意如果fgetcsv出错和到了行尾都是会返回false的。
