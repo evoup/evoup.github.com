@@ -6,7 +6,7 @@ comments: true
 categories: shell 
 ---
 
-今天看了下客户端运行状况，发现流量图断断续续的。下意思的反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。查了下似乎没有这个问题。
+今天看了下客户端运行状况，发现流量图断断续续的。直觉反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。但查了下似乎没有这个问题。
 
 ![Alt text](/images/evoup/netstat1.png)
 <!-- more -->
