@@ -7,9 +7,10 @@ categories: shell
 ---
 
 今天看了下客户端运行状况，发现流量图断断续续的。下意思的反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。查了下似乎没有这个问题。
+
 ![Alt text](/images/evoup/netstat1.png)
-![Alt text](/images/evoup/netstat2.png)
 <!-- more -->
+
 该机器执行netstat本身就很慢，top看了下CPU占用也无异常，该机器基本OK，就是netstat执行起来很慢。
 后来发现使用-n参数就快了。
 ```
