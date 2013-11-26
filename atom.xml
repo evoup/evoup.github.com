@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-26T11:54:01+08:00</updated>
+  <updated>2013-11-26T14:38:11+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,34 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[部分机器netstat运行结果缓慢的原因]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns/"/>
+    <updated>2013-11-26T14:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns</id>
+    <content type="html"><![CDATA[<p>今天看了下客户端运行状况，发现流量图断断续续的。下意思的反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。查了下似乎没有这个问题。
+<img src="http://evoupsight.com/images/evoup/netstat1.png" alt="Alt text" />
+<img src="http://evoupsight.com/images/evoup/netstat2.png" alt="Alt text" /></p>
+
+<!-- more -->
+
+
+<p>该机器执行netstat本身就很慢，top看了下CPU占用也无异常，该机器基本OK，就是netstat执行起来很慢。
+后来发现使用-n参数就快了。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> -n    Show network addresses and ports as numbers.  Normally netstat
+</span><span class='line'>       attempts to resolve addresses and ports, and display them symboli‐
+</span><span class='line'>       cally.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个参数是说netstat以数字的方式展现网络地址和端口。而不加该参数时netstat会尝试去解析地址和端口，然后采用象征方式呈现。至于究竟啥叫象征方式，其实就是如果你的hostname是localhost,它就会显示localhost，而不是127.0.0.1的方式。
+经过参数修改，netstat调用正常了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[如何正确地把带参数的C语言main程序改成so]]></title>
@@ -2758,15 +2786,6 @@ C到B，同上。</p>
 <p>这样子使用
 long2ip（3232290954).
 {192,168,216,138}</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[博客搬家到github]]></title>
-    <link href="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/"/>
-    <updated>2013-09-29T16:27:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/09/29/change-blog-to-github</id>
-    <content type="html"><![CDATA[<p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
 ]]></content>
   </entry>
   

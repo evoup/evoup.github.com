@@ -9,7 +9,16 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="目前项目急需一套可记录到文件并能自动轮询的机制的日志系统，考虑良久，最后置自带gen_event和标准日志函数于不顾，决定用log4erl。 ">
+  <meta name="description" content="最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。 1
+2
+3
+4
+5
+6
+7
+8
+9
+10 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +74,93 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/04/erlang-self-log-to-file/">Erlang自带日志写文件的方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-04T18:19:00+08:00" pubdate data-updated="true">Feb 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">x</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">define</span><span class="p">(</span><span class="no">LogsLoaction</span><span class="p">,</span><span class="s">&quot;/tmp/&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">start</span><span class="p">()</span><span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">FileName</span> <span class="o">=</span> <span class="o">?</span><span class="nv">LogsLoaction</span><span class="o">++</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">file</span><span class="p">:</span><span class="nf">write_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">,</span> <span class="o">&lt;&lt;</span><span class="s">&quot;start to record&quot;</span><span class="o">&gt;&gt;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">error_logger</span><span class="p">:</span><span class="nf">logfile</span><span class="p">({</span><span class="n">open</span><span class="p">,</span><span class="nv">FileName</span><span class="p">}),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">info</span><span class="p">(</span><span class="s">&quot;[init] log start </span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -726,67 +822,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/11/18/nginx-413/">Nginx报错413问题的解决</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-18T15:11:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天遇到php myadmin上传文件的2048k限制，页面报错413 Request Entity Too Large
-其实只要在任意section加上以下的配置即可。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>client_max_body_size 500m;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>同时针对php.ini加上以下的配置，如果有必要重启php-fpm</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">file_uploads</span> <span class="o">=</span> On ;打开文件上传选项
-</span><span class='line'><span class="nv">upload_max_filesize</span> <span class="o">=</span> 500M ;上传文件上限
-</span><span class='line'><span class="nv">post_max_size</span> <span class="o">=</span> 500M
-</span><span class='line'><span class="nv">memory_limit</span> <span class="o">=</span> 8M
-</span><span class='line'><span class="nv">max_execution_time</span> <span class="o">=</span> 600
-</span><span class='line'><span class="nv">max_input_time</span> <span class="o">=</span> 600
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>可以根据实际情况调整对应参数。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/5/">&larr; Older</a>
@@ -804,6 +839,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
       </li>
     
@@ -819,17 +858,13 @@
         <a href="/blog/2013/11/07/erlang-rebar-notool-not-found/">Rebar生成发布包后找不到noodtool</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/11/05/erl-crash-webtool-usage/">使用webtool查看erl_crash.dump</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 104.0%'>Mysql(1)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 124.0%'>Php(6)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 116.0%'>Shell(4)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 104.0%'>Mysql(1)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 124.0%'>Php(6)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
 </section>
 
 <section>

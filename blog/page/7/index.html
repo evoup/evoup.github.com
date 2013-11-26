@@ -9,7 +9,8 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="今天要初始化一组对象 1
+  <meta name="description" content="call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
+做项目修改a2billing代码时发现了这个函数。 在a2billing/Public/call-log-custoners.php的大约780行 1
 2
 3
 4
@@ -17,14 +18,7 @@
 6
 7
 8
-9
-cls_enemy * enemy0[]={
-new cls_enemy(),
-new cls_enemy(),
-new cls_enemy(),
-new cls_enemy(),
-new cls_enemy(),
-new &hellip;">
+while... &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +74,74 @@ new &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2009/06/11/php-call-user-func/">PHP之call_user_func动态调用函数</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true">Jun 11<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
+做项目修改a2billing代码时发现了这个函数。</p>
+
+<!-- readmore -->
+
+
+<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
+</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
+$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
+把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
+数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+
+<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -557,6 +619,10 @@ new &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
       </li>
     
@@ -572,17 +638,13 @@ new &hellip;">
         <a href="/blog/2013/11/07/erlang-rebar-notool-not-found/">Rebar生成发布包后找不到noodtool</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/11/05/erl-crash-webtool-usage/">使用webtool查看erl_crash.dump</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 104.0%'>Mysql(1)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 124.0%'>Php(6)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 116.0%'>Shell(4)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 104.0%'>Mysql(1)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 124.0%'>Php(6)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
 </section>
 
 <section>
