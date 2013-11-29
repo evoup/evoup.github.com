@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-26T17:39:04+08:00</updated>
+  <updated>2013-11-29T11:02:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
+    <updated>2013-11-29T10:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
+    <content type="html"><![CDATA[<h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找
+<code>php
+return strftime($date, $timestamp);
+</code>
+替换为
+<code>php
+if(extension_loaded('gettext'))
+  return strftime($date, $timestamp);
+</code></p>
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码
+```php
+$version = PMA_Util::getLatestVersion();</p>
+
+<p>echo json_encode(</p>
+
+<pre><code>array(
+    'version' =&gt; $version-&gt;version,
+    'date' =&gt; $version-&gt;date,
+    )
+);
+</code></pre>
+
+<p>```</p>
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[【How to】使用basho的erlang-protobuffs和PHP通讯]]></title>
@@ -479,39 +525,6 @@ if ($encode!="UTF-8") {
 这部分也指定完毕。</p>
 
 <p>但是还是会报告1045，最后清除浏览器缓存，终于搞定。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[PHP之call_user_func动态调用函数]]></title>
-    <link href="http://evoupsight.com/blog/2009/06/11/php-call-user-func/"/>
-    <updated>2009-06-11T11:40:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/06/11/php-call-user-func</id>
-    <content type="html"><![CDATA[<p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
-做项目修改a2billing代码时发现了这个函数。</p>
-
-<!-- readmore -->
-
-
-<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
-
-<p><code>php
-while...
-echo $FG_TABLE_COL[$i][11];
-call_user_func($FG_TABLE_COL[$i][11], $record_display);
-}else{
-echo stripslashes($record_display);
-}
-...
-end while
-</code></p>
-
-<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
-$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
-把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
-数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
-
-<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
 ]]></content>
   </entry>
   

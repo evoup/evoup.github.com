@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-26T17:39:04+08:00</updated>
+  <updated>2013-11-29T11:02:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
+    <updated>2013-11-29T10:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
+    <content type="html"><![CDATA[<h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找
+<code>php
+return strftime($date, $timestamp);
+</code>
+替换为
+<code>php
+if(extension_loaded('gettext'))
+  return strftime($date, $timestamp);
+</code></p>
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码
+```php
+$version = PMA_Util::getLatestVersion();</p>
+
+<p>echo json_encode(</p>
+
+<pre><code>array(
+    'version' =&gt; $version-&gt;version,
+    'date' =&gt; $version-&gt;date,
+    )
+);
+</code></pre>
+
+<p>```</p>
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[浅谈mysql导入导出csv的几种方法]]></title>

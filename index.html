@@ -9,7 +9,11 @@
   <meta name="author" content="Your Name">
 
   
-  <meta name="description" content="今天看了下客户端运行状况，发现流量图断断续续的。直觉反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。但查了下似乎没有这个问题。 ">
+  <meta name="description" content="第一步 文件名./libraries/Util.class.php文件
+查找 1
+return strftime($date, $timestamp); 替换为 1
+2
+if(extension_loaded(&#39;gettext&#39;)) return strftime($date, $ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +69,91 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-29T10:52:00+08:00" pubdate data-updated="true">Nov 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">if</span><span class="p">(</span><span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">&#39;gettext&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$version</span> <span class="o">=</span> <span class="nx">PMA_Util</span><span class="o">::</span><span class="na">getLatestVersion</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="nb">json_encode</span><span class="p">(</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;version&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;date&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>    <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -511,49 +600,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/11/04/erlang-open-port-error-enoent/">Erlang Open_port 错误之error Enoent</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-11-04T11:04:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
-
-<h3>问题重现：</h3>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2013/11/04/erlang-open-port-error-enoent/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -567,6 +613,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
@@ -584,17 +634,13 @@
         <a href="/blog/2013/11/08/centos-install-cvs/">centos下CVS服务器的配置</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/11/07/erlang-rebar-notool-not-found/">Rebar生成发布包后找不到noodtool</a>
-      </li>
-    
   </ul>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 104.0%'>Mysql(1)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 124.0%'>Php(6)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 108.0%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 128.0%'>Php(7)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
 </section>
 
 <section>

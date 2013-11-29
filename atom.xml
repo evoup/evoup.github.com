@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-11-26T17:39:04+08:00</updated>
+  <updated>2013-11-29T11:02:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,64 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
+    <updated>2013-11-29T10:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
+    <content type="html"><![CDATA[<h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">if</span><span class="p">(</span><span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">&#39;gettext&#39;</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$version</span> <span class="o">=</span> <span class="nx">PMA_Util</span><span class="o">::</span><span class="na">getLatestVersion</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="nb">json_encode</span><span class="p">(</span>
+</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;version&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;date&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>    <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[部分机器netstat运行结果缓慢的原因]]></title>
@@ -2759,33 +2817,6 @@ C到B，同上。</p>
 
 <p>附一张运行截图
 <img src="http://evoupsight.com/images/evoup/df.png" alt="Alt text" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[erlang版的long2ip函数]]></title>
-    <link href="http://evoupsight.com/blog/2013/10/09/erlang-long2ip/"/>
-    <updated>2013-10-09T17:56:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/10/09/erlang-long2ip</id>
-    <content type="html"><![CDATA[<p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
-
-<figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
-</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
-</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样子使用
-long2ip（3232290954).
-{192,168,216,138}</p>
 ]]></content>
   </entry>
   
