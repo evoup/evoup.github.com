@@ -5,6 +5,10 @@ date: 2013-11-29 10:52
 comments: true
 categories: [php,mysql]
 ---
+安装最新版phpmyadmin4.1.0出现了访问非常缓慢的问题，记录一下
+
+<!-- more -->
+
 ###第一步
 文件名./libraries/Util.class.php文件
 查找
