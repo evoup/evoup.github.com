@@ -35,36 +35,35 @@ cd e:\devkit
 ruby dk.rb init
 C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)
 ```
-原来是环境变量不能先设置
-```
-LANG=zh_CN.UTF-8
-LC_ALL=zh_CN.UTF-8
-```
-再次
+原来是环境变量不能先设置为UTF-8，这个是要特别注意的。
+
+然后就可以执行devkit的安装了：
 ```
 ruby dk.rb init
 ruby dk.rb install
 ```
-再次设置环境变量为
+接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：
 ```
 LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 ```
 
-继续执行
+继续安装2个必要的gem
 ```
 gem install rdoc bundler
 bundle install
 ```
-这样环境就算和之前一致了。
+这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。
 
 
 ##博客恢复篇
-签出自己的octopress项目
+签出自己的octopress项目,我的放在e:\octopress
 ```
+cd e:\octopress\
 git clone https://github.com/you/you.github.com.git
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
+cd you.github.com
 rake setup_github_pages
 cd _deploy
 git checkout source
@@ -79,7 +78,7 @@ git checkout source
 
 最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
 ```
-cd Octopress/  
+cd e:\octopress\you.github.com 
 git pull origin source 
 cd _deploy  
 git pull origin master  
