@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-01T19:54:35+08:00</updated>
+  <updated>2013-12-01T20:01:56+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,11 +14,13 @@
 
   
   <entry>
-    <title type="html"><![CDATA[deploy another octopress environment in win7]]></title>
+    <title type="html"><![CDATA[克隆你的octopress博客到win7]]></title>
     <link href="http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7/"/>
     <updated>2013-12-01T18:25:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7</id>
-    <content type="html"><![CDATA[<p>由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。</p>
+    <content type="html"><![CDATA[<p>由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。参考互联网一博主的《【像黑客一样写博客之五】博客克隆》进行操作。</p>
+
+<p>方法稍微有点区别,呵呵。</p>
 
 <!-- more -->
 
@@ -83,7 +85,8 @@ rake generate
 <code>
 rake preview
 </code>
-然后访问<a href="http://127.0.0.1:4000%E6%9F%A5%E7%9C%8Bblog%EF%BC%8C%E4%B8%80%E5%88%87%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E3%80%82">http://127.0.0.1:4000%E6%9F%A5%E7%9C%8Bblog%EF%BC%8C%E4%B8%80%E5%88%87%E6%81%A2%E5%A4%8D%E6%AD%A3%E5%B8%B8%E3%80%82</a></p>
+然后访问 <a href="http://127.0.0.1:4000">http://127.0.0.1:4000</a>
+查看blog，一切恢复正常。</p>
 
 <p>但是到了
 <code>
@@ -106,6 +109,14 @@ git pull origin master
 git checkout source
 </code>
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
+
+<p>最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
+<code>
+cd Octopress/  
+git pull origin source
+cd _deploy  
+git pull origin master  
+</code></p>
 ]]></content>
   </entry>
   
