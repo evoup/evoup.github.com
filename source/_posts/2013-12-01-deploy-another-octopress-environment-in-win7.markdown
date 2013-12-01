@@ -30,7 +30,7 @@ continue.
 而安装ruby1.9.3,相应需要安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
 直接解压到e:\devkit
 然后再
-```
+```ruby
 cd e:\devkit
 ruby dk.rb init
 C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)
@@ -38,18 +38,18 @@ C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence i
 原来是环境变量不能先设置为UTF-8，这个是要特别注意的。
 
 然后就可以执行devkit的安装了：
-```
+```ruby
 ruby dk.rb init
 ruby dk.rb install
 ```
 接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：
-```
+```sh
 LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 ```
 
 继续安装2个必要的gem
-```
+```ruby
 gem install rdoc bundler
 bundle install
 ```
@@ -58,7 +58,7 @@ bundle install
 
 ##博客恢复篇
 签出自己的octopress项目,我的放在e:\octopress
-```
+```sh
 cd e:\octopress\
 git clone https://github.com/you/you.github.com.git
 git config --global user.email "you@example.com"
@@ -71,14 +71,14 @@ git pull origin master
 ```
 所有的资料都从远程origin仓库的master分支取回来了！
 然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。
-```
+```sh
 cd ..
 git checkout source
 ```
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
 
 最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
-```
+```sh
 cd e:\octopress\you.github.com 
 git pull origin source 
 cd _deploy  
