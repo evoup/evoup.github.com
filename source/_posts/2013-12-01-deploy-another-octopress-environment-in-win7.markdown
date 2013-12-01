@@ -77,6 +77,7 @@ rake deploy
 ```
 又出现No such file or directory - _deploy
 那么只要手工创建一个_deploy文件夹
-再次运行rake deploy
+再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。
+
 
 
