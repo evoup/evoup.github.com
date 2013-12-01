@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-01T23:19:34+08:00</updated>
+  <updated>2013-12-01T23:24:05+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -49,38 +49,42 @@
 直接解压到e:\devkit
 然后再</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd e:\devkit
-</span><span class='line'>ruby dk.rb init
-</span><span class='line'>C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">cd</span> <span class="ss">e</span><span class="p">:\</span><span class="n">devkit</span>
+</span><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">init</span>
+</span><span class='line'><span class="ss">C</span><span class="p">:</span><span class="sr">/Ruby193/</span><span class="n">lib</span><span class="o">/</span><span class="n">ruby</span><span class="o">/</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">win32</span><span class="o">/</span><span class="n">registry</span><span class="o">.</span><span class="n">rb</span><span class="p">:</span><span class="mi">173</span><span class="ss">:in</span> <span class="sb">`tr&#39;: invalid byte sequence in UTF-8 (ArgumentError)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>原来是环境变量不能先设置为UTF-8，这个是要特别注意的。</p>
 
 <p>然后就可以执行devkit的安装了：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>ruby dk.rb init
-</span><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">init</span>
+</span><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>LANG=zh_CN.UTF-8
-</span><span class='line'>LC_ALL=zh_CN.UTF-8</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">LANG</span><span class="o">=</span>zh_CN.UTF-8
+</span><span class='line'><span class="nv">LC_ALL</span><span class="o">=</span>zh_CN.UTF-8
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>继续安装2个必要的gem</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem install rdoc bundler
-</span><span class='line'>bundle install</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">gem</span> <span class="n">install</span> <span class="n">rdoc</span> <span class="n">bundler</span>
+</span><span class='line'><span class="n">bundle</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。</p>
@@ -89,7 +93,7 @@
 
 <p>签出自己的octopress项目,我的放在e:\octopress</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -98,38 +102,41 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd e:\octopress\
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>e:<span class="se">\o</span>ctopress<span class="se">\</span>
 </span><span class='line'>git clone https://github.com/you/you.github.com.git
-</span><span class='line'>git config --global user.email "you@example.com"
-</span><span class='line'>git config --global user.name "Your Name"
-</span><span class='line'>cd you.github.com
-</span><span class='line'>git checkout source
+</span><span class='line'>git config --global user.email <span class="s2">&quot;you@example.com&quot;</span>
+</span><span class='line'>git config --global user.name <span class="s2">&quot;Your Name&quot;</span>
+</span><span class='line'><span class="nb">cd </span>you.github.com
+</span><span class='line'>git checkout <span class="nb">source</span>
 </span><span class='line'>rake setup_github_pages
-</span><span class='line'>cd _deploy
-</span><span class='line'>git pull origin master</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'><span class="nb">cd </span>_deploy
+</span><span class='line'>git pull origin master
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>所有的资料都从远程origin仓库的master分支取回来了！
 然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd ..
-</span><span class='line'>git checkout source</span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> ..
+</span><span class='line'>git checkout <span class="nb">source</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
 
 <p>最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd e:\octopress\you.github.com 
-</span><span class='line'>git pull origin source 
-</span><span class='line'>cd _deploy  
-</span><span class='line'>git pull origin master  </span></code></pre></td></tr></table></div></figure>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>e:<span class="se">\o</span>ctopress<span class="se">\y</span>ou.github.com
+</span><span class='line'>git pull origin <span class="nb">source </span>
+</span><span class='line'><span class="nb">cd </span>_deploy
+</span><span class='line'>git pull origin master
+</span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
   </entry>
