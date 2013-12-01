@@ -7,11 +7,15 @@ categories:  octopress
 ---
 由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。参考互联网一博主的《【像黑客一样写博客之五】博客克隆》进行操作。
 
-方法稍微有点区别,呵呵。
+方法稍微有点区别,呵呵。归纳成了几个问题，顺序看就行。
 
 <!-- more -->
+##环境准备：
+这个可以参考大多数搭建octopres博客的文章了，这里一笔带过，之把出现的问题记一笔方便日后查阅。
 
-一个一个来，当我装到bundle install的时候，出现了如下问题
+###问题1（ruby的版本）
+
+当我装到bundle install的时候，出现了如下问题
 ```
 An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
 continue.
@@ -19,6 +23,9 @@ continue.
 查阅README.markdown
 **Note**: Octopress requires a minimum Ruby version of `1.9.3-p0`.
 原来需要安装ruby1.9.3。
+
+
+###问题2 （在装完devkit之前utf-8环境变量不要设置）
 
 而安装ruby1.9.3需要先安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
 直接解压到e:\devkit
@@ -43,6 +50,7 @@ ruby dk.rb install
 LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 ```
+###问题3 （要安装bundle）
 继续执行
 ```
 gem install rdoc bundler
@@ -74,6 +82,8 @@ rake preview
 然后访问 http://127.0.0.1:4000
 查看blog，一切恢复正常。
 
+
+###问题4 （找不到_deploy目录）
 但是到了
 ```
 rake deploy
