@@ -3,7 +3,7 @@ layout: post
 title: "deploy another octopress environment in win7"
 date: 2013-12-01 18:25
 comments: true
-categories: 
+categories:  octopress
 ---
 由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。
 
