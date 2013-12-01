@@ -75,9 +75,23 @@ rake preview
 ```
 rake deploy
 ```
-又出现No such file or directory - _deploy
-那么只要手工创建一个_deploy文件夹
+又出现No such file or directory – deploy 
+那么只要手工创建一个deploy文件夹 
 再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。
+ 我们还是删除_deploy文件夹 其实问题在于没有运行
+ rake setup_github_pages
+执行之后，发现多出_deploy
+```
+cd _deploy
+git checkout source
+git pull origin master
+```
+所有的资料都回来了！
+然后切记切换会source
+```
+git checkout source
+```
+再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
 
-
+ 
 
