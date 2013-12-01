@@ -92,4 +92,5 @@ git pull origin master
 
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
 
-
+最后遇到error: src refspec source does not match any.
+可以用git pull然后再次git push解决。
