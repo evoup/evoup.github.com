@@ -1,0 +1,605 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>【How to】使用basho的erlang-protobuffs和PHP通讯 - Evoup`s Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  <meta name="description" content="这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Evoup`s Blog</a></h1>
+  
+    <h2>Life is an endless fighting</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:evoupsight.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">【How to】使用basho的erlang-protobuffs和PHP通讯</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-27T13:49:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+<!-- more -->
+
+
+<p>可以在这里下载，git://github.com/basho/erlang_protobuffs.git</p>
+
+<p>先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>erlang_protobuffs
+</span><span class='line'>make all
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就可以使用了，接下来给出一个测试的protobuf文件</p>
+
+<figure class='code'><figcaption><span>test.proto </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='protobuf'><span class='line'><span class="kd">message</span> <span class="nc">test</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">required</span> <span class="kt">string</span> <span class="na">test1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>进入ebin目录准备生成</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>ebin
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">erl</span>
+</span><span class='line'><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">protobuffs_compile</span><span class="p">:</span><span class="nf">generate_source</span><span class="p">(</span><span class="s">&quot;test.proto&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">=</span><span class="nv">INFO</span> <span class="nv">REPORT</span><span class="o">====</span> <span class="mi">27</span><span class="o">-</span><span class="nv">May</span><span class="o">-</span><span class="mi">2013</span><span class="p">::</span><span class="mi">15</span><span class="p">:</span><span class="mi">31</span><span class="p">:</span><span class="mi">13</span> <span class="o">===</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">Writing</span> <span class="n">header</span> <span class="n">file</span> <span class="n">to</span> <span class="s">&quot;test_pb.hrl&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">=</span><span class="nv">INFO</span> <span class="nv">REPORT</span><span class="o">====</span> <span class="mi">27</span><span class="o">-</span><span class="nv">May</span><span class="o">-</span><span class="mi">2013</span><span class="p">::</span><span class="mi">15</span><span class="p">:</span><span class="mi">31</span><span class="p">:</span><span class="mi">13</span> <span class="o">===</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">Writing</span> <span class="n">src</span> <span class="n">file</span> <span class="n">to</span> <span class="s">&quot;test_pb.erl&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">ok</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。</p>
+
+<p>然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。</p>
+
+<figure class='code'><figcaption><span>server.erl start:51 mark:51,54-55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">server</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">include</span><span class="p">(</span><span class="s">&quot;test_pb.hrl&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">start_nano_server</span><span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Listen</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">listen</span><span class="p">(</span><span class="mi">2345</span><span class="p">,</span> <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">{</span><span class="n">reuseaddr</span><span class="p">,</span> <span class="n">true</span><span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">{</span><span class="n">active</span><span class="p">,</span> <span class="n">true</span><span class="p">}]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">accept</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nf">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">)</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">receive</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="p">{</span><span class="n">tcp</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">,</span> <span class="nv">Bin</span><span class="p">}</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server received binary = </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Bin</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nv">Msg</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">decode_test</span><span class="p">(</span><span class="nv">Bin</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server (unpacked)  </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Msg</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="p">{</span><span class="n">tcp_closed</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server socket closed</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">end</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>client的代码</p>
+
+<figure class='code'><figcaption><span>client.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">client</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">include</span><span class="p">(</span><span class="s">&quot;test_pb.hrl&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">nano_client_eval</span><span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">connect</span><span class="p">(</span><span class="s">&quot;localhost&quot;</span><span class="p">,</span> <span class="mi">2345</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">}]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">Test</span><span class="o">=</span><span class="nl">#test</span><span class="p">{</span><span class="n">test1</span><span class="o">=</span><span class="s">&quot;test1&quot;</span><span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">Str</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">encode_test</span><span class="p">(</span><span class="nv">Test</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">ok</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nb">send</span><span class="p">(</span><span class="nv">Socket</span><span class="p">,</span> <span class="nv">Str</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要说明的是packet,4这个参数，代表每个数据包的前4个字节为消息头，该头标识了消息体的长度。这样互通是没有问题的，erlang自动为数据包的加上前4个字节的消息头。</p>
+
+<p>接下来难点是php作为客户端，要手工打包消息然后发送。
+首先是下载php版本的<a href="https://code.google.com/p/pb4php/">https://code.google.com/p/pb4php/</a>
+然后，解压得到protocolbuf，接着创建你的项目，把protocolbuf放到该项目文件夹的根目录下。一样要生成源代码。注意，pb4php不是很智能，如果直接.proto文件中=1没有空格，而不是写成xx = 1是会报错的！</p>
+
+<figure class='code'><figcaption><span>test.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="s2">&quot;./protocolbuf/parser/pb_parser.php&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PBParser</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$parser</span><span class="o">-&gt;</span><span class="na">parse</span><span class="p">(</span><span class="s2">&quot;./test.proto&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;done</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行test.php后生成pb_proto_test.php</p>
+
+<p>php版本的client的代码</p>
+
+<figure class='code'><figcaption><span>client.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="s2">&quot;./protocolbuf/message/pb_message.php&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">require_once</span><span class="p">(</span><span class="s2">&quot;./pb_proto_test.php&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">test</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span><span class="o">-&gt;</span><span class="na">set_test1</span><span class="p">(</span><span class="s2">&quot;test php&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$string</span> <span class="o">=</span> <span class="nv">$test</span><span class="o">-&gt;</span><span class="na">SerializeToString</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$sock</span><span class="o">=@</span><span class="nb">socket_create</span><span class="p">(</span><span class="nx">AF_INET</span><span class="p">,</span> <span class="nx">SOCK_STREAM</span><span class="p">,</span> <span class="nx">getprotobyname</span><span class="p">(</span><span class="s1">&#39;tcp&#39;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$sock</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nb">socket_connect</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">,</span> <span class="mi">2345</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$msg</span> <span class="o">=</span> <span class="nx">pack_data</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nb">file_put_contents</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;/resmessage&#39;</span><span class="p">,</span><span class="nv">$msg</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$sent</span> <span class="o">=</span> <span class="o">@</span><span class="nb">socket_write</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="nv">$msg</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$msg</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">pack_data</span> <span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$head</span> <span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="s2">&quot;H*&quot;</span><span class="p">,</span> <span class="nx">to_hex_str</span> <span class="p">(</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$data</span><span class="p">)));</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$body</span><span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="s2">&quot;A*&quot;</span><span class="p">,</span><span class="nv">$data</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">return</span> <span class="nv">$head</span><span class="o">.</span><span class="nv">$body</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">to_hex_str</span> <span class="p">(</span><span class="nv">$num</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">dechex</span><span class="p">(</span><span class="nv">$num</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">str_pad</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nx">STR_PAD_LEFT</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
+
+<p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-27T13:49:00+08:00" pubdate data-updated="true">May 27<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/erlang/'>erlang</a>, <a class='category' href='/blog/categories/php/'>php</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php/" data-via="" data-counturl="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php/" >Tweet</a>
+  
+  
+  
+  
+  <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js"></script>
+<!-- UY END -->
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/05/04/rebar-build-erlang-project/" title="Previous Post: [How to]使用rebar构建erlang 项目">&laquo; [How to]使用rebar构建erlang 项目</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/06/19/erlang-r15b01-install-bugfix/" title="Next Post: erlang R15B01安装问题">erlang R15B01安装问题 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/12/gvim-unable-to-open-swap-file/">Gvim无法打开交换文件</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/08/centos-install-cvs/">centos下CVS服务器的配置</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 116.0%'>Monitor(4)</a>  <a href='/blog/categories/mysql' style='font-size: 108.0%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 104.0%'>Octopress(1)</a>  <a href='/blog/categories/php' style='font-size: 128.0%'>Php(7)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Your Name -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

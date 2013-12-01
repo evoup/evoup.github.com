@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: rrdtool | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/rrdtool/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-11-29T11:39:48+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[erlang open_port 错误之error enoent]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/"/>
+    <updated>2013-11-04T11:04:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent</id>
+    <content type="html"><![CDATA[<p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
+
+<h3>问题重现：</h3>
+
+<!-- more -->
+
+
+<p>在open_port处，查看日志报错如下：
+```erlang
+[rrddir ok]^
+[ResRrd:{error,{enoent,[{erlang,open_port,</p>
+
+<pre><code>                            [{spawn_executable,"/usr/local/bin/rrdtool"},^
+                             [{line,1024},{args,["-"]}]],^
+                            []},^M
+                    {rrdtool,init,1,[{file,"src/rrdtool.erl"},{line,83}]},
+                    {gen_server,init_it,6,^M
+                                [{file,"gen_server.erl"},{line,304}]},
+                    {proc_lib,init_p_do_apply,3,
+                              [{file,"proc_lib.erl"},{line,227}]}]}}]
+</code></pre>
+
+<p>```
+怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% @hidden</span>
+</span><span class='line'><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]}]),</span>
+</span><span class='line'><span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>再定位到上层看gen_server的start函数
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nf">start</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="s">&quot;rrdtool&quot;</span><span class="p">)],</span> <span class="p">[]).</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回
+```bash
+RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#58;&#x74;&#111;&#98;&#x69;&#x40;&#x6f;&#x65;&#x74;&#x69;&#107;&#x65;&#x72;&#x2e;&#99;&#104;">&#116;&#x6f;&#x62;&#105;&#x40;&#x6f;&#101;&#x74;&#x69;&#x6b;&#x65;&#x72;&#x2e;&#99;&#104;</a></p>
+
+<pre><code>           Compiled Oct 22 2012 11:33:26
+</code></pre>
+
+<p>Usage: rrdtool [options] command command_options
+Valid commands: create, update, updatev, graph, graphv,  dump, restore,</p>
+
+<pre><code>            last, lastupdate, first, info, fetch, tune,
+            resize, xport, flushcached
+</code></pre>
+
+<p>RRDtool is distributed under the Terms of the GNU General
+Public License Version 2. (www.gnu.org/copyleft/gpl.html)</p>
+
+<p>For more information read the RRD manpages
+<code>
+已经装好了啊？那为什么还要报错，难道是做了alias
+</code>bash
+[yin@yin-arch monitorserver2]>alias rrdtool
+/usr/lib64/rrdtool/bin/rrdtool
+```
+果不其然</p>
+
+<h3>解决方法</h3>
+
+<p>在/usr/local/bin/目录下做一个软连接
+<code>bash
+sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
+</code>
+再次运行，enoent问题解决。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mochiweb下调用rrdtool graph命令绘制类似ganglia的load的图表]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/"/>
+    <updated>2013-10-28T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic</id>
+    <content type="html"><![CDATA[<p>今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minute load开始。通过mochiweb在restful接口直接出图。</p>
+
+<!-- more -->
+
+
+<p>```erlang
+-module(webapi_func_graph).
+-include(&ldquo;include/inc.hrl&rdquo;).
+-compile(export_all).</p>
+
+<p>get(Selector,Req,Key) &ndash;></p>
+
+<pre><code>Method=Req:get(method),
+QueryStringData = Req:parse_qs(),
+io:format("[req:~p][qsd:~p]~n",[Req,QueryStringData]),
+StartTs = proplists:get_value("start", QueryStringData, ""),
+EndTs = proplists:get_value("end", QueryStringData, ""),
+Width = proplists:get_value("w", QueryStringData, "705"),
+Height = proplists:get_value("h", QueryStringData, "245"),
+io:format("[M:~p][F:get][A:~p][M:~p][K:~p][start:~p][end:~p][width:~p][height:~p]~n",[?MODULE,Selector,Method,Key,StartTs,EndTs,Width,Height]),
+case Selector of
+    "@self" -&gt;
+        FileName="/tmp/myLoad_"++integer_to_list(erlang:phash2(make_ref()))++".png",
+        AvgLoad= os:cmd("/usr/local/bin/rrdtool fetch /services/rrds/"++Key++"/load.rrd AVERAGE --start "++StartTs++" --end "++
+            EndTs++" | awk 'BEGIN {ORS=\"\"} {sum+=$2} END {print sum/NR}'"),
+        AverageLoad=list_to_float(AvgLoad),
+        io:format("[average load:~p]~n",[AverageLoad]),
+        case AverageLoad &gt; 2 of
+            true -&gt;
+                case AverageLoad &gt; 10 of
+                    true -&gt;
+                        BColor="FF9966";
+                    false -&gt;
+                        BColor="E2ECFF"
+                end;
+            _ -&gt;
+                BColor="CCFF99"
+        end,
+        os:cmd("/usr/local/bin/rrdtool graph "++FileName++" --lazy --start "++StartTs++" --end "++EndTs++"  --title \"One Minute Load Average "++Key++" last hour\" --width "++Width++" --height "++Height++" DEF:load=/services/rrds/"++Key++"/load.rrd:load:AVERAGE AREA:load#4A4A4A:load GPRINT:load:LAST:\" Current\\:%8.2lf %s\"  GPRINT:load:AVERAGE:\"Average\\:%8.2lf %s\\n\"  GPRINT:load:MAX:\"Maximum\\:%8.2lf %s\" GPRINT:load:MIN:\"Minimum\\:%8.2lf %s\" -c BACK#"++BColor),
+        {ok, Data} = file:read_file(FileName),
+        file:delete(FileName),
+        {"Content-type: image/png",Data};
+    _ -&gt;
+        io:format("[other]~n")
+end.
+</code></pre>
+
+<p>```
+注意点，我没有使用rrdcgi这个东西是因为，手册上没有说可以直接输出二进制文件流，第二即使可以用，mochiweb也没有cgi的接口可以对接。
+访问我的restful接口<a href="http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141">http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141</a></p>
+
+<p>最后出图像下面一样的图了。当平均load大于10背景呈现红色（代表严重），大于2为蓝色，其余绿色。计算平均load我使用了rrdtoo fetch这个指令，此外还要注意在/tmp目录生成好随机名图片，用完了之后得删除，这个也是惯用方法。其余的请参阅rrdtool graph和rrdtool fetch命令的说明。
+<img src="/images/evoup/yin-arch_ac101eb8_load.png" alt="Alt text" /></p>
+
+<p>参考链接：
+<a href="http://man.lupaworld.com/content/manage/ringkee/awk.htm">http://man.lupaworld.com/content/manage/ringkee/awk.htm</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[配置nginx支持rrdcgi]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi/"/>
+    <updated>2013-10-25T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi</id>
+    <content type="html"><![CDATA[<p>开始在web界面上加载监控图表了，用rrdrool graph生成图，但是发现只能够生成。于是想当然地试了一下rrdcgi，本以为能够出图，结果还是创建图片，html来加载图片。最后发现ganglia的图表中居然也是先提取在临时目录生成好的图片，然后用php来生成头，最后再删除图片。不过顺便把nginx下配置CGI程序的知识学会了，权且记一笔。</p>
+
+<!-- more -->
+
+
+<h3>RRDCGI的使用</h3>
+
+<p>首先是编写graph.cgi
+```bash</p>
+
+<h1>!/usr/local/bin/rrdcgi</h1>
+
+<p> &lt;RRD::GRAPH</p>
+
+<pre><code>  /services/cgi-bin/load.png
+  --imginfo '&lt;IMG SRC=/rrdgraph/%s WIDTH=%lu HEIGHT=%lu &gt;'
+  --lazy --title="load"
+  --start 1382666836 --end 1382677047
+  --width 705 --height 245
+  --alt-autoscale
+      DEF:load=/services/rrds/yin-arch_ac101eb8/load.rrd:load:AVERAGE
+      HRULE:1#ff0000:"warning value"
+  AREA:load#3d3d3d:load&gt;
+</code></pre>
+
+<p><code>
+语法基本和rrdgraph的差不多，没什么好说的，这样等等会生成出来一个html代码叫做
+</code>html
+<IMG SRC=/rrdgraph/load.png WIDTH=786 HEIGHT=324 >
+```
+首先在webroot下创建一个软连接rrdgraph，成的图片的src所指向rrdgraph文件夹，其实是个软连接，指向路径为/services/cgi-bin/
+这么做是为了在nginx配置方便。</p>
+
+<p>要怎么在shell中直接验证能出图呢？
+```bash
+sudo rrdcgi graph.cgi &lt; /dev/null
+(offline mode: enter name=value pairs on standard input)
+Content-Type: text/html
+Content-Length: 53</p>
+
+<p> <IMG SRC=/rrdgraph/load.png WIDTH=786 HEIGHT=324 >
+```
+很明显这样子是得到了load.png这个图片文件。然后把这个cgi文件移到/services/cgi-bin/目录下待机。</p>
+
+<h3>nginx的对rrdcgi支持的配置</h3>
+
+<p>首先需要安装好perl，还需要用到以下库：（以下版本可能过旧，直接到CPAN的网站搜索安装）
+```bash
+wget <a href="http://www.cpan.org/modules/by-module/FCGI/FCGI-0.67.tar.gz">http://www.cpan.org/modules/by-module/FCGI/FCGI-0.67.tar.gz</a>
+tar -zxf FCGI-0.67.tar.gz
+cd FCGI-0.67
+perl Makefile.PL
+make &amp;&amp; make install
+cd ..</p>
+
+<p>wget <a href="http://search.cpan.org/CPAN/authors/id/G/GB/GBJK/FCGI-ProcManager-0.18.tar.gz">http://search.cpan.org/CPAN/authors/id/G/GB/GBJK/FCGI-ProcManager-0.18.tar.gz</a>
+tar -zxf FCGI-ProcManager-0.18.tar.gz
+cd FCGI-ProcManager-0.18
+perl Makefile.PL
+make &amp;&amp; make install
+cd ..</p>
+
+<p>wget <a href="http://search.cpan.org/CPAN/authors/id/I/IN/INGY/IO-All-0.39.tar.gz">http://search.cpan.org/CPAN/authors/id/I/IN/INGY/IO-All-0.39.tar.gz</a>
+tar zxf IO-All-0.39.tar.gz
+cd IO-All-0.39
+perl Makefile.PL
+make &amp;&amp; make install
+<code>
+安装 nginx-fcgi 脚本：
+</code>bash
+wget <a href="http://hily.me/blog/wp-content/uploads/2010/01/nginx-fcgi.txt">http://hily.me/blog/wp-content/uploads/2010/01/nginx-fcgi.txt</a></p>
+
+<p>mv nginx-fcgi.txt /usr/sbin/nginx-fcgi</p>
+
+<p>chmod +x /usr/sbin/nginx-fcgi
+<code>
+如果不用 sudo 方式运行 nginx-fcgi，请注释掉 nginx-fcgi 脚本中的：
+</code>bash
+if ( $> == “0″ ) {
+print “\n\tERROR\tRunning as a root!\n”;
+print “\tSuggested not to do so !!!\n\n”;
+exit 1;
+}
+<code>
+启动 nginx-fcgi：
+</code>bash
+sudo nginx-fcgi -l /var/log/nginx/nginx-fcgi.log -pid /var/run/nginx-fcgi.pid -S /var/run/nginx-fcgi.sock
+```</p>
+
+<p>注意一定要为 socket 添加 nginx 帐户的权限，否则 cgi 会执行失败。
+新建 nginx-fcgi 脚本指令配置，直接从 fastcgi_params 复制模板：
+<code>bash
+cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
+</code></p>
+
+<p>去除尾部的：
+```bash</p>
+
+<h1>PHP only, required if PHP was built with –enable-force-cgi-redirect</h1>
+
+<p>fastcgi_param  REDIRECT_STATUS    200;
+```</p>
+
+<p>最后的cgi站点配置：
+```bash</p>
+
+<pre><code>    location / {
+        root   /webroot;
+        index  index.html index.htm;
+    }
+
+    location ~ ^/cgi-bin/.*\.cgi$
+    {
+        fastcgi_index  index.cgi;
+        fastcgi_param  SCRIPT_FILENAME    /services$fastcgi_script_name;
+        include        nginx_fcgi_params;
+        fastcgi_read_timeout    5m;
+        fastcgi_pass   unix:/var/run/nginx-fcgi.sock;
+    }
+</code></pre>
+
+<p>```
+重启nginx，访问地址<a href="http://192.168.216.145/cgi-bin/graph.cgi">http://192.168.216.145/cgi-bin/graph.cgi</a></p>
+
+<p>看到已经有图了
+<img src="/images/evoup/rrdtool_load_graph2.png" alt="Alt text" /></p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html">http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html</a></p>
+
+<p><a href="http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample">http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[[How to]在erlang中使用rrdtool进行监控数据的保存]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool/"/>
+    <updated>2013-10-23T15:12:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
+
+<p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
+
+<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+
+<h2>准备工作</h2>
+
+<p>在freebsd上安装rrdtool1.2以上的版本</p>
+
+<!-- more -->
+
+
+<p><code>bash
+cd /usr/port/databases/rrdtool12
+sudo make install clean
+</code>
+erlang对应接口的安装</p>
+
+<p>在项目中rebar.conf对应位置中加入8-11行的内容
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:8-11 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}</span> <span class="p">}},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="n">&#39;rrdtool&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/Vagabond/erlang-rrdtool.git&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;master&quot;</span><span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">apps</span><span class="o">/</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">rel</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;]}.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>以及
+rel/reltool.config对应位置中加入第13、30行的内容
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rebar.conf start:0 mark:13,30 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">erts</span><span class="p">,</span> <span class="p">[{</span><span class="n">mod_cond</span><span class="p">,</span> <span class="n">derived</span><span class="p">},</span> <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app_file</span><span class="p">,</span> <span class="n">strip</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">sasl</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">inets</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">crypto</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">mochiweb</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">rrdtool</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">monitorserver2</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">rel</span><span class="p">,</span> <span class="s">&quot;start_clean&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">[</span>
+</span><span class='line'>     <span class="n">kernel</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">stdlib</span>
+</span><span class='line'>    <span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">boot_rel</span><span class="p">,</span> <span class="s">&quot;monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">profile</span><span class="p">,</span> <span class="n">embedded</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">exclude</span><span class="p">},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_archive_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;.*&quot;</span><span class="p">]},</span> <span class="c">%% Do not archive built libs</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_sys_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;^bin/.*&quot;</span><span class="p">,</span> <span class="s">&quot;^erts.*/bin/(dialyzer|typer)&quot;</span><span class="p">,</span>
+</span><span class='line'>                       <span class="s">&quot;^erts.*/(doc|info|include|lib|man|src)&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">excl_app_filters</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;</span><span class="err">\</span><span class="s">.gitignore&quot;</span><span class="p">]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">rrdtool</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">stdlib</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mnesia</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">xmerl</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">monitorserver2</span><span class="p">,</span> <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]}</span>
+</span><span class='line'>  <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">target_dir</span><span class="p">,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">monitorserver2</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;}.</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="n">overlay</span><span class="p">,</span> <span class="p">[</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>       <span class="p">{</span><span class="n">mkdir</span><span class="p">,</span> <span class="s">&quot;log/sasl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/erl&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/erl&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/nodetool&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{erts_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/bin/nodetool&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/monitorserver2.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/monitorserver2.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/start_erl.cmd&quot;</span><span class="p">,</span> <span class="s">&quot;bin/start_erl.cmd&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/install_upgrade.escript&quot;</span><span class="p">,</span> <span class="s">&quot;bin/install_upgrade.escript&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/sys.config&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/sys.config&quot;</span><span class="p">},</span>
+</span><span class='line'>       <span class="p">{</span><span class="n">copy</span><span class="p">,</span> <span class="s">&quot;files/vm.args&quot;</span><span class="p">,</span> <span class="s">&quot;releases/</span><span class="err">\</span><span class="s">{</span><span class="err">\</span><span class="s">{rel_vsn</span><span class="err">\</span><span class="s">}</span><span class="err">\</span><span class="s">}/vm.args&quot;</span><span class="p">}</span>
+</span><span class='line'>      <span class="p">]}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+这样就算安装完成了（需要注意项目使用了rebar）</p>
+
+<h2>创建RRD数据库</h2>
+
+<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+
+<p>```
+rrdtool info load_one.rrd</p>
+
+<p>filename = &ldquo;load_one.rrd&rdquo;
+rrd_version = &ldquo;0003&rdquo;
+step = 15
+last_update = 1382507991
+ds[sum].type = &ldquo;GAUGE&rdquo;
+ds[sum].minimal_heartbeat = 120
+ds[sum].min = NaN
+ds[sum].max = NaN
+ds[sum].last_ds = &ldquo;0.10&rdquo;
+ds[sum].value = 6.0000000000e-01
+ds[sum].unknown_sec = 0
+rra[0].cf = &ldquo;AVERAGE&rdquo;
+rra[0].rows = 5856
+rra[0].pdp_per_row = 1
+rra[0].xff = 5.0000000000e-01
+rra[0].cdp_prep[0].value = NaN
+rra[0].cdp_prep[0].unknown_datapoints = 0
+rra[1].cf = &ldquo;AVERAGE&rdquo;
+rra[1].rows = 20160
+rra[1].pdp_per_row = 4
+rra[1].xff = 5.0000000000e-01
+rra[1].cdp_prep[0].value = 3.3266666667e-01
+rra[1].cdp_prep[0].unknown_datapoints = 0
+rra[2].cf = &ldquo;AVERAGE&rdquo;
+rra[2].rows = 52704
+rra[2].pdp_per_row = 40
+rra[2].xff = 5.0000000000e-01
+rra[2].cdp_prep[0].value = 2.2742000000e+01
+rra[2].cdp_prep[0].unknown_datapoints = 14
+```</p>
+
+<p>熟悉一下它的结构，数据库的名字叫做load_one.rrd，rrd的版本为3，步长step为15秒，即15秒之内的数据不能再次被写入，为一个最小单位。
+然后last_update为最后一次更新的时间戳，数据类型为GAUGE，这是一种直接写入不做平均计算的数据类型。minimal_heartbeat为120秒，意思是120秒内没有数据被更新，系统认为状态未知。
+min max为最大和最小。last_ds最后的ds为0.10，最后被写入的数据为6.0000000000e-01，就是0.6，未知的时间为0。
+接下来CF的第一个AVERAGE的每行（row）有1个pdp（ Primary Data Point），共有5856个pdp,我们算下代表的时间跨度，15<em>1</em>5856=87840秒，为24.4小时。为啥有0.4小时，估计是出图的时候，为了更好看吧，可以不去管它。这里废话一句：也可以通过如下命令查看实际的时间跨度：
+rrdtool dump load_one.rrd > load_one.xml
+进去可以看一下是不是时间跨度规划正确。
+<img src="/images/evoup/rrdtool_dump.png" alt="Alt text" /></p>
+
+<p>于是我有了我的load数据库</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>foo.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">ok</span><span class="p">,</span><span class="nv">PidRrdtool</span><span class="p">}</span><span class="o">=</span><span class="nn">rrdtool</span><span class="p">:</span><span class="nf">start</span><span class="p">(),</span>
+</span><span class='line'><span class="nn">rrdtool</span><span class="p">:</span><span class="nf">create</span><span class="p">(</span><span class="nv">PidRrdtool</span><span class="p">,</span> <span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">load</span><span class="p">.</span><span class="n">rrd</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="p">[{</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">load</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="err">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nv">GAUGE</span><span class="err">&amp;</span><span class="n">rsquo</span><span class="p">;,</span> <span class="p">[</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">]}],</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="p">[{</span><span class="n">&#39;AVERAGE&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5856</span><span class="p">},</span> <span class="p">{</span><span class="n">&#39;AVERAGE&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">20160</span><span class="p">},</span> <span class="p">{</span><span class="n">&#39;AVERAGE&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">52704</span><span class="p">}</span>
+</span><span class='line'><span class="p">],[{</span><span class="n">step</span><span class="p">,</span><span class="mi">15</span><span class="p">}]).</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在
+ 才调用rrdtool:create函数创建数据库。</p>
+
+<p> 其中最后一个参数为创建选项，可以传{step,15}，代表创建步长为15的数据库。</p>
+
+<h2>更新数据库</h2>
+
+<p>这个比较简单了，就是update
+<code>erlang
+%%写入rrd数据库
+%%Load为客户端上传的监控到的load数值
+rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
+</code></p>
+
+<h2>简单的绘图</h2>
+
+<p>这里用最原始的方法，rrdtool graph来画图
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>make_graph.sh </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/bin/sh&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;rrdtool graph  myLoad.png                    <span class="se">\&lt;</span>/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;  --start 1382508875 --end 1382512874         <span class="se">\</span>
+</span><span class='line'>  --title <span class="s2">&quot;Load Average yin-arch_ac101eb8&quot;</span>   <span class="se">\</span>
+</span><span class='line'>  --v <span class="s2">&quot;Load Average&quot;</span>                          <span class="se">\</span>
+</span><span class='line'>  DEF:load<span class="o">=</span>load.rrd:load:AVERAGE              <span class="se">\</span>
+</span><span class='line'>  HRULE:1#ff0000:<span class="s2">&quot;warning value&quot;</span>             <span class="se">\</span>
+</span><span class='line'>  AREA:load#4A4A4A:load<span class="se">\ </span>average<span class="se">\</span>
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>运行该脚本，最后绘图效果见此:</p>
+
+<p><img src="/images/evoup/rrdtool_load_graph.png" alt="Alt text" /></p>
+
+<p>其他参考资料：
+<a href="http://oss.oetiker.ch/rrdtool/">http://oss.oetiker.ch/rrdtool/</a></p>
+
+<p><a href="https://github.com/Vagabond/erlang-rrdtool">https://github.com/Vagabond/erlang-rrdtool</a></p>
+
+<p><a href="http://blog.sina.com.cn/s/blog_79d1f5e00100test.html">http://blog.sina.com.cn/s/blog_79d1f5e00100test.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rrdtool graph报错Cannot parse vname from DEF]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/"/>
+    <updated>2013-04-13T14:55:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/13/rrdtool-graph-cannot-parse-vname</id>
+    <content type="html"><![CDATA[<p>今天在创建rrdtool的graph的时候遇到了报错Cannot parse vname from &lsquo;DEF
+```sh</p>
+
+<h1>/bin/sh</h1>
+
+<p>/usr/local/bin/rrdtool graph result.png &mdash;lazy &mdash;start 1384320009 &mdash;end 1384323609 &mdash;title &ldquo;Disk / usage&rdquo; -v &ldquo;bytes&rdquo; &mdash;width 320 &mdash;height 240 \
+DEF:/=/services/rrds/yin2-monitorbeta-arch_ac101eb4/diskused_.rrd:/:AVERAGE AREA:/#444444
+```</p>
+
+<!-- more -->
+
+
+<p>最后发现其实是保存的时候vname名字是used，非常白痴的低级错误记录一下,贴出正确的统计/挂载点的used指标图表呈现代码。
+```sh</p>
+
+<h1>/bin/sh</h1>
+
+<p>/usr/local/bin/rrdtool graph result.png &mdash;lazy &mdash;start 1384320009 &mdash;end 1384323609 &mdash;title &ldquo;Disk / usage&rdquo; -v &ldquo;bytes&rdquo; &mdash;width 320 &mdash;height 240 \
+DEF:used=/services/rrds/yin2-monitorbeta-arch_ac101eb4/diskused_.rrd:used:AVERAGE AREA:used#444444
+```</p>
+]]></content>
+  </entry>
+  
+</feed>
