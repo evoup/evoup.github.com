@@ -9,7 +9,7 @@ categories:
 
 <!-- more -->
 
-一个一个来，当我装到bundle install的时候，出现了这个问题
+一个一个来，当我装到bundle install的时候，出现了如下问题
 ```
 An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
 continue.
