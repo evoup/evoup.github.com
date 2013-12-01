@@ -64,14 +64,15 @@ git clone https://github.com/you/you.github.com.git
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 cd you.github.com
+git checkout source
 rake setup_github_pages
 cd _deploy
-git checkout source
 git pull origin master
 ```
 所有的资料都回来了！
 然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。
 ```
+cd ..
 git checkout source
 ```
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
