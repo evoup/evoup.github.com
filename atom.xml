@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-01T19:14:37+08:00</updated>
+  <updated>2013-12-01T19:24:17+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -124,7 +124,25 @@
 
 <p>又出现No such file or directory &ndash; <em>deploy
 那么只要手工创建一个</em>deploy文件夹
-再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。</p>
+再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。
+我们还是删除_deploy文件夹
+其实问题在于没有运行rake setup_github_pages</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake setup_github_pages</span></code></pre></td></tr></table></div></figure>
+
+
+<p>执行之后，发现多出_deploy</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd _deploy
+</span><span class='line'>git pull origin master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所有的资料都回来了！</p>
+
+<p>再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
 ]]></content>
   </entry>
   
