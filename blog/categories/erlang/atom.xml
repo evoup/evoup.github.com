@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-01T19:45:30+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rebar生成发布包后找不到noodtool]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/"/>
+    <updated>2013-11-07T15:08:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found</id>
+    <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告
+```erlang
+[evoup@host63i386 erlang]>sudo rel/madmonitor2/bin/madmonitor2 start
+current node: <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#x3a;&#109;&#97;&#x64;&#x6d;&#x6f;&#110;&#105;&#x74;&#x6f;&#x72;&#50;&#x40;&#49;&#x39;&#x32;&#x2e;&#49;&#x36;&#x38;&#x2e;&#50;&#49;&#x36;&#46;&#x31;&#54;&#x35;">&#109;&#97;&#100;&#x6d;&#111;&#110;&#x69;&#x74;&#x6f;&#114;&#x32;&#64;&#49;&#x39;&#50;&#x2e;&#49;&#54;&#56;&#x2e;&#x32;&#x31;&#x36;&#46;&#49;&#x36;&#x35;</a>
+release vm.args file empty,recopy
+escript: Failed to open file: /usr/home/evoup/project/madmonitor2/erlang/rel/madmonitor2/erts-</p>
+
+<p>5.9.3.1/bin/nodetool
+```</p>
+
+<!-- more -->
+
+
+<p>原来是少一个nodetool文件，进到目录一看发现有2个erts
+一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
+删除之前的剩余文件
+<code>erlang
+sudo rm -rf /usr/local/lib/erlang/erts-5.9.3.1/
+sudo rm -rf /usr/local/lib/erlang/lib/erts-5.9.3.1/
+</code></p>
+
+<p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
+都给删除了
+<code>erlang
+sudo rm -rf /usr/local/lib/erlang/erts-5.5.1/
+sudo rm -rf /usr/local/lib/erlang/erts-5.6.5/
+</code></p>
+
+<p>再次编译，问题解决,收工:)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用webtool查看erl_crash.dump]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/05/erl-crash-webtool-usage/"/>
+    <updated>2013-11-05T14:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/05/erl-crash-webtool-usage</id>
+    <content type="html"><![CDATA[<p>运行erlang程序崩溃，按照许多人推荐的webtool方式找问题，这里记录一下启动的过程。</p>
+
+<!-- more -->
+
+
+<p>首先开一个erl shell，然后按如下参数启动webtool
+webtool:start(standard_path,[{port,8888},{bind_address,{192,168,216,145}},{server_name,&ldquo;monitorserver2&rdquo;}] ).</p>
+
+<p>然后访问浏览器可以调试到erl.crash的具体信息。</p>
+
+<p><img src="/images/evoup/webtool_watch__erlcrash.png" alt="Alt text" /></p>
+
+<p>最后发现虽然没有找到什么有价值的信息，总算不是竹篮打水，最后通过记录日志的方式解决了问题。在这里先记录一下了……</p>
+
+<p>参考链接：</p>
+
+<p><a href="http://www.erlang.org/doc/man/webtool.html#start-2">http://www.erlang.org/doc/man/webtool.html#start-2</a>
+<a href="http://hi.baidu.com/ah__fu/item/86c65e8b88ecf453e73d1962">http://hi.baidu.com/ah__fu/item/86c65e8b88ecf453e73d1962</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[erlang open_port 错误之error enoent]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/"/>
+    <updated>2013-11-04T11:04:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent</id>
+    <content type="html"><![CDATA[<p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
+
+<h3>问题重现：</h3>
+
+<!-- more -->
+
+
+<p>在open_port处，查看日志报错如下：
+```erlang
+[rrddir ok]^
+[ResRrd:{error,{enoent,[{erlang,open_port,</p>
+
+<pre><code>                            [{spawn_executable,"/usr/local/bin/rrdtool"},^
+                             [{line,1024},{args,["-"]}]],^
+                            []},^M
+                    {rrdtool,init,1,[{file,"src/rrdtool.erl"},{line,83}]},
+                    {gen_server,init_it,6,^M
+                                [{file,"gen_server.erl"},{line,304}]},
+                    {proc_lib,init_p_do_apply,3,
+                              [{file,"proc_lib.erl"},{line,227}]}]}}]
+</code></pre>
+
+<p>```
+怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% @hidden</span>
+</span><span class='line'><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]}]),</span>
+</span><span class='line'><span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>再定位到上层看gen_server的start函数
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nf">start</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="s">&quot;rrdtool&quot;</span><span class="p">)],</span> <span class="p">[]).</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回
+```bash
+RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker <a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#x3a;&#x74;&#111;&#x62;&#x69;&#64;&#111;&#101;&#x74;&#105;&#107;&#101;&#x72;&#x2e;&#99;&#104;">&#116;&#111;&#98;&#x69;&#64;&#111;&#101;&#x74;&#x69;&#x6b;&#101;&#x72;&#46;&#99;&#104;</a></p>
+
+<pre><code>           Compiled Oct 22 2012 11:33:26
+</code></pre>
+
+<p>Usage: rrdtool [options] command command_options
+Valid commands: create, update, updatev, graph, graphv,  dump, restore,</p>
+
+<pre><code>            last, lastupdate, first, info, fetch, tune,
+            resize, xport, flushcached
+</code></pre>
+
+<p>RRDtool is distributed under the Terms of the GNU General
+Public License Version 2. (www.gnu.org/copyleft/gpl.html)</p>
+
+<p>For more information read the RRD manpages
+<code>
+已经装好了啊？那为什么还要报错，难道是做了alias
+</code>bash
+[yin@yin-arch monitorserver2]>alias rrdtool
+/usr/lib64/rrdtool/bin/rrdtool
+```
+果不其然</p>
+
+<h3>解决方法</h3>
+
+<p>在/usr/local/bin/目录下做一个软连接
+<code>bash
+sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
+</code>
+再次运行，enoent问题解决。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[mochiweb下调用rrdtool graph命令绘制类似ganglia的load的图表]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/"/>
+    <updated>2013-10-28T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic</id>
+    <content type="html"><![CDATA[<p>今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minute load开始。通过mochiweb在restful接口直接出图。</p>
+
+<!-- more -->
+
+
+<p>```erlang
+-module(webapi_func_graph).
+-include(&ldquo;include/inc.hrl&rdquo;).
+-compile(export_all).</p>
+
+<p>get(Selector,Req,Key) &ndash;></p>
+
+<pre><code>Method=Req:get(method),
+QueryStringData = Req:parse_qs(),
+io:format("[req:~p][qsd:~p]~n",[Req,QueryStringData]),
+StartTs = proplists:get_value("start", QueryStringData, ""),
+EndTs = proplists:get_value("end", QueryStringData, ""),
+Width = proplists:get_value("w", QueryStringData, "705"),
+Height = proplists:get_value("h", QueryStringData, "245"),
+io:format("[M:~p][F:get][A:~p][M:~p][K:~p][start:~p][end:~p][width:~p][height:~p]~n",[?MODULE,Selector,Method,Key,StartTs,EndTs,Width,Height]),
+case Selector of
+    "@self" -&gt;
+        FileName="/tmp/myLoad_"++integer_to_list(erlang:phash2(make_ref()))++".png",
+        AvgLoad= os:cmd("/usr/local/bin/rrdtool fetch /services/rrds/"++Key++"/load.rrd AVERAGE --start "++StartTs++" --end "++
+            EndTs++" | awk 'BEGIN {ORS=\"\"} {sum+=$2} END {print sum/NR}'"),
+        AverageLoad=list_to_float(AvgLoad),
+        io:format("[average load:~p]~n",[AverageLoad]),
+        case AverageLoad &gt; 2 of
+            true -&gt;
+                case AverageLoad &gt; 10 of
+                    true -&gt;
+                        BColor="FF9966";
+                    false -&gt;
+                        BColor="E2ECFF"
+                end;
+            _ -&gt;
+                BColor="CCFF99"
+        end,
+        os:cmd("/usr/local/bin/rrdtool graph "++FileName++" --lazy --start "++StartTs++" --end "++EndTs++"  --title \"One Minute Load Average "++Key++" last hour\" --width "++Width++" --height "++Height++" DEF:load=/services/rrds/"++Key++"/load.rrd:load:AVERAGE AREA:load#4A4A4A:load GPRINT:load:LAST:\" Current\\:%8.2lf %s\"  GPRINT:load:AVERAGE:\"Average\\:%8.2lf %s\\n\"  GPRINT:load:MAX:\"Maximum\\:%8.2lf %s\" GPRINT:load:MIN:\"Minimum\\:%8.2lf %s\" -c BACK#"++BColor),
+        {ok, Data} = file:read_file(FileName),
+        file:delete(FileName),
+        {"Content-type: image/png",Data};
+    _ -&gt;
+        io:format("[other]~n")
+end.
+</code></pre>
+
+<p>```
+注意点，我没有使用rrdcgi这个东西是因为，手册上没有说可以直接输出二进制文件流，第二即使可以用，mochiweb也没有cgi的接口可以对接。
+访问我的restful接口<a href="http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141">http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&amp;end=1382944644&amp;w=395&amp;h=141</a></p>
+
+<p>最后出图像下面一样的图了。当平均load大于10背景呈现红色（代表严重），大于2为蓝色，其余绿色。计算平均load我使用了rrdtoo fetch这个指令，此外还要注意在/tmp目录生成好随机名图片，用完了之后得删除，这个也是惯用方法。其余的请参阅rrdtool graph和rrdtool fetch命令的说明。
+<img src="/images/evoup/yin-arch_ac101eb8_load.png" alt="Alt text" /></p>
+
+<p>参考链接：
+<a href="http://man.lupaworld.com/content/manage/ringkee/awk.htm">http://man.lupaworld.com/content/manage/ringkee/awk.htm</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[编译rebar项目中单个erlang源文件的vim脚本]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/"/>
+    <updated>2013-10-24T12:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim</id>
+    <content type="html"><![CDATA[<p>本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。</p>
+
+<!-- more -->
+
+
+<p>方法也很EZ
+<code>bash
+erlc -o ./ebin foo.erl
+</code></p>
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp %"
+  exec "!set bar = \"</code>ls apps/<code>\""
+  exec "!mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/<code>ls apps/</code>/src/<code>ls apps/</code>.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/"
+  exec "!</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct</p>
+
+<p>```
+基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp % &amp;&amp; set bar = \"</code>ls apps/<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/{$bar}/src/{$bar}.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/ &amp;&amp;</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct
+```</p>
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
+需要注意的是，至少要rebar generate成功生成一次rel目录的文件，对于新建文件时尤其要做这一步，否则替换啥呢：）</p>
+
+<h3>后续</h3>
+
+<p>如果能再加入热部署，整个过程就更加轻松了</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
+]]></content>
+  </entry>
+  
+</feed>
