@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-01T19:24:17+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[部分机器netstat运行结果缓慢的原因]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns/"/>
+    <updated>2013-11-26T14:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns</id>
+    <content type="html"><![CDATA[<p>今天看了下客户端运行状况，发现流量图断断续续的。直觉反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。但查了下似乎没有这个问题。</p>
+
+<p><img src="/images/evoup/netstat1.png" alt="Alt text" /></p>
+
+<!-- more -->
+
+
+<p>该机器执行netstat本身就很慢，top看了下CPU占用也无异常，该机器基本OK，就是netstat执行起来很慢。
+后来发现使用-n参数就快了。
+```</p>
+
+<pre><code> -n    Show network addresses and ports as numbers.  Normally netstat
+       attempts to resolve addresses and ports, and display them symboli‐
+       cally.
+</code></pre>
+
+<p>```
+这个参数是说netstat以数字的方式展现网络地址和端口。而不加该参数时netstat会尝试去解析地址和端口，然后采用象征方式呈现。至于究竟啥叫象征方式，其实就是如果你的hostname是localhost,它就会显示localhost，而不是127.0.0.1的方式。
+最后判断应该是本机的出站通讯没有加上dns协议的53端口导致的，经过参数修改，netstat调用正常了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[非常便捷的ssh信任制作脚本ssh-copy-id]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/17/ssh-copy-id/"/>
+    <updated>2013-10-17T17:29:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/17/ssh-copy-id</id>
+    <content type="html"><![CDATA[<p>手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+
+<!-- more -->
+
+
+<p>实验：hostA: 172.16.30.184:22  hostB:211.136.104.189:9999
+```bash</p>
+
+<blockquote><p>ssh-keygen -t rsa</p></blockquote>
+
+<p>Generating public/private rsa key pair.</p>
+
+<p>Enter file in which to save the key (/home/user/.ssh/id_rsa):</p>
+
+<p>/home/user/.ssh/id_rsa already exists.</p>
+
+<p>Overwrite (y/n)? y</p>
+
+<p>Enter passphrase (empty for no passphrase):</p>
+
+<p>Enter same passphrase again:</p>
+
+<p>Your identification has been saved in /home/user/.ssh/id_rsa.</p>
+
+<p>Your public key has been saved in /home/user/.ssh/id_rsa.pub.</p>
+
+<p>The key fingerprint is:</p>
+
+<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#109;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#117;&#115;&#x65;&#114;&#64;&#x75;&#x73;&#101;&#114;&#45;&#x61;&#x72;&#99;&#x68;&#46;&#109;&#97;&#x64;&#x68;&#x6f;&#117;&#x73;&#x65;&#46;&#x63;&#x6e;">&#117;&#115;&#x65;&#x72;&#x40;&#117;&#115;&#101;&#x72;&#45;&#97;&#114;&#x63;&#104;&#x2e;&#x6d;&#97;&#x64;&#104;&#111;&#x75;&#115;&#101;&#46;&#99;&#x6e;</a></p>
+
+<p>The key&rsquo;s randomart image is:</p>
+
+<p>+&mdash;[ RSA 2048]&mdash;&mdash;+</p>
+
+<p>|+== . .o&hellip;o+.   |</p>
+
+<p>|oooO .  . .+.    |</p>
+
+<p>|ooE +   . o.     |</p>
+
+<p>| . o   . .       |</p>
+
+<p>|        S        |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+<code>
+然后运行如下脚本，按照提示输入密码即可
+</code>bash
+ssh-copy-id &lsquo;-p 9999 -i /usr/home/user/.ssh/id_rsa.pub <a href="&#109;&#97;&#105;&#x6c;&#116;&#x6f;&#x3a;&#x75;&#x73;&#x65;&#114;&#64;&#50;&#49;&#49;&#x2e;&#x31;&#51;&#54;&#x2e;&#x31;&#48;&#52;&#x2e;&#49;&#x38;&#57;">&#x75;&#115;&#x65;&#x72;&#x40;&#50;&#x31;&#49;&#46;&#x31;&#x33;&#54;&#x2e;&#x31;&#48;&#x34;&#x2e;&#x31;&#56;&#57;</a>&rsquo;
+<code>
+更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥
+</code>bash
+ssh-copy-id <a href="&#x6d;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x75;&#115;&#101;&#x72;&#x40;&#50;&#x31;&#49;&#46;&#x31;&#x33;&#54;&#46;&#x31;&#x30;&#52;&#x2e;&#x31;&#56;&#x39;">&#x75;&#115;&#101;&#114;&#x40;&#50;&#x31;&#x31;&#46;&#49;&#x33;&#x36;&#x2e;&#49;&#x30;&#52;&#46;&#x31;&#x38;&#57;</a>
+```
+这样子就可以了。</p>
+
+<p>如果要建立非22端口的信任。
+例：建立到211.136.221.207的信任，ssh的端口为8887，用户名为user
+<code>bash
+ssh-copy-id "-p8887 user@211.136.221.207"
+</code></p>
+
+<p>参考：</p>
+
+<p><a href="http://mikegerwitz.com/ssh-copy-id-and-sshd-port/">http://mikegerwitz.com/ssh-copy-id-and-sshd-port/</a></p>
+
+<p><a href="http://blogread.cn/it/article/6103">http://blogread.cn/it/article/6103</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[创建ssh信任失败的原因分析和改进]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/21/ssh-authorized-keys/"/>
+    <updated>2013-04-21T18:15:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/21/ssh-authorized-keys</id>
+    <content type="html"><![CDATA[<p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[shell收集]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/11/shell-gather/"/>
+    <updated>2011-01-11T12:11:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/11/shell-gather</id>
+    <content type="html"><![CDATA[<p>批量拷贝文件到服务器bash版
+```bash</p>
+
+<h1>!/usr/local/bin/bash</h1>
+
+<p>for hosts in <code>cat host.list</code> ;
+do</p>
+
+<pre><code>echo "将处理"$hosts ;
+scp /services/monitor_deal/madmonitor.current root@$hosts:/services/monitor_deal/ ;
+scp /services/monitor_deal/libphp5.so root@$hosts:/usr/local/lib/ ;
+scp /services/monitor_deal/libmysqlclient.so.16 root@$hosts:/usr/local/lib/ ;
+scp /services/monitor_deal/libz.so.6 root@$hosts:/usr/lib/ ;
+</code></pre>
+
+<p>done</p>
+
+<p>```</p>
+
+<p>取得fb6的网卡mac
+<code>sh
+ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
+</code></p>
+
+<p>获取文本的第三行
+<code>sh
+sed -n '3p' file
+</code></p>
+
+<p>截取字符串
+<code>sh
+echo "abcd" | cut -b 1-3
+</code></p>
+
+<p>获取当前时间戳
+<code>sh
+date "+%s"
+</code></p>
+
+<p>把时间戳转换成系统时间
+```sh</p>
+
+<h1>linux版本的</h1>
+
+<p>date -d &lsquo;1970-01-01 UTC 946684800 seconds&rsquo; +&ldquo;%Y-%m-%d %T %z&rdquo;</p>
+
+<h1>freebsd版本的</h1>
+
+<p>date -r 1384499085 +&ldquo;%Y-%m-%d %T %z&rdquo;
+```</p>
+
+<p>在第三行之后插入指定数据
+<code>awk
+awk '{v1="###\n\呵呵呵";if (NR==4)print v1;print}' file &gt; file_translated
+</code>
+参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
+
+<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行
+<code>awk
+awk '/(error|fail)/ { print; }' syslog.log
+</code></p>
+
+<p>统计源码总行数
+<code>sh
+find . -exec wc -l {} \; | awk '{print $1}'
+find . -type f ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=sum+$1}END{print sum }'
+</code></p>
+
+<p>如果要给sum来个初值，那么
+<code>sh
+find . ! -path "*.svn*" -exec wc -l {} \; | awk '{sum=0}{sum=sum+$1}END{print sum }'
+</code></p>
+
+<p>寻找全部process开头的rrd文件，删除前确认
+<code>sh
+find . -name "process*.rrd" -ok rm {} \;
+</code></p>
+
+<p>打印某网卡信息
+<code>sh
+ifconfig | awk '{if(NR==5) print $2}'
+</code></p>
+
+<p>整个文件夹内替换字符串
+<code>sh
+find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
+</code></p>
+
+<p>找到的c头文件放到temp目录下
+<code>sh
+find . -name "*.h" -exec mv {} temp/ \;
+</code></p>
+
+<p>AWK的入门</p>
+
+<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
+
+<p>AWK高级用法</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
+
+<p>AWK一句话手册</p>
+
+<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
+
+<p>可以用得到的shell的脚本</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
+
+<p>cshell参考</p>
+
+<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
+
+<p>数组的定义
+<code>bash
+set array=(a b c d)
+居然下标是从1开始
+echo ${A[1]}  
+a
+</code>
+bash下实现的伪多进程(实际是用了&amp;后台执行)
+```bash
+　　#!/bin/bash</p>
+
+<p>　　for ((i=0;i&lt;5;i++));do</p>
+
+<p>　　{</p>
+
+<pre><code>　　sleep 3;echo 1&gt;&gt;aa &amp;&amp; echo "done!"
+</code></pre>
+
+<p>　　} &amp;</p>
+
+<p>　　done</p>
+
+<p>　　wait</p>
+
+<p>　　cat aa|wc -l</p>
+
+<p>　　rm aa
+```</p>
+
+<p>bash的fifo实现的多线程</p>
+
+<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+
+<p>多线程的实现是采用了有名管道mkfifo</p>
+
+<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
+
+<p>shell判断文件是否存在</p>
+
+<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[批量删除CVS目录的cmd]]></title>
+    <link href="http://evoupsight.com/blog/2008/07/20/delete-cvs-dir/"/>
+    <updated>2008-07-20T23:23:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2008/07/20/delete-cvs-dir</id>
+    <content type="html"><![CDATA[<p>windows下的bat的方法
+```bat
+@echo On
+@Rem 删除CVS版本控制目录
+@PROMPT [Com]#
+@echo Find CVS</p>
+
+<p>@for /r . %%a in (.) do @if exist &ldquo;%%a\CVS&rdquo; @echo &ldquo;%%a\CVS&rdquo;</p>
+
+<p>@echo Find CVS Dir&hellip;.OK
+@pause</p>
+
+<p>@for /r . %%a in (.) do @if exist &ldquo;%%a\CVS&rdquo; rd /s /q &ldquo;%%a\CVS&rdquo;</p>
+
+<p>@echo Clear CVS Dir Mission Completed</p>
+
+<p>@pause
+```</p>
+
+<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a>
+```bash</p>
+
+<h1>!/bin/sh</h1>
+
+<p>if [ -z &ldquo;$1&rdquo; ]; then</p>
+
+<pre><code>echo "Usage: $0 path"
+exit 1
+</code></pre>
+
+<p>fi</p>
+
+<p>find &ldquo;$1&rdquo; -name &lsquo;CVS&rsquo; -type d -print0 | xargs -0 rm -Rf</p>
+
+<h1>or find … -exec like you have, if you can&rsquo;t use -print0/xargs -0</h1>
+
+<h1>print0/xargs will be slightly faster.</h1>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>
