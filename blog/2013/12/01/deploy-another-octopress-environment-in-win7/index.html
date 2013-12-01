@@ -130,15 +130,9 @@
 </span><span class='line'>C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)</span></code></pre></td></tr></table></div></figure>
 
 
-<p>原来是环境变量不能先设置</p>
+<p>原来是环境变量不能先设置为UTF-8，这个是要特别注意的。</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>LANG=zh_CN.UTF-8
-</span><span class='line'>LC_ALL=zh_CN.UTF-8</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再次</p>
+<p>然后就可以执行devkit的安装了：</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -146,7 +140,7 @@
 </span><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
 
 
-<p>再次设置环境变量为</p>
+<p>接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -154,7 +148,7 @@
 </span><span class='line'>LC_ALL=zh_CN.UTF-8</span></code></pre></td></tr></table></div></figure>
 
 
-<p>继续执行</p>
+<p>继续安装2个必要的gem</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -162,11 +156,11 @@
 </span><span class='line'>bundle install</span></code></pre></td></tr></table></div></figure>
 
 
-<p>这样环境就算和之前一致了。</p>
+<p>这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。</p>
 
 <h2>博客恢复篇</h2>
 
-<p>签出自己的octopress项目</p>
+<p>签出自己的octopress项目,我的放在e:\octopress</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -175,9 +169,13 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git clone https://github.com/you/you.github.com.git
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd e:\octopress\
+</span><span class='line'>git clone https://github.com/you/you.github.com.git
 </span><span class='line'>git config --global user.email "you@example.com"
 </span><span class='line'>git config --global user.name "Your Name"
+</span><span class='line'>cd you.github.com
 </span><span class='line'>rake setup_github_pages
 </span><span class='line'>cd _deploy
 </span><span class='line'>git checkout source
@@ -199,7 +197,7 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>cd Octopress/  
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd e:\octopress\you.github.com 
 </span><span class='line'>git pull origin source 
 </span><span class='line'>cd _deploy  
 </span><span class='line'>git pull origin master  </span></code></pre></td></tr></table></div></figure>
