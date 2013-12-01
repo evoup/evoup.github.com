@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-01T19:45:30+08:00</updated>
+  <updated>2013-12-01T19:54:35+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[克隆octopress博客到另外一台win7]]></title>
+    <title type="html"><![CDATA[deploy another octopress environment in win7]]></title>
     <link href="http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7/"/>
     <updated>2013-12-01T18:25:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7</id>
@@ -89,25 +89,23 @@ rake preview
 <code>
 rake deploy
 </code>
-又出现No such file or directory &ndash; <em>deploy
-那么只要手工创建一个</em>deploy文件夹
+又出现No such file or directory – deploy
+那么只要手工创建一个deploy文件夹
 再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。
-我们还是删除<em>deploy文件夹
-其实问题在于没有运行rake setup_github_pages
-<code>
-rake setup_github_pages
-</code>
+ 我们还是删除<em>deploy文件夹 其实问题在于没有运行
+ rake setup_github_pages
 执行之后，发现多出</em>deploy
 <code>
 cd _deploy
+git checkout source
 git pull origin master
 </code>
-所有的资料都回来了！</p>
-
-<p>再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
-
-<p>最后遇到error: src refspec source does not match any.
-可以用git pull然后再次git push解决。</p>
+所有的资料都回来了！
+然后切记切换会source
+<code>
+git checkout source
+</code>
+再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
 ]]></content>
   </entry>
   
