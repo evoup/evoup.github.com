@@ -7,10 +7,10 @@ categories:  octopress
 ---
 由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。参考互联网一博主的《【像黑客一样写博客之五】博客克隆》进行操作。
 
-方法稍微有点区别,呵呵。归纳成了几个问题，顺序看就行。
+方法稍微有点区别,呵呵。主要注意几个问题，就可以轻松搞定，顺序看就行。
 
 <!-- more -->
-##环境准备：
+##环境篇：
 这个可以参考大多数搭建octopres博客的文章了，这里一笔带过，之把出现的问题记一笔方便日后查阅。
 
 ###问题1（ruby的版本）
@@ -27,7 +27,7 @@ continue.
 
 ###问题2 （在装完devkit之前utf-8环境变量不要设置）
 
-而安装ruby1.9.3需要先安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
+而安装ruby1.9.3,相应需要安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
 直接解压到e:\devkit
 然后再
 ```
@@ -50,51 +50,22 @@ ruby dk.rb install
 LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 ```
-###问题3 （要安装bundle）
+
 继续执行
 ```
 gem install rdoc bundler
+bundle install
 ```
+这样环境就算和之前一致了。
+
+
+##博客恢复篇
 签出自己的octopress项目
 ```
 git clone https://github.com/you/you.github.com.git
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
-rake generate
-```
-报错需要先bundle install
-则先
-```
-bundle install
-Your bundle is complete!
-Use `bundle show [gemname]` to see where a bundled gem is installed.
-```
-安装ok
-
-可以生成项目了
-```
-rake generate
-```
-进行本地预览
-```
-rake preview
-```
-然后访问 http://127.0.0.1:4000
-查看blog，一切恢复正常。
-
-
-###问题4 （找不到_deploy目录）
-但是到了
-```
-rake deploy
-```
-又出现No such file or directory – deploy 
-那么只要手工创建一个deploy文件夹 
-再次运行rake deploy，但是发现虽然能够被部署，资料却没有被更新。
- 我们还是删除_deploy文件夹 其实问题在于没有运行
- rake setup_github_pages
-执行之后，发现多出_deploy
-```
+rake setup_github_pages
 cd _deploy
 git checkout source
 git pull origin master
