@@ -1,11 +1,13 @@
 ---
 layout: post
-title: "deploy another octopress environment in win7"
+title: "克隆你的octopress博客到win7"
 date: 2013-12-01 18:25
 comments: true
 categories:  octopress
 ---
-由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。
+由于之前octopress博客是在公司搭的，我想在家里也搞一个环境，方便及时写博客。参考互联网一博主的《【像黑客一样写博客之五】博客克隆》进行操作。
+
+方法稍微有点区别,呵呵。
 
 <!-- more -->
 
@@ -69,7 +71,8 @@ rake generate
 ```
 rake preview
 ```
-然后访问http://127.0.0.1:4000查看blog，一切恢复正常。
+然后访问 http://127.0.0.1:4000
+查看blog，一切恢复正常。
 
 但是到了
 ```
@@ -93,5 +96,10 @@ git checkout source
 ```
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
 
- 
-
+最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
+```
+cd Octopress/  
+git pull origin source 
+cd _deploy  
+git pull origin master  
+```
