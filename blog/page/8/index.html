@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>php转换文件编码 - Evoup`s Blog</title>
+  <title>Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/22/php-convert-encoding">
+  <link rel="canonical" href="http://evoupsight.com/blog/page/8">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -80,8 +80,12 @@
         <div id="content">
           <div class="row">
   <div class="page-content col-md-9">
-    <article class="hentry" role="article">
+    <div class="blog-index">
       
+      
+      
+        <article class="post">
+          
   <header class="page-header">
     
       <p class="meta text-muted text-uppercase">
@@ -98,120 +102,54 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-22T17:56:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2010</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2008</time>
         
       </p>
     
     
-    <h1 class="entry-title">
-        Php转换文件编码
-        
-    </h1>
+      <h1 class="entry-title"><a href="/blog/2008/05/19/js-exit-frame/">JS跳出框架</a></h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了</p>
-
-<!-- more -->
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+  <div class="entry-content clearfix"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$allFiles</span><span class="o">=</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;/path/to/file0&#39;</span><span class="p">,</span><span class="s1">&#39;/path/to/file1&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">foreach</span><span class="p">(</span><span class="nv">$allFiles</span> <span class="k">as</span> <span class="nv">$file</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nv">$temstr</span><span class="o">=</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">function_exists</span><span class="p">(</span><span class="s1">&#39;mb_detect_encoding&#39;</span><span class="p">))</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;请安装mb函数集</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>        <span class="k">exit</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="nv">$encode</span> <span class="o">=</span> <span class="nb">mb_detect_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span><span class="s2">&quot;ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW&quot;</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$encode</span><span class="o">!=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">echo</span> <span class="s2">&quot;</span><span class="si">{</span><span class="nv">$file</span><span class="si">}</span><span class="s2">文件编码从</span><span class="si">{</span><span class="nv">$encode</span><span class="si">}</span><span class="s2">转换为UTF-8</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>        <span class="nv">$temstr</span><span class="o">=</span><span class="nb">mb_convert_encoding</span><span class="p">(</span><span class="nv">$temstr</span><span class="p">,</span> <span class="s2">&quot;UTF-8&quot;</span><span class="p">,</span> <span class="nv">$encode</span><span class="p">);</span>
-</span><span class='line'>        <span class="nb">file_put_contents</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span><span class="nv">$temstr</span><span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">language</span><span class="o">=</span> <span class="s2">&quot;JavaScript&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="c">&lt;!--</span><span class="nx">Break</span> <span class="nx">out</span> <span class="nx">of</span> <span class="nx">frames</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">top</span><span class="p">.</span><span class="nx">location</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+</span><span class='line'>  <span class="c1">//--&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-
 </div>
-
-
-      <footer>
-        <p class="meta text-muted">
-          
-  
-
-<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
-
-          
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-22T17:56:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2010</time>
-          
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/php/'>php</a>
-  
-</span>
-
-
-        </p>
-        
-          <div class="sharing">
-  
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/" data-via="" data-counturl="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/" >Tweet</a>
   
   
-  
-</div>
 
-        
-        
-          <ul class="meta text-muted pager">
-            
-            <li class="previous"><a href="/blog/2010/11/19/php-myadmin1045-error/" title="Previous Post: php myadmin1045 error">&laquo; php myadmin1045 error</a></li>
-            
-            
-            <li class="next"><a href="/blog/2010/11/25/typedef-summary/" title="Next Post: typedef小结">typedef小结 &raquo;</a></li>
-            
-          </ul>
-        
-      </footer>
-    </article>
-    
+
+        </article>
+      
+    </div>
+
+    <ul class="pager">
+      
+        <li class="previous disabled"><a href="#">&larr;&nbsp;Older</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+        <li class="next"><a href="/blog/page/7/">Newer&nbsp;&rarr;</a></li>
+      
+    </ul>
   </div>
 
   
-  <aside class="sidebar col-md-3">
-    
-      <section class="panel panel-default">
+    <aside class="sidebar col-md-3">
+      
+        <section class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Recent Posts</h3>
   </div>
@@ -261,8 +199,8 @@
 
 
 
-    
-  </aside>
+      
+    </aside>
   
 </div>
 

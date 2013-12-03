@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-01T23:24:05+08:00</updated>
+  <updated>2013-12-03T13:53:33+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,320 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[centos6.4下搭建zabbix2.0.6]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix/"/>
+    <updated>2013-12-03T13:37:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix</id>
+    <content type="html"><![CDATA[<p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
+
+<!-- more -->
+
+
+<p>关闭iptables和selinux</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service iptables stop
+</span><span class='line'>sudo chkconfig iptables off
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>临时关闭selinux</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenfoce 0  <span class="c">##设置为permissive模式</span>
+</span><span class='line'>             <span class="c">##setenforce 1设置SELunix为enforcing模式</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>永久关闭
+修改/etc/selinux/config 文件
+将SELINUX=enforcing改为SELINUX=disabled
+重启机器看到
+getenforce返回Disabled说明已经关闭</p>
+
+<p>再次进入centos6.4，先安装LAMP环境。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php-mbstring php-gd php-odbc php-xml php-pear
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后下载zabbix</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>继续安装需要的组件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建zabbix用户帐号</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo useradd zabbix
+</span><span class='line'>sudo usermod -s /sbin/nologin zabbix
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>启动mysql</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service mysqld start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>登录mysql</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uroot -p123456
+</span><span class='line'>mysql&gt; create database zabbix;
+</span><span class='line'>mysql&gt; grant all on zabbix.* to zabbix@localhost identified by <span class="s1">&#39;123456&#39;</span>;
+</span><span class='line'>mysql&gt; use zabbix;
+</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/schema.sql
+</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/images.sql
+</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/data.sql
+</span><span class='line'>mysql&gt; <span class="nb">exit</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装zabbix</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl
+</span><span class='line'>Configuration:
+</span><span class='line'>
+</span><span class='line'>  Detected OS:           linux-gnu
+</span><span class='line'>  Install path:          /usr/local
+</span><span class='line'>  Compilation arch:      linux
+</span><span class='line'>
+</span><span class='line'>  Compiler:              gcc
+</span><span class='line'>  Compiler flags:        -g -O2  -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE<span class="o">=</span>2 -fexceptions -fstack-protector --param<span class="o">=</span>ssp-buffer-size<span class="o">=</span>4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS<span class="o">=</span>64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX       -I/usr/include/rpm -I/usr/local/include -I/usr/lib64/perl5/CORE -I. -I/usr/include
+</span><span class='line'>
+</span><span class='line'>  Enable server:         yes
+</span><span class='line'>  Server details:
+</span><span class='line'>    With database:         MySQL
+</span><span class='line'>    WEB Monitoring via:    cURL
+</span><span class='line'>    Native Jabber:         no
+</span><span class='line'>    SNMP:                  net-snmp
+</span><span class='line'>    IPMI:                  no
+</span><span class='line'>    SSH:                   no
+</span><span class='line'>    ODBC:                  no
+</span><span class='line'>    Linker flags:          -rdynamic      -L/usr/lib64/mysql       -L/usr/lib64  -L/usr/lib64
+</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lmysqlclient       -lcurl  -lnetsnmp -lcrypto  -lnetsnmp -lcrypto
+</span><span class='line'>
+</span><span class='line'>  Enable proxy:          no
+</span><span class='line'>
+</span><span class='line'>  Enable agent:          yes
+</span><span class='line'>  Agent details:
+</span><span class='line'>    Linker flags:          -rdynamic
+</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lcurl
+</span><span class='line'>
+</span><span class='line'>  Enable Java gateway:   no
+</span><span class='line'>
+</span><span class='line'>  LDAP support:          no
+</span><span class='line'>  IPv6 support:          no
+</span><span class='line'>
+</span><span class='line'>***********************************************************
+</span><span class='line'>*            Now run <span class="s1">&#39;make install&#39;</span>                       *
+</span><span class='line'>*                                                         *
+</span><span class='line'>*            Thank you <span class="k">for </span>using Zabbix!                  *
+</span><span class='line'>*              &lt;http://www.zabbix.com&gt;                    *
+</span><span class='line'>***********************************************************
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>好了，我们正式安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接下来编辑配置文件
+可以不用sudo，直接切换到root做</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /usr/local/etc
+</span><span class='line'>cat zabbix_server.conf
+</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix_server.log
+</span><span class='line'><span class="nv">DBHost</span><span class="o">=</span>localhost
+</span><span class='line'><span class="nv">DBName</span><span class="o">=</span>zabbix
+</span><span class='line'><span class="nv">DBUser</span><span class="o">=</span>zabbix
+</span><span class='line'><span class="nv">DBPassword</span><span class="o">=</span>123456
+</span><span class='line'>
+</span><span class='line'>cat zabbix_agent.conf
+</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/tmp/zabbix_agentd.log
+</span><span class='line'><span class="nv">Server</span><span class="o">=</span>127.0.0.1
+</span><span class='line'><span class="nv">UnsafeUserParameters</span><span class="o">=</span>1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>创建日志文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>touch /var/log/zabbix_server.log
+</span><span class='line'>touch /var/log/zabbix_agent.log
+</span><span class='line'>
+</span><span class='line'><span class="nb">cd</span> -
+</span><span class='line'>cp misc/init.d/tru64/zabbix_server /etc/init.d/
+</span><span class='line'>cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2个文件的文件头改成如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c">#chkconfig: 35 95 95</span>
+</span><span class='line'><span class="c">#description:zabbix Agent server</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>添加服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig --add zabbix_server
+</span><span class='line'>chkconfig --add zabbix_agentd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>开机自动启动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig zabbix_server on
+</span><span class='line'>chkconfig zabbix_agent on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>文件执行权限</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>chmod +x zabbix_server
+</span><span class='line'>chmod +x zabbix_agentd
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>启动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /etc/init.d/zabbix_server start
+</span><span class='line'>sudo /etc/init.d/zabbix_agentd start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装zabbix web</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp -r frontends/php/ /var/www/html/zabbix
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>访问<a href="http://ip/zabbix">http://ip/zabbix</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim /etc/php.ini
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>指定</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">timezone</span><span class="o">=</span><span class="nx">Asia</span><span class="o">/</span><span class="nx">Shanghai</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>根据提示修改php配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y php-bcmath
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后再次重启httpd</p>
+
+<p>最后登录前端界面密码为 admin/zabbix</p>
+
+<p>告一段落，接下来学习操作zabbix。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[克隆你的octopress博客到win7]]></title>
@@ -2713,143 +3027,6 @@ C到A，网络规划的时候指定了，/etc/resolv.conf中nameserver 172.16.27
 
 <p>B到C，经过以上操作已经可以了。
 C到B，同上。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[非常便捷的ssh信任制作脚本ssh-copy-id]]></title>
-    <link href="http://evoupsight.com/blog/2013/10/17/ssh-copy-id/"/>
-    <updated>2013-10-17T17:29:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/10/17/ssh-copy-id</id>
-    <content type="html"><![CDATA[<p>手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
-
-<!-- more -->
-
-
-<p>实验：hostA: 172.16.30.184:22  hostB:211.136.104.189:9999</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt;ssh-keygen -t rsa
-</span><span class='line'>
-</span><span class='line'>Generating public/private rsa key pair.
-</span><span class='line'>
-</span><span class='line'>Enter file in which to save the key <span class="o">(</span>/home/user/.ssh/id_rsa<span class="o">)</span>:
-</span><span class='line'>
-</span><span class='line'>/home/user/.ssh/id_rsa already exists.
-</span><span class='line'>
-</span><span class='line'>Overwrite <span class="o">(</span>y/n<span class="o">)</span>? y
-</span><span class='line'>
-</span><span class='line'>Enter passphrase <span class="o">(</span>empty <span class="k">for </span>no passphrase<span class="o">)</span>:
-</span><span class='line'>
-</span><span class='line'>Enter same passphrase again:
-</span><span class='line'>
-</span><span class='line'>Your identification has been saved in /home/user/.ssh/id_rsa.
-</span><span class='line'>
-</span><span class='line'>Your public key has been saved in /home/user/.ssh/id_rsa.pub.
-</span><span class='line'>
-</span><span class='line'>The key fingerprint is:
-</span><span class='line'>
-</span><span class='line'>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 user@user-arch.madhouse.cn
-</span><span class='line'>
-</span><span class='line'>The key<span class="err">&#39;</span>s randomart image is:
-</span><span class='line'>
-</span><span class='line'>+--<span class="o">[</span> RSA 2048<span class="o">]</span>----+
-</span><span class='line'>
-</span><span class='line'>|+<span class="o">==</span> . .o...o+.   |
-</span><span class='line'>
-</span><span class='line'>|oooO .  . .+.    |
-</span><span class='line'>
-</span><span class='line'>|ooE +   . o.     |
-</span><span class='line'>
-</span><span class='line'>| . o   . .       |
-</span><span class='line'>
-</span><span class='line'>|        S        |
-</span><span class='line'>
-</span><span class='line'>|                 |
-</span><span class='line'>
-</span><span class='line'>|                 |
-</span><span class='line'>
-</span><span class='line'>|                 |
-</span><span class='line'>
-</span><span class='line'>|                 |
-</span><span class='line'>
-</span><span class='line'>+-----------------+
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后运行如下脚本，按照提示输入密码即可</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-copy-id <span class="s1">&#39;-p 9999 -i /usr/home/user/.ssh/id_rsa.pub user@211.136.104.189&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-copy-id user@211.136.104.189
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样子就可以了。</p>
-
-<p>如果要建立非22端口的信任。
-例：建立到211.136.221.207的信任，ssh的端口为8887，用户名为user</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-copy-id <span class="s2">&quot;-p8887 user@211.136.221.207&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>参考：</p>
-
-<p><a href="http://mikegerwitz.com/ssh-copy-id-and-sshd-port/">http://mikegerwitz.com/ssh-copy-id-and-sshd-port/</a></p>
-
-<p><a href="http://blogread.cn/it/article/6103">http://blogread.cn/it/article/6103</a></p>
 ]]></content>
   </entry>
   
