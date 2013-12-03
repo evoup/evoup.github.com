@@ -60,7 +60,7 @@ bundle install
 签出自己的octopress项目,我的放在e:\octopress
 ```sh
 cd e:\octopress\
-git clone https://github.com/you/you.github.com.git
+git clone git@github.com:you/you.github.com.git 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 cd you.github.com
