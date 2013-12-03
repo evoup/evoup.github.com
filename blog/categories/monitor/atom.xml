@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-01T23:24:41+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Freebsd版linux下free指令实现]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c/"/>
+    <updated>2013-10-30T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c</id>
+    <content type="html"><![CDATA[<p>监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。</p>
+
+<!-- more -->
+
+
+<p>直接贴代码了，除了mem_total之外基本都正确。total的部分，先用sysctl -a | grep realmem解决
+```c
+/<em>
+ * free.c &ndash; Display FreeBSD memory information
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#x76;&#105;&#110;&#111;&#x64;&#x40;&#115;&#101;&#103;&#x66;&#97;&#117;&#x6c;&#x74;&#x2e;&#x69;&#x6e;">&#118;&#105;&#x6e;&#x6f;&#100;&#64;&#x73;&#x65;&#103;&#102;&#97;&#x75;&#108;&#x74;&#46;&#105;&#x6e;</a>
+ * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
+ </em>/</p>
+
+<h1>include &lt;sys/types.h></h1>
+
+<h1>include &lt;sys/sysctl.h></h1>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>const char *version = &ldquo;$Id: free,v 0.1.3 2008/11/26 19:34:54 IST vinod $&rdquo;;</p>
+
+<p>int
+get_sysctl(char *name)
+{</p>
+
+<pre><code>    int mib[4], value, i;
+    size_t len, miblen = 1;
+
+    for(i = 0; name[i] != '\0'; i++) 
+            if(name[i] == '.')
+                    miblen++;
+    len = miblen;
+    sysctlnametomib(name, mib, &amp;len);
+    len = sizeof(value);
+    sysctl(mib, miblen, &amp;value, &amp;len, NULL, 0);
+
+    return value;
+</code></pre>
+
+<p>}</p>
+
+<p>void
+usage(void)
+{</p>
+
+<pre><code>    fprintf(stderr, "usage: free [-b|-k|-m|-g] [-t] [-v]\n" \
+    "  -b,-k,-m,-g show output in bytes, KB, MB, or GB\n" \
+    "  -t display logical summary for RAM\n" \
+    "  -v display version information and exit\n");
+</code></pre>
+
+<p>}</p>
+
+<p>int
+main(int argc, char *argv[])
+{</p>
+
+<pre><code>    int c, vflag = 0, tflag = 0;
+    int factor = 1;
+    long int physmem, realmem;
+    long int vmactive, vminactive, vmfree, vmcache, vmpage, vmwire;
+    long int memfree, memused;
+    long int pagesize;
+
+    opterr = 0;
+
+    while ((c = getopt(argc, argv, "bghkmtv")) != -1) {
+            switch (c) {
+                    case 'b':
+                            factor = 1;
+                            break;
+                    case 'g':
+                            factor = 1024*1024*1024;
+
+                    case 'h':
+                            usage();
+                            exit(EXIT_SUCCESS);
+                    case 'k':
+                            factor = 1024;
+                            break;
+                    case 'm':
+                            factor = 1024*1024;
+                            break;
+                    case 't':
+                            tflag = 1;
+                            break;
+                    case 'v':
+                            vflag = 1;
+                            break;
+                    case '?':
+                    default:
+                            fprintf(stderr, "%s: invalid option -- %c\n", argv[0], optopt);
+                            usage();
+                            exit(EXIT_FAILURE);
+            }
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    if(vflag) {
+            fprintf(stderr, "%s\nbuilt %s %s\n", version,
+                            __DATE__, __TIME__);
+            exit(EXIT_SUCCESS);
+    }
+
+    physmem    = labs(get_sysctl("hw.physmem"));
+    realmem    = labs(get_sysctl("hw.realmem"));
+    pagesize   = labs(get_sysctl("hw.pagesize"));
+
+    vmpage     = labs(get_sysctl("vm.stats.vm.v_page_count") * pagesize);
+    vmwire     = labs(get_sysctl("vm.stats.vm.v_wire_count") * pagesize);
+    vmactive   = labs(get_sysctl("vm.stats.vm.v_active_count") * pagesize);
+    vminactive = labs(get_sysctl("vm.stats.vm.v_inactive_count") * pagesize);
+    vmcache    = labs(get_sysctl("vm.stats.vm.v_cache_count") * pagesize);
+    vmfree     = labs(get_sysctl("vm.stats.vm.v_free_count") * pagesize);
+
+    printf("         %15s %15s %15s %15s %15s %15s\n", "total", "active", "free", "inactive", "wire", "cached");
+    printf("Memory:  %15ld %15ld %15ld %15ld %15ld %15ld\n",
+                    realmem/factor,
+                    vmactive/factor,
+                    vmfree/factor,
+                    vminactive/factor,
+                    vmwire/factor,
+                    vmcache/factor);
+
+    /*
+     * logical summary
+     */
+    if(tflag) {
+            memfree = vminactive + vmfree + vmcache;
+            memused        = realmem - memfree;
+
+            printf("Summary: %15ld %15ld %15ld\n",
+                            realmem/factor,
+                            memused/factor,
+                            memfree/factor);
+    }
+
+    return (EXIT_SUCCESS);
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>项目位置</h3>
+
+<p><a href="https://github.com/evoup/free">https://github.com/evoup/free</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[[How to]在erlang中使用rrdtool进行监控数据的保存]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool/"/>
+    <updated>2013-10-23T15:12:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/23/erlang-with-rrdtool</id>
+    <content type="html"><![CDATA[<h2>概述</h2>
+
+<p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
+
+<p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
+
+<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+
+<h2>准备工作</h2>
+
+<p>在freebsd上安装rrdtool1.2以上的版本</p>
+
+<!-- more -->
+
+
+<p><code>bash
+cd /usr/port/databases/rrdtool12
+sudo make install clean
+</code>
+erlang对应接口的安装</p>
+
+<p>在项目中rebar.conf对应位置中加入8-11行的内容
+{% codeblock rebar.conf lang:erlang start:0 mark:8-11 %}
+{deps, [</p>
+
+<pre><code>{mochiweb, "1.5.1",
+    {git, "git://github.com/mochi/mochiweb.git",
+        {tag, "1.5.1"} }},
+    {'log4erl', ".*",
+        {git, "git://github.com/ahmednawras/log4erl.git",
+            "master"} },
+    {'rrdtool', ".*",
+        {git, "git://github.com/Vagabond/erlang-rrdtool.git",
+            "master"} }
+]}.
+</code></pre>
+
+<p>{sub_dirs, [&ldquo;apps/monitorserver2&rdquo;, &ldquo;rel&rdquo;]}.
+{% endcodeblock %}</p>
+
+<p>以及
+rel/reltool.config对应位置中加入第13、30行的内容
+{% codeblock rebar.conf lang:erlang start:0 mark:13,30 %}
+{sys, [</p>
+
+<pre><code>   {lib_dirs, ["../apps", "../deps"]},
+   {erts, [{mod_cond, derived}, {app_file, strip}]},
+   {app_file, strip},
+   {rel, "monitorserver2", "1",
+    [
+     kernel,
+     stdlib,
+     sasl,
+     inets,
+     crypto,
+     mochiweb,
+     rrdtool,
+     monitorserver2
+    ]},
+   {rel, "start_clean", "",
+    [
+     kernel,
+     stdlib
+    ]},
+   {boot_rel, "monitorserver2"},
+   {profile, embedded},
+   {incl_cond, exclude},
+   {excl_archive_filters, [".*"]}, %% Do not archive built libs
+   {excl_sys_filters, ["^bin/.*", "^erts.*/bin/(dialyzer|typer)",
+                       "^erts.*/(doc|info|include|lib|man|src)"]},
+   {excl_app_filters, ["\.gitignore"]},
+   {app, sasl,   [{incl_cond, include}]},
+   {app, mochiweb,   [{incl_cond, include}]},
+   {app, rrdtool,   [{incl_cond, include}]},
+   {app, crypto,   [{incl_cond, include}]},
+   {app, inets,   [{incl_cond, include}]},
+   {app, stdlib, [{incl_cond, include}]},
+   {app, kernel, [{incl_cond, include}]},
+   {app, mnesia, [{incl_cond, include}]},
+   {app, xmerl, [{incl_cond, include}]},
+   {app, monitorserver2, [{incl_cond, include}]}
+  ]}.
+</code></pre>
+
+<p>{target_dir, &ldquo;monitorserver2&rdquo;}.</p>
+
+<p>{overlay, [</p>
+
+<pre><code>       {mkdir, "log/sasl"},
+       {copy, "files/erl", "\{\{erts_vsn\}\}/bin/erl"},
+       {copy, "files/nodetool", "\{\{erts_vsn\}\}/bin/nodetool"},
+       {copy, "files/monitorserver2", "bin/monitorserver2"},
+       {copy, "files/monitorserver2.cmd", "bin/monitorserver2.cmd"},
+       {copy, "files/start_erl.cmd", "bin/start_erl.cmd"},
+       {copy, "files/install_upgrade.escript", "bin/install_upgrade.escript"},
+       {copy, "files/sys.config", "releases/\{\{rel_vsn\}\}/sys.config"},
+       {copy, "files/vm.args", "releases/\{\{rel_vsn\}\}/vm.args"}
+      ]}.
+</code></pre>
+
+<p>{% endcodeblock %}
+这样就算安装完成了（需要注意项目使用了rebar）</p>
+
+<h2>创建RRD数据库</h2>
+
+<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+
+<p>```
+rrdtool info load_one.rrd</p>
+
+<p>filename = &ldquo;load_one.rrd&rdquo;
+rrd_version = &ldquo;0003&rdquo;
+step = 15
+last_update = 1382507991
+ds[sum].type = &ldquo;GAUGE&rdquo;
+ds[sum].minimal_heartbeat = 120
+ds[sum].min = NaN
+ds[sum].max = NaN
+ds[sum].last_ds = &ldquo;0.10&rdquo;
+ds[sum].value = 6.0000000000e-01
+ds[sum].unknown_sec = 0
+rra[0].cf = &ldquo;AVERAGE&rdquo;
+rra[0].rows = 5856
+rra[0].pdp_per_row = 1
+rra[0].xff = 5.0000000000e-01
+rra[0].cdp_prep[0].value = NaN
+rra[0].cdp_prep[0].unknown_datapoints = 0
+rra[1].cf = &ldquo;AVERAGE&rdquo;
+rra[1].rows = 20160
+rra[1].pdp_per_row = 4
+rra[1].xff = 5.0000000000e-01
+rra[1].cdp_prep[0].value = 3.3266666667e-01
+rra[1].cdp_prep[0].unknown_datapoints = 0
+rra[2].cf = &ldquo;AVERAGE&rdquo;
+rra[2].rows = 52704
+rra[2].pdp_per_row = 40
+rra[2].xff = 5.0000000000e-01
+rra[2].cdp_prep[0].value = 2.2742000000e+01
+rra[2].cdp_prep[0].unknown_datapoints = 14
+```</p>
+
+<p>熟悉一下它的结构，数据库的名字叫做load_one.rrd，rrd的版本为3，步长step为15秒，即15秒之内的数据不能再次被写入，为一个最小单位。
+然后last_update为最后一次更新的时间戳，数据类型为GAUGE，这是一种直接写入不做平均计算的数据类型。minimal_heartbeat为120秒，意思是120秒内没有数据被更新，系统认为状态未知。
+min max为最大和最小。last_ds最后的ds为0.10，最后被写入的数据为6.0000000000e-01，就是0.6，未知的时间为0。
+接下来CF的第一个AVERAGE的每行（row）有1个pdp（ Primary Data Point），共有5856个pdp,我们算下代表的时间跨度，15<em>1</em>5856=87840秒，为24.4小时。为啥有0.4小时，估计是出图的时候，为了更好看吧，可以不去管它。这里废话一句：也可以通过如下命令查看实际的时间跨度：
+rrdtool dump load_one.rrd > load_one.xml
+进去可以看一下是不是时间跨度规划正确。
+<img src="/images/evoup/rrdtool_dump.png" alt="Alt text" /></p>
+
+<p>于是我有了我的load数据库</p>
+
+<p>{% codeblock  foo.erl lang:erlang %}
+{ok,PidRrdtool}=rrdtool:start(),
+rrdtool:create(PidRrdtool, &ldquo;load.rrd&rdquo;, [{&ldquo;load&rdquo;, &lsquo;GAUGE&rsquo;, [120, 0, 100]}],</p>
+
+<pre><code>[{'AVERAGE', 0.5, 1, 5856}, {'AVERAGE', 0.5, 4, 20160}, {'AVERAGE', 0.5, 40, 52704}
+],[{step,15}]).
+</code></pre>
+
+<p>{% endcodeblock %}</p>
+
+<p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在
+ 才调用rrdtool:create函数创建数据库。</p>
+
+<p> 其中最后一个参数为创建选项，可以传{step,15}，代表创建步长为15的数据库。</p>
+
+<h2>更新数据库</h2>
+
+<p>这个比较简单了，就是update
+<code>erlang
+%%写入rrd数据库
+%%Load为客户端上传的监控到的load数值
+rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
+</code></p>
+
+<h2>简单的绘图</h2>
+
+<p>这里用最原始的方法，rrdtool graph来画图
+{% codeblock  make_graph.sh %}</p>
+
+<h1>!/bin/sh</h1>
+
+<p>rrdtool graph  myLoad.png                    \</p>
+
+<pre><code>  --start 1382508875 --end 1382512874         \
+  --title "Load Average yin-arch_ac101eb8"   \
+  --v "Load Average"                          \
+  DEF:load=load.rrd:load:AVERAGE              \
+  HRULE:1#ff0000:"warning value"             \
+  AREA:load#4A4A4A:load\ average\
+</code></pre>
+
+<p>{% endcodeblock %}</p>
+
+<p>运行该脚本，最后绘图效果见此:</p>
+
+<p><img src="/images/evoup/rrdtool_load_graph.png" alt="Alt text" /></p>
+
+<p>其他参考资料：
+<a href="http://oss.oetiker.ch/rrdtool/">http://oss.oetiker.ch/rrdtool/</a></p>
+
+<p><a href="https://github.com/Vagabond/erlang-rrdtool">https://github.com/Vagabond/erlang-rrdtool</a></p>
+
+<p><a href="http://blog.sina.com.cn/s/blog_79d1f5e00100test.html">http://blog.sina.com.cn/s/blog_79d1f5e00100test.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux下模拟df.c源码]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code/"/>
+    <updated>2013-10-16T18:09:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code</id>
+    <content type="html"><![CDATA[<p>主要实现df的基本不带参数的功能，连界面都不一样，凑活用，见代码：</p>
+
+<!-- more -->
+
+
+<p>```c</p>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;mntent.h></h1>
+
+<h1>include &lt;sys/vfs.h></h1>
+
+<p>int main(void)
+{
+ struct mntent <em>ent;
+ FILE </em>aFile;</p>
+
+<p> aFile = setmntent(&ldquo;/etc/mtab&rdquo;, &ldquo;r&rdquo;);
+ if (aFile == NULL) {
+   perror(&ldquo;setmntent&rdquo;);
+   exit(1);
+ }
+ struct statfs diskInfo;
+ unsigned long long blocksize;
+ unsigned long long totalsize;
+ unsigned long long freeDisk;
+ unsigned long long availsize;
+ unsigned long long used;
+ while (NULL != (ent = getmntent(aFile))) { //获取各挂载点的信息
+   printf(&ldquo;=========================================================================\
+==================================================\n&rdquo;);
+   //根据挂载点，确认磁盘空间
+   statfs(ent->mnt_dir,&amp;diskInfo);
+   blocksize = diskInfo.f_bsize; //每个block里面包含的字节数
+   totalsize = blocksize * diskInfo.f_blocks; //总的字节数
+   freeDisk = diskInfo.f_bfree<em>blocksize; //再计算下剩余的空间大小
+   availsize = diskInfo.f_bavail</em>blocksize;
+   //>10换算成KB
+   used=totalsize-freeDisk;
+   printf(&ldquo;FS == %s MOUNTPOINT == %s TOTAL_SIZE == %lu KB DISK_FREE == %ld KB USED ==\
+%ld KB avail == %ld KB\n&rdquo;, ent->mnt_fsname, ent->mnt_dir,(int)(totalsize>>10),
+(int)(freeDisk>>10),(int)(used>>10),(int)(availsize>>10));
+ }
+ endmntent(aFile);
+   printf(&ldquo;=========================================================================\
+==================================================\n&rdquo;);
+}
+```</p>
+
+<p>附一张运行截图
+<img src="/images/evoup/df.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd安装ganglia3.4]]></title>
+    <link href="http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4/"/>
+    <updated>2012-10-22T11:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4</id>
+    <content type="html"><![CDATA[<h2>Ganglia是什么?</h2>
+
+<p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
+
+<!-- more -->
+
+
+<h2>安装小记</h2>
+
+<p>首先是下载ganglia
+{% codeblock shell lang:bash %}
+wget <a href="http://downloads.sourceforge.net/project/ganglia/">http://downloads.sourceforge.net/project/ganglia/</a>
+wget <a href="http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz">http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz</a>
+{% endcodeblock %}</p>
+
+<p>先安装rrdtool
+{% codeblock shell lang:bash %}
+./configure &mdash;prefix=/usr/lib32/rrdtool &mdash;disable-perl
+make &amp;&amp; make install
+{% endcodeblock %}</p>
+
+<p>(Ps:安装过程有缺少包的解决，可以尝试先从port安装好rrdtool之后deinstall rrdtool，这样依赖的包就都有了，因为port直接安装rrdtool后ganglia不认，所以手动编译)</p>
+
+<p>再来是ganglia
+{% codeblock shell lang:bash %}
+./configure &mdash;with-gmetad &mdash;with-librrd=/usr/lib32/rrdtool
+make &amp;&amp; make install
+{% endcodeblock %}
+报告</p>
+
+<p>Checking for apr</p>
+
+<p>checking for apr-1-config&hellip; no</p>
+
+<p>configure: error: apr-1-config binary not found in path</p>
+
+<p>没有安装apache2</p>
+
+<p>先安装mysql</p>
+
+<p>whereis mysql51-server
+{% codeblock shell lang:bash %}
+wget <a href="ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz">ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz</a>
+sudo make WITH_CHARSET=utf8 WITH_XCHARSET=all install clean
+sudo make install
+{% endcodeblock %}</p>
+
+<p>安装httpd
+{% codeblock shell lang:bash %}
+wget <a href="http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz">http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz</a>
+./configure &mdash;prefix=/usr/local/apache2 &mdash;enable-modules=so &mdash;enable-rewrite
+make &amp;&amp; make install
+{% endcodeblock %}</p>
+
+<p>安装php
+{% codeblock shell lang:bash %}
+wget <a href="http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror">http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror</a>
+tar –zxvf php-5.3.6.tar.gz
+cd php-5.3.6
+./configure &mdash;prefix=/usr/local/php &mdash;with-apxs2=/usr/local/apache2/bin/apxs &mdash;with-config-file-path=/usr/local/lib &mdash;with-mysql=/usr
+make &amp;&amp; make install
+{% endcodeblock %}</p>
+
+<p>将php5的库复制到apache的modules里
+{% codeblock shell lang:bash %}
+sudo cp –p .libs/libphp5.so /usr/local/apache2/modules
+sudo chown cdh:cdh /usr/local/apache2/modules/libphp5.so
+{% endcodeblock %}</p>
+
+<p>复制php5配置文件
+{% codeblock shell lang:bash %}
+sudo cp php.ini-development /usr/local/php/lib/php/php.ini
+{% endcodeblock %}</p>
+
+<p>修改http.conf 兼容php5
+{% codeblock shell lang:bash %}
+sudo vim /usr/local/apache2/conf/httpd.conf
+{% endcodeblock %}
+加上
+{% codeblock shell lang:bash %}
+AddType application/x-httpd-php .php</p>
+
+<h1>LoadModule php5_module modules/libphp5.so</h1>
+
+<p>{% endcodeblock %}<br/>
+把上面的#号去掉</p>
+
+<p>DirectoryIndex index.html</p>
+
+<p>在后面加 index.php</p>
+
+<p>DocumentRoot &ldquo;/usr/local/apache2/htdocs&rdquo;</p>
+
+<p>把/usr/local/apache2/htdocs改为你存放网页文件的路径</p>
+
+<p>AddDefaultCharset iso8859-1</p>
+
+<p>把后面的iso8859-1改为gb2312 或者是干脆off</p>
+
+<p>更详细的请参考<a href="http://article.21e.cn">http://article.21e.cn</a></p>
+
+<p>到这里看下访问一下浏览器，php应该工作ok</p>
+
+<p>继续编译ganglia
+{% codeblock shell lang:bash %}
+sudo ./configure &mdash;with-gmetad &mdash;with-librrd=/usr/lib32/rrdtool
+{% endcodeblock %}
+configure: error: apr-1-config binary not found in path</p>
+
+<p>{% codeblock shell lang:bash %}
+whereis apr1
+cd /usr/ports/devel/apr1
+sudo make install clean &amp;&amp; rehash
+{% endcodeblock %}</p>
+
+<p>回来继续编译，报告缺少libconfuse not found
+{% codeblock shell lang:bash %}
+cd /usr/ports/devel/libconfuse/
+sudo make install clean &amp;&amp; rehash
+{% endcodeblock %}</p>
+
+<p>报告缺少expat.h
+{% codeblock shell lang:bash %}
+cd /usr/ports/textproc/expat2
+sudo make install clean &amp;&amp; rehash
+{% endcodeblock %}</p>
+
+<p>问题依旧修改配置
+{% codeblock shell lang:bash %}
+sudo ./configure &mdash;with-gmetad &mdash;with-librrd=/usr/lib32/rrdtool &mdash;with-libexpat=/usr/local/
+sudo make
+sudo make install
+{% endcodeblock %}
+安装完成！</p>
+
+<p>测试gmetad的运行
+{% codeblock shell lang:bash %}
+sudo /usr/local/sbin/gmetad -d 5</p>
+
+<p>Going to run as user nobody</p>
+
+<p>Please make sure that /var/db/ganglia/rrds exists: No such file or directory</p>
+
+<p>sudo mkdir -p /var/db/ganglia/rrds</p>
+
+<p>sudo /usr/local/sbin/gmetad -d 5</p>
+
+<p>Going to run as user nobody</p>
+
+<p>Please make sure that /var/db/ganglia/rrds is owned by nobody</p>
+
+<p>sudo chown -R nobody:nobody /var/db/ganglia/</p>
+
+<p>Going to run as user nobody</p>
+
+<p>Sources are &hellip;</p>
+
+<p>Source: [my cluster, step 15] has 1 sources</p>
+
+<pre><code>    127.0.0.1
+</code></pre>
+
+<p>xml listening on port 8651</p>
+
+<p>interactive xml listening on port 8652</p>
+
+<p>cleanup thread has been started</p>
+
+<p>Data thread 34460440576 is monitoring [my cluster] data source</p>
+
+<pre><code>    127.0.0.1
+</code></pre>
+
+<p>data_thread() for [my cluster] failed to contact node 127.0.0.1</p>
+
+<p>data_thread() got no answer from any [my cluster] datasource</p>
+
+<p>data_thread() for [my cluster] failed to contact node 127.0.0.1</p>
+
+<p>data_thread() got no answer from any [my cluster] datasource</p>
+
+<p>data_thread() for [my cluster] failed to contact node 127.0.0.1</p>
+
+<p>data_thread() got no answer from any [my cluster] datasource</p>
+
+<p>sudo /usr/local/sbin/gmond -d 5
+{% endcodeblock %}</p>
+
+<p>看上去运行正常了</p>
+
+<p>基本可以。</p>
+
+<p>开始装界面。不要装3.5.3有些图开不了，3.5.2经过测试没有问题。</p>
+
+<p><a href="http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download">http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download</a></p>
+
+<p>注意web要求rrd数据库的路径只能是/var/lib/ganglia/rrds</p>
+
+<p>由于之前是装在了/var/db/ganglia/rrds</p>
+
+<p>则
+{% codeblock shell lang:bash %}
+cd /var/lib
+sudo ln -s /var/db/ganglia ganglia
+{% endcodeblock %}</p>
+
+<p>然后访问浏览器</p>
+
+<p><a href="http://192.168.174.133/ganglia/">http://192.168.174.133/ganglia/</a></p>
+
+<p>此时</p>
+
+<p>There was an error collecting ganglia data (127.0.0.1:8652): fsockopen error: Connection refused</p>
+
+<p>因为没有打开gmond和gmetad，打开发现界面ok了，但是没有数据！</p>
+
+<p>怀疑是php没有安装rrdtool的扩展,继续安装php的rrdtool扩展</p>
+
+<p><a href="http://pecl.php.net/package/rrd">http://pecl.php.net/package/rrd</a>
+{% codeblock shell lang:bash %}
+sudo ./configure &mdash;with-php-config=/usr/local/php/bin/php-config &mdash;with-rrd-binary=/usr/lib32/rrdtool/bin/rrdtool
+{% endcodeblock %}</p>
+
+<p>配置报错找不到rrdtool的头文件，直接定位configure文件进行修改</p>
+
+<p>for i in /usr /usr/local /usr/local/rrdtool /opt; do</p>
+
+<p>改成我装的路径</p>
+
+<p>for i in /usr /usr/local /usr/local/rrdtool /opt /usr/lib32/rrdtool; do</p>
+
+<p>改了之后</p>
+
+<p>configure: error: rrd lib version seems older than 1.3.0, update to 1.3.0+</p>
+
+<p>通过后还是报错</p>
+
+<p>error: too many arguments to function &lsquo;rrd_lastupdate&rsquo;</p>
+
+<p>参考这里<a href="https://bugs.php.net/bug.php?id=59558">https://bugs.php.net/bug.php?id=59558</a></p>
+
+<p>```c
+&ndash; if (rrd_lastupdate(2, &amp;argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,</p>
+
+<ul>
+<li>if (rrd_lastupdate_r(argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,
+```</li>
+</ul>
+
+
+<p>装完看到phpinfo里有了。</p>
+
+<p>之后还要修改conf_default.php文件</p>
+
+<p>graphite_rrd_dir变量，指向ganglia存放rrd的目录，我的是/var/db/ganglia/rrds</p>
+
+<p>还有一个$conf[&lsquo;rrdtool&rsquo;]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
+
+<p>应该就差不多了！这样如果还不行，检查自身人品，然后看下/var/log/message</p>
+]]></content>
+  </entry>
+  
+</feed>

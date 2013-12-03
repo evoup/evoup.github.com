@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: php | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-01T23:24:41+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
+    <updated>2013-11-29T10:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
+    <content type="html"><![CDATA[<p>安装最新版phpmyadmin4.1.0出现了访问非常缓慢的问题，记录一下</p>
+
+<!-- more -->
+
+
+<h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找
+<code>php
+return strftime($date, $timestamp);
+</code>
+替换为
+<code>php
+if(extension_loaded('gettext'))
+  return strftime($date, $timestamp);
+</code></p>
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码
+```php
+$version = PMA_Util::getLatestVersion();</p>
+
+<p>echo json_encode(</p>
+
+<pre><code>array(
+    'version' =&gt; $version-&gt;version,
+    'date' =&gt; $version-&gt;date,
+    )
+);
+</code></pre>
+
+<p>```</p>
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【How to】使用basho的erlang-protobuffs和PHP通讯]]></title>
+    <link href="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php/"/>
+    <updated>2013-05-27T13:49:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php</id>
+    <content type="html"><![CDATA[<p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+<!-- more -->
+
+
+<p>可以在这里下载，git://github.com/basho/erlang_protobuffs.git</p>
+
+<p>先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。</p>
+
+<p><code>bash
+cd erlang_protobuffs
+make all
+</code></p>
+
+<p>这样就可以使用了，接下来给出一个测试的protobuf文件</p>
+
+<p>{% codeblock lang:protobuf test.proto %}
+message test {
+   required string test1 = 1;
+}
+{% endcodeblock %}</p>
+
+<p>进入ebin目录准备生成
+<code>bash
+cd ebin  
+</code></p>
+
+<p>```erlang
+erl
+1> protobuffs_compile:generate_source(&ldquo;test.proto&rdquo;).</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing header file to &ldquo;test_pb.hrl&rdquo;</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing src file to &ldquo;test_pb.erl&rdquo;</p>
+
+<p>ok
+```
+这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。</p>
+
+<p>然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。</p>
+
+<p>{% codeblock lang:erlang server.erl start:51 mark:51,54-55 %}
+-module(server).</p>
+
+<p>-compile(export_all).</p>
+
+<p>-import(lists, [reverse/1]).</p>
+
+<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
+
+<p>start_nano_server() &ndash;></p>
+
+<p>   {ok, Listen} = gen_tcp:listen(2345, [binary, {packet, 4},</p>
+
+<pre><code>                {reuseaddr, true},
+
+                {active, true}]),
+</code></pre>
+
+<p>   {ok, Socket} = gen_tcp:accept(Listen),</p>
+
+<p>   gen_tcp:close(Listen),</p>
+
+<p>   loop(Socket).</p>
+
+<p>loop(Socket) &ndash;></p>
+
+<p>   receive</p>
+
+<p>   {tcp, Socket, Bin} &ndash;></p>
+
+<pre><code>   io:format("Server received binary = ~p~n",[Bin]),
+
+   Msg=test_pb:decode_test(Bin),
+
+   io:format("Server (unpacked)  ~p~n",[Msg]),
+
+   loop(Socket);
+</code></pre>
+
+<p>   {tcp_closed, Socket} &ndash;></p>
+
+<pre><code>   io:format("Server socket closed~n")
+</code></pre>
+
+<p>   end.
+{% endcodeblock %}</p>
+
+<p>client的代码</p>
+
+<p>{% codeblock lang:erlang client.erl %}
+-module(client).</p>
+
+<p>-compile(export_all).</p>
+
+<p>-import(lists, [reverse/1]).</p>
+
+<p>-include(&ldquo;test_pb.hrl&rdquo;).</p>
+
+<p>nano_client_eval() &ndash;></p>
+
+<p>   {ok, Socket} =</p>
+
+<p>   gen_tcp:connect(&ldquo;localhost&rdquo;, 2345,</p>
+
+<pre><code>   [binary, {packet, 4}]),
+</code></pre>
+
+<p>   Test=#test{test1=&ldquo;test1&rdquo;},</p>
+
+<p>   Str=test_pb:encode_test(Test),</p>
+
+<p>   ok = gen_tcp:send(Socket, Str),</p>
+
+<p>   gen_tcp:close(Socket).
+{% endcodeblock %}</p>
+
+<p>需要说明的是packet,4这个参数，代表每个数据包的前4个字节为消息头，该头标识了消息体的长度。这样互通是没有问题的，erlang自动为数据包的加上前4个字节的消息头。</p>
+
+<p>接下来难点是php作为客户端，要手工打包消息然后发送。
+首先是下载php版本的<a href="https://code.google.com/p/pb4php/">https://code.google.com/p/pb4php/</a>
+然后，解压得到protocolbuf，接着创建你的项目，把protocolbuf放到该项目文件夹的根目录下。一样要生成源代码。注意，pb4php不是很智能，如果直接.proto文件中=1没有空格，而不是写成xx = 1是会报错的！</p>
+
+<p>{% codeblock lang:php test.php %}  <br/>
+&lt;?php</p>
+
+<p>require_once(&ldquo;./protocolbuf/parser/pb_parser.php&rdquo;);</p>
+
+<p>$parser = new PBParser();</p>
+
+<p>$parser->parse(&ldquo;./test.proto&rdquo;);</p>
+
+<p>echo &ldquo;done\n&rdquo;;</p>
+
+<p>?>
+{% endcodeblock %}</p>
+
+<p>运行test.php后生成pb_proto_test.php</p>
+
+<p>php版本的client的代码</p>
+
+<p>{% codeblock lang:php client.php %}
+&lt;?php</p>
+
+<p>require_once(&ldquo;./protocolbuf/message/pb_message.php&rdquo;);</p>
+
+<p>require_once(&ldquo;./pb_proto_test.php&rdquo;);</p>
+
+<p>$test = new test();</p>
+
+<p>$test->set_test1(&ldquo;test php&rdquo;);</p>
+
+<p>$string = $test->SerializeToString();</p>
+
+<p>$sock=@socket_create(AF_INET, SOCK_STREAM, getprotobyname(&lsquo;tcp&rsquo;));</p>
+
+<p>if ($sock)
+{</p>
+
+<p>   socket_connect($sock, &ldquo;127.0.0.1&rdquo;, 2345);</p>
+
+<p>   $msg = pack_data($string);</p>
+
+<p>   file_put_contents(dirname(<strong>FILE</strong>).&lsquo;/resmessage&rsquo;,$msg);</p>
+
+<p>   $sent = @socket_write($sock, $msg, strlen($msg));
+}</p>
+
+<p>function pack_data ($data) {</p>
+
+<p>   $head =pack(&ldquo;H*&rdquo;, to_hex_str (strlen($data)));</p>
+
+<p>   $body=pack(&ldquo;A*&rdquo;,$data);</p>
+
+<p>   return $head.$body;</p>
+
+<p>}</p>
+
+<p>function to_hex_str ($num)
+{</p>
+
+<p>   $str = dechex($num);</p>
+
+<p>   $str = str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT);</p>
+
+<p>   return $str;</p>
+
+<p>}
+?>
+{% endcodeblock %}</p>
+
+<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
+
+<p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装nginx+php4.4.9的方法]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/18/nginx-php4/"/>
+    <updated>2011-01-18T15:10:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/18/nginx-php4</id>
+    <content type="html"><![CDATA[<p>首先是php4.4
+<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
+
+<!-- more -->
+
+
+<p>（ps:更老的版本可以到museum.php.net去找。）</p>
+
+<p>装之前别忘为&mdash;enable的几个找下pecl
+编译php4（先不打补丁）的时候先使用这样的参数
+```makefile
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>然后打补丁
+同时候准备好补丁文件，<a href="http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz">http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz</a>
+<code>sh
+gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
+</code>
+再次
+```makefile
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;enable-force-cgi-redirect &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>这个php-fpm.conf要改的
+<code>sh
+ 62             Unix user of processes
+ 63         &lt;!--    &lt;value name="user"&gt;nobody&lt;/value&gt;       --&gt;
+ 64
+ 65             Unix group of processes
+ 66         &lt;!--    &lt;value name="group"&gt;nobody&lt;/value&gt;      --&gt;
+</code></p>
+
+<p>换成
+<code>sh
+ 62             Unix user of processes
+ 63             &lt;value name="user"&gt;www&lt;/value&gt;
+ 64
+ 65             Unix group of processes
+ 66             &lt;value name="group"&gt;www&lt;/value&gt;
+</code></p>
+
+<p>然后到目录sbin下试一试
+<code>sh
+sudo /usr/local/php4_admin/sbin/php-fpm start
+</code>
+看到就可以了，收工。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php转换文件编码]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/22/php-convert-encoding/"/>
+    <updated>2010-11-22T17:56:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/22/php-convert-encoding</id>
+    <content type="html"><![CDATA[<p>工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```php
+$allFiles=array(&lsquo;/path/to/file0&rsquo;,&lsquo;/path/to/file1&rsquo;);
+foreach($allFiles as $file) {</p>
+
+<pre><code>$temstr=file_get_contents($file);
+if (!function_exists('mb_detect_encoding')) {
+    echo "请安装mb函数集\n";
+    exit;
+}
+$encode = mb_detect_encoding($temstr,"ASCII,UTF-8,CP936,EUC-CN,BIG-5,EUC-TW");
+if ($encode!="UTF-8") {
+    echo "{$file}文件编码从{$encode}转换为UTF-8\n";
+    $temstr=mb_convert_encoding($temstr, "UTF-8", $encode);
+    file_put_contents($file,$temstr);
+}
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[php myadmin1045 error]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/19/php-myadmin1045-error/"/>
+    <updated>2010-11-19T15:58:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/19/php-myadmin1045-error</id>
+    <content type="html"><![CDATA[<p>今天遇到phpMyAdmin错误 #1045 &ndash; Access denied for user@localhost的错误</p>
+
+<p>记得在./libraries/config.default.php
+已经制定好了需要的变量。
+<code>php
+ 57 $cfg['Servers'][$i]['host']          = '172.16.27.55'; // MySQL hostname or IP address
+ 58 $cfg['Servers'][$i]['port']          = '3306';          // MySQL port - leave blank for default port
+ 59 $cfg['Servers'][$i]['socket']        = '';          // Path to the socket - leave blank for default socket
+ 60 $cfg['Servers'][$i]['connect_type']  = 'tcp';       // How to connect to MySQL server ('tcp' or 'socket')
+ 61 $cfg['Servers'][$i]['extension']     = 'mysql';     // The php MySQL extension to use ('mysql' or 'mysqli')
+ 62 $cfg['Servers'][$i]['compress']      = FALSE;       // Use compressed protocol for the MySQL connection
+ 63                                                     // (requires PHP &gt;= 4.3.0)
+ 64 $cfg['Servers'][$i]['controluser']   = '';          // MySQL control user settings
+ 65                                                     // (this user must have read-only
+ 66 $cfg['Servers'][$i]['controlpass']   = '';          // access to the "mysql/user"
+ 72 $cfg['Servers'][$i]['user']          = 'user';      // MySQL user
+ 73 $cfg['Servers'][$i]['password']      = '%**';          // MySQL password (only needed
+</code></p>
+
+<p>同时
+<code>php
+ 40  * The 'cookie' auth_type uses blowfish algorithm to encrypt the password. If
+ 41  * at least one server configuration uses 'cookie' auth_type, enter here a
+ 42  * passphrase that will be used by blowfish. The maximum length seems to be 46
+ 43  * characters.
+ 44  */
+ 45 $cfg['blowfish_secret'] = 's#$dcrnm^9fk2';
+</code>
+这部分也指定完毕。</p>
+
+<p>但是还是会报告1045，最后清除浏览器缓存，终于搞定。</p>
+]]></content>
+  </entry>
+  
+</feed>
