@@ -102,6 +102,53 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/21/ssh-authorized-keys/">创建ssh信任失败的原因分析和改进</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-13T14:55:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2013</time>
         
       </p>
@@ -808,56 +855,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-11-22T15:01:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/22/nginx-upstream-send-too-big-header/">解决nginx Upstream Send Too Big Header</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
-
-<p>这个问题会导致输出502头信息。</p>
-
-<p>在fastcgi_params中加以下2行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>fastcgi_buffer_size 128k;
-</span><span class='line'>fastcgi_buffers 8 128k;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，调试的时候再去做了。</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -881,6 +878,8 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacit0-dot-8/">centos6.4 Install cacit0.8</a>
+    
     <a class="list-group-item " href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">centos6.4下搭建zabbix2.0.6</a>
     
     <a class="list-group-item " href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">克隆你的octopress博客到win7</a>
@@ -888,8 +887,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     <a class="list-group-item " href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a>
     
     <a class="list-group-item " href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
-    
-    <a class="list-group-item " href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
     
   </div>
 </section>

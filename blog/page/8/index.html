@@ -102,6 +102,82 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-05-22T16:31:00+08:00" pubdate data-updated="true">May 22<span>nd</span>, 2008</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2008/05/22/js-get-cookie/">Js获取cookie</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>直接参考网易的函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
+</span><span class='line'>   <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">offset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="nx">offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="nx">offset</span> <span class="o">+=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>
+</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="k">return</span> <span class="nx">unescape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">end</span><span class="p">))</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>   <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<hr>
+
+
+<p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2008</time>
         
       </p>
@@ -156,6 +232,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacit0-dot-8/">centos6.4 Install cacit0.8</a>
+    
     <a class="list-group-item " href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">centos6.4下搭建zabbix2.0.6</a>
     
     <a class="list-group-item " href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">克隆你的octopress博客到win7</a>
@@ -163,8 +241,6 @@
     <a class="list-group-item " href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a>
     
     <a class="list-group-item " href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
-    
-    <a class="list-group-item " href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
     
   </div>
 </section>
