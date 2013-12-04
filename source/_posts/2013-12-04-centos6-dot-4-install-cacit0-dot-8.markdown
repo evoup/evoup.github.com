@@ -5,7 +5,10 @@ date: 2013-12-04 10:37
 comments: true
 categories: 
 ---
-还是一样先把不要的关了
+cacti号称一款完全采用rrdtool和snmp实现的监控软件，相比nagios，它能够呈现大量直观的监控图表，功能主要体现在了数据的量化上。
+
+<!-- more -->
+接下来开始安装，一开始还是一样先把可能妨碍安装成功的iptables和selinux关闭掉
 ```sh
 service iptables stop
 chkconfig iptables off
@@ -129,5 +132,4 @@ ll
 
 确保/var/www/html/cacti/rra目录下有可写权限。
 重启点击graph菜单观察发现已经出现图表了。
-
 
