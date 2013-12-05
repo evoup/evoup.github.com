@@ -35,6 +35,9 @@ sed -n '3p' file
 echo "abcd" | cut -b 1-3
 ```
 
+使用nc访问百度
+printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
+
 获取当前时间戳
 ```sh
 date "+%s"
