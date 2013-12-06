@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "centos6.4 install cacit0.8"
+title: "centos6.4 install cacti0.8"
 date: 2013-12-04 10:37
 comments: true
 categories: 
 ---
 ###简介
-cacti号称一款完全采用rrdtool和snmp实现的监控软件，相比nagios，它能够呈现大量直观的监控图表，功能主要体现在了数据的量化上。该软件最初完全采用php写成，采用crontab调用poller.php脚本进行数据的定时收集，如今已经有c语言写成的改良版spine收集器进行数据的收集可供选择。
+cacti号称一款完全采用rrdtool和snmp实现的监控软件，与同为自由软件的nagios相比，它能够呈现大量直观的监控图表，功能主要体现在了数据的量化上。该软件最初完全采用php写成，采用crontab调用poller.php脚本进行数据的定时收集，如今已经有c语言写成的改良版spine收集器进行数据的收集可供选择。
 
 <!-- more -->
 接下来开始安装，一开始还是一样先把可能妨碍安装成功的iptables和selinux关闭掉
