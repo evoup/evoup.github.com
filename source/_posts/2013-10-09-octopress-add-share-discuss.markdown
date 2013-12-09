@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "octopress添加社会化分享和添加多说评论"
-date: 2013-02-09 16:14
+date: 2013-10-09 16:14
 comments: true
 categories: octopress
 ---
