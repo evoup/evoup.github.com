@@ -105,6 +105,50 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-05-04T14:41:00+08:00" pubdate data-updated="true">May 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/04/rebar-build-erlang-project/">[How To]使用rebar构建erlang 项目</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的，在这里记一下，我只是用了绕过的方法不是很好，因为时间不允许，这里先SORRY一下。我这里的环境为freebsd9.0 amd64 (elrang5.9.1 R15B01),erlang的其他版本，请参看wiki的Release-handling部分调整生成环节的命令。</p>
+
+<p>1）第一步要获取rebar程序，两种方法：自己编译和直接下载。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/05/04/rebar-build-erlang-project/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2013</time>
         
       </p>
@@ -278,84 +322,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     <footer>
       <a class="btn btn-default" rel="full-article" href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">Read on &rarr;</a>
     </footer>
-  
-
-
-        </article>
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-09T16:14:00+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/02/09/octopress-add-share-discuss/">Octopress添加社会化分享和添加多说评论</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><h3>社会化分享</h3>
-
-<p>社会化分享主要采用的是bshare
-在<em>config.yml中增加bshare:true,在&#8221;source/</em>includes/post&#8221;下的share.html中添加如下代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-custom&quot;</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;分享到QQ空间&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-qzone&quot;</span><span class="o">&gt;&lt;</span><span class="err">/a&gt;&lt;a title=&quot;分享到新浪微博&quot; class=&quot;bshare-sinaminiblog&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到人人网&quot; class=&quot;bshare-renren&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到腾讯微博&quot; class=&quot;bshare-qqmb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到网易微博&quot; class=&quot;bshare-neteasemb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;更多平台&quot; class=&quot;bshare-more bshare-more-icon more-style-addthis&quot;&gt;&lt;/a&gt;&lt;span class=&quot;BSHARE_COUNT bshare-share-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/buttonLite.js#style=-1&amp;amp;uuid=&amp;amp;pophcol=2&amp;amp;lang=zh&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/bshareC0.js&quot;&gt;&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样就完成了一键分享的功能。</p>
-
-<h3>社会化评论</h3>
-
-<p>octopress默认采用第三方评论系统disqus，但是国内用户普遍都不使用，可以采用duoshuo。
-首先在 source/post/ 下创建duoshuo.html
-然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
-在source/_layouts/post.html中，将对应的disqus代码改为：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="nx">site</span><span class="p">.</span><span class="nx">duoshuo_name</span> <span class="nx">and</span> <span class="nx">page</span><span class="p">.</span><span class="nx">comments</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">%</span><span class="p">}</span>
-</span><span class='line'>  <span class="o">&lt;</span><span class="nx">section</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;comment&quot;</span><span class="o">&gt;</span>
-</span><span class='line'>    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">发表评论</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
-</span><span class='line'>    <span class="p">{</span><span class="o">%</span> <span class="nx">include</span> <span class="nx">post</span><span class="o">/</span><span class="nx">duoshuo</span><span class="p">.</span><span class="nx">html</span> <span class="o">%</span><span class="p">}</span>
-</span><span class='line'>  <span class="o">&lt;</span><span class="err">/section&gt;</span>
-</span><span class='line'><span class="p">{</span><span class="o">%</span> <span class="nx">endif</span> <span class="o">%</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在source/_config/yml中，添加：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>duoshuo_name: 你在多说创建的站点名称
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>不出意外，分享和评论就添加完成了，最后不要忘记生成就可以了。</p>
-</div>
-  
   
 
 
