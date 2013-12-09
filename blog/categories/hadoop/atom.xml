@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-06T23:12:00+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[HBASE完全分布式搭建(VMware版)]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case/"/>
+    <updated>2013-11-04T16:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a></p>
+
+<p>参考 <a href="http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html">http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html</a></p>
+
+<!-- more -->
+
+
+<p><code>bash
+cd /u01/app
+tar xzf hbase-0.90.6.tgz
+ln -s hbase-0.90.6 hbase
+cd hbase/conf
+</code></p>
+
+<p>编辑hbase-env.sh
+<code>bash
+export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
+export JAVA_HOME=/usr/java/jdk1.6.0_29
+export HBASE_MANAGES_ZK=true
+</code></p>
+
+<p>注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。</p>
+
+<p>编辑hbase-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!--
+/**
+ * Copyright 2010 The Apache Software Foundation
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn2.net:9024/hbase&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.master&lt;/name&gt;
+    &lt;value&gt;mdn2.net:60000&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+    &lt;value&gt;mdn2.net,mdn2_datanode1.net,mdn2_datanode2.net&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意点：
+ 1.其中首先需要注意hdfs://mdn2.net:9024/hbase这里，必须与你的Hadoop集群的core-site.xml文件配置保持完全一致才行，如果你Hadoop的hdfs使用了其它端口，请在这里也修改。再者就是Hbase该项并不识别机器IP，只能使用机器hostname才可行，即若使用IP是会抛出java错误。
+ 2.hbase.zookeeper.quorum 的个数必须是奇数。</p>
+
+<p>修改regionservers文件（同hadoop的slaves文件）
+<code>bash
+mdn2_datanode1.net
+mdn2_datanode2.net
+</code></p>
+
+<p>然后分发到各点，就可以启动了。</p>
+
+<p><code>bash
+bin/start hbase
+bin/hbase shell
+</code></p>
+
+<p>报错
+ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to connect to ZooKeeper but the connection closes immediately. This could be a sign that the server has too many connections (30 is the default). Consider inspecting your ZK server logs for that error and then make sure you are reusing HBaseConfiguration as often as you can. See HTable&rsquo;s javadoc for more information.
+看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
+
+<p><code>bash
+wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+</code></p>
+
+<p>编辑~/.profile,加入关于zk环境变量的设置</p>
+
+<p><code>bash
+export ZOOKEEPER_HOME="/u01/app/zookeeper/"
+PATH=$ZOOKEEPER_HOME/bin:$PATH
+export PATH
+cd /u01/app/zookeeper/conf
+cp zoo_sample.cfg zoo.cfg
+cd ../bin
+./zkServer.sh start
+</code></p>
+
+<p>最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。</p>
+
+<p><img src="/images/evoup/hbase_vmware.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[HADOOP完全分布式搭建(VMware版)]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
+    <updated>2013-11-04T15:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>vmware版本8.0.4 build-744019
+首先准备3台虚拟机</p>
+
+<p><img src="/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
+
+<p><code>
+ ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
+ |    usage    |        IP        |             Hostname              |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | namenode    | 192.168.174.132  |           mdn2.net                |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+ |             |                  |                                   |
+ |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+ | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+ |             |                  |                                   |
+  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</code></p>
+
+<p> <!-- more --></p>
+
+<p>Ps:
+为节省资源关闭点不必要的服务
+```bash</p>
+
+<h1>!/bin/bash</h1>
+
+<p>for SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
+do /sbin/chkconfig ${SERVICES} off;
+done
+```</p>
+
+<h3>准备工作</h3>
+
+<p>先安装JDK1.6
+linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
+```bash</p>
+
+<h1>rpm -qa | grep jdk</h1>
+
+<p>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</p>
+
+<h1>rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</h1>
+
+<h1>sudo chmod +x jdk-6u35-linux-x64-rpm.bin</h1>
+
+<h1>./jdk-6u35-linux-x64-rpm.bin</h1>
+
+<p>```</p>
+
+<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
+
+<p>hadoop所有操作都是用hadoop帐号，下面添加</p>
+
+<p>```bash
+linux:# groupadd hadoop
+freebsd:# pw groupadd hadoop
+linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
+freebsd:# pw adduser hadoop -g hadoop -d /home/hadoop -m -s /bin/bash</p>
+
+<p>all:# mkdir -p /u01/app
+all:# chgrp -R hadoop /u01/app
+all:# chown -R hadoop /u01/app
+```</p>
+
+<p>环境变量
+<code>bash
+all:$ vi ~/.profile
+all:export HADOOP_HOME=/u01/app/hadoop
+all:export HBASE_HOME=/u01/app/hbase
+</code></p>
+
+<p>进行免密码的ssh登录设置
+<code>bash
+ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+</code>
+到此准备工作完成</p>
+
+<p>安装Hadoop
+<code>bash
+all:$ cd /u01/app
+all:$ tar zxf hadoop-0.20.203.0rc1.tar.gz
+all:$ ln -s hadoop-0.20.203.0 hadoop
+</code></p>
+
+<h3>正式开始</h3>
+
+<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
+(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
+
+<p>```bash</p>
+
+<h1>Do not remove the following line, or various programs</h1>
+
+<h1>that require network functionality will fail.</h1>
+
+<p>127.0.0.1       localhost.localdomain localhost
+::1             localhost6.localdomain6 localhost6
+192.168.174.132 mdn2.net
+192.168.174.135 mdn2_datanode1.net
+192.168.174.136 mdn2_datanode2.net
+```</p>
+
+<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码
+<code>bash
+export HADOOP_HOME=/u01/app/hadoop
+export HBASE_HOME=/u01/app/hbase
+export PATH="/usr/java/jdk1.6.0_37/bin/:$PATH"
+export JAVA_HOME="/usr/java/jdk1.6.0_37/bin/"
+</code></p>
+
+<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录
+<code>bash
+export JAVA_HOME=/usr/java/jdk1.6.0_37/
+</code></p>
+
+<p>再编辑core-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;fs.default.name&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn2.net:9024&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+    &lt;value&gt;/u01/app/hadoopTmp&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
+
+<p>再编辑hdfs-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!-- Put site-specific property overrides in this file. -->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;1&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;dfs.data.dir&lt;/name&gt;
+    &lt;value&gt;/u01/app/hdfsdata&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录</p>
+
+<p>master里
+<code>bash
+mdn2.net
+</code></p>
+
+<p>slaves里
+<code>bash
+mdn2_datanode1.net
+mdn2_datanode2.net
+</code></p>
+
+<p>注意点：
+修改hadoop-0.20.203.0/bin下的hadoop.
+vi  hadoop
+查找 –jvm . vi 下的命令模式： :/-jvm
+将-jvm server改成 –server .
+因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
+
+<p>到namenode上格式化hdfs
+<code>bash
+/bin/hadoop namenode -format
+</code>
+注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭
+<code>bash
+sudo /etc/init.d/iptables stop
+sudo /sbin/chkconfig iptables off
+</code>
+启动：
+<code>bash
+bin/start-all.sh
+</code>
+或者只启动dfs和mapreduce
+<code>bash
+bin/start-dfs.sh
+bin/start-mapred.sh
+</code>
+最后发一个jps的进程图</p>
+
+<p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+</feed>
