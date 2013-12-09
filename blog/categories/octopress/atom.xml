@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-09T16:26:40+08:00</updated>
+  <updated>2013-12-09T16:42:29+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -109,9 +109,11 @@ git pull origin master
     <id>http://evoupsight.com/blog/2013/10/09/octopress-add-share-discuss</id>
     <content type="html"><![CDATA[<h3>社会化分享</h3>
 
-<p>社会化分享主要采用的是bshare
-在<em>config.yml中增加bshare:true,在"source/</em>includes/post"下的share.html中添加如下代码
-```js</p>
+<p>社会化分享主要采用的是bshare</p>
+
+<p>在_config.yml中增加bshare:true,在"source/_includes/post"下的share.html中添加如下代码</p>
+
+<p>```js</p>
 
 <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div>
 
@@ -132,9 +134,17 @@ git pull origin master
 然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
 在source/_layouts/post.html中，将对应的disqus代码改为：
 ```js
+{% if site.duoshuo_name and page.comments == true %}
+  <section id="comment"></p>
 
+<pre><code>&lt;h1&gt;发表评论&lt;/h1&gt;
+{% include post/duoshuo.html %}
+</code></pre>
+
+<p>  </section>
+{% endif %}
 <code>
-在source/_config/yml中，添加：
+在source/\_config/yml中，添加：
 </code>sh
 duoshuo_name: 你在多说创建的站点名称
 ```</p>
