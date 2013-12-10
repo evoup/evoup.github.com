@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>关于头文件互相包含的解决方法 - Evoup`s Blog</title>
+  <title>使用php的snmp模块进行监控数据的获取 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/09/23/header-file-refered-by-each-other">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,41 +101,26 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-10T10:19:00+08:00" pubdate data-updated="true">Dec 10<span>th</span>, 2013</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        关于头文件互相包含的解决方法
+        使用php的snmp模块进行监控数据的获取
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
-
-<p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
+<div class="entry-content clearfix"><p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
 
 <!-- more -->
 
-
-
-
-<hr>
-
-
-<p>不要在.h里互相包含头文件.</p>
-
-<p>可以在另一个A的.h里声明一下class B,然后用B的指针就可以.包头文件放在A的cpp里包含就可以了.
-</hr>
-声明的时候只要在cls_enemy.h里面加上一句class class_player;就可以了。这样cls_enemy.h里就不要去包含cls_player.h了，而cls_player.h则照旧包含cls_enemy.h。但是在设计的时候发现还不行。</p>
-
-<p>总结，如果2个类是差不多的类，最好放在一个文件里。</p>
-
-<p>java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
-这样子大概会这么写</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -143,30 +128,51 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">cls_player</span><span class="o">.</span><span class="na">java</span>
-</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">...</span>
-</span><span class='line'><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
-</span><span class='line'>   <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+</span><span class='line'>tar xjf php-5.5.6.tar.bz2
+</span><span class='line'><span class="nb">cd </span>php-5.5.6
+</span><span class='line'><span class="nv">$ </span>ls ext/snmp/
+</span><span class='line'>config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+</span><span class='line'><span class="err">$</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>然后看搜到了这篇文章
-<a href="http://topic.csdn.net/t/20051106/18/4375160.html">http://topic.csdn.net/t/20051106/18/4375160.html</a></p>
+<p>可见snmp已经自带了，不需要到pecl下载然后放到ext目录。</p>
 
-<p><a href="http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4">http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4</a></p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo yum install libxml2 libxml2-devel
+</span></code></pre></td></tr></table></div></figure>
 
-<hr>
+
+<p>备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。无独有偶，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+
+<h3>静态编译</h3>
+
+<p>查一下snmp的安装选项</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>./configure --help | grep snmp
+</span><span class='line'>  --with-snmp<span class="o">=</span>DIR         Include SNMP support
+</span></code></pre></td></tr></table></div></figure>
 
 
-<h2>正解</h2>
+<p>是&mdash;with，了解后继续操作，注意要指定好snmp路径</p>
 
-<p>现在我总结一下问题的解决过程和方法：</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --prefix<span class="o">=</span>/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+</span><span class='line'>make
+</span><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
 
-<p>方法一：利用友元类</p>
 
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>这样静态编译就完成了。</p>
+
+<h3>动态编译</h3>
+
+<p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -176,18 +182,58 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>ext/snmp
+</span><span class='line'>/usr/local/php55/bin/phpize
+</span><span class='line'>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
+</span><span class='line'>make
+</span><span class='line'>sudo make install
+</span><span class='line'><span class="nb">cd</span> ../../ext/sockets
+</span><span class='line'>/usr/local/php55/bin/phpize
+</span><span class='line'>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
+</span><span class='line'>make
+</span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在另一个类中可以这样声明:</p>
+<p>然后复制刚才的编译好的so文件到扩展目录到etc目录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+</span><span class='line'>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑php的配置文件，加入2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vi /usr/local/php55/etc/php.ini
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>加入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">extension</span><span class="o">=</span>sockets.so
+</span><span class='line'><span class="nv">extension</span><span class="o">=</span>snmp.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>撰写php版的snmp客户端测试程序</h3>
+
+<p>开始写点测试程序，确认snmp已经在本机支持</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$nc</span> -uvz 127.0.0.1 161
+</span><span class='line'>Connection to 127.0.0.1 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>已经支持，那么来写程序吧</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -196,64 +242,42 @@
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;A.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nv">$host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$oid</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.1&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$oid1</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.2&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$oid2</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.3&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$oid3</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.4.3.0&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>  <span class="c1">//1 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid1</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//5 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid2</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//15 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid3</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//Total Swap Size</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
-
-<p>方法二：</p>
-
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>查看结果</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$/</span>usr/local/php55/bin/php test.php
+</span><span class='line'>STRING: 0.05
+</span><span class='line'>STRING: 0.03
+</span><span class='line'>STRING: 0.03
+</span><span class='line'>INTEGER: 2064376 kB
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在另一个类中可以这样声明:</p>
+<p>竟然是如此简单，由此推断你只要学会rrdtool和php snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我们自己做公司监控平台2.0的时，上级要求使用C api直接获取数据，不走snmp，其实分析ganglia其实也是采用了类似的方式，所以号称比snmpd快，为了完成任务和系统的拓展性，果然支持snmp吧。分析完毕。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在cb.cpp文件中包含头文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;ca.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
+<p>扩展阅读：请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
 </div>
 
 
@@ -277,13 +301,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-10T10:19:00+08:00" pubdate data-updated="true">Dec 10<span>th</span>, 2013</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
+    <a class='category' href='/blog/categories/monitor/'>monitor</a>, <a class='category' href='/blog/categories/php/'>php</a>
   
 </span>
 
@@ -295,10 +319,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: PHP之call_user_func动态调用函数">&laquo; PHP之call_user_func动态调用函数</a></li>
+            <li class="previous"><a href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/" title="Previous Post: centos6.4 install cacti0.8">&laquo; centos6.4 install cacti0.8</a></li>
             
-            
-            <li class="next"><a href="/blog/2009/10/06/win32-c-call-python/" title="Next Post: 关于win32程序调用python脚本的发布问题">关于win32程序调用python脚本的发布问题 &raquo;</a></li>
             
           </ul>
         
@@ -335,7 +357,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
+    <a class="list-group-item active" href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
     
     <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">centos6.4 Install cacti0.8</a>
     

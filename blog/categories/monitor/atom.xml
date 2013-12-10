@@ -4,7 +4,7 @@
   <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-09T17:32:06+08:00</updated>
+  <updated>2013-12-10T17:52:41+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,115 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用php的snmp模块进行监控数据的获取]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor/"/>
+    <updated>2013-12-10T10:19:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor</id>
+    <content type="html"><![CDATA[<p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
+
+<!-- more -->
+
+
+<p><code>sh
+wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+tar xjf php-5.5.6.tar.bz2
+cd php-5.5.6
+$ ls ext/snmp/
+config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+$
+</code>
+可见snmp已经自带了，不需要到pecl下载然后放到ext目录。
+<code>sh
+sudo yum install libxml2 libxml2-devel
+</code>
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。无独有偶，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+
+<h3>静态编译</h3>
+
+<p>查一下snmp的安装选项
+<code>sh
+$ ./configure --help | grep snmp
+  --with-snmp=DIR         Include SNMP support
+</code>
+是&mdash;with，了解后继续操作，注意要指定好snmp路径
+<code>sh
+./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+make
+sudo make install
+</code>
+这样静态编译就完成了。</p>
+
+<h3>动态编译</h3>
+
+<p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so
+```sh
+cd ext/snmp
+/usr/local/php55/bin/phpize
+./configure &mdash;with-php-config=/usr/local/php55/bin/php-config
+make
+sudo make install
+cd ../../ext/sockets
+/usr/local/php55/bin/phpize
+./configure &mdash;with-php-config=/usr/local/php55/bin/php-config
+make
+sudo make install</p>
+
+<p><code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+</code>sh
+cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+<code>
+编辑php的配置文件，加入2行
+</code>sh
+vi /usr/local/php55/etc/php.ini
+<code>
+加入
+</code>sh
+extension=sockets.so
+extension=snmp.so
+```</p>
+
+<h3>撰写php版的snmp客户端测试程序</h3>
+
+<p>开始写点测试程序，确认snmp已经在本机支持
+<code>sh
+$nc -uvz 127.0.0.1 161
+Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
+</code>
+已经支持，那么来写程序吧
+<code>php
+&lt;?php
+$host="127.0.0.1";
+$community="public";
+$oid=".1.3.6.1.4.1.2021.10.1.3.1";
+$oid1=".1.3.6.1.4.1.2021.10.1.3.2";
+$oid2=".1.3.6.1.4.1.2021.10.1.3.3";
+$oid3=".1.3.6.1.4.1.2021.4.3.0";
+echo (snmpget($host,$community,$oid)."\n");  //1 minute Load
+echo (snmpget($host,$community,$oid1)."\n"); //5 minute Load
+echo (snmpget($host,$community,$oid2)."\n"); //15 minute Load
+echo (snmpget($host,$community,$oid3)."\n"); //Total Swap Size
+</code>
+查看结果
+```sh
+$/usr/local/php55/bin/php test.php
+STRING: 0.05
+STRING: 0.03
+STRING: 0.03
+INTEGER: 2064376 kB</p>
+
+<p>```
+竟然是如此简单，由此推断你只要学会rrdtool和php snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我们自己做公司监控平台2.0的时，上级要求使用C api直接获取数据，不走snmp，其实分析ganglia其实也是采用了类似的方式，所以号称比snmpd快，为了完成任务和系统的拓展性，果然支持snmp吧。分析完毕。</p>
+
+<p>扩展阅读：请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[centos6.4下搭建zabbix2.0.6]]></title>
@@ -249,7 +358,7 @@ yum install -y php-bcmath
 ```c
 /<em>
  * free.c &ndash; Display FreeBSD memory information
- * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#x6d;&#97;&#105;&#108;&#116;&#x6f;&#58;&#x76;&#105;&#110;&#111;&#100;&#x40;&#115;&#x65;&#103;&#x66;&#x61;&#x75;&#x6c;&#116;&#x2e;&#105;&#110;">&#x76;&#105;&#x6e;&#111;&#x64;&#64;&#115;&#x65;&#x67;&#102;&#97;&#117;&#x6c;&#x74;&#46;&#x69;&#110;</a>
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#118;&#105;&#110;&#x6f;&#x64;&#x40;&#x73;&#101;&#103;&#102;&#x61;&#x75;&#108;&#x74;&#x2e;&#x69;&#110;">&#x76;&#105;&#110;&#x6f;&#x64;&#64;&#x73;&#101;&#x67;&#102;&#x61;&#x75;&#108;&#116;&#46;&#x69;&#110;</a>
  * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
  </em>/</p>
 
@@ -766,363 +875,6 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
 
 <p>附一张运行截图
 <img src="/images/evoup/df.png" alt="Alt text" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd安装ganglia3.4]]></title>
-    <link href="http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4/"/>
-    <updated>2012-10-22T11:24:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4</id>
-    <content type="html"><![CDATA[<h2>Ganglia是什么?</h2>
-
-<p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
-
-<!-- more -->
-
-
-<h2>安装小记</h2>
-
-<p>首先是下载ganglia
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://downloads.sourceforge.net/project/ganglia/&quot;</span>&gt;http://downloads.sourceforge.net/project/ganglia/&lt;/a&gt;
-</span><span class='line'>wget &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz&quot;</span>&gt;http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz&lt;/a&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>先安装rrdtool
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure &amp;mdash;prefix<span class="o">=</span>/usr/lib32/rrdtool &amp;mdash;disable-perl
-</span><span class='line'>make &amp;amp;&amp;amp; make install
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>(Ps:安装过程有缺少包的解决，可以尝试先从port安装好rrdtool之后deinstall rrdtool，这样依赖的包就都有了，因为port直接安装rrdtool后ganglia不认，所以手动编译)</p>
-
-<p>再来是ganglia
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure &amp;mdash;with-gmetad &amp;mdash;with-librrd<span class="o">=</span>/usr/lib32/rrdtool
-</span><span class='line'>make &amp;amp;&amp;amp; make install
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-报告</p>
-
-<p>Checking for apr</p>
-
-<p>checking for apr-1-config&hellip; no</p>
-
-<p>configure: error: apr-1-config binary not found in path</p>
-
-<p>没有安装apache2</p>
-
-<p>先安装mysql</p>
-
-<p>whereis mysql51-server
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz&quot;</span>&gt;ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz&lt;/a&gt;
-</span><span class='line'>sudo make <span class="nv">WITH_CHARSET</span><span class="o">=</span>utf8 <span class="nv">WITH_XCHARSET</span><span class="o">=</span>all install clean
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>安装httpd
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz&quot;</span>&gt;http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz&lt;/a&gt;
-</span><span class='line'>./configure &amp;mdash;prefix<span class="o">=</span>/usr/local/apache2 &amp;mdash;enable-modules<span class="o">=</span>so &amp;mdash;enable-rewrite
-</span><span class='line'>make &amp;amp;&amp;amp; make install
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>安装php
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror&quot;</span>&gt;http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror&lt;/a&gt;
-</span><span class='line'>tar –zxvf php-5.3.6.tar.gz
-</span><span class='line'><span class="nb">cd </span>php-5.3.6
-</span><span class='line'>./configure &amp;mdash;prefix<span class="o">=</span>/usr/local/php &amp;mdash;with-apxs2<span class="o">=</span>/usr/local/apache2/bin/apxs &amp;mdash;with-config-file-path<span class="o">=</span>/usr/local/lib &amp;mdash;with-mysql<span class="o">=</span>/usr
-</span><span class='line'>make &amp;amp;&amp;amp; make install
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>将php5的库复制到apache的modules里
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp –p .libs/libphp5.so /usr/local/apache2/modules
-</span><span class='line'>sudo chown cdh:cdh /usr/local/apache2/modules/libphp5.so
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>复制php5配置文件
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp php.ini-development /usr/local/php/lib/php/php.ini
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>修改http.conf 兼容php5
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo vim /usr/local/apache2/conf/httpd.conf
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-加上
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>AddType application/x-httpd-php .php&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;h1&gt;LoadModule php5_module modules/libphp5.so&lt;/h1&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div><br/>
-把上面的#号去掉</p>
-
-<p>DirectoryIndex index.html</p>
-
-<p>在后面加 index.php</p>
-
-<p>DocumentRoot &ldquo;/usr/local/apache2/htdocs&rdquo;</p>
-
-<p>把/usr/local/apache2/htdocs改为你存放网页文件的路径</p>
-
-<p>AddDefaultCharset iso8859-1</p>
-
-<p>把后面的iso8859-1改为gb2312 或者是干脆off</p>
-
-<p>更详细的请参考<a href="http://article.21e.cn">http://article.21e.cn</a></p>
-
-<p>到这里看下访问一下浏览器，php应该工作ok</p>
-
-<p>继续编译ganglia
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure &amp;mdash;with-gmetad &amp;mdash;with-librrd<span class="o">=</span>/usr/lib32/rrdtool
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-configure: error: apr-1-config binary not found in path</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>whereis apr1
-</span><span class='line'><span class="nb">cd</span> /usr/ports/devel/apr1
-</span><span class='line'>sudo make install clean &amp;amp;&amp;amp; rehash
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>回来继续编译，报告缺少libconfuse not found
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/devel/libconfuse/
-</span><span class='line'>sudo make install clean &amp;amp;&amp;amp; rehash
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>报告缺少expat.h
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/textproc/expat2
-</span><span class='line'>sudo make install clean &amp;amp;&amp;amp; rehash
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>问题依旧修改配置
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure &amp;mdash;with-gmetad &amp;mdash;with-librrd<span class="o">=</span>/usr/lib32/rrdtool &amp;mdash;with-libexpat<span class="o">=</span>/usr/local/
-</span><span class='line'>sudo make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-安装完成！</p>
-
-<p>测试gmetad的运行
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /usr/local/sbin/gmetad -d 5&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Going to run as user nobody&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Please make sure that /var/db/ganglia/rrds exists: No such file or directory&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sudo mkdir -p /var/db/ganglia/rrds&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sudo /usr/local/sbin/gmetad -d 5&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Going to run as user nobody&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Please make sure that /var/db/ganglia/rrds is owned by nobody&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sudo chown -R nobody:nobody /var/db/ganglia/&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Going to run as user nobody&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Sources are &amp;hellip;&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Source: <span class="o">[</span>my cluster, step 15<span class="o">]</span> has 1 sources&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;pre&gt;&lt;code&gt;    127.0.0.1
-</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;xml listening on port 8651&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;interactive xml listening on port 8652&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;cleanup thread has been started&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;Data thread 34460440576 is monitoring <span class="o">[</span>my cluster<span class="o">]</span> data <span class="nb">source</span>&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;pre&gt;&lt;code&gt;    127.0.0.1
-</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;sudo /usr/local/sbin/gmond -d 5
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>看上去运行正常了</p>
-
-<p>基本可以。</p>
-
-<p>开始装界面。不要装3.5.3有些图开不了，3.5.2经过测试没有问题。</p>
-
-<p><a href="http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download">http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download</a></p>
-
-<p>注意web要求rrd数据库的路径只能是/var/lib/ganglia/rrds</p>
-
-<p>由于之前是装在了/var/db/ganglia/rrds</p>
-
-<p>则
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /var/lib
-</span><span class='line'>sudo ln -s /var/db/ganglia ganglia
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>然后访问浏览器</p>
-
-<p><a href="http://192.168.174.133/ganglia/">http://192.168.174.133/ganglia/</a></p>
-
-<p>此时</p>
-
-<p>There was an error collecting ganglia data (127.0.0.1:8652): fsockopen error: Connection refused</p>
-
-<p>因为没有打开gmond和gmetad，打开发现界面ok了，但是没有数据！</p>
-
-<p>怀疑是php没有安装rrdtool的扩展,继续安装php的rrdtool扩展</p>
-
-<p><a href="http://pecl.php.net/package/rrd">http://pecl.php.net/package/rrd</a>
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure &amp;mdash;with-php-config<span class="o">=</span>/usr/local/php/bin/php-config &amp;mdash;with-rrd-binary<span class="o">=</span>/usr/lib32/rrdtool/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>配置报错找不到rrdtool的头文件，直接定位configure文件进行修改</p>
-
-<p>for i in /usr /usr/local /usr/local/rrdtool /opt; do</p>
-
-<p>改成我装的路径</p>
-
-<p>for i in /usr /usr/local /usr/local/rrdtool /opt /usr/lib32/rrdtool; do</p>
-
-<p>改了之后</p>
-
-<p>configure: error: rrd lib version seems older than 1.3.0, update to 1.3.0+</p>
-
-<p>通过后还是报错</p>
-
-<p>error: too many arguments to function &lsquo;rrd_lastupdate&rsquo;</p>
-
-<p>参考这里<a href="https://bugs.php.net/bug.php?id=59558">https://bugs.php.net/bug.php?id=59558</a></p>
-
-<p>```c
-&ndash; if (rrd_lastupdate(2, &amp;argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,</p>
-
-<ul>
-<li>if (rrd_lastupdate_r(argv[1], &amp;last_update, &amp;ds_cnt, &amp;ds_namv,
-```</li>
-</ul>
-
-
-<p>装完看到phpinfo里有了。</p>
-
-<p>之后还要修改conf_default.php文件</p>
-
-<p>graphite_rrd_dir变量，指向ganglia存放rrd的目录，我的是/var/db/ganglia/rrds</p>
-
-<p>还有一个$conf[&lsquo;rrdtool&rsquo;]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
-
-<p>应该就差不多了！这样如果还不行，检查自身人品，然后看下/var/log/message</p>
 ]]></content>
   </entry>
   
