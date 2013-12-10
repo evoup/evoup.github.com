@@ -4,7 +4,7 @@
   <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-10T18:00:37+08:00</updated>
+  <updated>2013-12-10T18:12:15+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -38,7 +38,7 @@ $
 <code>sh
 sudo yum install libxml2 libxml2-devel
 </code>
-备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。无独有偶，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
 
 <h3>静态编译</h3>
 
@@ -96,16 +96,23 @@ Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
 已经支持，那么来写程序吧
 <code>php
 &lt;?php
+/**
+ * test.php
+ */
 $host="127.0.0.1";
 $community="public";
 $oid=".1.3.6.1.4.1.2021.10.1.3.1";
 $oid1=".1.3.6.1.4.1.2021.10.1.3.2";
 $oid2=".1.3.6.1.4.1.2021.10.1.3.3";
 $oid3=".1.3.6.1.4.1.2021.4.3.0";
-echo (snmpget($host,$community,$oid)."\n");  //1 minute Load
-echo (snmpget($host,$community,$oid1)."\n"); //5 minute Load
-echo (snmpget($host,$community,$oid2)."\n"); //15 minute Load
-echo (snmpget($host,$community,$oid3)."\n"); //Total Swap Size
+// 1 minute Load
+echo (snmpget($host,$community,$oid)."\n");
+// 5 minute Load
+echo (snmpget($host,$community,$oid1)."\n");
+// 15 minute Load
+echo (snmpget($host,$community,$oid2)."\n");
+// Total Swap Size
+echo (snmpget($host,$community,$oid3)."\n");
 </code>
 查看结果
 ```sh
@@ -363,7 +370,7 @@ yum install -y php-bcmath
 ```c
 /<em>
  * free.c &ndash; Display FreeBSD memory information
- * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#111;&#58;&#x76;&#105;&#x6e;&#111;&#x64;&#64;&#x73;&#x65;&#103;&#102;&#x61;&#x75;&#x6c;&#x74;&#x2e;&#x69;&#110;">&#118;&#x69;&#x6e;&#x6f;&#x64;&#x40;&#115;&#101;&#103;&#102;&#97;&#117;&#x6c;&#x74;&#46;&#x69;&#x6e;</a>
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x76;&#x69;&#110;&#111;&#100;&#64;&#115;&#x65;&#x67;&#102;&#x61;&#x75;&#x6c;&#x74;&#x2e;&#105;&#110;">&#118;&#x69;&#x6e;&#111;&#100;&#x40;&#x73;&#x65;&#103;&#x66;&#x61;&#117;&#108;&#116;&#46;&#x69;&#110;</a>
  * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
  </em>/</p>
 

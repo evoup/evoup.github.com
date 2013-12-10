@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-10T18:00:37+08:00</updated>
+  <updated>2013-12-10T18:12:15+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -48,7 +48,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。无独有偶，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+<p>备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
 
 <h3>静态编译</h3>
 
@@ -150,17 +150,31 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * test.php</span>
+</span><span class='line'><span class="sd"> */</span>
 </span><span class='line'><span class="nv">$host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$oid</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.1&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$oid1</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.2&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$oid2</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.3&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="nv">$oid3</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.4.3.0&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>  <span class="c1">//1 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid1</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//5 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid2</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//15 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid3</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span> <span class="c1">//Total Swap Size</span>
+</span><span class='line'><span class="c1">// 1 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 5 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid1</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// 15 minute Load</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid2</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// Total Swap Size</span>
+</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid3</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
