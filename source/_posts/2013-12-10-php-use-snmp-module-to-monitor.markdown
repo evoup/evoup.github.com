@@ -22,7 +22,7 @@ $
 ```sh
 sudo yum install libxml2 libxml2-devel 
 ```
-备注如果一意孤行，只装libxml2，呵呵，那么你将收到` configure: error: xml2-config not found. Please check your libxml2 installation. `的报错。无独有偶，你要是不装net-snmp-devel，就可以收到` configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation `的报错。 
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到` configure: error: xml2-config not found. Please check your libxml2 installation. `的报错。同样，你要是不装net-snmp-devel，就可以收到` configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation `的报错。 
 
 ###静态编译
 查一下snmp的安装选项
@@ -30,7 +30,7 @@ sudo yum install libxml2 libxml2-devel
 $ ./configure --help | grep snmp
   --with-snmp=DIR         Include SNMP support
 ```
-是--with，了解后继续操作，注意要指定好snmp路径
+是--with，了解后继续操作，这里直接使用默认snmp路径
 ```sh
 ./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets 
 make
@@ -77,16 +77,23 @@ Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
 已经支持，那么来写程序吧
 ```php
 <?php
+/**
+ * test.php
+ */
 $host="127.0.0.1";
 $community="public";
 $oid=".1.3.6.1.4.1.2021.10.1.3.1";
 $oid1=".1.3.6.1.4.1.2021.10.1.3.2";
 $oid2=".1.3.6.1.4.1.2021.10.1.3.3";
 $oid3=".1.3.6.1.4.1.2021.4.3.0";
-echo (snmpget($host,$community,$oid)."\n");  //1 minute Load
-echo (snmpget($host,$community,$oid1)."\n"); //5 minute Load
-echo (snmpget($host,$community,$oid2)."\n"); //15 minute Load
-echo (snmpget($host,$community,$oid3)."\n"); //Total Swap Size
+// 1 minute Load
+echo (snmpget($host,$community,$oid)."\n");
+// 5 minute Load
+echo (snmpget($host,$community,$oid1)."\n");
+// 15 minute Load
+echo (snmpget($host,$community,$oid2)."\n");
+// Total Swap Size
+echo (snmpget($host,$community,$oid3)."\n");
 ```
 查看结果
 ```sh
@@ -98,7 +105,10 @@ INTEGER: 2064376 kB
 
 
 ```
-竟然是如此简单，由此推断你只要学会rrdtool和php snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我们自己做公司监控平台2.0的时，上级要求使用C api直接获取数据，不走snmp，其实分析ganglia其实也是采用了类似的方式，所以号称比snmpd快，为了完成任务和系统的拓展性，果然支持snmp吧。分析完毕。
 
-扩展阅读：请需要OID对照资料的兄弟自行互联网查询《linux常用OID》
+###分析总结
+可以看出php的snmp接口还是非常简明优雅的，由此推断你只要学会rrdtool、php和snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我自己写公司监控平台2.0的时候，上级要求使用C api直接获取数据，不走snmp，其实通过对分析ganglia源代码的粗读，也能马上发现其也是采用了原生api调用获取主要监控数据的方式，所以号称比snmpd快和非常节省系统开销。但为了完成任务和系统的拓展性，果然另外支持snmp吧。
+
+###扩展阅读
+请需要OID对照资料的兄弟自行互联网查询《linux常用OID》
 
