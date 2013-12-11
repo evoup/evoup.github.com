@@ -5,6 +5,9 @@ date: 2012-12-11 11:08
 comments: true
 categories: [monitor]
 ---
+###引子
+> Net-SNMP是一个免费的、开放源码的SNMP实现，以前称为UCD-SNMP。它包括agent和多个管理工具的源代码，支持多种扩展方式。[1]不仅扩展了获取方式，而且对于数据类型也有一定的扩展。
+所谓snmp agent，个人理解就是能够实现snmp read、snmp get操作的容器，它可以提供默认的MIB和自定义的MIB。
 
 ###centos上安装net-snmp的过程
 ```sh
