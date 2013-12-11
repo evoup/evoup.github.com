@@ -66,4 +66,5 @@ sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
 ```
 再次运行，enoent问题解决。
 
-
+###继续深入
+gen_server:start如何捕捉错误？下回专门讨论。
