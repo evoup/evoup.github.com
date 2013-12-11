@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-11T14:05:25+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装vmware-tool]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/"/>
+    <updated>2013-11-05T13:22:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool</id>
+    <content type="html"><![CDATA[<p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+
+<!-- more -->
+
+
+<h3>消极的方法</h3>
+
+<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
+
+<p>在crontab内加入
+<code>bash
+*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
+</code>
+以及在/etc/rc.conf中
+<code>bash
+ntpdate_enable="YES"
+</code></p>
+
+<h3>积极的方法</h3>
+
+<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
+首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
+vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
+```bash
+cd /usr/port/dist
+sudo fetch <a href="ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz">ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz</a>
+sudo pkg_add compat6x-amd64.tbz</p>
+
+<hr />
+
+<ul>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>Do not forget to add COMPAT_FREEBSD6 into                                   *</li>
+<li>your kernel configuration (enabled by default).                             *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>To configure and recompile your kernel see:                                 *</li>
+<li><a href="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html">http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html</a> *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+</ul>
+
+
+<hr />
+
+<p><code>
+安装依赖库后，切换到root后，执行如下指令：
+</code>bash
+mount /cdrom
+cd /tmp
+tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
+cd vmware-tools-distrib
+./vmware-install.pl
+<code>
+这样vmware-tool就搞定了。
+最后为了保险起先，关闭系统后，编辑.vmx文件
+加上下面的时间同步的代码
+</code>bash
+tools.syncTime = &ldquo;TRUE&rdquo;
+time.synchronize.continue = &ldquo;TRUE&rdquo;
+time.synchronize.restore = &ldquo;TRUE&rdquo;
+time.synchronize.resume.disk = &ldquo;TRUE&rdquo;
+time.synchronize.shrink = &ldquo;TRUE&rdquo;
+time.synchronize.tools.startup = &ldquo;TRUE&rdquo;
+time.synchronize.tools.enable = &ldquo;TRUE&rdquo;
+time.synchronize.resume.host = &ldquo;TRUE&rdquo;
+```</p>
+
+<p>参考链接</p>
+
+<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
+<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[局域网计算机和vmware虚拟机互ping]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan/"/>
+    <updated>2013-10-22T13:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan</id>
+    <content type="html"><![CDATA[<h2>情景描述</h2>
+
+<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。</p>
+
+<!-- more -->
+
+
+<h2>我的环境</h2>
+
+<p>`&ldquo;
+  ,____________________
+  |                   |  ,&rdquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;|   ,&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;Y
+  |   gateway         |  |   gateway        |   |   gateway        |
+  |                   |__|                  |   |                  |</p>
+
+<pre><code>  172.16.27.38    |  |  172.16.27.1     |   |  172.16.30.254   |
+</code></pre>
+
+<p>  |                   |  |                  |   |                  |
+  `&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;./  L<strong><strong><strong><strong><strong><strong><strong><strong><strong>|   |</strong></strong></strong></strong></strong></strong></strong></strong></strong>J</p>
+
+<pre><code>       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+</code></pre>
+
+<p>   ,<strong><strong><strong>_|</strong></strong></strong>                                        |
+   |             |        ,&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;<code>.        ,'''''''''''''</code>.
+   |             |        |               |        |              |
+   | WIN7        |        |   freebsd8    |        |   freebsd9   |
+   |             |        |               |        |              |
+   | VMWARE Host |        | VMWARE client |        |              |
+   |             |&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;               |        |              |
+   |             |        |     server    |        |    client    |
+   | 172.16.27.37|        |192.168.216.145|        |172.16.30.184 |
+   |             |        |               |        |              |
+   |             |        |               |        |              |
+   |             |        |               |        |              |
+   &rsquo;<code>'''''''''''''       </code>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;&lsquo;        &rsquo;`&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;
+```
+A）WIN7所在vmware宿主机的网卡，地址为172.16.27.37/24(24代表子网掩码为255.255.255.0),默认网关172.16.27.38</p>
+
+<p>B）Freebsd8 服务器所在的vmware虚拟机上原有一块NAT网卡em0，地址为192.168.216.145,一开始采用DHCP配置</p>
+
+<p>C）Freebsd9 客户端上只有一块网卡epair38b,地址为172.16.30.184,默认网关为172.16.30.254</p>
+
+<p>记录：</p>
+
+<h2>实现A和B互通</h2>
+
+<p>A到B，VMWARE直接就实现了。
+B到A，需要添加一块bridge方式的网卡em0。使用sysinstall添加后，配置为172.16.27.59/24,默认网关172.16.27.38,注意在/etc/resolv.conf中加上这块网卡的dns，这里是172.16.27.38</p>
+
+<h2>实现A和C互通</h2>
+
+<p>A到C，网络规划的时候直接就通了，不在同一网关，在win7的网卡属性TCP/IPv4属性的高级TCP/IP设置中，选IP设置选项卡，然后在默认网关中添加C所在的网关172.16.30.254
+C到A，网络规划的时候指定了，/etc/resolv.conf中nameserver 172.16.27.1，另一个网关也直接能通到A，只需要打开WIN7的ping防火墙即可，可以google之。</p>
+
+<h2>实现B和C互通</h2>
+
+<p>B到C，经过以上操作已经可以了。
+C到B，同上。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用ntpdate同步时间报错: step-systime: Operation not permitted]]></title>
+    <link href="http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error/"/>
+    <updated>2013-07-19T15:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error</id>
+    <content type="html"><![CDATA[<p>今天有台虚拟机进行时间的同步报错
+```sh
+ntpdate ntp.sjtu.edu.cn</p>
+
+<p>19 Nov 15:38:54 ntpdate[93376]: step-systime: Operation not permitted
+```</p>
+
+<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装nginx+php4.4.9的方法]]></title>
+    <link href="http://evoupsight.com/blog/2011/01/18/nginx-php4/"/>
+    <updated>2011-01-18T15:10:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/01/18/nginx-php4</id>
+    <content type="html"><![CDATA[<p>首先是php4.4
+<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
+
+<!-- more -->
+
+
+<p>（ps:更老的版本可以到museum.php.net去找。）</p>
+
+<p>装之前别忘为&mdash;enable的几个找下pecl
+编译php4（先不打补丁）的时候先使用这样的参数
+```makefile
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>然后打补丁
+同时候准备好补丁文件，<a href="http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz">http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz</a>
+<code>sh
+gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
+</code>
+再次
+```makefile
+./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;enable-force-cgi-redirect &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
+
+<p>make
+make install
+```</p>
+
+<p>这个php-fpm.conf要改的
+<code>sh
+ 62             Unix user of processes
+ 63         &lt;!--    &lt;value name="user"&gt;nobody&lt;/value&gt;       --&gt;
+ 64
+ 65             Unix group of processes
+ 66         &lt;!--    &lt;value name="group"&gt;nobody&lt;/value&gt;      --&gt;
+</code></p>
+
+<p>换成
+<code>sh
+ 62             Unix user of processes
+ 63             &lt;value name="user"&gt;www&lt;/value&gt;
+ 64
+ 65             Unix group of processes
+ 66             &lt;value name="group"&gt;www&lt;/value&gt;
+</code></p>
+
+<p>然后到目录sbin下试一试
+<code>sh
+sudo /usr/local/php4_admin/sbin/php-fpm start
+</code>
+看到就可以了，收工。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下如何使用ctags为项目生成tag文件]]></title>
+    <link href="http://evoupsight.com/blog/2010/07/23/freebsd-ctags/"/>
+    <updated>2010-07-23T14:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/07/23/freebsd-ctags</id>
+    <content type="html"><![CDATA[<p>用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。</p>
+
+<!-- more -->
+
+
+<p>在freebsd里面，可以去ctags.sourceforge.net下载编译安装了ctags，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了。</p>
+
+<p>其实可以直接port安装了,装完之后这个软件其实叫做exctags。
+<code>sh
+whereis ctags
+/usr/ports/devel/ctags
+cd /usr/ports/devel/ctags
+sudo make install clean
+</code>
+以php语言为例
+<code>bash
+find . -name "*.php" -exec exctags --language-force=php {} +
+</code></p>
+
+<p>对于c语言可能包含的h文件的方法，我采用如下的方式：
+<code>bash
+find . -regex ".*\.\(c\|h\)" -exec exctags {} +
+</code>
+如果没有限制想把全部源码递归生成到一个tag文件则
+<code>bash
+cd /root/repos/httpd &amp;&amp; exctags -R　*
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>
