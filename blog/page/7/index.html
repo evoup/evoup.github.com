@@ -105,6 +105,94 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-19T15:58:00+08:00" pubdate data-updated="true">Nov 19<span>th</span>, 2010</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/19/php-myadmin1045-error/">Php Myadmin1045 Error</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>今天遇到phpMyAdmin错误 #1045 &ndash; Access denied for user@localhost的错误</p>
+
+<p>记得在./libraries/config.default.php
+已经制定好了需要的变量。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'> <span class="mi">57</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;host&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;172.16.27.55&#39;</span><span class="p">;</span> <span class="c1">// MySQL hostname or IP address</span>
+</span><span class='line'> <span class="mi">58</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;port&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;3306&#39;</span><span class="p">;</span>          <span class="c1">// MySQL port - leave blank for default port</span>
+</span><span class='line'> <span class="mi">59</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;socket&#39;</span><span class="p">]</span>        <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// Path to the socket - leave blank for default socket</span>
+</span><span class='line'> <span class="mi">60</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;connect_type&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="s1">&#39;tcp&#39;</span><span class="p">;</span>       <span class="c1">// How to connect to MySQL server (&#39;tcp&#39; or &#39;socket&#39;)</span>
+</span><span class='line'> <span class="mi">61</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;extension&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;mysql&#39;</span><span class="p">;</span>     <span class="c1">// The php MySQL extension to use (&#39;mysql&#39; or &#39;mysqli&#39;)</span>
+</span><span class='line'> <span class="mi">62</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;compress&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>       <span class="c1">// Use compressed protocol for the MySQL connection</span>
+</span><span class='line'> <span class="mi">63</span>                                                     <span class="c1">// (requires PHP &gt;= 4.3.0)</span>
+</span><span class='line'> <span class="mi">64</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;controluser&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// MySQL control user settings</span>
+</span><span class='line'> <span class="mi">65</span>                                                     <span class="c1">// (this user must have read-only</span>
+</span><span class='line'> <span class="mi">66</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;controlpass&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// access to the &quot;mysql/user&quot;</span>
+</span><span class='line'> <span class="mi">72</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>      <span class="c1">// MySQL user</span>
+</span><span class='line'> <span class="mi">73</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="s1">&#39;%**&#39;</span><span class="p">;</span>          <span class="c1">// MySQL password (only needed</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同时</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'> <span class="mi">40</span>  <span class="o">*</span> <span class="nx">The</span> <span class="s1">&#39;cookie&#39;</span> <span class="nx">auth_type</span> <span class="nx">uses</span> <span class="nx">blowfish</span> <span class="nx">algorithm</span> <span class="nx">to</span> <span class="nx">encrypt</span> <span class="nx">the</span> <span class="nx">password</span><span class="o">.</span> <span class="k">If</span>
+</span><span class='line'> <span class="mi">41</span>  <span class="o">*</span> <span class="nx">at</span> <span class="nx">least</span> <span class="nx">one</span> <span class="nx">server</span> <span class="nx">configuration</span> <span class="nx">uses</span> <span class="s1">&#39;cookie&#39;</span> <span class="nx">auth_type</span><span class="p">,</span> <span class="nx">enter</span> <span class="nx">here</span> <span class="nx">a</span>
+</span><span class='line'> <span class="mi">42</span>  <span class="o">*</span> <span class="nx">passphrase</span> <span class="nx">that</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">used</span> <span class="nx">by</span> <span class="nx">blowfish</span><span class="o">.</span> <span class="nx">The</span> <span class="nx">maximum</span> <span class="nx">length</span> <span class="nx">seems</span> <span class="nx">to</span> <span class="nx">be</span> <span class="mi">46</span>
+</span><span class='line'> <span class="mi">43</span>  <span class="o">*</span> <span class="nx">characters</span><span class="o">.</span>
+</span><span class='line'> <span class="mi">44</span>  <span class="o">*/</span>
+</span><span class='line'> <span class="mi">45</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;blowfish_secret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s#$dcrnm^9fk2&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这部分也指定完毕。</p>
+
+<p>但是还是会报告1045，最后清除浏览器缓存，终于搞定。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
         
       </p>
@@ -635,95 +723,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2009</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2009/06/02/cplusplus-string-to-int/">STL中string到int的类型转换</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>STL的string转int的正确方法不是.data()
-应该是</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">aoti</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者用个别人的string2int函数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">string2int</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'>   <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
-</span><span class='line'>   <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后int XX[];
-完全可以用vector来实现</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>v[]一样可以的用的。</p>
-
-<p>下面有个类似的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">integer</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -763,7 +762,7 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 124.0%'>Monitor(6)</a>  <a href='/blog/categories/mysql' style='font-size: 108.0%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 112.0%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 132.0%'>Php(8)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 136.0%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 116.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(15)</a>  <a href='/blog/categories/freebsd' style='font-size: 120.0%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 104.0%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 104.0%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 108.0%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 104.0%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 104.0%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 108.0%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 112.0%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 104.0%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 128.0%'>Monitor(7)</a>  <a href='/blog/categories/mysql' style='font-size: 108.0%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 124.0%'>Nginx(6)</a>  <a href='/blog/categories/octopress' style='font-size: 112.0%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 132.0%'>Php(8)</a>  <a href='/blog/categories/python' style='font-size: 104.0%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 120.0%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 120.0%'>Shell(5)</a>  <a href='/blog/categories/version-control' style='font-size: 104.0%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 124.0%'>Vim(6)</a> </span>
 </section>
 
 <section>

@@ -2874,6 +2874,290 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     <header>
   
   <h1 class="beta">
+    <a href="/blog/2012/12/11/centos-install-net-snmp/">centos上安装net-snmp</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-12-11T11:08:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 11<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <h3>centos上安装net-snmp的过程</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>配置snmpd</h3>
+
+<p>配置的方法有2种，一个是<code>snmpconf -g basic_setup</code>,一个如下的方式（注:前一个我由于时间关系没有试过）：</p>
+
+<p>安装完成后编辑/etc/snmp/snmpd.conf文件，更改如下配置：</p>
+
+<p>主要是控制那台机器可以访问snmp</p>
+
+<h4>1、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sec.name <span class="nb">source          </span>community
+</span><span class='line'>com2sec notConfigUser default       public
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将&#8221;comunity&#8221;字段改为你要设置的密码.比如&#8221;public&#8221;.                                          <br/>
+将“default”改为你想哪台机器可以看到你的snmp信息,如127.0.0.1</p>
+
+<h4>2、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># Finally, grant the group read-only access to the systemview view.</span>
+</span><span class='line'><span class="c">#       group          context sec.model sec.level prefix read   write notif</span>
+</span><span class='line'>access notConfigGroup <span class="s2">&quot;&quot;</span>      any       noauth    exact all none none
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将&#8221;read&#8221;字段改为all.</p>
+
+<h4>3、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#           incl/excl subtree                          mask</span>
+</span><span class='line'><span class="c">#view all    included .1                               80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将该行前面的&#8221;#&ldquo;去掉.
+保存关闭.</p>
+
+<h3>snmpwalk和snmpget的区别</h3>
+
+<p>snmpwalk是对OID的遍历，必须从根节点一次遍历，而不能通过某个叶子节点遍历。
+而snmpget是取得具体的OID的值，必须是叶子节点。</p>
+
+<h3>用snmpwalk进行监控数据的获取</h3>
+
+<p>编辑完成之后可以测试，需要用到snmpwalk和snmpget</p>
+
+<p>缺少snmpwalk和snmpget的可以安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp-utils
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>启动snmpd</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/snmpd start
+</span><span class='line'><span class="nv">$ </span>sudo /sbin/chkconfig snmpd on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试是否开启snmp服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c -c public 127.0.0.1 <span class="k">if</span>
+</span><span class='line'>IF-MIB::ifIndex.1 <span class="o">=</span> INTEGER: 1
+</span><span class='line'>IF-MIB::ifIndex.2 <span class="o">=</span> INTEGER: 2
+</span><span class='line'>IF-MIB::ifDescr.1 <span class="o">=</span> STRING: lo
+</span><span class='line'>IF-MIB::ifDescr.2 <span class="o">=</span> STRING: eth0
+</span><span class='line'>IF-MIB::ifType.1 <span class="o">=</span> INTEGER: softwareLoopback<span class="o">(</span>24<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifType.2 <span class="o">=</span> INTEGER: ethernetCsmacd<span class="o">(</span>6<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifMtu.1 <span class="o">=</span> INTEGER: 16436
+</span><span class='line'>IF-MIB::ifMtu.2 <span class="o">=</span> INTEGER: 1500
+</span><span class='line'>IF-MIB::ifSpeed.1 <span class="o">=</span> Gauge32: 10000000
+</span><span class='line'>IF-MIB::ifSpeed.2 <span class="o">=</span> Gauge32: 1000000000
+</span><span class='line'>IF-MIB::ifPhysAddress.1 <span class="o">=</span> STRING:
+</span><span class='line'>IF-MIB::ifPhysAddress.2 <span class="o">=</span> STRING: 0:c:29:e6:ed:27
+</span><span class='line'>IF-MIB::ifAdminStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifAdminStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifOperStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifOperStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifLastChange.1 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
+</span><span class='line'>IF-MIB::ifLastChange.2 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
+</span><span class='line'>IF-MIB::ifInOctets.1 <span class="o">=</span> Counter32: 784
+</span><span class='line'>IF-MIB::ifInOctets.2 <span class="o">=</span> Counter32: 4216979
+</span><span class='line'>IF-MIB::ifInUcastPkts.1 <span class="o">=</span> Counter32: 14
+</span><span class='line'>IF-MIB::ifInUcastPkts.2 <span class="o">=</span> Counter32: 5593
+</span><span class='line'>IF-MIB::ifInNUcastPkts.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInNUcastPkts.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInDiscards.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInDiscards.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInErrors.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInErrors.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInUnknownProtos.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInUnknownProtos.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutOctets.1 <span class="o">=</span> Counter32: 784
+</span><span class='line'>IF-MIB::ifOutOctets.2 <span class="o">=</span> Counter32: 417463
+</span><span class='line'>IF-MIB::ifOutUcastPkts.1 <span class="o">=</span> Counter32: 14
+</span><span class='line'>IF-MIB::ifOutUcastPkts.2 <span class="o">=</span> Counter32: 3968
+</span><span class='line'>IF-MIB::ifOutNUcastPkts.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutNUcastPkts.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutDiscards.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutDiscards.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutErrors.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutErrors.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutQLen.1 <span class="o">=</span> Gauge32: 0
+</span><span class='line'>IF-MIB::ifOutQLen.2 <span class="o">=</span> Gauge32: 0
+</span><span class='line'>IF-MIB::ifSpecific.1 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
+</span><span class='line'>IF-MIB::ifSpecific.2 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取load信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c 127.0.0.1 -c public .1.3.6.1.4.1.2021.10.1.3
+</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.03
+</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.03
+</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同样可以尝试使用snmp版本1来获取</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 1 -c public localhost .1.3.6.1.4.1.2021.10.1.3
+</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.01
+</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.02
+</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>对外开放SNMP服务</h3>
+
+<p>得知本机已经安装完成，但是根据之前的设置，应该只有本机才有snmp的访问权限。可以通过修改/etc/snmp/snmpd.conf把刚才设置的127.0.0.1改为default</p>
+
+<p>确认本机开放snmp端口，由于snmp协议基于udp，所以采用基于tcp的telnet来测试是不奏效的，可以利用nc来测试，如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>nc -uvz 192.168.216.177 161
+</span><span class='line'>Connection to 192.168.216.177 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果打开了IPTABLES,确保本机的udp161端口对外开放，或者说入站通讯端口为udp161</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /sbin/iptables -I INPUT -p udp --dport 161 -j ACCEPT
+</span><span class='line'><span class="nv">$ </span>sudo /etc/rc.d/init.d/iptables save
+</span><span class='line'><span class="nv">$ </span>sudo /etc/init.d/iptables restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者直接在/etc/sysconfig/iptable中增加一行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>-A RH-Firewall-1-INPUT -m state –state NEW -m udp -p udp –dport 161 -j ACCEPT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>小结</h3>
+
+<p>处于快速分析的目的，本文简单阐述了net-snmp在centos下的安装步骤，更加详细的内容可以参见net-snmp的<a href="http://www.net-snmp.org/">官方网站</a></p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
     <a href="/blog/2012/11/26/mysql-import-output-csv/">浅谈mysql导入导出csv的几种方法</a>
   </h1>
   
