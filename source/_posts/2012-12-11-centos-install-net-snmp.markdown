@@ -152,5 +152,5 @@ $ sudo /etc/init.d/iptables restart
 ```
 
 ###小结
-处于快速分析的目的，本文简单阐述了net-snmp在centos下的安装步骤，更加详细的内容可以参见net-snmp的[官方网站](http://www.net-snmp.org/)
+出于快速分析的目的，本文简单阐述了net-snmp在centos下的安装步骤，更加详细的内容可以参见net-snmp的[官方网站](http://www.net-snmp.org/)
 
