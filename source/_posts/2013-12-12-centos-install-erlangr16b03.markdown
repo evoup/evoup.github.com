@@ -54,9 +54,11 @@ $ sudo vim /etc/profiles
 ```bash
 export PATH=$PATH:/home/erlang/bin
 ```
-加完不要忘记去source /etc/profile和source ~/.bash_profile
+加完如果要立即生效忘记去source /etc/profile和source ~/.bash_profile，否则要等到下次登录再可以。
 
 (ps: bash是根据/etc/profile、~/.bash_profile、~/.bash_login或~/.profile的顺序进行读取的。)
+
+(ADDED IN 2013-12-16,今日发现以上代码必须加到~/.bashrc中才行，否则重启后还是不予加载原因未明)
 
 ###测试
 接下来输入erl,应该就可以看见erlang的提示符了。
