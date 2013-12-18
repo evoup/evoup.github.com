@@ -89,6 +89,157 @@
     <header>
   
   <h1 class="beta">
+    <a href="/blog/2013/12/18/uatest/">uatest</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-18T15:35:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 18<span>th</span>, 2013</time>
+    
+
+
+
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>简述：由于内网的外部访问端口已经作废，在宁波10.10.9.199和花木10.10.8.222上的ua抓取程序，已经不能够传递打包过后的ua到我们内网的172.16.30.217内部服务器。采取的方案是修改transfer_newua的代码。
+注释scp的部分，通过mail到一个uatrans@madhouse-inc.com的帐号的间接方式，再由内部服务器接收邮件解析后在本机处理，达到异曲同工的目的。</p>
+
+<p>第一步：transfer_newua的代码加入最新被动传输方式。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cm">/* { { { Rh_modify*/</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span> <span class="k">elseif</span><span class="p">(</span><span class="nv">$_transfer_type</span><span class="o">==</span><span class="s1">&#39;scp&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//保存为文件后通过scp传输出去</span>
+</span><span class='line'>    <span class="nv">$save_file</span><span class="o">=</span><span class="s1">&#39;/services/new_useragent/&#39;</span><span class="o">.</span><span class="nb">date</span><span class="p">(</span><span class="s1">&#39;ymd&#39;</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;.txt&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$scpstats_file</span><span class="o">=</span><span class="s1">&#39;/services/new_useragent/&#39;</span><span class="o">.</span><span class="nb">date</span><span class="p">(</span><span class="s1">&#39;ymd&#39;</span><span class="p">)</span><span class="o">.</span><span class="s1">&#39;.scpstat&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">makeDir</span><span class="p">(</span><span class="nv">$save_file</span><span class="p">,</span><span class="s2">&quot;0755&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$sfp</span><span class="o">=@</span><span class="nb">fopen</span><span class="p">(</span><span class="nv">$save_file</span><span class="p">,</span><span class="s2">&quot;wb&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nb">fputs</span><span class="p">(</span><span class="nv">$sfp</span><span class="p">,</span><span class="nv">$newua_str</span><span class="p">);</span>
+</span><span class='line'>    <span class="nb">fclose</span><span class="p">(</span><span class="nv">$sfp</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$cmd</span><span class="o">=</span><span class="s2">&quot;/usr/bin/scp -P </span><span class="si">$_transfer_port</span><span class="s2"> -o StrictHostKeyChecking=no -o ConnectTimeout=10 </span><span class="si">$save_file</span><span class="s2"> </span><span class="si">$_transfer_user</span><span class="s2">@</span><span class="si">$_transfer_host</span><span class="s2">:</span><span class="si">$_transfer_path</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nb">system</span><span class="p">(</span><span class="nv">$cmd</span><span class="p">,</span><span class="nv">$retval</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nv">$retval</span><span class="o">===</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$scpstats</span><span class="o">=</span><span class="nv">$save_file</span><span class="o">.</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="s1">&#39;upload successed&#39;</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nv">$fp</span><span class="o">=@</span><span class="nb">fopen</span><span class="p">(</span><span class="nv">$scpstats_file</span><span class="p">,</span><span class="s2">&quot;a+&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nb">fputs</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span><span class="nv">$scpstats</span><span class="p">);</span>
+</span><span class='line'>            <span class="nb">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$scpstats</span><span class="o">=</span><span class="nv">$save_file</span><span class="o">.</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="s1">&#39;upload fail&#39;</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nv">$fp</span><span class="o">=@</span><span class="nb">fopen</span><span class="p">(</span><span class="nv">$scpstats_file</span><span class="p">,</span><span class="s2">&quot;a+&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>          <span class="nb">fputs</span><span class="p">(</span><span class="nv">$fp</span><span class="p">,</span><span class="nv">$scpstats</span><span class="p">);</span>
+</span><span class='line'>          <span class="nb">fclose</span><span class="p">(</span><span class="nv">$fp</span><span class="p">);}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cm">/* } } } Rh_modify_end */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注释掉127行，之后再加入如下的email</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">elseif</span> <span class="p">(</span><span class="nv">$_transfer_type</span><span class="o">==</span><span class="s1">&#39;email&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//email方式只需要用最简单的方式投递到某个邮箱,如uatrans@madhouse-inc.com</span>
+</span><span class='line'>    <span class="c1">//代码待写   </span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样ua抓取端程序就算完成了。
+接下来配置172.16.30.217这台原本接受ua传递的服务器，采取主动获取的方式把东西从抓取ua的服务器那里抓过来。</p>
+
+<p>现提供解决方案一：</p>
+
+<p>需要做的是在crontab里加这样一个脚本fetch_ua.php</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="c1">#!/usr/bin/php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">//收信获取今日的新ua邮件，解压得到类似131218sm1.txt资料，放到/services/ua_collect目录，即可。</span>
+</span><span class='line'><span class="c1">//代码待写  </span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>根据之前</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="mi">20</span>  <span class="mo">02</span>  <span class="o">*</span>   <span class="o">*</span>  <span class="o">*</span>  <span class="nx">root</span>  <span class="o">/</span><span class="nx">services</span><span class="o">/</span><span class="nx">SUPDATE</span><span class="o">/</span><span class="nx">transfer_newua</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>由此可得原先的传输程序每天2点20分传递ua到这台机器上，加上处理的时间，则可以这么设置这个脚本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="mi">20</span>  <span class="mo">03</span>  <span class="o">*</span>  <span class="o">*</span>  <span class="o">*</span> <span class="nx">root</span> <span class="o">/</span><span class="nx">services</span><span class="o">/</span><span class="nx">fetch_ua</span><span class="o">/</span><span class="nx">fetch_ua</span><span class="o">.</span><span class="nx">php</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意事项：提取邮件的时候要注意，邮件合法性的判断。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
     <a href="/blog/2013/12/12/centos-install-erlangr16b03/">centos安装erlang R16b03</a>
   </h1>
   

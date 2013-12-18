@@ -105,6 +105,64 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-11-06T15:15:00+08:00" pubdate data-updated="true">Nov 6<span>th</span>, 2011</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2011/11/06/vim-sudo-use-vimrc-env/">Vim在sudo下的使用当前用户的配置文件</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>部门配备了freebsd做为统一的开发环境，大家登上各自的jail进行软件开发任务。但是发现执行sudo vim之后，居然使用的是root的vim配置文件。</p>
+
+<p>那么有什么办法能够使用自己的配置文件呢？其实再简单不过,使用-E参数</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>   -E  The -E (preserve environment) option will override the env_reset
+</span><span class='line'>       option in sudoers(5)).  It is only available when either the match-
+</span><span class='line'>       ing command has the SETENV tag or the setenv option is set in sudo-
+</span><span class='line'>       ers(5).</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo -E vim file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后就可以使用自己的配置文件了。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true">Sep 11<span>th</span>, 2011</time>
         
       </p>
@@ -722,52 +780,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-25T14:52:00+08:00" pubdate data-updated="true">Nov 25<span>th</span>, 2010</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2010/11/25/typedef-summary/">Typedef小结</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
-
-<p>对于动态分配内存的时候也可以</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -791,6 +803,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2013/12/18/uatest/">Uatest</a>
+    
     <a class="list-group-item " href="/blog/2013/12/12/centos-install-erlangr16b03/">Centos安装erlang R16b03</a>
     
     <a class="list-group-item " href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
@@ -798,8 +812,6 @@
     <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">centos6.4 Install cacti0.8</a>
     
     <a class="list-group-item " href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">centos6.4下搭建zabbix2.0.6</a>
-    
-    <a class="list-group-item " href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">克隆你的octopress博客到win7</a>
     
   </div>
 </section>
