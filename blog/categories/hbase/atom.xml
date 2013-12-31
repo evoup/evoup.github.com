@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hbase | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hbase/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-31T13:38:47+08:00</updated>
+  <updated>2013-12-31T13:47:19+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -20,9 +20,12 @@
     <id>http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip</id>
     <content type="html"><![CDATA[<h3>问题</h3>
 
-<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。
-<code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] - Too many connections from /10.10.8.136 - max is 10</code>
-通过telnet测试发现确实有如此情况发生。</p>
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。</p>
+
+<p><code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247]</code>
+<code>- Too many connections from /10.10.8.136 - max is 10</code></p>
+
+<p>这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。</p>
 
 <!-- more -->
 
