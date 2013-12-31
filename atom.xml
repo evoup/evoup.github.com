@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-26T16:38:35+08:00</updated>
+  <updated>2013-12-31T11:55:28+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hbase无法访问zookeeper，telnet一连就断开]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/"/>
+    <updated>2013-12-31T11:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip</id>
+    <content type="html"><![CDATA[<h3>问题</h3>
+
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法获取数据，进入log一看说是zookeeper连上了之后马上就断开。
+通过telnet测试发现确实有如此情况发生。
+[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
+
+<h3>解决</h3>
+
+<p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
+
+<h3>原因</h3>
+
+<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper了。</p>
+
+<p>这个教训告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置，做运维不能刻舟求剑地认为默认没列出来的参数就不要去设置，需要自己去主动关注。等出了问题了别总怪东西不好用，硬件配置不够，分析问题要找症结。</p>
+
+<h3>挖掘相关问题</h3>
+
+<p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dataDir = 数据存放路径
+</span><span class='line'>
+</span><span class='line'>dataLogDir = 日志存放路径
+</span><span class='line'>
+</span><span class='line'>clientPort = 客户端连接端口
+</span><span class='line'>
+</span><span class='line'>clientPortAddress
+</span><span class='line'>
+</span><span class='line'>tickTime= 整形 不能为0
+</span><span class='line'>
+</span><span class='line'>maxClientCnxns= 整形 最大客户端连接数
+</span><span class='line'>
+</span><span class='line'>minSessionTimeout= 整形
+</span><span class='line'>
+</span><span class='line'>maxSessionTimeout= 整形
+</span><span class='line'>
+</span><span class='line'>initLimit = 整形
+</span><span class='line'>
+</span><span class='line'>syncLimit = 整形
+</span><span class='line'>
+</span><span class='line'>electionAlg = 整形
+</span><span class='line'>
+</span><span class='line'>peerType = observer | participant
+</span><span class='line'>
+</span><span class='line'>server. sid= host:port | host:port:port  | host:port:port:type (type值 observer | participant)
+</span><span class='line'>
+</span><span class='line'>group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)
+</span><span class='line'>
+</span><span class='line'>weight.sid=整形</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。</p>
+
+<p>同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[centos安装erlang R16b03]]></title>
@@ -2829,217 +2920,6 @@ vi  hadoop
 
 <p>参考链接：
 <a href="http://man.lupaworld.com/content/manage/ringkee/awk.htm">http://man.lupaworld.com/content/manage/ringkee/awk.htm</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[配置nginx支持rrdcgi]]></title>
-    <link href="http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi/"/>
-    <updated>2013-10-25T17:27:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi</id>
-    <content type="html"><![CDATA[<p>开始在web界面上加载监控图表了，用rrdrool graph生成图，但是发现只能够生成。于是想当然地试了一下rrdcgi，本以为能够出图，结果还是创建图片，html来加载图片。最后发现ganglia的图表中居然也是先提取在临时目录生成好的图片，然后用php来生成头，最后再删除图片。不过顺便把nginx下配置CGI程序的知识学会了，权且记一笔。</p>
-
-<!-- more -->
-
-
-<h3>RRDCGI的使用</h3>
-
-<p>首先是编写graph.cgi</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/local/bin/rrdcgi</span>
-</span><span class='line'> &lt;RRD::GRAPH
-</span><span class='line'>      /services/cgi-bin/load.png
-</span><span class='line'>      --imginfo <span class="s1">&#39;&lt;IMG SRC=/rrdgraph/%s WIDTH=%lu HEIGHT=%lu &gt;&#39;</span>
-</span><span class='line'>      --lazy --title<span class="o">=</span><span class="s2">&quot;load&quot;</span>
-</span><span class='line'>      --start 1382666836 --end 1382677047
-</span><span class='line'>      --width 705 --height 245
-</span><span class='line'>      --alt-autoscale
-</span><span class='line'>          DEF:load<span class="o">=</span>/services/rrds/yin-arch_ac101eb8/load.rrd:load:AVERAGE
-</span><span class='line'>          HRULE:1#ff0000:<span class="s2">&quot;warning value&quot;</span>
-</span><span class='line'>      AREA:load#3d3d3d:load&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>语法基本和rrdgraph的差不多，没什么好说的，这样等等会生成出来一个html代码叫做</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;IMG</span> <span class="na">SRC=</span><span class="s">/rrdgraph/load.png</span> <span class="na">WIDTH=</span><span class="s">786</span> <span class="na">HEIGHT=</span><span class="s">324</span> <span class="nt">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>首先在webroot下创建一个软连接rrdgraph，成的图片的src所指向rrdgraph文件夹，其实是个软连接，指向路径为/services/cgi-bin/
-这么做是为了在nginx配置方便。</p>
-
-<p>要怎么在shell中直接验证能出图呢？</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo rrdcgi graph.cgi &lt; /dev/null
-</span><span class='line'><span class="o">(</span>offline mode: enter <span class="nv">name</span><span class="o">=</span>value pairs on standard input<span class="o">)</span>
-</span><span class='line'>Content-Type: text/html
-</span><span class='line'>Content-Length: 53
-</span><span class='line'>
-</span><span class='line'> &lt;IMG <span class="nv">SRC</span><span class="o">=</span>/rrdgraph/load.png <span class="nv">WIDTH</span><span class="o">=</span>786 <span class="nv">HEIGHT</span><span class="o">=</span>324 &gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>很明显这样子是得到了load.png这个图片文件。然后把这个cgi文件移到/services/cgi-bin/目录下待机。</p>
-
-<h3>nginx的对rrdcgi支持的配置</h3>
-
-<p>首先需要安装好perl，还需要用到以下库：（以下版本可能过旧，直接到CPAN的网站搜索安装）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://www.cpan.org/modules/by-module/FCGI/FCGI-0.67.tar.gz
-</span><span class='line'>tar -zxf FCGI-0.67.tar.gz
-</span><span class='line'><span class="nb">cd </span>FCGI-0.67
-</span><span class='line'>perl Makefile.PL
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span><span class='line'><span class="nb">cd</span> ..
-</span><span class='line'>
-</span><span class='line'>wget http://search.cpan.org/CPAN/authors/id/G/GB/GBJK/FCGI-ProcManager-0.18.tar.gz
-</span><span class='line'>tar -zxf FCGI-ProcManager-0.18.tar.gz
-</span><span class='line'><span class="nb">cd </span>FCGI-ProcManager-0.18
-</span><span class='line'>perl Makefile.PL
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span><span class='line'><span class="nb">cd</span> ..
-</span><span class='line'>
-</span><span class='line'>wget http://search.cpan.org/CPAN/authors/id/I/IN/INGY/IO-All-0.39.tar.gz
-</span><span class='line'>tar zxf IO-All-0.39.tar.gz
-</span><span class='line'><span class="nb">cd </span>IO-All-0.39
-</span><span class='line'>perl Makefile.PL
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装 nginx-fcgi 脚本：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://hily.me/blog/wp-content/uploads/2010/01/nginx-fcgi.txt
-</span><span class='line'>
-</span><span class='line'>mv nginx-fcgi.txt /usr/sbin/nginx-fcgi
-</span><span class='line'>
-</span><span class='line'>chmod +x /usr/sbin/nginx-fcgi
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果不用 sudo 方式运行 nginx-fcgi，请注释掉 nginx-fcgi 脚本中的：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="k">if</span> <span class="o">(</span> <span class="nv">$&gt;</span> <span class="o">==</span> “0″ <span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>print “<span class="se">\n\t</span>ERROR<span class="se">\t</span>Running as a root!<span class="se">\n</span>”;
-</span><span class='line'>print “<span class="se">\t</span>Suggested not to <span class="k">do </span>so !!!<span class="se">\n\n</span>”;
-</span><span class='line'><span class="nb">exit </span>1;
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动 nginx-fcgi：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo nginx-fcgi -l /var/log/nginx/nginx-fcgi.log -pid /var/run/nginx-fcgi.pid -S /var/run/nginx-fcgi.sock
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意一定要为 socket 添加 nginx 帐户的权限，否则 cgi 会执行失败。
-新建 nginx-fcgi 脚本指令配置，直接从 fastcgi_params 复制模板：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>去除尾部的：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># PHP only, required if PHP was built with –enable-force-cgi-redirect</span>
-</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后的cgi站点配置：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>    location / <span class="o">{</span>
-</span><span class='line'>        root   /webroot;
-</span><span class='line'>        index  index.html index.htm;
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>    location ~ ^/cgi-bin/.*<span class="se">\.</span>cgi<span class="err">$</span>
-</span><span class='line'>    <span class="o">{</span>
-</span><span class='line'>        fastcgi_index  index.cgi;
-</span><span class='line'>        fastcgi_param  SCRIPT_FILENAME    /services<span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'>        include        nginx_fcgi_params;
-</span><span class='line'>        fastcgi_read_timeout    5m;
-</span><span class='line'>        fastcgi_pass   unix:/var/run/nginx-fcgi.sock;
-</span><span class='line'>    <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>重启nginx，访问地址<a href="http://192.168.216.145/cgi-bin/graph.cgi">http://192.168.216.145/cgi-bin/graph.cgi</a></p>
-
-<p>看到已经有图了
-<img src="http://evoupsight.com/images/evoup/rrdtool_load_graph2.png" alt="Alt text" /></p>
-
-<h3>参考链接</h3>
-
-<p><a href="http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html">http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html</a></p>
-
-<p><a href="http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample">http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample</a></p>
 ]]></content>
   </entry>
   
