@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2013-12-31T11:55:28+08:00</updated>
+  <updated>2013-12-31T13:25:32+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,69 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hbase无法访问zookeeper，telnet一连就断开]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/"/>
+    <updated>2013-12-31T11:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip</id>
+    <content type="html"><![CDATA[<h4>问题</h4>
+
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。
+通过telnet测试发现确实有如此情况发生。</p>
+
+<p>` [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
+
+<!-- more -->
+
+
+<h4>解决</h4>
+
+<p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
+
+<h4>原因</h4>
+
+<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper，进而无法显示该页面。</p>
+
+<p>这个教训告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置，做运维不能刻舟求剑地认为默认没列出来的参数就不要去设置，需要自己去主动关注。等出了问题了别总怪东西不好用，硬件配置不够，分析问题要找症结。</p>
+
+<p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件
+```
+dataDir = 数据存放路径</p>
+
+<p>dataLogDir = 日志存放路径</p>
+
+<p>clientPort = 客户端连接端口</p>
+
+<p>clientPortAddress</p>
+
+<p>tickTime= 整形 不能为0</p>
+
+<p>maxClientCnxns= 整形 最大客户端连接数</p>
+
+<p>minSessionTimeout= 整形</p>
+
+<p>maxSessionTimeout= 整形</p>
+
+<p>initLimit = 整形</p>
+
+<p>syncLimit = 整形</p>
+
+<p>electionAlg = 整形</p>
+
+<p>peerType = observer | participant</p>
+
+<p>server. sid= host:port | host:port:port  | host:port:port:type (type值 observer | participant)</p>
+
+<p>group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)</p>
+
+<p>weight.sid=整形
+```
+可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。</p>
+
+<p>同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[HBASE完全分布式搭建(VMware版)]]></title>

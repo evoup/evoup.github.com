@@ -113,6 +113,19 @@
 
 
   
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hadoop/">hadoop</a></li>
+    
+      <li><a href="/blog/categories/hbase/">hbase</a></li>
+    
+      <li><a href="/blog/categories/zookeeper/">zookeeper</a></li>
+    
+    </ul>
+  </div>
+  
 
     
   </div>
@@ -122,90 +135,17 @@
 
 
 
-  <h3>问题</h3>
+<div class="entry-content clearfix">
+  <h4>问题</h4>
 
-<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法获取数据，进入log一看说是zookeeper连上了之后马上就断开。
-通过telnet测试发现确实有如此情况发生。
-[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。
+通过telnet测试发现确实有如此情况发生。</p>
 
-<h3>解决</h3>
-
-<p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
-
-<h3>原因</h3>
-
-<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper了。</p>
-
-<p>这个教训告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置，做运维不能刻舟求剑地认为默认没列出来的参数就不要去设置，需要自己去主动关注。等出了问题了别总怪东西不好用，硬件配置不够，分析问题要找症结。</p>
-
-<h3>挖掘相关问题</h3>
-
-<p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>dataDir = 数据存放路径
-</span><span class='line'>
-</span><span class='line'>dataLogDir = 日志存放路径
-</span><span class='line'>
-</span><span class='line'>clientPort = 客户端连接端口
-</span><span class='line'>
-</span><span class='line'>clientPortAddress
-</span><span class='line'>
-</span><span class='line'>tickTime= 整形 不能为0
-</span><span class='line'>
-</span><span class='line'>maxClientCnxns= 整形 最大客户端连接数
-</span><span class='line'>
-</span><span class='line'>minSessionTimeout= 整形
-</span><span class='line'>
-</span><span class='line'>maxSessionTimeout= 整形
-</span><span class='line'>
-</span><span class='line'>initLimit = 整形
-</span><span class='line'>
-</span><span class='line'>syncLimit = 整形
-</span><span class='line'>
-</span><span class='line'>electionAlg = 整形
-</span><span class='line'>
-</span><span class='line'>peerType = observer | participant
-</span><span class='line'>
-</span><span class='line'>server. sid= host:port | host:port:port  | host:port:port:type (type值 observer | participant)
-</span><span class='line'>
-</span><span class='line'>group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)
-</span><span class='line'>
-</span><span class='line'>weight.sid=整形</span></code></pre></td></tr></table></div></figure>
+<p>` [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
 
 
-<p>可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。</p>
-
-<p>同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。</p>
-
+  <a class="btn pull-right" href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Read on &rarr;</a>
+</div>
 
   </article>
   <hr>

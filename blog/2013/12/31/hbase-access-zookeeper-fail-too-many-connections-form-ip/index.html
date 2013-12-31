@@ -114,23 +114,25 @@
   </header>
 
 
-<div class="entry-content clearfix"><h3>问题</h3>
+<div class="entry-content clearfix"><h4>问题</h4>
 
-<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法获取数据，进入log一看说是zookeeper连上了之后马上就断开。
-通过telnet测试发现确实有如此情况发生。
-[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。
+通过telnet测试发现确实有如此情况发生。</p>
 
-<h3>解决</h3>
+<p>` [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] &ndash; Too many connections from /10.10.8.136 &ndash; max is 10</p>
+
+<!-- more -->
+
+
+<h4>解决</h4>
 
 <p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
 
-<h3>原因</h3>
+<h4>原因</h4>
 
-<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper了。</p>
+<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper，进而无法显示该页面。</p>
 
 <p>这个教训告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置，做运维不能刻舟求剑地认为默认没列出来的参数就不要去设置，需要自己去主动关注。等出了问题了别总怪东西不好用，硬件配置不够，分析问题要找症结。</p>
-
-<h3>挖掘相关问题</h3>
 
 <p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件</p>
 
@@ -223,6 +225,13 @@
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-31T11:48:00+08:00" pubdate data-updated="true">Dec 31<span>st</span>, 2013</time>
           
 
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>, <a class='category' href='/blog/categories/hbase/'>hbase</a>, <a class='category' href='/blog/categories/zookeeper/'>zookeeper</a>
+  
+</span>
+
 
         </p>
         
@@ -285,7 +294,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 115.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 107.5%'>Hadoop(2)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 103.75%'>Hbase(1)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 126.25%'>Monitor(7)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 126.25%'>Shell(7)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 115.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 126.25%'>Monitor(7)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 126.25%'>Shell(7)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>
