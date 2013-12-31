@@ -9,8 +9,11 @@ categories:  [hbase,hadoop,zookeeper]
 ###问题
 
 今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。
-` [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] - Too many connections from /10.10.8.136 - max is 10 `
-通过telnet测试发现确实有如此情况发生。
+
+` [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] ` 
+` - Too many connections from /10.10.8.136 - max is 10 `
+
+这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。
 
 <!-- more -->
 
