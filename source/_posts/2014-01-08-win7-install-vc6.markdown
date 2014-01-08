@@ -3,7 +3,7 @@ layout: post
 title: "WIN7下安装VC++6.0的方法"
 date: 2014-01-08 14:09
 comments: true
-categories: cpp
+categories: cplusplus
 ---
 
 今天打算研究snmp++的例子，要回来用一下vc6，WIN7上安装vc6还是会遇到一点点小问题，记录一下备查。
