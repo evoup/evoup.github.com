@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: gcc | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/gcc/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2013-12-31T17:24:29+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gcc静态编译]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/18/gcc-static-compile/"/>
+    <updated>2010-11-18T16:50:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/18/gcc-static-compile</id>
+    <content type="html"><![CDATA[<p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件
+<code>bash
+find . -name "*.c"
+./sfhashfcn.c
+./test.c
+./sfmemcap.c
+./sfxhash.c
+./sfprimetable.c
+</code>
+生成中间文件
+<code>bash
+gcc -c sfhashfcn.c -o sfhashfcn.o
+gcc -c sfmemcap.c -o sfmemcap.o
+gcc -c sfxhash.c -o sfxhash.o
+gcc -c sfprimetable.c -o sfprimetable.o
+</code>
+生成静态库
+<code>bash
+ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</code>
+最后链接（注意libxx.a，最后链接参数是-lxx）
+<code>bash
+gcc -static test.c -L. -lthash -o statically_linked_test
+</code></p>
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码
+```c
+extern &ldquo;C&rdquo; {</p>
+
+<pre><code>#include "header.h"
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

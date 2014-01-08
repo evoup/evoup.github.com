@@ -1,0 +1,6175 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Evoup`s Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li >
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          
+
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">hbase连zookeeper瞬断</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-31T11:48:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 31<span>st</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hadoop/">hadoop</a></li>
+    
+      <li><a href="/blog/categories/hbase/">hbase</a></li>
+    
+      <li><a href="/blog/categories/zookeeper/">zookeeper</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h3>问题</h3>
+
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。</p>
+
+<p><code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247]</code>
+<code>- Too many connections from /10.10.8.136 - max is 10</code></p>
+
+<p>这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/12/centos-install-erlangr16b03/">centos安装erlang R16b03</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-12T16:43:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 12<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h3>起因</h3>
+
+<p>原本以为centos上简单敲几个yum install erlang就可以完成，结果事与愿违，没有package，那么只要乖乖下载源码编译，记录若干步骤备查。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/12/centos-install-erlangr16b03/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-10T10:19:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 10<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">centos6.4 install cacti0.8</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-04T10:37:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h3>简介</h3>
+
+<p>cacti号称一款完全采用rrdtool和snmp实现的监控软件，与同为自由软件的nagios相比，它能够呈现大量直观的监控图表，功能主要体现在了数据的量化上。该软件最初完全采用php写成，采用crontab调用poller.php脚本进行数据的定时收集，如今已经有c语言写成的改良版spine收集器进行数据的收集可供选择。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">centos6.4下搭建zabbix2.0.6</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-03T13:37:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 3<span>rd</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">克隆你的octopress博客到win7</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-12-01T18:25:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 1<span>st</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/octopress/">octopress</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>由于之前octopress博客是在公司的机器上搭的，想到在家里笔记本上的win7也搞一个环境，方便及时写写技术博客。参考网文《【像黑客一样写博客之五】博客克隆》进行摸索，终于实践成功。</p>
+
+<p>但我的方法稍微有点区别,这里采用clone的方式比较快，主要省去一个remote add环节：）只要主要注意几个问题，就可以轻松搞定，顺序看就行。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">完美解决phpmyadmin4.1.0访问缓慢</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-29T10:52:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 29<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/mysql/">mysql</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>安装最新版phpmyadmin4.1.0出现了访问非常缓慢的问题，记录一下</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/26/netstat-resolv-dns/">部分机器netstat运行结果缓慢的原因</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-26T14:17:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 26<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天看了下客户端运行状况，发现流量图断断续续的。直觉反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。但查了下似乎没有这个问题。</p>
+
+<p><img src="/images/evoup/netstat1.png" alt="Alt text" /></p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/26/netstat-resolv-dns/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/19/change-c-program-to-so/">如何正确地把带参数的C语言main程序改成so</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-19T18:17:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 19<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>首先有些标题党吧，不过个人体会修改程序的过程中遇到未知的坑还是比较阴险的，所以整理一下写个博客。</p>
+
+<p>之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了一会儿之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。</p>
+
+<p>话说回来，先看怎么把带参main程序改成动态链接库。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/19/change-c-program-to-so/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/12/gvim-unable-to-open-swap-file/">gvim无法打开交换文件</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-12T12:21:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 12<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>最近在windows下使用gvim，直接按照之前在freebsd上的配置搬回来，发现问题多多。每次打开文件都会报错E303，非常碍事。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='vim'><span class='line'><span class="p">:</span>help E303
+</span><span class='line'>Unable <span class="k">to</span> open <span class="k">swap</span> <span class="k">file</span> <span class="k">for</span> <span class="s2">&quot;{filename}&quot;</span><span class="p">,</span> recovery impossible
+</span><span class='line'>
+</span><span class='line'>Vim was not able <span class="k">to</span> create <span class="k">a</span> <span class="k">swap</span> <span class="k">file</span>.  You can still edit the <span class="k">file</span><span class="p">,</span> but <span class="k">if</span>
+</span><span class='line'>Vim unexpected exits the <span class="k">changes</span> will be lost.  And Vim may consume <span class="k">a</span> lot of
+</span><span class='line'>memory when editing <span class="k">a</span> big <span class="k">file</span>.  You may want <span class="k">to</span> change the <span class="s1">&#39;directory&#39;</span> <span class="k">option</span>
+</span><span class='line'><span class="k">to</span> avoid this error.  See <span class="p">|</span><span class="k">swap</span><span class="p">-</span><span class="k">file</span><span class="p">|</span>.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>说是无法创建交换文件。
+其实只要这么解决：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='vim'><span class='line'><span class="p">:</span><span class="k">set</span> <span class="nb">directory</span><span class="p">=</span>.<span class="p">,</span>$TEMP
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者指定一个实际存在路径。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/08/centos-install-cvs/">centos下CVS服务器的配置</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-08T13:20:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 8<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/version_control/">version_control</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/08/centos-install-cvs/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/07/erlang-rebar-notool-not-found/">rebar生成发布包后找不到noodtool</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-07T15:08:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 7<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">evoup</span><span class="p">@</span><span class="n">host63i386</span> <span class="n">erlang</span><span class="p">]</span><span class="o">&gt;</span><span class="n">sudo</span> <span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">madmonitor2</span> <span class="n">start</span>
+</span><span class='line'><span class="n">current</span> <span class="nb">node</span><span class="p">:</span> <span class="n">madmonitor2</span><span class="p">@</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">216</span><span class="p">.</span><span class="mi">165</span>
+</span><span class='line'><span class="n">release</span> <span class="n">vm</span><span class="p">.</span><span class="n">args</span> <span class="n">file</span> <span class="n">empty</span><span class="p">,</span><span class="n">recopy</span>
+</span><span class='line'><span class="nn">escript</span><span class="p">:</span> <span class="nv">Failed</span> <span class="n">to</span> <span class="n">open</span> <span class="nn">file</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">evoup</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span>
+</span><span class='line'>
+</span><span class='line'><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">nodetool</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  <a class="btn pull-right" href="/blog/2013/11/07/erlang-rebar-notool-not-found/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/05/erl-crash-webtool-usage/">使用webtool查看erl_crash.dump</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-05T14:17:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 5<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>运行erlang程序崩溃，按照许多人推荐的webtool方式找问题，这里记录一下启动的过程。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/05/erl-crash-webtool-usage/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/05/freebsd-install-vmware-tool/">freebsd下安装vmware-tool</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-05T13:22:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 5<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/freebsd/">freebsd</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/05/freebsd-install-vmware-tool/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/04/hbase-full-distributed-case/">HBASE完全分布式搭建(VMware版)</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-04T16:28:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hadoop/">hadoop</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a></p>
+
+<p>参考 <a href="http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html">http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html</a></p>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/04/hbase-full-distributed-case/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/04/hadoop-full-distributed-case/">HADOOP完全分布式搭建(VMware版)</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-04T15:28:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hadoop/">hadoop</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>vmware版本8.0.4 build-744019
+首先准备3台虚拟机</p>
+
+<p><img src="/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'> ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> |    usage    |        IP        |             Hostname              |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | namenode    | 192.168.174.132  |           mdn2.net                |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
+</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+</span><span class='line'> |             |                  |                                   |
+</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
+
+
+<p> 
+  <a class="btn pull-right" href="/blog/2013/11/04/hadoop-full-distributed-case/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/11/04/erlang-open-port-error-enoent/">erlang open_port 错误之error enoent</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-11-04T11:04:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+      <li><a href="/blog/categories/rrdtool/">rrdtool</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
+
+<h3>问题重现：</h3>
+
+
+  <a class="btn pull-right" href="/blog/2013/11/04/erlang-open-port-error-enoent/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">用haproxy分单个端口到多个应用</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-31T10:57:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 31<span>st</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/haproxy/">haproxy</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天实验了一下鼎鼎大名号称七层负载均衡的haproxy软件，果然是强得五体投地。如果要对多种协议进行负载均衡的路由到不同的server，haproxy非常合适了。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/31/use-haproxy-split-one-port-to-two-servers/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/30/freebsd-memory-free-c/">Freebsd版linux下free指令实现</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-30T16:41:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 30<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/30/freebsd-memory-free-c/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/">mochiweb下调用rrdtool graph命令绘制类似ganglia的load的图表</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-28T16:41:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 28<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+      <li><a href="/blog/categories/rrdtool/">rrdtool</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minute load开始。通过mochiweb在restful接口直接出图。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/28/mochiweb-write-pretty-rrdtool-graphic/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/25/nginx-with-rrdcgi/">配置nginx支持rrdcgi</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-25T17:27:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 25<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+      <li><a href="/blog/categories/rrdtool/">rrdtool</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>开始在web界面上加载监控图表了，用rrdrool graph生成图，但是发现只能够生成。于是想当然地试了一下rrdcgi，本以为能够出图，结果还是创建图片，html来加载图片。最后发现ganglia的图表中居然也是先提取在临时目录生成好的图片，然后用php来生成头，最后再删除图片。不过顺便把nginx下配置CGI程序的知识学会了，权且记一笔。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/25/nginx-with-rrdcgi/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">编译rebar项目中单个erlang源文件的vim脚本</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-24T12:41:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 24<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/23/erlang-with-rrdtool/">[How to]在erlang中使用rrdtool进行监控数据的保存</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-23T15:12:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 23<span>rd</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+      <li><a href="/blog/categories/rrdtool/">rrdtool</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h2>概述</h2>
+
+<p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
+
+<p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
+
+<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+
+<h2>准备工作</h2>
+
+<p>在freebsd上安装rrdtool1.2以上的版本</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/23/erlang-with-rrdtool/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/22/vmware-ping-in-lan/">局域网计算机和vmware虚拟机互ping</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-22T13:35:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 22<span>nd</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/freebsd/">freebsd</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h2>情景描述</h2>
+
+<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/22/vmware-ping-in-lan/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/17/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-17T17:29:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 17<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/17/ssh-copy-id/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/16/linux-df-source-c-code/">linux下模拟df.c源码</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-16T18:09:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 16<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>主要实现df的基本不带参数的功能，连界面都不一样，凑活用，见代码：</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/10/16/linux-df-source-c-code/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/09/erlang-long2ip/">erlang版的long2ip函数</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-09T17:56:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 9<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
+
+<figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
+</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
+</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样子使用
+long2ip（3232290954).
+{192,168,216,138}</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/10/09/octopress-add-share-discuss/">octopress添加社会化分享和添加多说评论</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-10-09T16:14:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 9<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/octopress/">octopress</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <h3>社会化分享</h3>
+
+<p>社会化分享主要采用的是bshare</p>
+
+<p>在_config.yml中增加bshare:true,在&#8221;source/_includes/post&#8221;下的share.html中添加如下代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-custom&quot;</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;分享到QQ空间&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-qzone&quot;</span><span class="o">&gt;&lt;</span><span class="err">/a&gt;&lt;a title=&quot;分享到新浪微博&quot; class=&quot;bshare-sinaminiblog&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到人人网&quot; class=&quot;bshare-renren&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到腾讯微博&quot; class=&quot;bshare-qqmb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到网易微博&quot; class=&quot;bshare-neteasemb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;更多平台&quot; class=&quot;bshare-more bshare-more-icon more-style-addthis&quot;&gt;&lt;/a&gt;&lt;span class=&quot;BSHARE_COUNT bshare-share-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/buttonLite.js#style=-1&amp;amp;uuid=&amp;amp;pophcol=2&amp;amp;lang=zh&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/bshareC0.js&quot;&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就完成了一键分享的功能。</p>
+
+<h3>社会化评论</h3>
+
+<p>octopress默认采用第三方评论系统disqus，但是国内用户普遍都不使用，可以采用duoshuo。
+首先在 source/post/ 下创建duoshuo.html
+然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
+在source/_layouts/post.html中，将对应的disqus代码改为：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="nx">site</span><span class="p">.</span><span class="nx">duoshuo_name</span> <span class="nx">and</span> <span class="nx">page</span><span class="p">.</span><span class="nx">comments</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">%</span><span class="p">}</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">section</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;comment&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">发表评论</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
+</span><span class='line'>    <span class="p">{</span><span class="o">%</span> <span class="nx">include</span> <span class="nx">post</span><span class="o">/</span><span class="nx">duoshuo</span><span class="p">.</span><span class="nx">html</span> <span class="o">%</span><span class="p">}</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="err">/section&gt;</span>
+</span><span class='line'><span class="p">{</span><span class="o">%</span> <span class="nx">endif</span> <span class="o">%</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在source/_config/yml中，添加：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>duoshuo_name: 你在多说创建的站点名称
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不出意外，分享和评论就添加完成了，最后不要忘记生成就可以了。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/09/29/change-blog-to-github/">博客搬家到github</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Sep 29<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/octopress/">octopress</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/09/26/freebsd-tokyo-tyrant-php-test/">freebsd下PHP的Tokyo Tyrant安装配置测试</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-09-26T16:24:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Sep 26<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nosql/">nosql</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h3>简介和横向对比</h3>
+
+<p>Tokyo Tyrant（ttserver）是一款分布式nosql数据库，内部主要是用Tokyo Cabinet数据库实现。与memcache相比，其具有持久化存储的特性；与redis相比，这个数据库在记录数上亿时性能会急剧下降，没有redis业界口碑好，当然也可能是因为这是比较早起的nosql产品了，以及没有进行正确的配置导致的。除此之外ttserver还支持memcache兼容协议，仅仅需要注意INCR的操作中，memcache是不返回值，ttserver是返回自增ID的。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/09/26/freebsd-tokyo-tyrant-php-test/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">关于log4erl的localtime_to_universaltime报错</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-07-29T09:46:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jul 29<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h2>问题症状：</h2>
+
+<p>项目遇到编译后运行的一个问题，logerl报错之</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">**</span> <span class="p">{</span><span class="n">appender_died</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="p">{</span><span class="n">&#39;EXIT&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>           <span class="p">{</span><span class="n">badarg</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>               <span class="p">[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">localtime_to_universaltime</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">[{</span> <span class="p">{</span><span class="mi">2013</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">},{</span><span class="mi">15</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">35</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">[]},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/07/19/ntpdate-step-system-error/">使用ntpdate同步时间报错: step-systime: Operation not permitted</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jul 19<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/freebsd/">freebsd</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>今天有台虚拟机进行时间的同步报错</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ntpdate ntp.sjtu.edu.cn
+</span><span class='line'>
+</span><span class='line'>19 Nov 15:38:54 ntpdate<span class="o">[</span>93376<span class="o">]</span>: step-systime: Operation not permitted
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/06/19/erlang-r15b01-install-bugfix/">erlang R15B01安装问题</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-06-19T14:21:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 19<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>freebsd8.0上安装erlang15B01，报错,可以直接修改vi ./erts/emulator/i386-unknown-freebsd8.1/Makefile的-DUSE_VM_PROBES参数，指定其=0绕过。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/05/27/erlang-protobuffs-with-php/">【How to】使用basho的erlang-protobuffs和PHP通讯</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-05-27T13:49:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> May 27<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/05/27/erlang-protobuffs-with-php/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/05/04/rebar-build-erlang-project/">[How to]使用rebar构建erlang 项目</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-05-04T14:41:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> May 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的，在这里记一下，我只是用了绕过的方法不是很好，因为时间不允许，这里先SORRY一下。我这里的环境为freebsd9.0 amd64 (elrang5.9.1 R15B01),erlang的其他版本，请参看wiki的Release-handling部分调整生成环节的命令。</p>
+
+<p>1）第一步要获取rebar程序，两种方法：自己编译和直接下载。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/05/04/rebar-build-erlang-project/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/04/21/ssh-authorized-keys/">创建ssh信任失败的原因分析和改进</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Apr 21<span>st</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/">rrdtool graph报错Cannot parse vname from DEF</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-04-13T14:55:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Apr 13<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/rrdtool/">rrdtool</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天在创建rrdtool的graph的时候遇到了报错Cannot parse vname from &lsquo;DEF</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#/bin/sh</span>
+</span><span class='line'>/usr/local/bin/rrdtool graph result.png --lazy --start 1384320009 --end 1384323609 --title <span class="s2">&quot;Disk / usage&quot;</span> -v <span class="s2">&quot;bytes&quot;</span> --width 320 --height 240 <span class="se">\</span>
+</span><span class='line'>DEF:/<span class="o">=</span>/services/rrds/yin2-monitorbeta-arch_ac101eb4/diskused_.rrd:/:AVERAGE AREA:/#444444
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+
+  <a class="btn pull-right" href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-03-01T13:39:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Mar 1<span>st</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/03/01/erlang-c-nif/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">[转]Erlang监测系统CPU、内存和磁盘</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-02-27T13:59:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Feb 27<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>os_mon
+Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
+
+<p><font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font></p>
+
+<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
+
+<p>disksup：监测磁盘（Unix、Windows）</p>
+
+<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
+
+<p>os_sup：监测系统日志（Solaris、Windows）</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/02/04/erlang-self-log-to-file/">erlang自带日志写文件的方法</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-02-04T18:19:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Feb 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">x</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">define</span><span class="p">(</span><span class="no">LogsLoaction</span><span class="p">,</span><span class="s">&quot;/tmp/&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">start</span><span class="p">()</span><span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">FileName</span> <span class="o">=</span> <span class="o">?</span><span class="nv">LogsLoaction</span><span class="o">++</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">file</span><span class="p">:</span><span class="nf">write_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">,</span> <span class="o">&lt;&lt;</span><span class="s">&quot;start to record&quot;</span><span class="o">&gt;&gt;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">error_logger</span><span class="p">:</span><span class="nf">logfile</span><span class="p">({</span><span class="n">open</span><span class="p">,</span><span class="nv">FileName</span><span class="p">}),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">info</span><span class="p">(</span><span class="s">&quot;[init] log start </span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/02/04/log4erl-install-using/">log4erl 安装使用</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-02-04T16:57:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Feb 4<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/erlang/">erlang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>目前项目急需一套可记录到文件并能自动轮询的机制的日志系统，考虑良久，最后置自带gen_event和标准日志函数于不顾，决定用log4erl。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/02/04/log4erl-install-using/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/01/14/apache-mina-hello-world/">apache Mina 使用小记</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-01-14T14:14:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 14<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/java/">java</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME <span class="s2">&quot;/usr/local/diablo-jdk1.6.0/&quot;</span>
+</span><span class='line'>setenv JAVA_BIN <span class="s2">&quot;/usr/local/bin/&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载mina</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/home/evoup/monsrvd-2.1/test/
+</span><span class='line'>fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz
+</span><span class='line'>tar xzf apache-mina-2.0.7-bin.tar.gz
+</span><span class='line'>cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
+</span><span class='line'>cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除此之外还需要slf4j这个是mina需要使用的日志库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
+</span><span class='line'>tar xzf slf4j-1.7.2.tar.gz
+</span><span class='line'>cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
+</span><span class='line'>cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>设置好JAVA的CLASSPATH</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv CLASSPATH <span class="s2">&quot;/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
+</span><span class='line'>   <span class="o">{</span>
+</span><span class='line'>       <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">static</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">TimeServerHandler</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>   <span class="c1">//static Logger logger = Logger.getLogger(TimeServerHandler.class);</span>
+</span><span class='line'>   <span class="c1">//异常处理</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>   <span class="c1">//对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</span><span class='line'>       <span class="k">if</span> <span class="o">(</span><span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>           <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'>           <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>       <span class="o">}</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Rec:&quot;</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
+</span><span class='line'>       <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
+</span><span class='line'>       <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>   <span class="c1">//当连接空闲时的处理</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span><span class="n">status</span><span class="o">));</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">[</span><span class="n">evoup</span><span class="nd">@myhost</span><span class="o">]&gt;</span><span class="n">telnet</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span> <span class="mi">9123</span>
+</span><span class='line'><span class="n">Trying</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">...</span>
+</span><span class='line'><span class="n">Connected</span> <span class="n">to</span> <span class="n">localhost</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Escape</span> <span class="n">character</span> <span class="n">is</span> <span class="err">&#39;</span><span class="o">^]</span><span class="err">&#39;</span><span class="o">.</span>
+</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
+</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/01/06/golang-daemonize/">golang的守护进程化</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-01-06T17:37:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 6<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/golang/">golang</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>golang的守护进程化代码，参考了网上的代码，结合自己的项目，去掉了一些没用的代码，增加了fork时候的判断处理，我的机器是freebsd，fork会报errno:0,忽略，原因见代码注释。</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/01/06/golang-daemonize/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">nginx反向代理mongodb的web页面</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-01-05T15:32:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 5<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/mongodb/">mongodb</a></li>
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
+
+
+  <a class="btn pull-right" href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/12/19/use-enca-check-file-encoding/">shell下使用enca指令查看文件编码</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-12-19T15:42:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 19<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>enca是shell下直接查看文件编码的工具,而转换编码的工具有iconv，这里仅仅介绍enca的安装和使用。</p>
+
+
+  <a class="btn pull-right" href="/blog/2012/12/19/use-enca-check-file-encoding/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/12/19/use-telnet-run-smtp/">用telnet透过smtp协议发送邮件</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-12-19T15:40:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 19<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>调试程序的时候需要了解SMTP的工作原理，由于这是应用层文本的TCP协议，所以直接通过telnet调试即可。</p>
+
+
+  <a class="btn pull-right" href="/blog/2012/12/19/use-telnet-run-smtp/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/12/11/centos-install-net-snmp/">centos上安装net-snmp</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-12-11T11:08:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 11<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <h3>引子</h3>
+
+<blockquote><p>Net-SNMP是一个免费的、开放源码的SNMP实现，以前称为UCD-SNMP。它包括agent和多个管理工具的源代码，支持多种扩展方式。[1]不仅扩展了获取方式，而且对于数据类型也有一定的扩展。</p></blockquote>
+
+<p>以上文字摘自百度百科。而所谓snmp agent，个人理解就是能够实现snmp的read和snmp和get等标准snmp协议交互操作的容器，它可以提供默认的MIB和自定义的MIB。</p>
+
+<h3>centos上安装net-snmp的过程</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>配置snmpd</h3>
+
+<p>配置的方法有2种，一个是<code>snmpconf -g basic_setup</code>,一个如下的方式（注:前一个我由于时间关系没有试过）：</p>
+
+<p>安装完成后编辑/etc/snmp/snmpd.conf文件，更改如下配置：</p>
+
+<p>主要是控制那台机器可以访问snmp</p>
+
+<h4>1、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sec.name <span class="nb">source          </span>community
+</span><span class='line'>com2sec notConfigUser default       public
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将&#8221;comunity&#8221;字段改为你要设置的密码.比如&#8221;public&#8221;.                                          <br/>
+将“default”改为你想哪台机器可以看到你的snmp信息,如127.0.0.1</p>
+
+<h4>2、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># Finally, grant the group read-only access to the systemview view.</span>
+</span><span class='line'><span class="c">#       group          context sec.model sec.level prefix read   write notif</span>
+</span><span class='line'>access notConfigGroup <span class="s2">&quot;&quot;</span>      any       noauth    exact all none none
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将&#8221;read&#8221;字段改为all.</p>
+
+<h4>3、查找以下字段：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#           incl/excl subtree                          mask</span>
+</span><span class='line'><span class="c">#view all    included .1                               80</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将该行前面的&#8221;#&ldquo;去掉.
+保存关闭.</p>
+
+<h3>snmpwalk和snmpget的区别</h3>
+
+<p>snmpwalk是对OID的遍历，必须从根节点一次遍历，而不能通过某个叶子节点遍历。
+而snmpget是取得具体的OID的值，必须是叶子节点。</p>
+
+<h3>用snmpwalk进行监控数据的获取</h3>
+
+<p>编辑完成之后可以测试，需要用到snmpwalk和snmpget</p>
+
+<p>缺少snmpwalk和snmpget的可以安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp-utils
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>启动snmpd</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/snmpd start
+</span><span class='line'><span class="nv">$ </span>sudo /sbin/chkconfig snmpd on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试是否开启snmp服务</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c -c public 127.0.0.1 <span class="k">if</span>
+</span><span class='line'>IF-MIB::ifIndex.1 <span class="o">=</span> INTEGER: 1
+</span><span class='line'>IF-MIB::ifIndex.2 <span class="o">=</span> INTEGER: 2
+</span><span class='line'>IF-MIB::ifDescr.1 <span class="o">=</span> STRING: lo
+</span><span class='line'>IF-MIB::ifDescr.2 <span class="o">=</span> STRING: eth0
+</span><span class='line'>IF-MIB::ifType.1 <span class="o">=</span> INTEGER: softwareLoopback<span class="o">(</span>24<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifType.2 <span class="o">=</span> INTEGER: ethernetCsmacd<span class="o">(</span>6<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifMtu.1 <span class="o">=</span> INTEGER: 16436
+</span><span class='line'>IF-MIB::ifMtu.2 <span class="o">=</span> INTEGER: 1500
+</span><span class='line'>IF-MIB::ifSpeed.1 <span class="o">=</span> Gauge32: 10000000
+</span><span class='line'>IF-MIB::ifSpeed.2 <span class="o">=</span> Gauge32: 1000000000
+</span><span class='line'>IF-MIB::ifPhysAddress.1 <span class="o">=</span> STRING:
+</span><span class='line'>IF-MIB::ifPhysAddress.2 <span class="o">=</span> STRING: 0:c:29:e6:ed:27
+</span><span class='line'>IF-MIB::ifAdminStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifAdminStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifOperStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifOperStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
+</span><span class='line'>IF-MIB::ifLastChange.1 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
+</span><span class='line'>IF-MIB::ifLastChange.2 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
+</span><span class='line'>IF-MIB::ifInOctets.1 <span class="o">=</span> Counter32: 784
+</span><span class='line'>IF-MIB::ifInOctets.2 <span class="o">=</span> Counter32: 4216979
+</span><span class='line'>IF-MIB::ifInUcastPkts.1 <span class="o">=</span> Counter32: 14
+</span><span class='line'>IF-MIB::ifInUcastPkts.2 <span class="o">=</span> Counter32: 5593
+</span><span class='line'>IF-MIB::ifInNUcastPkts.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInNUcastPkts.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInDiscards.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInDiscards.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInErrors.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInErrors.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInUnknownProtos.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifInUnknownProtos.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutOctets.1 <span class="o">=</span> Counter32: 784
+</span><span class='line'>IF-MIB::ifOutOctets.2 <span class="o">=</span> Counter32: 417463
+</span><span class='line'>IF-MIB::ifOutUcastPkts.1 <span class="o">=</span> Counter32: 14
+</span><span class='line'>IF-MIB::ifOutUcastPkts.2 <span class="o">=</span> Counter32: 3968
+</span><span class='line'>IF-MIB::ifOutNUcastPkts.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutNUcastPkts.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutDiscards.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutDiscards.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutErrors.1 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutErrors.2 <span class="o">=</span> Counter32: 0
+</span><span class='line'>IF-MIB::ifOutQLen.1 <span class="o">=</span> Gauge32: 0
+</span><span class='line'>IF-MIB::ifOutQLen.2 <span class="o">=</span> Gauge32: 0
+</span><span class='line'>IF-MIB::ifSpecific.1 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
+</span><span class='line'>IF-MIB::ifSpecific.2 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取load信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c 127.0.0.1 -c public .1.3.6.1.4.1.2021.10.1.3
+</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.03
+</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.03
+</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同样可以尝试使用snmp版本1来获取</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 1 -c public localhost .1.3.6.1.4.1.2021.10.1.3
+</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.01
+</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.02
+</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>对外开放SNMP服务</h3>
+
+<p>得知本机已经安装完成，但是根据之前的设置，应该只有本机才有snmp的访问权限。可以通过修改/etc/snmp/snmpd.conf把刚才设置的127.0.0.1改为default</p>
+
+<p>确认本机开放snmp端口，由于snmp协议基于udp，所以采用基于tcp的telnet来测试是不奏效的，可以利用nc来测试，如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>nc -uvz 192.168.216.177 161
+</span><span class='line'>Connection to 192.168.216.177 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果打开了IPTABLES,确保本机的udp161端口对外开放，或者说入站通讯端口为udp161</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /sbin/iptables -I INPUT -p udp --dport 161 -j ACCEPT
+</span><span class='line'><span class="nv">$ </span>sudo /etc/rc.d/init.d/iptables save
+</span><span class='line'><span class="nv">$ </span>sudo /etc/init.d/iptables restart
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者直接在/etc/sysconfig/iptable中增加一行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>-A RH-Firewall-1-INPUT -m state –state NEW -m udp -p udp –dport 161 -j ACCEPT
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>小结</h3>
+
+<p>出于快速分析的目的，本文简单阐述了net-snmp在centos下的安装步骤，更加详细的内容可以参见net-snmp的<a href="http://www.net-snmp.org/">官方网站</a></p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/11/26/mysql-import-output-csv/">浅谈mysql导入导出csv的几种方法</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-11-26T09:56:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 26<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/mysql/">mysql</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>有几种方法，这里一一列举：</p>
+
+<h3>第一种：使用phpmyadmin选择文件上传</h3>
+
+<p>此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">test_info</span>
+</span><span class='line'><span class="k">into</span> <span class="n">outfile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'><span class="n">fields</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span> <span class="n">optionally</span> <span class="n">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="n">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'><span class="n">lines</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>则需要上传test_info.csv，点击CSV using LOAD DATA，然后按照如下设置进行导入
+（其中fields terminated为分隔字段，optionally enclosed为可选包裹字段，escaped为转移字段，line terminated为行终止字段）
+<img src="/images/evoup/phpmyadmin.png" alt="Alt text" /></p>
+
+<h3>第二种：mysql shell</h3>
+
+<p>其实就是刚刚导出的逆操作。在mysql的shell中操作：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='mysql'><span class='line'><span class="k">load</span> <span class="n">data</span> <span class="k">infile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'>  <span class="k">into</span> <span class="k">table</span> <span class="n">test_info</span>
+</span><span class='line'>  <span class="n">fields</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span>  <span class="k">optionally</span> <span class="k">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="k">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'>  <span class="k">lines</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三种：php程序解析后插入</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;开始导入csv数据到工作表</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;导入test_info...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_host</span><span class="o">=</span><span class="s2">&quot;172.16.27.55&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_pass</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$db</span><span class="o">=</span><span class="s2">&quot;test_info&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$handle</span> <span class="o">=</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;/tmp/test_info.csv&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">=</span> <span class="nx">mysqli_init</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(</span><span class="nx">MYSQLI_OPT_CONNECT_TIMEOUT</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">real_connect</span><span class="p">(</span><span class="nv">$mysql_host</span><span class="p">,</span> <span class="nv">$mysql_user</span><span class="p">,</span> <span class="nv">$mysql_pass</span><span class="p">,</span> <span class="nv">$db</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SET NAMES utf8&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="nb">fgetcsv</span> <span class="p">(</span><span class="nv">$handle</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$num</span> <span class="o">=</span> <span class="nb">count</span> <span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nv">$i</span> <span class="o">==</span> <span class="nv">$num</span><span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'>            <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">,&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$result</span><span class="o">=</span><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$query</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="nv">$query</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="p">(</span><span class="s2">&quot;[导入失败]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">exit</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意如果fgetcsv出错和到了行尾都是会返回false的。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/11/22/nginx-upstream-send-too-big-header/">解决nginx upstream send too big header</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-11-22T15:01:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 22<span>nd</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>在fastcgi_params中加以下2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fastcgi_buffer_size 128k;
+</span><span class='line'>fastcgi_buffers 8 128k;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，调试的时候再去做了。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/11/12/gvim-unreadable-codes/">解决gvim菜单乱码问题</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-11-12T11:15:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 12<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>windows下的gvim在使用过程中还有一个问题，就是当我设置了set encoding=utf-8之后，菜单就出现了乱码。如果不设置呢，那么编辑文件就不能是utf-8，网上搜了一圈之后，终于发现比较满意的解决方法。</p>
+
+
+  <a class="btn pull-right" href="/blog/2012/11/12/gvim-unreadable-codes/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/10/26/gvim-turn-off-beep-and-alert/">windows：Gvim关闭声音警报和屏闪</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-10-26T12:07:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 26<span>th</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='vim'><span class='line'><span class="k">if</span> has<span class="p">(</span><span class="s2">&quot;win32&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">set</span> <span class="nb">visualbell</span> <span class="nb">t_vb</span><span class="p">=</span>  <span class="c">&quot;关闭visual bell</span>
+</span><span class='line'>  <span class="k">au</span> GuiEnter * <span class="k">set</span> <span class="nb">t_vb</span><span class="p">=</span> <span class="c">&quot;关闭beep</span>
+</span><span class='line'><span class="k">endif</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">freebsd安装ganglia3.4</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2012-10-22T11:24:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 22<span>nd</span>, 2012</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/monitor/">monitor</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h2>Ganglia是什么?</h2>
+
+<p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
+
+
+  <a class="btn pull-right" href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/11/18/nginx-413/">nginx报错413问题的解决</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-11-18T15:11:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 18<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>今天遇到php myadmin上传文件的2048k限制，页面报错413 Request Entity Too Large
+其实只要在任意section加上以下的配置即可。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>client_max_body_size 500m;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同时针对php.ini加上以下的配置，如果有必要重启php-fpm</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">file_uploads</span> <span class="o">=</span> On ;打开文件上传选项
+</span><span class='line'><span class="nv">upload_max_filesize</span> <span class="o">=</span> 500M ;上传文件上限
+</span><span class='line'><span class="nv">post_max_size</span> <span class="o">=</span> 500M
+</span><span class='line'><span class="nv">memory_limit</span> <span class="o">=</span> 8M
+</span><span class='line'><span class="nv">max_execution_time</span> <span class="o">=</span> 600
+</span><span class='line'><span class="nv">max_input_time</span> <span class="o">=</span> 600
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以根据实际情况调整对应参数。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/11/06/vim-sudo-use-vimrc-env/">vim在sudo下的使用当前用户的配置文件</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-11-06T15:15:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 6<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>部门配备了freebsd做为统一的开发环境，大家登上各自的jail进行软件开发任务。但是发现执行sudo vim之后，居然使用的是root的vim配置文件。</p>
+
+<p>那么有什么办法能够使用自己的配置文件呢？其实再简单不过,使用-E参数</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>   -E  The -E (preserve environment) option will override the env_reset
+</span><span class='line'>       option in sudoers(5)).  It is only available when either the match-
+</span><span class='line'>       ing command has the SETENV tag or the setenv option is set in sudo-
+</span><span class='line'>       ers(5).</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo -E vim file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后就可以使用自己的配置文件了。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/">遭遇nginx upstream sent too big header</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-09-11T23:20:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Sep 11<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>nginx配置中要加以下2行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fastcgi_buffer_size 128k;
+</span><span class='line'>fastcgi_buffers 8 128k;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>一加果然就不报错了！原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，程序还要调整啊。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/07/30/freebsd-install-hbase/">freebsd下hbase安装</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jul 30<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hbase/">hbase</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+
+<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+
+
+  <a class="btn pull-right" href="/blog/2011/07/30/freebsd-install-hbase/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 5<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而此参数声明的时候是这样的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这不就成了三个参了？记一笔&hellip;</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/01/18/nginx-php4/">freebsd下安装nginx+php4.4.9的方法</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-01-18T15:10:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 18<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/freebsd/">freebsd</a></li>
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>首先是php4.4
+<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
+
+
+  <a class="btn pull-right" href="/blog/2011/01/18/nginx-php4/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/01/16/c-common-define/">C语言宏定义技巧(常用宏定义)(转)</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 16<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//头文件内容 </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+
+  <a class="btn pull-right" href="/blog/2011/01/16/c-common-define/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2011/01/11/shell-gather/">shell收集</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jan 11<span>th</span>, 2011</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>批量拷贝文件到服务器bash版</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/local/bin/bash</span>
+</span><span class='line'><span class="k">for </span>hosts in <span class="sb">`</span>cat host.list<span class="sb">`</span> ;
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;将处理&quot;</span><span class="nv">$hosts</span> ;
+</span><span class='line'>    scp /services/monitor_deal/madmonitor.current root@<span class="nv">$hosts</span>:/services/monitor_deal/ ;
+</span><span class='line'>    scp /services/monitor_deal/libphp5.so root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libmysqlclient.so.16 root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libz.so.6 root@<span class="nv">$hosts</span>:/usr/lib/ ;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>取得fb6的网卡mac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取文本的第三行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sed -n <span class="s1">&#39;3p&#39;</span> file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>截取字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;abcd&quot;</span> | cut -b 1-3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用nc访问百度</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">printf</span> <span class="s2">&quot;GET / HTTP/1.0\r\n\r\n&quot;</span> | nc www.baidu.com 80
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取当前时间戳</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>date <span class="s2">&quot;+%s&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把时间戳转换成系统时间</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#linux版本的</span>
+</span><span class='line'>date -d <span class="s1">&#39;1970-01-01 UTC 946684800 seconds&#39;</span> +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
+</span><span class='line'><span class="c">#freebsd版本的</span>
+</span><span class='line'>date -r 1384499085 +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在第三行之后插入指定数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4)print v1;print}&#39;</span> <span class="nx">file</span> <span class="o">&gt;</span> <span class="nx">file_translated</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
+
+<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>统计源码总行数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{print $1}&#39;</span>
+</span><span class='line'>find . -type f ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果要给sum来个初值，那么</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=0}{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>寻找全部process开头的rrd文件，删除前确认</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;process*.rrd&quot;</span> -ok rm <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打印某网卡信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig | awk <span class="s1">&#39;{if(NR==5) print $2}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>整个文件夹内替换字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到的c头文件放到temp目录下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.h&quot;</span> -exec mv <span class="o">{}</span> temp/ <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>AWK的入门</p>
+
+<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
+
+<p>AWK高级用法</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
+
+<p>AWK一句话手册</p>
+
+<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
+
+<p>可以用得到的shell的脚本</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
+
+<p>cshell参考</p>
+
+<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
+
+<p>数组的定义</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">array</span><span class="o">=(</span>a b c d<span class="o">)</span>
+</span><span class='line'>居然下标是从1开始
+</span><span class='line'><span class="nb">echo</span> <span class="k">${</span><span class="nv">A</span><span class="p">[1]</span><span class="k">}</span>
+</span><span class='line'>a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash下实现的伪多进程(实际是用了&amp;后台执行)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>　　#!/bin/bash
+</span><span class='line'>
+</span><span class='line'>　　for <span class="o">((</span><span class="nv">i</span><span class="o">=</span>0;i&lt;5;i++<span class="o">))</span>;<span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    　　sleep 3;echo 1&gt;&gt;aa <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;done!&quot;</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">}</span> &amp;
+</span><span class='line'>
+</span><span class='line'>　　done
+</span><span class='line'>
+</span><span class='line'>　　wait
+</span><span class='line'>
+</span><span class='line'>　　cat aa|wc -l
+</span><span class='line'>
+</span><span class='line'>　　rm aa
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的fifo实现的多线程</p>
+
+<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+
+<p>多线程的实现是采用了有名管道mkfifo</p>
+
+<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
+
+<p>shell判断文件是否存在</p>
+
+<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/12/15/header-file-variable-assign/">头文件中变量赋值方法</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-12-15T00:04:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 15<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>先看这段文字</p>
+
+
+  <a class="btn pull-right" href="/blog/2010/12/15/header-file-variable-assign/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/30/memory-alignment/">目前看到的对内存对齐问题最好的解释</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-30T12:14:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 30<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>简单的说，对于一个class或是struct：</p>
+
+<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
+
+
+  <a class="btn pull-right" href="/blog/2010/11/30/memory-alignment/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/26/crc32-cpp/">C++实现crc32</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 26<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/cplusplus/">cplusplus</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>直接参考如下连接
+<a href="http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation">http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</a></p>
+
+<p>或者boost、Crypto++</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/25/typedef-summary/">typedef小结</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-25T14:52:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 25<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>在头文件里typedef的再inlcude到源文件里，这样就可以省去struct xx obj;直接xx obj;</p>
+
+<p>对于动态分配内存的时候也可以</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="n">xx</span> <span class="o">*</span> <span class="n">obj</span><span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">xx</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/22/php-convert-encoding/">php转换文件编码</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-22T17:56:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 22<span>nd</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了</p>
+
+
+  <a class="btn pull-right" href="/blog/2010/11/22/php-convert-encoding/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/19/php-myadmin1045-error/">php myadmin1045 error</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-19T15:58:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 19<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>今天遇到phpMyAdmin错误 #1045 &ndash; Access denied for user@localhost的错误</p>
+
+<p>记得在./libraries/config.default.php
+已经制定好了需要的变量。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'> <span class="mi">57</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;host&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;172.16.27.55&#39;</span><span class="p">;</span> <span class="c1">// MySQL hostname or IP address</span>
+</span><span class='line'> <span class="mi">58</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;port&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;3306&#39;</span><span class="p">;</span>          <span class="c1">// MySQL port - leave blank for default port</span>
+</span><span class='line'> <span class="mi">59</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;socket&#39;</span><span class="p">]</span>        <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// Path to the socket - leave blank for default socket</span>
+</span><span class='line'> <span class="mi">60</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;connect_type&#39;</span><span class="p">]</span>  <span class="o">=</span> <span class="s1">&#39;tcp&#39;</span><span class="p">;</span>       <span class="c1">// How to connect to MySQL server (&#39;tcp&#39; or &#39;socket&#39;)</span>
+</span><span class='line'> <span class="mi">61</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;extension&#39;</span><span class="p">]</span>     <span class="o">=</span> <span class="s1">&#39;mysql&#39;</span><span class="p">;</span>     <span class="c1">// The php MySQL extension to use (&#39;mysql&#39; or &#39;mysqli&#39;)</span>
+</span><span class='line'> <span class="mi">62</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;compress&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="k">FALSE</span><span class="p">;</span>       <span class="c1">// Use compressed protocol for the MySQL connection</span>
+</span><span class='line'> <span class="mi">63</span>                                                     <span class="c1">// (requires PHP &gt;= 4.3.0)</span>
+</span><span class='line'> <span class="mi">64</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;controluser&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// MySQL control user settings</span>
+</span><span class='line'> <span class="mi">65</span>                                                     <span class="c1">// (this user must have read-only</span>
+</span><span class='line'> <span class="mi">66</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;controlpass&#39;</span><span class="p">]</span>   <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>          <span class="c1">// access to the &quot;mysql/user&quot;</span>
+</span><span class='line'> <span class="mi">72</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;user&#39;</span><span class="p">]</span>          <span class="o">=</span> <span class="s1">&#39;user&#39;</span><span class="p">;</span>      <span class="c1">// MySQL user</span>
+</span><span class='line'> <span class="mi">73</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;Servers&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>      <span class="o">=</span> <span class="s1">&#39;%**&#39;</span><span class="p">;</span>          <span class="c1">// MySQL password (only needed</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同时</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'> <span class="mi">40</span>  <span class="o">*</span> <span class="nx">The</span> <span class="s1">&#39;cookie&#39;</span> <span class="nx">auth_type</span> <span class="nx">uses</span> <span class="nx">blowfish</span> <span class="nx">algorithm</span> <span class="nx">to</span> <span class="nx">encrypt</span> <span class="nx">the</span> <span class="nx">password</span><span class="o">.</span> <span class="k">If</span>
+</span><span class='line'> <span class="mi">41</span>  <span class="o">*</span> <span class="nx">at</span> <span class="nx">least</span> <span class="nx">one</span> <span class="nx">server</span> <span class="nx">configuration</span> <span class="nx">uses</span> <span class="s1">&#39;cookie&#39;</span> <span class="nx">auth_type</span><span class="p">,</span> <span class="nx">enter</span> <span class="nx">here</span> <span class="nx">a</span>
+</span><span class='line'> <span class="mi">42</span>  <span class="o">*</span> <span class="nx">passphrase</span> <span class="nx">that</span> <span class="nx">will</span> <span class="nx">be</span> <span class="nx">used</span> <span class="nx">by</span> <span class="nx">blowfish</span><span class="o">.</span> <span class="nx">The</span> <span class="nx">maximum</span> <span class="nx">length</span> <span class="nx">seems</span> <span class="nx">to</span> <span class="nx">be</span> <span class="mi">46</span>
+</span><span class='line'> <span class="mi">43</span>  <span class="o">*</span> <span class="nx">characters</span><span class="o">.</span>
+</span><span class='line'> <span class="mi">44</span>  <span class="o">*/</span>
+</span><span class='line'> <span class="mi">45</span> <span class="nv">$cfg</span><span class="p">[</span><span class="s1">&#39;blowfish_secret&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;s#$dcrnm^9fk2&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这部分也指定完毕。</p>
+
+<p>但是还是会报告1045，最后清除浏览器缓存，终于搞定。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/11/18/gcc-static-compile/">gcc静态编译</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 18<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/gcc/">gcc</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成中间文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/07/23/freebsd-ctags/">freebsd下如何使用ctags为项目生成tag文件</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-07-23T14:48:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jul 23<span>rd</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/freebsd/">freebsd</a></li>
+    
+      <li><a href="/blog/categories/vim/">vim</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。</p>
+
+
+  <a class="btn pull-right" href="/blog/2010/07/23/freebsd-ctags/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2010/06/21/singleton-c-language/">单例模式C语言版</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 21<span>st</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/c-language/">c-language</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>Tokyo Cabinet的源码看到的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
+</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
+</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
+</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/12/23/java-concurrentmodificationexception/">java关于ConcurrentModificationException异常</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-12-23T15:46:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Dec 23<span>rd</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/java/">java</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>如果出现java.util.ConcurrentModificationException</p>
+
+<p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/10/06/win32-c-call-python/">关于win32程序调用python脚本的发布问题</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-10-06T15:49:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Oct 6<span>th</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/python/">python</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe,然后直接通过python的capi，调用python脚本工作。后来发现非控制台程序的exe，嵌入python是会有这样那样的问题出现。参见《PyRun_SimpleString的无穷怨念》</p>
+
+<!-- readmore -->
+
+
+<p><a href="http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx">http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx</a></p>
+
+<p>于是在dll里面去嵌入python，dll里面可以用win32线程来调度python脚本的执行状态。</p>
+
+<p>然后就涉及到发布的问题，先是这样子出现
+“由于应用程序配置不正确，应用程序未能启动。重新安装应用程序可能会纠正这个问题。”</p>
+
+<p>查了下资料,<a href="http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html">http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html</a>
+意思是python2.6是vc++2008编译的，所以要装Microsoft Visual C++ 2008 Redistributable Package。</p>
+
+<p>再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。</p>
+
+<p>这个过程大致如下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># setup.py</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">py2exe</span>
+</span><span class='line'><span class="n">setup</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;hello.py&quot;</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行setup.py，记得要传一个参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">py2e</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>于是生成的dist文件夹里就是发布好的程序了。
+按照这个思路，解压library.zip里面的程序到dll目录也就可以运行了，试验发现如果是dll的话， w9xpopen.exe到是不必打包带进去了，这样我的dll连同这些文件都放到一个目录里，exe调用这个 dll就完成任务了。我的dll是Release版本的，因为我带的dll是python26.dll而不是python26_d.dll， 这样客户机再也不必安装python就可以运行带有python脚本的程序了。</p>
+
+<p>总结：这谁想出来的，搞得这么复杂，LUA就没有这么复杂，直接2个DLL就完事了，但是估计调用 库的话也是一样的。</p>
+
+<p>后记：其实非商业项目可以用selenium这类GUI自动化测试软件来干，也就是写写脚本。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/09/23/header-file-refered-by-each-other/">关于头文件互相包含的解决方法</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Sep 23<span>rd</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/cplusplus/">cplusplus</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
+
+<p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
+
+
+  <a class="btn pull-right" href="/blog/2009/09/23/header-file-refered-by-each-other/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/06/11/php-call-user-func/">PHP之call_user_func动态调用函数</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-06-11T11:40:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 11<span>th</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>call_user_func这个函数，可以把函数存到数组之后，在代码的任何位置进行调用，非常方便。
+做项目修改a2billing代码时发现了这个函数。</p>
+
+<!-- readmore -->
+
+
+<p>在a2billing/Public/call-log-custoners.php的大约780行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">while</span><span class="o">...</span>
+</span><span class='line'><span class="k">echo</span> <span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">];</span>
+</span><span class='line'><span class="nb">call_user_func</span><span class="p">(</span><span class="nv">$FG_TABLE_COL</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="mi">11</span><span class="p">],</span> <span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span><span class='line'><span class="k">echo</span> <span class="nb">stripslashes</span><span class="p">(</span><span class="nv">$record_display</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="nb">end</span> <span class="k">while</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里$FG_TABLE_COL[$i][11]其实是放的是函数，设计目的是循环echo一行的每个列，如果
+$FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
+把自定义函数都放在数组里，然后用call_user_func，第一个参数设置为
+数组，第二个参数设置为自定义函数的参数。这个设计思想很直接借鉴。</p>
+
+<p>后计：这种设计方法，比较适合用在设计restful程序的框架上。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/06/10/cplusplus-init-a-lot-of-objects/">初始化一组C++对象</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-06-10T13:29:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 10<span>th</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/cplusplus/">cplusplus</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>今天要初始化一组对象</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">cls_enemy</span> <span class="o">*</span> <span class="n">enemy0</span><span class="p">[]</span><span class="o">=</span><span class="p">{</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">(),</span>
+</span><span class='line'><span class="k">new</span> <span class="n">cls_enemy</span><span class="p">()</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>像这样初始化也太麻烦了吧，看看有什么对象链表之类的东西。</p>
+
+
+  <a class="btn pull-right" href="/blog/2009/06/10/cplusplus-init-a-lot-of-objects/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/06/10/php-mysql-fetch-array-without-while/">mysql_fetch_array不使用while</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-06-10T13:14:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 10<span>th</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>原来mysql_fetch_array也可以直接就分配到一个array，不用while
+方法是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$num</span><span class="o">=</span><span class="nb">mysql_num_rows</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$num</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$row</span><span class="p">[]</span><span class="o">=</span><span class="nb">mysql_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2009/06/02/cplusplus-string-to-int/">STL中string到int的类型转换</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jun 2<span>nd</span>, 2009</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/cplusplus/">cplusplus</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>STL的string转int的正确方法不是.data()
+应该是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">aoti</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者用个别人的string2int函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">string2int</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'>   <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>   <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后int XX[];
+完全可以用vector来实现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>v[]一样可以的用的。</p>
+
+<p>下面有个类似的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">integer</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2008/07/20/delete-cvs-dir/">批量删除CVS目录的cmd</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Jul 20<span>th</span>, 2008</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/shell/">shell</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>windows下的bat的方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
+</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
+</span><span class='line'><span class="p">@</span>PROMPT [Com]#
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
+</span><span class='line'>
+</span><span class='line'><span class="p">@</span><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
+</span><span class='line'>    <span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
+</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
+</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2008/05/23/parent-frame-location/">W3的父框架下另一子框架跳转</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2008-05-23T21:15:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> May 23<span>rd</span>, 2008</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/javascript/">javascript</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">parent</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="s2">&quot;http://www.baidu.com&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2008/05/22/js-get-cookie/">js获取cookie</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2008-05-22T16:31:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> May 22<span>nd</span>, 2008</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/javascript/">javascript</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>直接参考网易的函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
+</span><span class='line'>   <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">offset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="nx">offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="nx">offset</span> <span class="o">+=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>
+</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="k">return</span> <span class="nx">unescape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">end</span><span class="p">))</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>   <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<hr>
+
+
+<p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2008/05/19/js-exit-frame/">JS跳出框架</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> May 19<span>th</span>, 2008</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/javascript/">javascript</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&lt;</span><span class="nx">script</span> <span class="nx">language</span><span class="o">=</span> <span class="s2">&quot;JavaScript&quot;</span><span class="o">&gt;</span>
+</span><span class='line'>  <span class="c">&lt;!--</span><span class="nx">Break</span> <span class="nx">out</span> <span class="nx">of</span> <span class="nx">frames</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">top</span><span class="p">.</span><span class="nx">frames</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">top</span><span class="p">.</span><span class="nx">location</span><span class="o">=</span><span class="nx">self</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+</span><span class='line'>  <span class="c1">//--&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+  </article>
+  <hr>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2013 - Your Name<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

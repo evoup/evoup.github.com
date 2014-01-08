@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>C语言宏定义技巧(常用宏定义)(转) - Evoup`s Blog</title>
+  <meta name="author" content="Your Name">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2011/01/16/c-common-define">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        C语言宏定义技巧(常用宏定义)(转)
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//头文件内容 </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
+
+
+<p>2，重新定义一些类型，防止由于各种平台和编译器的不同，而产生的类型字节数差异，方便移植。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">boolean</span><span class="p">;</span> <span class="cm">/* Boolean value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">uint32</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint16</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint8</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int32</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int16</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int8</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//下面的不建议使用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">byte</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">word</span><span class="p">;</span> <span class="cm">/* Unsinged 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">dword</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uint1</span><span class="p">;</span> <span class="cm">/* Unsigned 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">uint2</span><span class="p">;</span> <span class="cm">/* Unsigned 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">uint4</span><span class="p">;</span> <span class="cm">/* Unsigned 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">int1</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">int2</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">int4</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value type. */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">long</span> <span class="n">sint31</span><span class="p">;</span> <span class="cm">/* Signed 32 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">short</span> <span class="n">sint15</span><span class="p">;</span> <span class="cm">/* Signed 16 bit value */</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">signed</span> <span class="kt">char</span> <span class="n">sint7</span><span class="p">;</span> <span class="cm">/* Signed 8 bit value */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>3，得到指定地址上的一个字节或字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MEM_B( x ) ( *( (byte *) (x) ) ) </span>
+</span><span class='line'><span class="cp">#define MEM_W( x ) ( *( (word *) (x) ) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>4，求最大值和最小值</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MAX( x, y ) ( ((x) &gt; (y)) ? (x) : (y) ) </span>
+</span><span class='line'><span class="cp">#define MIN( x, y ) ( ((x) &lt; (y)) ? (x) : (y) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>5，得到一个field在结构体(struct)中的偏移量</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FPOS( type, field ) \ </span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/*lint -e545 */</span> <span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">((</span> <span class="n">type</span> <span class="o">*</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">field</span> <span class="p">)</span> <span class="cm">/*lint +e545 */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>6,得到一个结构体中field所占用的字节数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FSIZ( type, field ) sizeof( ((type *) 0)-&gt;field ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>7，按照LSB格式把两个字节转化为一个Word</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLIPW( ray ) ( (((word) (ray)[0]) * 256) + (ray)[1] ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>8，按照LSB格式把一个Word转化为两个字节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define FLOPW( ray, val ) \ </span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mi">256</span><span class="p">);</span> <span class="err">\</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="n">ray</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>9，得到一个变量的地址（word宽度）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define B_PTR( var ) ( (byte *) (void *) &amp;(var) ) </span>
+</span><span class='line'><span class="cp">#define W_PTR( var ) ( (word *) (void *) &amp;(var) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>10，得到一个字的高位和低位字节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define WORD_LO(xxx) ((byte) ((word)(xxx) &amp; 255)) </span>
+</span><span class='line'><span class="cp">#define WORD_HI(xxx) ((byte) ((word)(xxx) &gt;&gt; 8)) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>11，返回一个比X大的最接近的8的倍数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define RND8( x ) ((((x) + 7) / 8 ) * 8 ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>12，将一个字母转换为大写</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define UPCASE( c ) ( ((c) &gt;= &#39;a&#39; &amp;&amp; (c) &lt;= &#39;z&#39;) ? ((c) - 0x20) : (c) ) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>13，判断字符是不是10进值的数字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define DECCHK( c ) ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>14，判断字符是不是16进值的数字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define HEXCHK( c ) ( ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;) ||\ </span>
+</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;A&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;F&#39;</span><span class="p">)</span> <span class="o">||</span><span class="err">\</span>
+</span><span class='line'><span class="p">((</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="sc">&#39;a&#39;</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="sc">&#39;f&#39;</span><span class="p">)</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>15，防止溢出的一个方法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define INC_SAT( val ) (val = ((val)+1 &gt; (val)) ? (val)+1 : (val)) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>16，返回数组元素的个数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define ARR_SIZE( a ) ( sizeof( (a) ) / sizeof( (a[0]) ) )</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>17，返回一个无符号数n尾的值MOD_BY_POWER_OF_TWO(X,n)=X%(2<sup>n</sup>)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define MOD_BY_POWER_OF_TWO( val, mod_by ) \ </span>
+</span><span class='line'><span class="p">(</span> <span class="p">(</span><span class="n">dword</span><span class="p">)(</span><span class="n">val</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dword</span><span class="p">)((</span><span class="n">mod_by</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>18，对于IO空间映射在存储空间的结构，输入输出处理</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define inp(port) (*((volatile byte *) (port))) </span>
+</span><span class='line'><span class="cp">#define inpw(port) (*((volatile word *) (port))) </span>
+</span><span class='line'><span class="cp">#define inpdw(port) (*((volatile dword *)(port))) </span>
+</span><span class='line'><span class="cp">#define outp(port, val) (*((volatile byte *) (port)) = ((byte) (val))) </span>
+</span><span class='line'><span class="cp">#define outpw(port, val) (*((volatile word *) (port)) = ((word) (val))) </span>
+</span><span class='line'><span class="cp">#define outpdw(port, val) (*((volatile dword *) (port)) = ((dword) (val))) </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>[2005-9-9添加]</p>
+
+<p>19,使用一些宏跟踪调试</p>
+
+<p>A N S I标准说明了五个预定义的宏名。它们是：</p>
+
+<p>_ L I N E _</p>
+
+<p>_ F I L E _</p>
+
+<p>_ D A T E _</p>
+
+<p>_ T I M E _</p>
+
+<p>_ S T D C _</p>
+
+<p>如果编译不是标准的，则可能仅支持以上宏名中的几个，或根本不支持。记住编译程序</p>
+
+<p>也许还提供其它预定义的宏名。</p>
+
+<p>_ L I N E <em>及</em> F I L E _宏指令在有关# l i n e的部分中已讨论，这里讨论其余的宏名。</p>
+
+<p>_ D AT E _宏指令含有形式为月/日/年的串，表示源文件被翻译到代码时的日期。</p>
+
+<p>源代码翻译到目标代码的时间作为串包含在<em> T I M E </em>中。串形式为时：分：秒。</p>
+
+<p>如果实现是标准的，则宏<em> S T D C </em>含有十进制常量1。如果它含有任何其它数，则实现是</p>
+
+<p>非标准的。</p>
+
+<p>可以定义宏，例如:</p>
+
+<p>当定义了_DEBUG，输出数据信息和所在文件所在行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifdef _DEBUG </span>
+</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) printf(msg);printf(“%d%d%d”,date,_LINE_,_FILE_) </span>
+</span><span class='line'><span class="cp">#else </span>
+</span><span class='line'><span class="cp">#define DEBUGMSG(msg,date) </span>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>20，宏定义防止使用是错误</p>
+
+<p>用小括号包含。</p>
+
+<p>例如：#define ADD(a,b) （a+b）</p>
+
+<p>用do{}while(0)语句包含多语句防止错误</p>
+
+<p>例如：#difne DO(a,b) a+b;\</p>
+
+<p>a++;</p>
+
+<p>应用时：if(….)</p>
+
+<p>DO(a,b); //产生错误</p>
+
+<p>else</p>
+
+<p>解决方法: #difne DO(a,b) do{a+b;\</p>
+
+<p>a++;}while(0)</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2011/01/11/shell-gather/" title="Previous Post: shell收集">&laquo; shell收集</a></li>
+            
+            
+            <li class="next"><a href="/blog/2011/01/18/nginx-php4/" title="Next Post: freebsd下安装nginx+php4.4.9的方法">freebsd下安装nginx+php4.4.9的方法 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Recent Posts</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Hbase连zookeeper瞬断</a>
+    
+    <a class="list-group-item " href="/blog/2013/12/12/centos-install-erlangr16b03/">Centos安装erlang R16b03</a>
+    
+    <a class="list-group-item " href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
+    
+    <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">centos6.4 Install cacti0.8</a>
+    
+    <a class="list-group-item " href="/blog/2013/12/03/centos6-dot-4-install-zabbix/">centos6.4下搭建zabbix2.0.6</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 115.0%'>Cplusplus(4)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 126.25%'>Monitor(7)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 126.25%'>Shell(7)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2013 - Your Name<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>
