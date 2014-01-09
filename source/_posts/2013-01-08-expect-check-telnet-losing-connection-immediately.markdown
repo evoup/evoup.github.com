@@ -39,3 +39,5 @@ exit
 expect eof
 
 ```
+
+调用者程序可以根据expect输出的note: 3) disconnect by client cause timeout or not immediately exit expect得知telnet上去瞬间失去连接。
