@@ -5251,6 +5251,67 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     <header>
   
   <h1 class="beta">
+    <a href="/blog/2010/11/05/socket-server-experience/">socket服务器开发心得[长连接线程版]</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2010-11-05T11:23:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Nov 5<span>th</span>, 2010</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/socket server/">socket server</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>其实也算不上是什么心得，就是一些积累。cs结构的网游和聊天室基本上是在用长连接。</p>
+
+<p>长连接一般会有个心跳包，具体就是确认客户端状态是存活的，这个还没有设计。</p>
+
+<p>QQ其实也用TCP，也有心跳包，也涉及长连接。</p>
+
+<p>P2P一般都是长连接，但是网游一般不设计成UDP数据包，一般都是长连接。</p>
+
+<p>对于多线程阻塞服务器，recv就可以了，然后开个for(;;)或者while(1)死循环，长连接式的recv和send，这样交互，中间使用\n或者其他什么判断接受的一条协议命令；对于http这样的服务器，直接fopen套接字，fstat判断可写状态，则写入后fflush。这个flash也用了个flush函数，具体怎么回事，没做深入研究。</p>
+
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
     <a href="/blog/2010/07/23/freebsd-ctags/">freebsd下如何使用ctags为项目生成tag文件</a>
   </h1>
   
