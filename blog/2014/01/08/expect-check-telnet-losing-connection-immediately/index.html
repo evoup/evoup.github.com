@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>WIN7下安装VC++6.0的方法 - Evoup`s Blog</title>
+  <title>使用expect脚本检测telnet瞬断 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/08/win7-install-vc6">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,35 +101,80 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-08T14:09:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2014</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-08T18:17:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        WIN7下安装VC++6.0的方法
+        使用expect脚本检测telnet瞬断
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>今天打算研究snmp++的例子，要回来用一下vc6，WIN7上安装vc6还是会遇到一点点小问题，记录一下备查。</p>
+<div class="entry-content clearfix"><p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
+
+<p>直接上代码了</p>
 
 <!-- more -->
 
 
-<h3>步骤/方法</h3>
 
-<p>1）在安装或使用Visual C++6.0时，如果出现兼容性问题提示对话框，都只要选择“不再显示此消息”，然后选择“运行程序”。根据网上资料和实践没有任何问题。</p>
 
-<p>2）在安装Visual C++6.0过程中，选择“custom（自定义安装）”：其中visual source safe是不需安装的，这是微软的版本控制系统，咱就不装了。</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/usr/local/bin/expect</span>
+</span><span class='line'>spawn telnet 127.0.0.1 9090
+</span><span class='line'><span class="nb">set </span>timeout  1
+</span><span class='line'>expect <span class="o">{</span>
+</span><span class='line'>        <span class="s2">&quot;*Escape character is*&quot;</span> <span class="o">{</span>
+</span><span class='line'>                exp_continue
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        <span class="s2">&quot;*Connection closed by foreign host*&quot;</span> <span class="o">{</span>
+</span><span class='line'>                send <span class="s2">&quot;note: 1) detect a unsafe connection&quot;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>expect <span class="o">{</span>
+</span><span class='line'>        <span class="s2">&quot;*Connection closed by foreign host*&quot;</span> <span class="o">{</span>
+</span><span class='line'>                send <span class="s2">&quot;note: 2) detect a unsafe connection&quot;</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>        send <span class="s2">&quot;\\003&quot;</span>
+</span><span class='line'>        <span class="nb">exit</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>expect <span class="s2">&quot;*Connection closed by foreign host*&quot;</span>
+</span><span class='line'>send <span class="s2">&quot;note: 3) disconnect by client cause timeout or not immediately exit expect&quot;</span>
+</span><span class='line'><span class="nb">exit</span>
+</span><span class='line'>expect eof
+</span><span class='line'>
+</span><span class='line'><span class="nb">exit</span>
+</span><span class='line'>expect eof
+</span></code></pre></td></tr></table></div></figure>
 
-<p>3）最后最重要的一点，把windows7的UAC降到最低。然后打开vc6的时候需要以用管理员身份运行，这样就可以了。</p>
-
-<h3>补充</h3>
-
-<p>网上说还需要进到“工具”菜单的“选项”中，然后在“选项”窗口中选择“目录”选项卡。加入一些目录的路径。我实际试验下来可以不用这么做。</p>
 </div>
 
 
@@ -153,13 +198,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-08T14:09:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2014</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-08T18:17:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
+    <a class='category' href='/blog/categories/monitor/'>monitor</a>, <a class='category' href='/blog/categories/shell/'>shell</a>
   
 </span>
 
@@ -171,10 +216,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/" title="Previous Post: hbase连zookeeper瞬断">&laquo; hbase连zookeeper瞬断</a></li>
+            <li class="previous"><a href="/blog/2014/01/08/win7-install-vc6/" title="Previous Post: WIN7下安装VC++6.0的方法">&laquo; WIN7下安装VC++6.0的方法</a></li>
             
-            
-            <li class="next"><a href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/" title="Next Post: 使用expect脚本检测telnet瞬断">使用expect脚本检测telnet瞬断 &raquo;</a></li>
             
           </ul>
         
@@ -211,9 +254,9 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/">使用expect脚本检测telnet瞬断</a>
+    <a class="list-group-item active" href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/">使用expect脚本检测telnet瞬断</a>
     
-    <a class="list-group-item active" href="/blog/2014/01/08/win7-install-vc6/">WIN7下安装VC++6.0的方法</a>
+    <a class="list-group-item " href="/blog/2014/01/08/win7-install-vc6/">WIN7下安装VC++6.0的方法</a>
     
     <a class="list-group-item " href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Hbase连zookeeper瞬断</a>
     

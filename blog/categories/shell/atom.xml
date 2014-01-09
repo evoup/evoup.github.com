@@ -4,7 +4,7 @@
   <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-08T15:07:15+08:00</updated>
+  <updated>2014-01-09T10:16:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用expect脚本检测telnet瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/"/>
+    <updated>2014-01-08T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately</id>
+    <content type="html"><![CDATA[<p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
+
+<p>直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```sh</p>
+
+<h1>!/usr/local/bin/expect</h1>
+
+<p>spawn telnet 127.0.0.1 9090
+set timeout  1
+expect {</p>
+
+<pre><code>    "*Escape character is*" {
+            exp_continue
+    }
+    "*Connection closed by foreign host*" {
+            send "note: 1) detect a unsafe connection"
+    }
+</code></pre>
+
+<p>}
+expect {</p>
+
+<pre><code>    "*Connection closed by foreign host*" {
+            send "note: 2) detect a unsafe connection"
+    }
+    send "\\003"
+    exit
+</code></pre>
+
+<p>}
+expect &ldquo;<em>Connection closed by foreign host</em>&rdquo;
+send &ldquo;note: 3) disconnect by client cause timeout or not immediately exit expect&rdquo;
+exit
+expect eof</p>
+
+<p>exit
+expect eof</p>
+
+<p>```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[部分机器netstat运行结果缓慢的原因]]></title>
@@ -73,7 +124,7 @@
 
 <p>The key fingerprint is:</p>
 
-<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#97;&#105;&#x6c;&#x74;&#x6f;&#58;&#117;&#x73;&#101;&#x72;&#64;&#x75;&#x73;&#x65;&#114;&#45;&#97;&#114;&#x63;&#104;&#46;&#x6d;&#97;&#x64;&#104;&#x6f;&#117;&#x73;&#x65;&#x2e;&#x63;&#110;">&#x75;&#115;&#x65;&#x72;&#x40;&#x75;&#x73;&#101;&#x72;&#x2d;&#x61;&#114;&#x63;&#104;&#46;&#109;&#97;&#x64;&#x68;&#x6f;&#117;&#x73;&#101;&#46;&#99;&#x6e;</a></p>
+<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#109;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#117;&#115;&#x65;&#x72;&#x40;&#117;&#x73;&#101;&#x72;&#x2d;&#97;&#x72;&#x63;&#104;&#x2e;&#x6d;&#x61;&#x64;&#104;&#x6f;&#117;&#x73;&#x65;&#x2e;&#99;&#x6e;">&#x75;&#x73;&#101;&#114;&#64;&#x75;&#115;&#101;&#x72;&#45;&#97;&#114;&#x63;&#x68;&#46;&#x6d;&#x61;&#x64;&#104;&#x6f;&#x75;&#x73;&#101;&#46;&#99;&#x6e;</a></p>
 
 <p>The key&rsquo;s randomart image is:</p>
 
@@ -101,11 +152,11 @@
 <code>
 然后运行如下脚本，按照提示输入密码即可
 </code>bash
-ssh-copy-id &lsquo;-p 9999 -i /usr/home/user/.ssh/id_rsa.pub <a href="&#x6d;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#x75;&#115;&#x65;&#114;&#64;&#50;&#49;&#49;&#x2e;&#x31;&#51;&#x36;&#46;&#49;&#48;&#52;&#x2e;&#x31;&#x38;&#x39;">&#117;&#115;&#x65;&#114;&#64;&#50;&#49;&#49;&#x2e;&#49;&#51;&#x36;&#46;&#49;&#x30;&#x34;&#46;&#x31;&#56;&#x39;</a>&rsquo;
+ssh-copy-id &lsquo;-p 9999 -i /usr/home/user/.ssh/id_rsa.pub <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#117;&#115;&#x65;&#x72;&#64;&#x32;&#x31;&#x31;&#46;&#x31;&#51;&#54;&#46;&#x31;&#x30;&#52;&#x2e;&#x31;&#56;&#x39;">&#x75;&#x73;&#101;&#114;&#x40;&#x32;&#x31;&#49;&#46;&#49;&#51;&#54;&#x2e;&#x31;&#48;&#52;&#46;&#x31;&#56;&#x39;</a>&rsquo;
 <code>
 更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥
 </code>bash
-ssh-copy-id <a href="&#109;&#x61;&#x69;&#108;&#116;&#111;&#58;&#117;&#115;&#101;&#114;&#64;&#x32;&#49;&#49;&#x2e;&#x31;&#x33;&#54;&#46;&#x31;&#x30;&#x34;&#x2e;&#49;&#56;&#57;">&#117;&#115;&#x65;&#114;&#x40;&#50;&#x31;&#x31;&#x2e;&#49;&#x33;&#54;&#x2e;&#x31;&#48;&#52;&#46;&#49;&#x38;&#57;</a>
+ssh-copy-id <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#x3a;&#x75;&#x73;&#101;&#114;&#x40;&#x32;&#x31;&#49;&#46;&#x31;&#51;&#54;&#46;&#49;&#x30;&#52;&#46;&#49;&#x38;&#57;">&#x75;&#x73;&#x65;&#114;&#x40;&#50;&#49;&#x31;&#46;&#49;&#x33;&#54;&#46;&#49;&#x30;&#52;&#46;&#x31;&#x38;&#57;</a>
 ```
 这样子就可以了。</p>
 
@@ -172,57 +223,6 @@ yum install -y enca
 <code>sh
 $ enca test.txt
 Universal transformation format 8 bits; UTF-8
-</code></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[用telnet透过smtp协议发送邮件]]></title>
-    <link href="http://evoupsight.com/blog/2012/12/19/use-telnet-run-smtp/"/>
-    <updated>2012-12-19T15:40:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2012/12/19/use-telnet-run-smtp</id>
-    <content type="html"><![CDATA[<p>调试程序的时候需要了解SMTP的工作原理，由于这是应用层文本的TCP协议，所以直接通过telnet调试即可。</p>
-
-<!-- more -->
-
-
-<p><code>sh
-$ telnet mail.madhouse-inc.com 25
-Trying 172.16.27.3...
-Connected to mail.madhouse-inc.com.
-Escape character is '^]'.
-220 mail2.madhouse-inc.com ESMTP Mail System
-EHLO mail.madhouse-inc.com
-250-mail.madhouse-inc.com
-250-PIPELINING
-250-SIZE 512000000
-250-VRFY
-250-ETRN
-250-STARTTLS
-250-AUTH LOGIN PLAIN
-250-AUTH=LOGIN PLAIN
-250-ENHANCEDSTATUSCODES
-250-8BITMIME
-250 DSN
-250
-502 5.5.2 Error: command not recognized
-AUTH LOGIN
-334 VXNlcm5hbWU6
-用户名的base64字符串
-334 UGFzc3dvcmQ6
-密码的base64字符串
-235 2.0.0 Authentication successful
-MAIL FROM:&lt;test@163.com&gt;
-250 2.1.0 Ok
-RCPT TO:&lt;evoup@gmail.com&gt;
-250 2.1.5 Ok
-DATA
-354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;
-test now!
-.
-250 2.0.0 Ok: queued as 09AE022931
-NOOP
-250 2.0.0 Ok
 </code></p>
 ]]></content>
   </entry>

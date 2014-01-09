@@ -105,6 +105,69 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-16T13:43:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2011</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2011/01/16/c-common-define/">C语言宏定义技巧(常用宏定义)(转)</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>写好C语言，漂亮的宏定义很重要，使用宏定义可以防止出错，提高可移植性，可读性，方便性 等等。下面列举一些成熟软件中常用得宏定义。。。。。。</p>
+
+<p>1，防止一个头文件被重复包含</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#ifndef COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#define COMDEF_H </span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//头文件内容 </span>
+</span><span class='line'>
+</span><span class='line'><span class="cp">#endif </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2011/01/16/c-common-define/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
         
       </p>
@@ -775,71 +838,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-06-21T07:38:00+08:00" pubdate data-updated="true">Jun 21<span>st</span>, 2010</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2010/06/21/singleton-c-language/">单例模式C语言版</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>Tokyo Cabinet的源码看到的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Get the global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="nf">tcmpoolglobal</span><span class="p">(</span><span class="kt">void</span><span class="p">){</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tcglobalmemorypool</span><span class="p">)</span> <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span><span class="c1">//如果有全局内存池对象就返回对象</span>
-</span><span class='line'>    <span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="n">tcmpoolnew</span><span class="p">();</span><span class="c1">//如果没有就创建啊^_^</span>
-</span><span class='line'>    <span class="n">atexit</span><span class="p">(</span><span class="n">tcmpooldelglobal</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">tcglobalmemorypool</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而这个tcglobalmemorypool，其实是写在全局的，有</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/* Global memory pool object. */</span>
-</span><span class='line'><span class="n">TCMPOOL</span> <span class="o">*</span><span class="n">tcglobalmemorypool</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>后记：其实只要把tcglobalmemorypool定义为全局变量，是个人都会创建这种模式的吧&hellip;</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -863,6 +861,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/">使用expect脚本检测telnet瞬断</a>
+    
     <a class="list-group-item " href="/blog/2014/01/08/win7-install-vc6/">WIN7下安装VC++6.0的方法</a>
     
     <a class="list-group-item " href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Hbase连zookeeper瞬断</a>
@@ -871,15 +871,13 @@
     
     <a class="list-group-item " href="/blog/2013/12/10/php-use-snmp-module-to-monitor/">使用php的snmp模块进行监控数据的获取</a>
     
-    <a class="list-group-item " href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/">centos6.4 Install cacti0.8</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 118.75%'>Cplusplus(5)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 126.25%'>Monitor(7)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 126.25%'>Shell(7)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cplusplus' style='font-size: 118.75%'>Cplusplus(5)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>
