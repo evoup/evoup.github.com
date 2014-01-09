@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cplusplus | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cplusplus/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-09T13:02:36+08:00</updated>
+  <updated>2014-01-09T15:42:47+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,85 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd上手动编译boost的boost-regex库]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/09/freebsd-install-boost-for-regex/"/>
+    <updated>2014-01-09T14:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/09/freebsd-install-boost-for-regex</id>
+    <content type="html"><![CDATA[<p>Boost这玩意用起来容易，安装起来却很麻烦，如果按照默认安装很庞大臃肿，原因是bjam搞得太复杂了。对于只使用其中某几个模块而采用整体安装的方式时间和空间上都是划不来的。如果只需要连接其中的正则表达式模块regex的话，可以采取单独安装的方法。</p>
+
+<!-- more -->
+
+
+<h3>1.生成bjam编译器</h3>
+
+<p>boost不同的版本可能会有bjam包的路径不同的情况，这里采用boost_1_38_0为例。
+<code>sh
+$ pwd
+/home/software
+$ fetch http://sourceforge.net/projects/boost/files/boost/1.38.0/boost_1_38_0.tar.bz2
+$ tar xjf boost_1_38_0.tar.bz2
+$ cd tools/jam/src
+$ ./build.sh
+</code></p>
+
+<p>编译后bjam程序存放于tools/jam/src/bin.freebsdx86_64/
+<code>sh
+vi ./tools/build/v2/user-config.jam
+</code>
+修改“#using gcc;”为"using gcc;"</p>
+
+<h3>2.用bjam编译boost</h3>
+
+<p><code>sh
+$ ./bjam clean #清理之前的安装
+$ ./bjam --build-type=complete --with-regex workdir #只编译regex库，生成include和lib
+</code>
+注意bjam编译时，需要注意bjam只是把boost的include和lib的路径放在本地，一个是当前目录的子目录boost中，一个是在刚在指定workdir的lib中。
+然后复制到freebsd的include目录(/usr/local/include)和lib目录(/usr/local/lib)。
+<code>sh
+cd /home/software/boost_1_38_0
+sudo cp -r boost /usr/local/include/
+sudo cp -r workdir/lib /usr/local/
+</code></p>
+
+<h3>3.编译使用boost-regex的程序</h3>
+
+<p>简单的程序regex.cpp试一把
+```cpp</p>
+
+<h1>include &lt;boost/regex.hpp></h1>
+
+<h1>include <iostream></h1>
+
+<p>int main() {</p>
+
+<pre><code>std::string s = "&lt;html&gt;我是boost正则表达式匹配到的内容&lt;/html&gt;";
+boost::regex reg( "&lt;html&gt;(.+?)&lt;/html&gt;" );
+boost::sregex_token_iterator p( s.begin(), s.end(), reg, 01 );
+boost::sregex_token_iterator end;
+while ( p != end ) {
+    std::cout &lt;&lt; *p++ &lt;&lt; std::endl;
+}
+return 1;
+</code></pre>
+
+<p>}
+```
+&mdash;&mdash;&mdash;&mdash;&mdash;-付测试方法&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</p>
+
+<h3>编译方法</h3>
+
+<p><code>sh
+$ g++ -Wall regex.cpp -lboost_regex-gcc42-d-1_38 -I/usr/local/include -L/usr/local/lib -o regex
+$ ./regex
+我是boost正则表达式匹配到的内容
+</code></p>
+
+<p>这样就妥妥的了，祝各位看官好运，收工:)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[WIN7下安装VC++6.0的方法]]></title>
@@ -213,50 +292,6 @@ for (i=0;i&lt;7;i++) {</p>
 ```</p>
 
 <p>需要注意vector是模板类型，可以放任何类型，但是基于效率的考虑，最好放对象指针。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[STL中string到int的类型转换]]></title>
-    <link href="http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int/"/>
-    <updated>2009-06-02T14:04:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/06/02/cplusplus-string-to-int</id>
-    <content type="html"><![CDATA[<p>STL的string转int的正确方法不是.data()
-应该是
-<code>cpp
-aoti(obj.c_str());
-</code></p>
-
-<p>或者用个别人的string2int函数
-<code>cpp
-int string2int(const string &amp;s)
-{
-   int a;
-   sscanf(s.c_str(), "%d", &amp;a);
-   return a;
-}
-</code></p>
-
-<p>然后int XX[];
-完全可以用vector来实现</p>
-
-<p><code>cpp
-vector&lt;int &gt; v;
-</code>
-v[]一样可以的用的。</p>
-
-<p>下面有个类似的
-```cpp
-int integer(string &amp;s)
-{</p>
-
-<pre><code>int a;
-sscanf(s.c_str(), "%d", &amp;a);
-return a;
-</code></pre>
-
-<p>}
-```</p>
 ]]></content>
   </entry>
   

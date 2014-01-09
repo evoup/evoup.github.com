@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C语言变参宏 - Evoup`s Blog</title>
+  <title>freebsd上手动编译boost的boost-regex库 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/09/freebsd-install-boost-for-regex">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,41 +101,120 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-09T14:45:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        C语言变参宏
+        Freebsd上手动编译boost的boost-regex库
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+<div class="entry-content clearfix"><p>Boost这玩意用起来容易，安装起来却很麻烦，如果按照默认安装很庞大臃肿，原因是bjam搞得太复杂了。对于只使用其中某几个模块而采用整体安装的方式时间和空间上都是划不来的。如果只需要连接其中的正则表达式模块regex的话，可以采取单独安装的方法。</p>
+
+<!-- more -->
+
+
+<h3>1.生成bjam编译器</h3>
+
+<p>boost不同的版本可能会有bjam包的路径不同的情况，这里采用boost_1_38_0为例。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">pwd</span>
+</span><span class='line'>/home/software
+</span><span class='line'><span class="nv">$ </span>fetch http://sourceforge.net/projects/boost/files/boost/1.38.0/boost_1_38_0.tar.bz2
+</span><span class='line'><span class="nv">$ </span>tar xjf boost_1_38_0.tar.bz2
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>tools/jam/src
+</span><span class='line'><span class="nv">$ </span>./build.sh
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>而此参数声明的时候是这样的</p>
+<p>编译后bjam程序存放于tools/jam/src/bin.freebsdx86_64/</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vi ./tools/build/v2/user-config.jam
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+<p>修改“#using gcc;”为&#8221;using gcc;&#8221;</p>
+
+<h3>2.用bjam编译boost</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>./bjam clean <span class="c">#清理之前的安装</span>
+</span><span class='line'><span class="nv">$ </span>./bjam --build-type<span class="o">=</span><span class="nb">complete</span> --with-regex workdir <span class="c">#只编译regex库，生成include和lib</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这不就成了三个参了？记一笔&hellip;</p>
+<p>注意bjam编译时，需要注意bjam只是把boost的include和lib的路径放在本地，一个是当前目录的子目录boost中，一个是在刚在指定workdir的lib中。
+然后复制到freebsd的include目录(/usr/local/include)和lib目录(/usr/local/lib)。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /home/software/boost_1_38_0
+</span><span class='line'>sudo cp -r boost /usr/local/include/
+</span><span class='line'>sudo cp -r workdir/lib /usr/local/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>3.编译使用boost-regex的程序</h3>
+
+<p>简单的程序regex.cpp试一把</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include &lt;boost/regex.hpp&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;iostream&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&quot;&lt;html&gt;我是boost正则表达式匹配到的内容&lt;/html&gt;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">boost</span><span class="o">::</span><span class="n">regex</span> <span class="n">reg</span><span class="p">(</span> <span class="s">&quot;&lt;html&gt;(.+?)&lt;/html&gt;&quot;</span> <span class="p">);</span>
+</span><span class='line'>  <span class="n">boost</span><span class="o">::</span><span class="n">sregex_token_iterator</span> <span class="n">p</span><span class="p">(</span> <span class="n">s</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">s</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">reg</span><span class="p">,</span> <span class="mo">01</span> <span class="p">);</span>
+</span><span class='line'>  <span class="n">boost</span><span class="o">::</span><span class="n">sregex_token_iterator</span> <span class="n">end</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">end</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">p</span><span class="o">++</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&mdash;&mdash;&mdash;&mdash;&mdash;-付测试方法&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</p>
+
+<h3>编译方法</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>g++ -Wall regex.cpp -lboost_regex-gcc42-d-1_38 -I/usr/local/include -L/usr/local/lib -o regex
+</span><span class='line'><span class="nv">$ </span>./regex
+</span><span class='line'>我是boost正则表达式匹配到的内容
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就妥妥的了，祝各位看官好运，收工:)</p>
 </div>
 
 
@@ -159,13 +238,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-09T14:45:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
   
 </span>
 
@@ -177,10 +256,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2011/01/18/nginx-php4/" title="Previous Post: freebsd下安装nginx+php4.4.9的方法">&laquo; freebsd下安装nginx+php4.4.9的方法</a></li>
+            <li class="previous"><a href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/" title="Previous Post: 使用expect脚本检测telnet瞬断">&laquo; 使用expect脚本检测telnet瞬断</a></li>
             
-            
-            <li class="next"><a href="/blog/2011/07/30/freebsd-install-hbase/" title="Next Post: freebsd下hbase安装">freebsd下hbase安装 &raquo;</a></li>
             
           </ul>
         
@@ -217,7 +294,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/01/09/freebsd-install-boost-for-regex/">Freebsd上手动编译boost的boost-regex库</a>
+    <a class="list-group-item active" href="/blog/2014/01/09/freebsd-install-boost-for-regex/">Freebsd上手动编译boost的boost-regex库</a>
     
     <a class="list-group-item " href="/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/">使用expect脚本检测telnet瞬断</a>
     
