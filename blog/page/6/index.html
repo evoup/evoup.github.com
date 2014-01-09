@@ -105,6 +105,150 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-11-26T09:56:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/26/mysql-import-output-csv/">浅谈mysql导入导出csv的几种方法</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>有几种方法，这里一一列举：</p>
+
+<h3>第一种：使用phpmyadmin选择文件上传</h3>
+
+<p>此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">test_info</span>
+</span><span class='line'><span class="k">into</span> <span class="n">outfile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'><span class="n">fields</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span> <span class="n">optionally</span> <span class="n">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="n">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'><span class="n">lines</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>则需要上传test_info.csv，点击CSV using LOAD DATA，然后按照如下设置进行导入
+（其中fields terminated为分隔字段，optionally enclosed为可选包裹字段，escaped为转移字段，line terminated为行终止字段）
+<img src="/images/evoup/phpmyadmin.png" alt="Alt text" /></p>
+
+<h3>第二种：mysql shell</h3>
+
+<p>其实就是刚刚导出的逆操作。在mysql的shell中操作：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='mysql'><span class='line'><span class="k">load</span> <span class="n">data</span> <span class="k">infile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'>  <span class="k">into</span> <span class="k">table</span> <span class="n">test_info</span>
+</span><span class='line'>  <span class="n">fields</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span>  <span class="k">optionally</span> <span class="k">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="k">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'>  <span class="k">lines</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三种：php程序解析后插入</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;开始导入csv数据到工作表</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;导入test_info...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_host</span><span class="o">=</span><span class="s2">&quot;172.16.27.55&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_pass</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$db</span><span class="o">=</span><span class="s2">&quot;test_info&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$handle</span> <span class="o">=</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;/tmp/test_info.csv&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">=</span> <span class="nx">mysqli_init</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(</span><span class="nx">MYSQLI_OPT_CONNECT_TIMEOUT</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">real_connect</span><span class="p">(</span><span class="nv">$mysql_host</span><span class="p">,</span> <span class="nv">$mysql_user</span><span class="p">,</span> <span class="nv">$mysql_pass</span><span class="p">,</span> <span class="nv">$db</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SET NAMES utf8&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="nb">fgetcsv</span> <span class="p">(</span><span class="nv">$handle</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$num</span> <span class="o">=</span> <span class="nb">count</span> <span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nv">$i</span> <span class="o">==</span> <span class="nv">$num</span><span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'>            <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">,&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$result</span><span class="o">=</span><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$query</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="nv">$query</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="p">(</span><span class="s2">&quot;[导入失败]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">exit</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意如果fgetcsv出错和到了行尾都是会返回false的。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-11-22T15:01:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2012</time>
         
       </p>
@@ -535,49 +679,6 @@
 <p>这不就成了三个参了？记一笔&hellip;</p>
 </div>
   
-  
-
-
-        </article>
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-18T15:10:00+08:00" pubdate data-updated="true">Jan 18<span>th</span>, 2011</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2011/01/18/nginx-php4/">freebsd下安装nginx+php4.4.9的方法</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>首先是php4.4
-<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
-
-</div>
-  
-  
-    <footer>
-      <a class="btn btn-default" rel="full-article" href="/blog/2011/01/18/nginx-php4/">Read on &rarr;</a>
-    </footer>
   
 
 
