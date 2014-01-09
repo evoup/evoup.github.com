@@ -16,7 +16,7 @@ categories: cplusplus
 
 2）在安装Visual C++6.0过程中，选择“custom（自定义安装）”：其中visual source safe是不需安装的，这是微软的版本控制系统，咱就不装了。
 
-3）最后最重要的一点，把windows7的UAC降到最低。然后打开vc6的时候需要以用管理方式运行，这样就可以了。
+3）最后最重要的一点，把windows7的UAC降到最低。然后打开vc6的时候需要以用管理员身份运行，这样就可以了。
 
 ###补充
 
