@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-09T16:49:15+08:00</updated>
+  <updated>2014-01-13T01:30:21+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,55 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[win7上搭建cocos2d-x2.2.2开发环境]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/"/>
+    <updated>2014-01-13T00:25:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2</id>
+    <content type="html"><![CDATA[<p>在win7上搭建cocos2d-x的开发环境，主要用到的开发IDE为visual C++2010，为什么不再使用vc6？第一，cocos2d-x本身不支持。第二，支持C++0x的特性。对于现代游戏游戏引擎来说，这是必要的。安装vc
+2010这里就不再讨论。</p>
+
+<!-- more -->
+
+
+<p>直接讲如何进行cocos2d-x的编译了。</p>
+
+<h3>1）下载</h3>
+
+<p>首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
+
+<h3>2）解压和编译cocos2d-x</h3>
+
+<p>接下来是解压,注意不要解压到中文目录，否则接下来生成项目会报错。我解压到了D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2。随后进入cocos2d-x2.2.2文件夹下的cocos2d-x2.2.2文件夹。因为我们是使用vc2010，所以就双击cocos2d-win32.vc2010.sln。
+进到IDE之后，选择解决方案资源管理器下的cocos2d-win32.vc2010,右击选择配置属性-配置，确保每个项目都为debug，可以看到共有17个项目。然后按下F7开始生成解决方案。
+慢慢等，我是等来10来分钟。可以看到17个项目都生成成功了。</p>
+
+<h3>3）创建工程</h3>
+
+<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\t</span>ools<span class="se">\p</span>roject-creator<span class="se">\</span>
+</span><span class='line'>create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
+
+<h3>4）编译工程</h3>
+
+<p>最后进入刚刚取名为HelloWorld的项目中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\p</span>rojects/HelloWorld
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始就可以开始进行项目的调试了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[freebsd上手动编译boost的boost-regex库]]></title>
@@ -2543,124 +2592,6 @@ vi  hadoop
 <p>最后发一个jps的进程图</p>
 
 <p><img src="http://evoupsight.com/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[erlang open_port 错误之error enoent]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent/"/>
-    <updated>2013-11-04T11:04:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/04/erlang-open-port-error-enoent</id>
-    <content type="html"><![CDATA[<p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
-
-<h3>问题重现：</h3>
-
-<!-- more -->
-
-
-<p>在open_port处，查看日志报错如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">rrddir</span> <span class="n">ok</span><span class="p">]</span><span class="err">^</span>
-</span><span class='line'><span class="p">[</span><span class="nv">ResRrd</span><span class="p">:{</span><span class="n">error</span><span class="p">,{</span><span class="n">enoent</span><span class="p">,[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">open_port</span><span class="p">,</span>
-</span><span class='line'>                                <span class="p">[{</span><span class="n">spawn_executable</span><span class="p">,</span><span class="s">&quot;/usr/local/bin/rrdtool&quot;</span><span class="p">},</span><span class="err">^</span>
-</span><span class='line'>                                 <span class="p">[{</span><span class="n">line</span><span class="p">,</span><span class="mi">1024</span><span class="p">},{</span><span class="n">args</span><span class="p">,[</span><span class="s">&quot;-&quot;</span><span class="p">]}]],</span><span class="err">^</span>
-</span><span class='line'>                                <span class="p">[]},</span><span class="err">^</span><span class="nv">M</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">rrdtool</span><span class="p">,</span><span class="n">init</span><span class="p">,</span><span class="mi">1</span><span class="p">,[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;src/rrdtool.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">83</span><span class="p">}]},</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">gen_server</span><span class="p">,</span><span class="n">init_it</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="err">^</span><span class="nv">M</span>
-</span><span class='line'>                                    <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;gen_server.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">304</span><span class="p">}]},</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">proc_lib</span><span class="p">,</span><span class="n">init_p_do_apply</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span>
-</span><span class='line'>                                  <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;proc_lib.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">227</span><span class="p">}]}]}}]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题</p>
-
-<figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% @hidden</span>
-</span><span class='line'><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]}]),</span>
-</span><span class='line'>    <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再定位到上层看gen_server的start函数</p>
-
-<figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="s">&quot;rrdtool&quot;</span><span class="p">)],</span> <span class="p">[]).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker &lt;tobi@oetiker.ch&gt;
-</span><span class='line'>               Compiled Oct 22 2012 11:33:26
-</span><span class='line'>
-</span><span class='line'>Usage: rrdtool <span class="o">[</span>options<span class="o">]</span> <span class="nb">command </span>command_options
-</span><span class='line'>Valid commands: create, update, updatev, graph, graphv,  dump, restore,
-</span><span class='line'>                last, lastupdate, first, info, fetch, tune,
-</span><span class='line'>                resize, xport, flushcached
-</span><span class='line'>
-</span><span class='line'>RRDtool is distributed under the Terms of the GNU General
-</span><span class='line'>Public License Version 2. <span class="o">(</span>www.gnu.org/copyleft/gpl.html<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>For more information <span class="nb">read </span>the RRD manpages
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>已经装好了啊？那为什么还要报错，难道是做了alias</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yin@yin-arch monitorserver2<span class="o">]</span>&gt;alias rrdtool
-</span><span class='line'>/usr/lib64/rrdtool/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>果不其然</p>
-
-<h3>解决方法</h3>
-
-<p>在/usr/local/bin/目录下做一个软连接</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再次运行，enoent问题解决。</p>
-
-<h3>继续深入</h3>
-
-<p>gen_server:start如何捕捉错误？下回专门讨论。</p>
 ]]></content>
   </entry>
   

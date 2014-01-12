@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>java关于ConcurrentModificationException异常 - Evoup`s Blog</title>
+  <title>win7上搭建cocos2d-x2.2.2开发环境 - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,22 +101,60 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-12-23T15:46:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-13T00:25:00+08:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        java关于ConcurrentModificationException异常
+        win7上搭建cocos2d-x2.2.2开发环境
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>如果出现java.util.ConcurrentModificationException</p>
+<div class="entry-content clearfix"><p>在win7上搭建cocos2d-x的开发环境，主要用到的开发IDE为visual C++2010，为什么不再使用vc6？第一，cocos2d-x本身不支持。第二，支持C++0x的特性。对于现代游戏游戏引擎来说，这是必要的。安装vc
+2010这里就不再讨论。</p>
 
-<p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
+<!-- more -->
+
+
+<p>直接讲如何进行cocos2d-x的编译了。</p>
+
+<h3>1）下载</h3>
+
+<p>首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
+
+<h3>2）解压和编译cocos2d-x</h3>
+
+<p>接下来是解压,注意不要解压到中文目录，否则接下来生成项目会报错。我解压到了D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2。随后进入cocos2d-x2.2.2文件夹下的cocos2d-x2.2.2文件夹。因为我们是使用vc2010，所以就双击cocos2d-win32.vc2010.sln。
+进到IDE之后，选择解决方案资源管理器下的cocos2d-win32.vc2010,右击选择配置属性-配置，确保每个项目都为debug，可以看到共有17个项目。然后按下F7开始生成解决方案。
+慢慢等，我是等来10来分钟。可以看到17个项目都生成成功了。</p>
+
+<h3>3）创建工程</h3>
+
+<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\t</span>ools<span class="se">\p</span>roject-creator<span class="se">\</span>
+</span><span class='line'>create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
+
+<h3>4）编译工程</h3>
+
+<p>最后进入刚刚取名为HelloWorld的项目中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\p</span>rojects/HelloWorld
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始就可以开始进行项目的调试了。</p>
 </div>
 
 
@@ -140,13 +178,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-12-23T15:46:00+08:00" pubdate data-updated="true">Dec 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-13T00:25:00+08:00" pubdate data-updated="true">Jan 13<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/java/'>java</a>
+    <a class='category' href='/blog/categories/cocos2d-x/'>cocos2d-x</a>
   
 </span>
 
@@ -158,10 +196,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2009/10/06/win32-c-call-python/" title="Previous Post: 关于win32程序调用python脚本的发布问题">&laquo; 关于win32程序调用python脚本的发布问题</a></li>
+            <li class="previous"><a href="/blog/2014/01/09/freebsd-install-boost-for-regex/" title="Previous Post: freebsd上手动编译boost的boost-regex库">&laquo; freebsd上手动编译boost的boost-regex库</a></li>
             
-            
-            <li class="next"><a href="/blog/2010/06/21/singleton-c-language/" title="Next Post: 单例模式C语言版">单例模式C语言版 &raquo;</a></li>
             
           </ul>
         
@@ -198,7 +234,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/">win7上搭建cocos2d-x2.2.2开发环境</a>
+    <a class="list-group-item active" href="/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/">win7上搭建cocos2d-x2.2.2开发环境</a>
     
     <a class="list-group-item " href="/blog/2014/01/09/freebsd-install-boost-for-regex/">Freebsd上手动编译boost的boost-regex库</a>
     
