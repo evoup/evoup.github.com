@@ -105,6 +105,53 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/21/ssh-authorized-keys/">创建ssh信任失败的原因分析和改进</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-13T14:55:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2013</time>
         
       </p>
@@ -713,48 +760,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-12-19T15:42:00+08:00" pubdate data-updated="true">Dec 19<span>th</span>, 2012</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2012/12/19/use-enca-check-file-encoding/">Shell下使用enca指令查看文件编码</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>enca是shell下直接查看文件编码的工具,而转换编码的工具有iconv，这里仅仅介绍enca的安装和使用。</p>
-
-</div>
-  
-  
-    <footer>
-      <a class="btn btn-default" rel="full-article" href="/blog/2012/12/19/use-enca-check-file-encoding/">Read on &rarr;</a>
-    </footer>
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -778,6 +783,8 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/">Cocos2d-x初心者阶段学习之一</a>
+    
     <a class="list-group-item " href="/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/">win7上搭建cocos2d-x2.2.2开发环境</a>
     
     <a class="list-group-item " href="/blog/2014/01/09/freebsd-install-boost-for-regex/">Freebsd上手动编译boost的boost-regex库</a>
@@ -786,15 +793,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     
     <a class="list-group-item " href="/blog/2014/01/08/win7-install-vc6/">WIN7下安装VC++6.0的方法</a>
     
-    <a class="list-group-item " href="/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/">Hbase连zookeeper瞬断</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 103.75%'>Cocos2d-x(1)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 103.75%'>Version_control(1)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>

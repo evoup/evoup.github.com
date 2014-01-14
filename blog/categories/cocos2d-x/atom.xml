@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-x | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-x/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-14T13:36:04+08:00</updated>
+  <updated>2014-01-14T16:21:33+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-x初心者阶段学习之一]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/"/>
+    <updated>2014-01-14T14:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1</id>
+    <content type="html"><![CDATA[<h3>序言</h3>
+
+<p>通过一个阶段的cocos2d-iphone的学习，对objective-c（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocos2d builder这一套的东西，应该是时候投入该框架的学习。</p>
+
+<!-- more -->
+
+
+<h5>本文参考</h5>
+
+<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
+
+<p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发。</p>
+
+<h3>加载精灵</h3>
+
+<h4>准备工作</h4>
+
+<p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
+然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
+可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
+然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
+（但是在项目管理器里无法看到，如何添加？TODO）</p>
+
+<h4>添加代码</h4>
+
+<p>在头文件中添加
+{% codeblock lang:cpp HelloWorldScene.h %}
+private:</p>
+
+<pre><code>cocos2d::CCSpriteBatchNode * _batchNode;
+cocos2d::CCSprite * _ship;
+</code></pre>
+
+<p>{% endcodeblock %}
+为什么需要2行代码？因为一个是批节点，用来涵盖全部用到的资源，已经对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
+
+<p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：
+{% codeblock lang:cpp HelloWorldScene.cpp %}
+<em>batchNode = CCSpriteBatchNode::create(&ldquo;Sprites.pvr.ccz&rdquo;);
+this->addChild(</em>batchNode);
+CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;Sprites.plist&rdquo;);</p>
+
+<p><em>ship = CCSprite::createWithSpriteFrameName(&ldquo;SpaceFlier_sm_1.png&rdquo;);
+CCSize winSize = CCDirector::sharedDirector()&ndash;>getWinSize();
+</em>ship->setPosition(ccp(winSize.width * 0.1, winSize.height * 0.5));  <br/>
+<em>batchNode->addChild(</em>ship, 1);
+return true;
+{% endcodeblock %}</p>
+
+<h4>简单的分析</h4>
+
+<p>按流程分析下吧，内存稍微提一下。
+首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
+addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
+接着，确定帧和帧缓冲的关系，通过用addSpriteFramesWithFile函数读取plist文件来实现。
+然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
+只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
+
+<h4>编译看结果</h4>
+
+<p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一搜宇宙飞船，目的达成。下篇学习如何移动和发射子弹。</p>
+
+<p><img src="/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
+
+<h4>参考阅读</h4>
+
+<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[win7上搭建cocos2d-x2.2.2开发环境]]></title>

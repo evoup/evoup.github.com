@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-14T13:35:00+08:00</updated>
+  <updated>2014-01-14T16:20:52+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,95 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-x初心者阶段学习之一]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/"/>
+    <updated>2014-01-14T14:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1</id>
+    <content type="html"><![CDATA[<h3>序言</h3>
+
+<p>通过一个阶段的cocos2d-iphone的学习，对objective-c（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocos2d builder这一套的东西，应该是时候投入该框架的学习。</p>
+
+<!-- more -->
+
+
+<h5>本文参考</h5>
+
+<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
+
+<p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发。</p>
+
+<h3>加载精灵</h3>
+
+<h4>准备工作</h4>
+
+<p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
+然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
+可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
+然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
+（但是在项目管理器里无法看到，如何添加？TODO）</p>
+
+<h4>添加代码</h4>
+
+<p>在头文件中添加</p>
+
+<figure class='code'><figcaption><span>HelloWorldScene.h </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">private</span><span class="o">:</span>
+</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为什么需要2行代码？因为一个是批节点，用来涵盖全部用到的资源，已经对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
+
+<p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：</p>
+
+<figure class='code'><figcaption><span>HelloWorldScene.cpp </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">_batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Sprites.pvr.ccz&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_batchNode</span><span class="p">);</span>
+</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;Sprites.plist&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">_ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;SpaceFlier_sm_1.png&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
+</span><span class='line'><span class="n">_ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
+</span><span class='line'><span class="n">_batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>简单的分析</h4>
+
+<p>按流程分析下吧，内存稍微提一下。
+首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
+addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
+接着，确定帧和帧缓冲的关系，通过用addSpriteFramesWithFile函数读取plist文件来实现。
+然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
+只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
+
+<h4>编译看结果</h4>
+
+<p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一搜宇宙飞船，目的达成。下篇学习如何移动和发射子弹。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
+
+<h4>参考阅读</h4>
+
+<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[win7上搭建cocos2d-x2.2.2开发环境]]></title>
@@ -2283,315 +2372,6 @@ ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to co
 <p>最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。</p>
 
 <p><img src="http://evoupsight.com/images/evoup/hbase_vmware.png" alt="Alt text" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[HADOOP完全分布式搭建(VMware版)]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/"/>
-    <updated>2013-11-04T15:28:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case</id>
-    <content type="html"><![CDATA[<p>vmware版本8.0.4 build-744019
-首先准备3台虚拟机</p>
-
-<p><img src="http://evoupsight.com/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> |    usage    |        IP        |             Hostname              |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | namenode    | 192.168.174.132  |           mdn2.net                |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
-
-
-<p> <!-- more --></p>
-
-<p>Ps:
-为节省资源关闭点不必要的服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="k">for </span>SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
-</span><span class='line'><span class="k">do</span> /sbin/chkconfig <span class="k">${</span><span class="nv">SERVICES</span><span class="k">}</span> off;
-</span><span class='line'><span class="k">done</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>准备工作</h3>
-
-<p>先安装JDK1.6
-linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#rpm -qa | grep jdk</span>
-</span><span class='line'>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
-</span><span class='line'><span class="c">#rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</span>
-</span><span class='line'><span class="c">#sudo chmod +x jdk-6u35-linux-x64-rpm.bin</span>
-</span><span class='line'><span class="c">#./jdk-6u35-linux-x64-rpm.bin</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
-
-<p>hadoop所有操作都是用hadoop帐号，下面添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>linux:# groupadd hadoop
-</span><span class='line'>freebsd:# pw groupadd hadoop
-</span><span class='line'>linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
-</span><span class='line'>freebsd:# pw adduser hadoop -g hadoop -d /home/hadoop -m -s /bin/bash
-</span><span class='line'>
-</span><span class='line'>all:# mkdir -p /u01/app
-</span><span class='line'>all:# chgrp -R hadoop /u01/app
-</span><span class='line'>all:# chown -R hadoop /u01/app
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>环境变量</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span>vi ~/.profile
-</span><span class='line'>all:export <span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
-</span><span class='line'>all:export <span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>进行免密码的ssh登录设置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
-</span><span class='line'>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
-</span><span class='line'>chmod 600 ~/.ssh/authorized_keys
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>到此准备工作完成</p>
-
-<p>安装Hadoop</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span><span class="nb">cd</span> /u01/app
-</span><span class='line'>all:<span class="nv">$ </span>tar zxf hadoop-0.20.203.0rc1.tar.gz
-</span><span class='line'>all:<span class="nv">$ </span>ln -s hadoop-0.20.203.0 hadoop
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>正式开始</h3>
-
-<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
-(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Do not remove the following line, or various programs</span>
-</span><span class='line'><span class="c"># that require network functionality will fail.</span>
-</span><span class='line'>
-</span><span class='line'>127.0.0.1       localhost.localdomain localhost
-</span><span class='line'>::1             localhost6.localdomain6 localhost6
-</span><span class='line'>192.168.174.132 mdn2.net
-</span><span class='line'>192.168.174.135 mdn2_datanode1.net
-</span><span class='line'>192.168.174.136 mdn2_datanode2.net
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
-</span><span class='line'><span class="nb">export </span><span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
-</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/:$PATH&quot;</span>
-</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_37/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再编辑core-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>fs.default.name<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>hdfs://mdn2.net:9024<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hadoopTmp<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
-
-<p>再编辑hdfs-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>1<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.data.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hdfsdata<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录</p>
-
-<p>master里</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2.net
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>slaves里</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
-</span><span class='line'>mdn2_datanode2.net
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意点：
-修改hadoop-0.20.203.0/bin下的hadoop.
-vi  hadoop
-查找 –jvm . vi 下的命令模式： :/-jvm
-将-jvm server改成 –server .
-因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
-
-<p>到namenode上格式化hdfs</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>/bin/hadoop namenode -format
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/init.d/iptables stop
-</span><span class='line'>sudo /sbin/chkconfig iptables off
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-all.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者只启动dfs和mapreduce</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-dfs.sh
-</span><span class='line'>bin/start-mapred.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后发一个jps的进程图</p>
-
-<p><img src="http://evoupsight.com/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
 ]]></content>
   </entry>
   
