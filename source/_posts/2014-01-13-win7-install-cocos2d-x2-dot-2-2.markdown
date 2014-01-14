@@ -33,7 +33,7 @@ create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
 ```sh
 cd D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\projects/HelloWorld
 ```
-双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始就可以开始进行项目的调试了。
+双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。
 
 
 
