@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd下hbase安装 - Evoup`s Blog</title>
+  <title>git clone失败警告unprotected private key file - Evoup`s Blog</title>
   <meta name="author" content="Your Name">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,65 +101,94 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-16T23:41:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Freebsd下hbase安装
+        Git Clone失败警告unprotected Private Key File
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+<div class="entry-content clearfix"><h3>起因</h3>
 
-<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+<p>今天在clone项目的时候发生了很奇怪的错误，而且居然是有的项目可以clone，有的不行，都是git协议。错误如下：</p>
 
 <!-- more -->
 
 
-<p>下完就放到/usr/port/distfile</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git clone git@github.com:someone/case.git
+</span><span class='line'>Cloning into <span class="s1">&#39;case&#39;</span>...
+</span><span class='line'>Warning: Permanently added the RSA host key <span class="k">for </span>IP address <span class="s1">&#39;192.30.252.129&#39;</span> to t
+</span><span class='line'>he list of known hosts.
+</span><span class='line'>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+</span><span class='line'>@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+</span><span class='line'>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+</span><span class='line'>Permissions 0644 <span class="k">for</span> <span class="s1">&#39;/c/Users/Administrator/.ssh/id_rsa&#39;</span> are too open.
+</span><span class='line'>It is recommended that your private key files are NOT accessible by others.
+</span><span class='line'>This private key will be ignored.
+</span><span class='line'>bad permissions: ignore key: /c/Users/Administrator/.ssh/id_rsa
+</span><span class='line'>Permission denied <span class="o">(</span>publickey<span class="o">)</span>.
+</span><span class='line'>fatal: Could not <span class="nb">read </span>from remote repository.
+</span><span class='line'>
+</span><span class='line'>Please make sure you have the correct access rights
+</span><span class='line'>and the repository exists.
+</span></code></pre></td></tr></table></div></figure>
 
-<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
 
-<p>再装jdk16/usr/port/java/jdk16</p>
+<h3>排查</h3>
+
+<p>显示是私钥权限不正确导致的，然后定位到git-bash所使用的sh.exe程序，用管理员模式运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>chmod 0600 /c/Users/Administrator/.ssh/id_rsa
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>尝试几次都没法收回group和other的r权限（r+w+rw=2<sup>2</sup>+2<sup>1</sup>+2<sup>0</sup>，我这里是4，2<sup>2</sup>所以是r）
+最后发现是因为装git windows的时候选择了第一种方式和cygwin正好冲突了，如果装了cygwin的基础上再安装git windows要在git windows的安装选项里选第二种方式；还有一种可能是和tortoise git冲突了，尚未确认。
+最后删除cygwin重装git-bash可以正常clone了。</p>
+
+<h3>延伸</h3>
+
+<p>git windows还有第三种安装方式，第三种比较危险，会覆盖windows指令，一般不采取，如果以后不打算用cygwin的话，直接第一种方式安装就可以了。</p>
+
+<p>附：正常的权限掩码，来自一台freebsd</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
-</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
-
-<p>而且要有足够的SWAP空间！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>PATH我没有设置</p>
-
-<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
-
-<p>单个节点的启动方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
-</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>hshell的进入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>-rw-r--r--   authorized_keys
+</span><span class='line'>-rw-------   config
+</span><span class='line'>-rw-------   id_dsa
+</span><span class='line'>-rw-------   id_dsa.pub
+</span><span class='line'>-rw-------   id_rsa
+</span><span class='line'>-rw-r--r--   id_rsa.pub
+</span><span class='line'>-rw-------   known_hosts
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -187,13 +216,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-16T23:41:00+08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/hbase/'>hbase</a>
+    <a class='category' href='/blog/categories/version-control/'>version_control</a>
   
 </span>
 
@@ -205,10 +234,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/" title="Previous Post: C语言变参宏">&laquo; C语言变参宏</a></li>
+            <li class="previous"><a href="/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/" title="Previous Post: cocos2d-x初心者阶段学习之一">&laquo; cocos2d-x初心者阶段学习之一</a></li>
             
-            
-            <li class="next"><a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/" title="Next Post: 遭遇nginx upstream sent too big header">遭遇nginx upstream sent too big header &raquo;</a></li>
             
           </ul>
         
@@ -245,7 +272,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file/">Git Clone失败警告unprotected Private Key File</a>
+    <a class="list-group-item active" href="/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file/">Git Clone失败警告unprotected Private Key File</a>
     
     <a class="list-group-item " href="/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/">Cocos2d-x初心者阶段学习之一</a>
     
