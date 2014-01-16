@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: socket server | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/socket-server/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-01-14T16:24:33+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Your Name]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[关于socket阻塞与非阻塞情况下的recv、send、read、write返回值]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/"/>
+    <updated>2013-01-09T11:42:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock</id>
+    <content type="html"><![CDATA[<h4>recv：</h4>
+
+<p>阻塞与非阻塞recv返回值没有区分，都是 &lt;0：出错，=0：连接关闭，>0接收到数据大小，</p>
+
+<p>特别：非阻塞模式下返回 值 &lt;0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况 下认为连接是正常的，继续接收。</p>
+
+<!--more -->
+
+
+<p>只是阻塞模式下recv会阻塞着接收数据，非阻塞模式下如果没有数据会返回，不会阻塞着读，因此需要 循环读取。</p>
+
+<h4>write：</h4>
+
+<p>阻塞与非阻塞write返回值没有区分，都是 &lt;0：出错，=0：连接关闭，>0发送数据大小，</p>
+
+<p>特别：非阻塞模式下返回值 &lt;0时并且 (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况下认为连接是正常的， 继续发送。</p>
+
+<p>只是阻塞模式下write会阻塞着发送数据，非阻塞模式下如果暂时无法发送数据会返回，不会阻塞着 write，因此需要循环发送。</p>
+
+<h4>read：</h4>
+
+<p>阻塞与非阻塞read返回值没有区分，都是 &lt;0：出错，=0：连接关闭，>0接收到数据大小，</p>
+
+<p>特别：非阻塞模式下返回 值 &lt;0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况 下认为连接是正常的，继续接收。</p>
+
+<p>只是阻塞模式下read会阻塞着接收数据，非阻塞模式下如果没有数据会返回，不会阻塞着读，因此需要 循环读取。</p>
+
+<h4>send：</h4>
+
+<p>阻塞与非阻塞send返回值没有区分，都是 &lt;0：出错，=0：连接关闭，>0发送数据大小，</p>
+
+<p>特别：非阻塞模式下返回值 &lt;0时并且 (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况下认为连接是正常的， 继续发送。</p>
+
+<p>只是阻塞模式下send会阻塞着发送数据，非阻塞模式下如果暂时无法发送数据会返回，不会阻塞着 send，因此需要循环发送。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[服务器开发知识汇总2010年整理的]]></title>
+    <link href="http://evoupsight.com/blog/2012/01/09/server-develop-knowledge/"/>
+    <updated>2012-01-09T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/01/09/server-develop-knowledge</id>
+    <content type="html"><![CDATA[<p>整理了一些服务开发的文章，以备不时之需</p>
+
+<p>一个开源CGI程序
+<a href="http://www.raosoft.com/help/cgi/ezs/index.html">http://www.raosoft.com/help/cgi/ezs/index.html</a></p>
+
+<p>nginx内存池用法(分析得不透，没有说出父子内存池，也搞错了子内存池其实是放一个指针到父内存池)
+<a href="http://www.cnblogs.com/sld666666/archive/2010/06/27/1766255.html">http://www.cnblogs.com/sld666666/archive/2010/06/27/1766255.html</a></p>
+
+<!-- more -->
+
+
+<p>nginx中的output
+<a href="http://simohayha.javaeye.com/blog/651779">http://simohayha.javaeye.com/blog/651779</a></p>
+
+<p>nginx的内存管理
+<a href="http://simohayha.javaeye.com/blog/545192">http://simohayha.javaeye.com/blog/545192</a></p>
+
+<p>typedef和函数指针（nginx实现，自己实现过一个）
+<a href="http://www.cnblogs.com/sld666666/archive/2010/06/20/1761457.html">http://www.cnblogs.com/sld666666/archive/2010/06/20/1761457.html</a></p>
+
+<p>syslog用法，只要看/var/log/debug的信息就可以了。《Linux下syslog日志函数使用》
+<a href="http://blog.csdn.net/telehiker/archive/2007/10/18/1830575.aspx">http://blog.csdn.net/telehiker/archive/2007/10/18/1830575.aspx</a></p>
+
+<p>如何改进winsocks版的police server,(参考一goto)
+<a href="http://www.boluor.com/linux-cs-ipc-using-named-pipe.html">http://www.boluor.com/linux-cs-ipc-using-named-pipe.html</a></p>
+
+<p>autoconf和automake来生成Makefile
+<a href="http://www.ibm.com/developerworks/cn/linux/l-makefile/">http://www.ibm.com/developerworks/cn/linux/l-makefile/</a></p>
+
+<p>通用链表（封装得很烂，试过一把）
+<a href="http://blog.csdn.net/eroswang/archive/2007/07/27/1711369.aspx">http://blog.csdn.net/eroswang/archive/2007/07/27/1711369.aspx</a></p>
+
+<p>线程里处理信号
+<a href="http://blog.csdn.net/eroswang/archive/2007/07/02/1675740.aspx">http://blog.csdn.net/eroswang/archive/2007/07/02/1675740.aspx</a></p>
+
+<p>HTTP协议中的Tranfer-Encoding：chunked编码解析
+<a href="http://blog.csdn.net/eroswang/archive/2008/01/16/2047701.aspx">http://blog.csdn.net/eroswang/archive/2008/01/16/2047701.aspx</a></p>
+
+<p>php正则表达参考(转的时候要知道)
+<a href="http://blog.csdn.net/eroswang/archive/2007/10/05/1812419.aspx">http://blog.csdn.net/eroswang/archive/2007/10/05/1812419.aspx</a></p>
+
+<p>结合这篇一起看
+<a href="http://deerchao.net/tutorials/regex/regex.htm">http://deerchao.net/tutorials/regex/regex.htm</a></p>
+
+<p>线程里sleep的正确的方法（用在定时做服务器广播的那个线程）
+<a href="http://blog.csdn.net/eroswang/archive/2008/09/15/2932630.aspx">http://blog.csdn.net/eroswang/archive/2008/09/15/2932630.aspx</a></p>
+
+<p>socket封包和拆包
+<a href="http://blog.csdn.net/eroswang/archive/2008/09/02/2869097.aspx">http://blog.csdn.net/eroswang/archive/2008/09/02/2869097.aspx</a></p>
+
+<p>offsetof和POD
+<a href="http://hi.baidu.com/infant/blog/item/4439b2fb5ef67e284e4aeac8.html">http://hi.baidu.com/infant/blog/item/4439b2fb5ef67e284e4aeac8.html</a></p>
+
+<p>memcache测试
+<a href="http://blog.csdn.net/eroswang/archive/2010/07/09/5722669.aspx">http://blog.csdn.net/eroswang/archive/2010/07/09/5722669.aspx</a></p>
+
+<p>fork两次如何避免僵尸进程
+<a href="http://blog.csdn.net/eroswang/archive/2008/11/19/3333617.aspx">http://blog.csdn.net/eroswang/archive/2008/11/19/3333617.aspx</a></p>
+
+<p>glib库hash表GHashTable介绍(也抄了一个snort的实现，这个是内置的选择)
+<a href="http://blog.csdn.net/eroswang/archive/2008/12/11/3497556.aspx">http://blog.csdn.net/eroswang/archive/2008/12/11/3497556.aspx</a></p>
+
+<p>Linux动态库(.so)搜索路径(编译时候确认)
+<a href="http://blog.csdn.net/eroswang/archive/2008/12/30/3645552.aspx">http://blog.csdn.net/eroswang/archive/2008/12/30/3645552.aspx</a></p>
+
+<p>惊群（不要试图把accept加锁,最好连锁都不用）
+<a href="http://blog.csdn.net/eroswang/archive/2008/12/19/3560366.aspx">http://blog.csdn.net/eroswang/archive/2008/12/19/3560366.aspx</a></p>
+
+<p>攻击工具(h00lyshit.c)
+<a href="http://www.xfocus.net/tools/12.html">http://www.xfocus.net/tools/12.html</a></p>
+
+<p>netstat全部参数
+<a href="http://blog.csdn.net/eroswang/archive/2008/11/17/3322023.aspx">http://blog.csdn.net/eroswang/archive/2008/11/17/3322023.aspx</a></p>
+
+<p>GDB调试在看一次
+<a href="http://blog.csdn.net/eroswang/archive/2009/03/29/4033722.aspx">http://blog.csdn.net/eroswang/archive/2009/03/29/4033722.aspx</a></p>
+
+<p>使用setsockopt来控制connect超时
+<a href="http://blog.csdn.net/eroswang/archive/2009/11/17/4819444.aspx">http://blog.csdn.net/eroswang/archive/2009/11/17/4819444.aspx</a></p>
+
+<p>八大排序算法总结
+<a href="http://blog.csdn.net/eroswang/archive/2009/10/26/4727644.aspx">http://blog.csdn.net/eroswang/archive/2009/10/26/4727644.aspx</a></p>
+
+<p>atoi源码(做地图的时候用的到)
+<a href="http://blog.csdn.net/eroswang/archive/2010/08/11/5804244.aspx">http://blog.csdn.net/eroswang/archive/2010/08/11/5804244.aspx</a></p>
+
+<p>异步下socket的返回值
+<a href="http://blog.csdn.net/eroswang/archive/2010/06/02/5642550.aspx">http://blog.csdn.net/eroswang/archive/2010/06/02/5642550.aspx</a></p>
+
+<p>C++的curl库调用手册
+<a href="http://blog.csdn.net/eroswang/archive/2010/08/23/5832481.aspx">http://blog.csdn.net/eroswang/archive/2010/08/23/5832481.aspx</a></p>
+
+<p>qsort和bsearch（qsort已经用过，bsearch是二分查找）
+<a href="http://blog.csdn.net/eroswang/archive/2009/04/15/4075611.aspx">http://blog.csdn.net/eroswang/archive/2009/04/15/4075611.aspx</a></p>
+
+<hr />
+
+<p>协议
+protobuffer(号称比json好)
+<a href="http://blog.csdn.net/eroswang/archive/2010/11/16/6011566.aspx">http://blog.csdn.net/eroswang/archive/2010/11/16/6011566.aspx</a></p>
+
+<hr />
+
+<p>调试
+显示16进制数据(vim和hexdump)
+<a href="http://blog.csdn.net/eroswang/archive/2009/11/09/4791875.aspx">http://blog.csdn.net/eroswang/archive/2009/11/09/4791875.aspx</a></p>
+
+<p>GCC内部都做些什么
+<a href="http://blog.csdn.net/eroswang/archive/2010/11/03/5983791.aspx">http://blog.csdn.net/eroswang/archive/2010/11/03/5983791.aspx</a></p>
+
+<p>杀掉僵尸进程
+<a href="http://blog.csdn.net/eroswang/archive/2009/07/28/4388837.aspx">http://blog.csdn.net/eroswang/archive/2009/07/28/4388837.aspx</a></p>
+
+<hr />
+
+<p>内核等级
+IOSTAT
+<a href="http://blog.csdn.net/eroswang/archive/2009/04/24/4107322.aspx">http://blog.csdn.net/eroswang/archive/2009/04/24/4107322.aspx</a></p>
+
+<p>malloc OS等级分析
+<a href="http://blog.csdn.net/eroswang/archive/2009/04/27/4130972.aspx">http://blog.csdn.net/eroswang/archive/2009/04/27/4130972.aspx</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[socket服务器开发心得[长连接线程版]]]></title>
+    <link href="http://evoupsight.com/blog/2010/11/05/socket-server-experience/"/>
+    <updated>2010-11-05T11:23:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2010/11/05/socket-server-experience</id>
+    <content type="html"><![CDATA[<p>其实也算不上是什么心得，就是一些积累。cs结构的网游和聊天室基本上是在用长连接。</p>
+
+<p>长连接一般会有个心跳包，具体就是确认客户端状态是存活的，这个还没有设计。</p>
+
+<p>QQ其实也用TCP，也有心跳包，也涉及长连接。</p>
+
+<p>P2P一般都是长连接，但是网游一般不设计成UDP数据包，一般都是长连接。</p>
+
+<p>对于多线程阻塞服务器，recv就可以了，然后开个for(;;)或者while(1)死循环，长连接式的recv和send，这样交互，中间使用\n或者其他什么判断接受的一条协议命令；对于http这样的服务器，直接fopen套接字，fstat判断可写状态，则写入后fflush。这个flash也用了个flush函数，具体怎么回事，没做深入研究。</p>
+]]></content>
+  </entry>
+  
+</feed>
