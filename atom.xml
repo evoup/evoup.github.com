@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-17T01:22:35+08:00</updated>
+  <updated>2014-01-17T17:55:03+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Win7 Android开发环境搭建]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/17/android-adt-development-deloy/"/>
+    <updated>2014-01-17T17:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/17/android-adt-development-deloy</id>
+    <content type="html"><![CDATA[<p>最近有个HTML5的项目需要部署在android里，先研究下基本功，安装时还是遇到一些问题，如有的文章过时了，自己连搜索测试带整理写了一片文章备查。</p>
+
+<!-- more -->
+
+
+<h3>一、安装JDK</h3>
+
+<p>安装JDK，我这里的windows7平台，先下载jdk7，然后安装，我的安装路径为C:\Program Files\Java\jdk1.7.0_25\。
+安装完成后设置环境变量
+开始->搜索程序和文件输入环境变量->编辑系统环境变量->添加以下环境变量：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>JAVA_HOME值为：C:<span class="se">\P</span>rogram Files<span class="se">\J</span>ava<span class="se">\j</span>dk1.7.0_25<span class="se">\</span>
+</span><span class='line'>CLASSPATH值为：.;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\t</span>ools.jar;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\d</span>t.jar;%JAVA_HOME%<span class="se">\b</span>in;
+</span><span class='line'>PATH值为：追加%JAVA_HOME<span class="se">\b</span>in;或者直接追加C:<span class="se">\P</span>rogram Files<span class="se">\J</span>ava<span class="se">\j</span>dk1.7.0_25<span class="se">\b</span>in;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>二、安装Eclipse</h3>
+
+<p>可以直接去www.eclipse.org下载，64位Windows平台下的下载地址：</p>
+
+<p><a href="http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/eclipse-cpp-kepler-SR1-win32-x86_64.zip">http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/eclipse-cpp-kepler-SR1-win32-x86_64.zip</a></p>
+
+<p>下载完成解压即可使用。见下图：
+<img src="http://evoupsight.com/images/evoup/eclipse_dir.png" alt="Alt text" /></p>
+
+<h3>三、安装SDK</h3>
+
+<p>首先去下载SDK,这个是等等用来和eclipse的adt插件关联的。</p>
+
+<p>  下载地址如下：
+  <a href="http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20131030.zip">http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20131030.zip</a></p>
+
+<p>下载完成后我把它解压到C:\android\adt-bundle-windows-x86_64-20131030,运行adt-bundle-windows-x86_64-20131030下的SDK Manager.exe，勾选几个必要的API版本，Android4.2.2(API17)还有Android2.2(API8)，然后点击Install 11 package开始安装</p>
+
+<p><img src="http://evoupsight.com/images/evoup/adt_wait.png" alt="Alt text" /></p>
+
+<p>如果速度慢，可以尝试用goagent代理进行加速,这里就提一下而以。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/adt_use_proxy.png" alt="Alt text" /></p>
+
+<p>等待下载完成</p>
+
+<p><img src="http://evoupsight.com/images/evoup/adt_done.png" alt="Alt text" /></p>
+
+<h3>SDK配置</h3>
+
+<p>接着把tools的路径C:\android\adt-bundle-windows-x86_64-20131030\sdk\tools追加到环境变量PATH中去。
+要测试安装sdk是否成功，只需要运行cmd，然后输入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>android -h
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>观察是否有输出正常信息，见下图：
+<img src="http://evoupsight.com/images/evoup/adt_installed.png" alt="Alt text" /></p>
+
+<p>有其他教程说要设置SDK Location变量，我配置时发现其实不需要，估计是老版本了。</p>
+
+<h3>Eclipse的ADT Package安装</h3>
+
+<p>打开Eclipse，指定好工程的位置</p>
+
+<p><img src="http://evoupsight.com/images/evoup/adt_project_dir.png" alt="Alt text" /></p>
+
+<p>选择 Help &lt; Install New Software 菜单。点击右上角的 Add 按钮，弹出 Add Repository 对话框，在 Name 一栏填写：“ADT Plugin”，在 Location 一栏填写：<a href="https://dl-ssl.google.com/android/eclipse/">https://dl-ssl.google.com/android/eclipse/</a></p>
+
+<p>点击 OK。如果不能获取插件信息，就把 https 换成 http 试试。</p>
+
+<p>然后整个勾选Developer Tools（最小安装的话至少要选择其下Android DDMS和Android Development Tools），点击Next，一路接受条款，等待安装插件完毕,中途可能出现安装警告，确认即可。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/eclipse_adt_warning.png" alt="Alt text" /></p>
+
+<p>之后重启Eclipse。</p>
+
+<h3>Eclipse的ADT插件的配置</h3>
+
+<p>安装完ADT插件并重启好Eclipse后，点击 Window &lt; Preferences 菜单，点击左侧菜单中的 Android，再点击右侧 Browse&hellip;，选择第3步中Android SDK的安装目录，设置完成后，点击 OK。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/eclipse_adt_config.png" alt="Alt text" /></p>
+
+<p>这样 Android 开发环境就搭建好了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[git clone失败警告unprotected private key file]]></title>
@@ -2172,112 +2266,6 @@ webtool:start(standard_path,[{port,8888},{bind_address,{192,168,216,145}},{serve
 
 <p><a href="http://www.erlang.org/doc/man/webtool.html#start-2">http://www.erlang.org/doc/man/webtool.html#start-2</a>
 <a href="http://hi.baidu.com/ah__fu/item/86c65e8b88ecf453e73d1962">http://hi.baidu.com/ah__fu/item/86c65e8b88ecf453e73d1962</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd下安装vmware-tool]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/"/>
-    <updated>2013-11-05T13:22:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool</id>
-    <content type="html"><![CDATA[<p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
-
-<!-- more -->
-
-
-<h3>消极的方法</h3>
-
-<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
-
-<p>在crontab内加入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以及在/etc/rc.conf中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ntpdate_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>积极的方法</h3>
-
-<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
-首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
-vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/port/dist
-</span><span class='line'>sudo fetch ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz
-</span><span class='line'>sudo pkg_add compat6x-amd64.tbz
-</span><span class='line'>*******************************************************************************
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* Do not forget to add COMPAT_FREEBSD6 into                                   *
-</span><span class='line'>* your kernel configuration <span class="o">(</span>enabled by default<span class="o">)</span>.                             *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* To configure and recompile your kernel see:                                 *
-</span><span class='line'>* http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>*******************************************************************************
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装依赖库后，切换到root后，执行如下指令：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mount /cdrom
-</span><span class='line'><span class="nb">cd</span> /tmp
-</span><span class='line'>tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
-</span><span class='line'><span class="nb">cd </span>vmware-tools-distrib
-</span><span class='line'>./vmware-install.pl
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样vmware-tool就搞定了。
-最后为了保险起先，关闭系统后，编辑.vmx文件
-加上下面的时间同步的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tools.syncTime <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.continue <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.restore <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.disk <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.shrink <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.startup <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.enable <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.host <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>参考链接</p>
-
-<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
-<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
 ]]></content>
   </entry>
   
