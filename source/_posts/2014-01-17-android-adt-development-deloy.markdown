@@ -16,7 +16,7 @@ categories: [android]
 ```sh
 JAVA_HOME值为：C:\Program Files\Java\jdk1.7.0_25\
 CLASSPATH值为：.;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\bin;
-PATH值为：追加%JAVA_HOME\bin;或者直接追加C:\Program Files\Java\jdk1.7.0_25\bin;
+PATH值为：追加%JAVA_HOME%\bin;
 ```
 ###二、安装Eclipse
 可以直接去www.eclipse.org下载，64位Windows平台下的下载地址：
