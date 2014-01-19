@@ -123,7 +123,7 @@ public class Activity extends ApplicationContext {
        protected void onDestroy();  
    }  
 ```
-也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写，不难看出这是方法和生命周期是息息相关的。
+也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写，不难看出这些方法和Activity生命周期是息息相关的。
 本例子就只要重写onCreate即可，看代码：
 ```java
     @Override
