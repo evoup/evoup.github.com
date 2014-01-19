@@ -4,7 +4,7 @@
   <title><![CDATA[Category: android | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-19T21:52:17+08:00</updated>
+  <updated>2014-01-19T22:04:58+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -23,14 +23,14 @@
 <p>官方示例代码
 <a href="https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo">https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo</a></p>
 
-<p>运行Eclipse，选择File->Import&hellip;&ndash;>Android->Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。</p>
+<p>运行Eclipse(本文提到的eclipse版本是Eclipse ide for java developer KEPLER)，选择File->Import&hellip;&ndash;>Android->Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。</p>
 
 <p>如果直接run，会出现错误<code>Project has no project.properties file! Edit the project properties to set one.</code>。
 这时只要右键项目属性properties &ndash;> android &ndash;> Project Build Target 把里面的Androidx.x改为对应的google APIs版本。google APIs是android apis的超集，Android只是其中一个用于移动设备的OS，可以有限的调用一些google api。</p>
 
 <h3>分析app部分代码</h3>
 
-<p>看示例java代码</p>
+<p>请看示例java代码</p>
 
 <!-- more -->
 
@@ -216,7 +216,7 @@
 
 <p><img src="/images/evoup/activity_lifecycle.png" alt="Alt text" /></p>
 
-<p>它有以下方法可以被重写：
+<p>它有以下7个方法可以被重写：
 ```java
 public class Activity extends ApplicationContext {</p>
 
@@ -231,7 +231,7 @@ public class Activity extends ApplicationContext {</p>
 
 <p>   }<br/>
 <code>
-也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写。
+也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写，不难看出这是方法和生命周期是息息相关的。
 本例子就只要重写onCreate即可，看代码：
 </code>java</p>
 
@@ -257,7 +257,7 @@ public void onCreate(Bundle icicle) {
 </code></pre>
 
 <p>```
-其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考量。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。</p>
+其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考虑。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。</p>
 
 <p>我们需要仔细看下addJavascriptInterface这个函数的说明</p>
 
