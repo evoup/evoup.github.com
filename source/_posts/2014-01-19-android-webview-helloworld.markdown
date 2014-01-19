@@ -10,13 +10,13 @@ categories: [android]
 官方示例代码
 https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo
 
-运行Eclipse，选择File->Import...->Android->Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。
+运行Eclipse(本文提到的eclipse版本是Eclipse ide for java developer KEPLER)，选择File->Import...->Android->Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。
 
 如果直接run，会出现错误` Project has no project.properties file! Edit the project properties to set one.`。
 这时只要右键项目属性properties -> android -> Project Build Target 把里面的Androidx.x改为对应的google APIs版本。google APIs是android apis的超集，Android只是其中一个用于移动设备的OS，可以有限的调用一些google api。
 
 ###分析app部分代码
-看示例java代码
+请看示例java代码
 <!-- more -->
 
 {% codeblock lang:java WebViewDemo.java %}
@@ -111,7 +111,7 @@ public class WebViewDemo extends Activity {
 
 ![Alt text](/images/evoup/activity_lifecycle.png)
 
-它有以下方法可以被重写：
+它有以下7个方法可以被重写：
 ```java
 public class Activity extends ApplicationContext {  
        protected void onCreate(Bundle savedInstanceState);  
@@ -123,7 +123,7 @@ public class Activity extends ApplicationContext {
        protected void onDestroy();  
    }  
 ```
-也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写。
+也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写，不难看出这是方法和生命周期是息息相关的。
 本例子就只要重写onCreate即可，看代码：
 ```java
     @Override
@@ -146,7 +146,7 @@ public class Activity extends ApplicationContext {
         mWebView.loadUrl("file:///android_asset/demo.html");
     }
 ```
-其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考量。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。
+其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考虑。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。
 
 我们需要仔细看下addJavascriptInterface这个函数的说明
 
