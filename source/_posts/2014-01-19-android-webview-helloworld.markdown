@@ -123,7 +123,7 @@ public class Activity extends ApplicationContext {
        protected void onDestroy();  
    }  
 ```
-也就是onCreate创建时，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写。
+也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写。
 本例子就只要重写onCreate即可，看代码：
 ```java
     @Override
@@ -179,7 +179,8 @@ public class Activity extends ApplicationContext {
 ```
 直接一个构造函数什么都不做，然后直接用句柄提交实现了Runnable类的引用，再深入Runnable探究下
 
-**The Runnable interface should be implemented by any class whose instances are intended to be executed by a thread. The class must define a method of no arguments called run. **
+> The Runnable interface should be implemented by any class whose instances are intended to be executed by a thread. The class must define a method of no arguments called run. 
+
 Runnable就一个方法，run给实现了就行，这里是直接调用demo.html页面里的JavaScript的wave方法。
 
 看下一段代码
