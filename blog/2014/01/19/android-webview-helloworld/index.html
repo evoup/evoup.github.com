@@ -126,6 +126,8 @@
 
 <h3>分析app部分代码</h3>
 
+<p>看示例java代码</p>
+
 <!-- more -->
 
 
@@ -305,7 +307,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>首先需要搞懂Activity这个核心概念，我们看一下android api中的activity的生命周期：</p>
+<p>首先需要搞懂Activity这个核心概念，基本上是进行android的活动对象事件调度的类，我们看一下android api中的activity的生命周期：</p>
 
 <p><img src="/images/evoup/activity_lifecycle.png" alt="Alt text" /></p>
 
@@ -378,9 +380,11 @@
 
 <p>其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考量。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。</p>
 
-<p>我们需要仔细看下addJavascriptInterface这个函数的说明，我给翻译了下：</p>
+<p>我们需要仔细看下addJavascriptInterface这个函数的说明</p>
 
-<p><strong>Injects the supplied Java object into this WebView. The object is injected into the JavaScript context of the main frame, using the supplied name. This allows the Java object&rsquo;s methods to be accessed from JavaScript. For applications targeted to API level JELLY_BEAN_MR1 and above, only public methods that are annotated with JavascriptInterface can be accessed from JavaScript. For applications targeted to API level JELLY_BEAN or below, all public methods (including the inherited ones) can be accessed, see the important security note below for implications.它注入提供的Java对象到这个WebView。对象使用提供的名字注入JavaScript上下文的主要框架。这允许从JavaScript访问Java对象的方法。针对应用程序API级别在JELLY_BEAN_MR1以上的,只有JavascriptInterface的公共方法与注释可以从JavaScript访问。针对应用程序API级别或低于JELLY_BEAN的,所有公共方法(包括继承的)可以访问,参见下面重要的安全注意影响。 </strong></p>
+<blockquote><p>Injects the supplied Java object into this WebView. The object is injected into the JavaScript context of the main frame, using the supplied name. This allows the Java object&rsquo;s methods to be accessed from JavaScript. For applications targeted to API level JELLY_BEAN_MR1 and above, only public methods that are annotated with JavascriptInterface can be accessed from JavaScript. For applications targeted to API level JELLY_BEAN or below, all public methods (including the inherited ones) can be accessed, see the important security note below for implications.</p></blockquote>
+
+<p>我给翻译了下：它注入提供的Java对象到这个WebView。对象使用提供的名字注入JavaScript上下文的主要框架。这允许从JavaScript访问Java对象的方法。针对应用程序API级别在JELLY_BEAN_MR1以上的,只有JavascriptInterface的公共方法与注释可以从JavaScript访问。针对应用程序API级别或低于JELLY_BEAN的,所有公共方法(包括继承的)可以访问,参见下面重要的安全注意影响。</p>
 
 <p>再看下2个参数，前一个为注入webview的Java对象（DemoJavaScriptInterface），后一个为暴露给JavaScript的对象名字（demo），本例中除了webview把点击消息传递给html，html中的JavaScript也要和webview交互，在哪里交互？伟大的google为我们想到JavaScript的顶层window对象，在下面动态创建了一个子对象，这里就是第二个参数demo，这个等等到了html再讲。</p>
 
