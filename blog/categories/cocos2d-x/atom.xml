@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-x | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-x/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-20T13:43:58+08:00</updated>
+  <updated>2014-01-20T14:02:19+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -44,28 +44,45 @@
 <h4>添加代码</h4>
 
 <p>在头文件中添加
-{% codeblock lang:cpp HelloWorldScene.h %}
-private:</p>
-
-<pre><code>cocos2d::CCSpriteBatchNode * _batchNode;
-cocos2d::CCSprite * _ship;
-</code></pre>
-
-<p>{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>HelloWorldScene.h </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">private</span><span class="o">:&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
+</span><span class='line'><span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 为什么需要2行代码？因为一个是批节点，用来涵盖全部用到的资源，已经对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
 
 <p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：
-{% codeblock lang:cpp HelloWorldScene.cpp %}
-<em>batchNode = CCSpriteBatchNode::create(&ldquo;Sprites.pvr.ccz&rdquo;);
-this->addChild(</em>batchNode);
-CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;Sprites.plist&rdquo;);</p>
-
-<p><em>ship = CCSprite::createWithSpriteFrameName(&ldquo;SpaceFlier_sm_1.png&rdquo;);
-CCSize winSize = CCDirector::sharedDirector()&ndash;>getWinSize();
-</em>ship->setPosition(ccp(winSize.width * 0.1, winSize.height * 0.5));  <br/>
-<em>batchNode->addChild(</em>ship, 1);
-return true;
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>HelloWorldScene.cpp </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Sprites</span><span class="p">.</span><span class="n">pvr</span><span class="p">.</span><span class="n">ccz</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">batchNode</span><span class="p">);</span>
+</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">Sprites</span><span class="p">.</span><span class="n">plist</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">SpaceFlier_sm_1</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span>
+</span><span class='line'><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>  <span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h4>简单的分析</h4>
 
