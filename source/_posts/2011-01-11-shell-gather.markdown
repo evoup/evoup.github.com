@@ -40,9 +40,14 @@ echo "abcd" | cut -b 1-3
 printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
 ```
 
-调用vim来把文件转换为utf-8格式,不加载vimrc
+vim不加载vimrc
 ```sh
-vim -u NONE -c "set fileencoding=utf-8 | wq!" main.cpp
+vim -u NONE
+```
+
+调用vim来把文件转换为utf-8格式，注意要和find连用，需加载vimrc不然乱码
+```sh
+vim -c "set fileencoding=utf-8 | wq!" main.cpp
 ```
 find查找c/c++的源文件和头文件
 ```sh
