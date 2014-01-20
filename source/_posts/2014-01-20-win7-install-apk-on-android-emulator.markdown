@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "win7上android模拟器上安装apk软件"
+title: "Win7上Android模拟器上安装apk软件"
 date: 2014-01-20 14:56
 comments: true
 categories: [android]
