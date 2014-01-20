@@ -44,6 +44,10 @@ printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
 ```sh
 vim -u NONE -c "set fileencoding=utf-8 | wq!" main.cpp
 ```
+find查找c/c++的源文件和头文件
+```sh
+find . -type f \( -name "*.cpp" -o -name "*.h" -o -name "*.c" \)
+```
 
 获取当前时间戳
 ```sh
