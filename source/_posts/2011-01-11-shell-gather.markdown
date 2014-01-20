@@ -40,6 +40,11 @@ echo "abcd" | cut -b 1-3
 printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
 ```
 
+调用vim来把文件转换为utf-8格式,不加载vimrc
+```sh
+vim -u NONE -c "set fileencoding=utf-8 | wq!" main.cpp
+```
+
 获取当前时间戳
 ```sh
 date "+%s"
