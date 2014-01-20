@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-20T15:49:48+08:00</updated>
+  <updated>2014-01-20T16:00:38+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -134,7 +134,15 @@ git pull origin master
 然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
 在source/_layouts/post.html中，将对应的disqus代码改为：
 ```js
+{% if site.duoshuo_name and page.comments == true %}
+  <section id="comment"></p>
 
+<pre><code>&lt;h1&gt;发表评论&lt;/h1&gt;
+{% include post/duoshuo.html %}
+</code></pre>
+
+<p>  </section>
+{% endif %}
 <code>
 在source/\_config/yml中，添加：
 </code>sh
