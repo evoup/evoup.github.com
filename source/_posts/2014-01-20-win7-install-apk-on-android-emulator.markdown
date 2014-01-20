@@ -1,14 +1,16 @@
 ---
 layout: post
-title: "在android模拟器上安装apk软件"
+title: "win7上android模拟器上安装apk软件"
 date: 2014-01-20 14:56
 comments: true
 categories: [android]
 ---
 ###前提
-在android模拟器上安装文件很简单,这个简单要求2个前提
-1）已经安装好了ADK（android sdk）
-2）配置好virtual device
+在android模拟器上安装apk文件（android安装包）很简单,要求2个前提：
+
+        1）已经安装好了ADK（android sdk）
+        
+        2）配置好virtual device
 
 <!-- more -->
 
