@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-20T14:24:34+08:00</updated>
+  <updated>2014-01-20T15:49:48+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,58 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[在android模拟器上安装apk软件]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/20/install-apk-on-android-emulator/"/>
+    <updated>2014-01-20T14:56:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/20/install-apk-on-android-emulator</id>
+    <content type="html"><![CDATA[<h3>前提</h3>
+
+<p>在android模拟器上安装文件很简单,这个简单要求2个前提
+1）已经安装好了ADK（android sdk）
+2）配置好virtual device</p>
+
+<!-- more -->
+
+
+<h3>准备工作</h3>
+
+<p>假设您已经安装好了ADK，运行Eclipse选择Window菜单：</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_first.png" alt="Alt text" /></p>
+
+<p>选择下方的Android Virtual Device Manager->new,我们创建一个android2.2的通用虚拟设备，屏幕选最小的我这里方便截图（一般会选择3.7WVGA,后期根据自己的需要可以做任意选择），然后取名这个模拟器为testAVD。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_create_new_one.png" alt="Alt text" /></p>
+
+<p>点击OK完成，然后选择testAVD并Start启动模拟器，然后选择launch。第一次启动很慢，至于到底需要多少时间取决于机器的性能。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_starting.png" alt="Alt text" /></p>
+
+<p>这样就算进去了</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_entered.png" alt="Alt text" /></p>
+
+<h3>安装apk</h3>
+
+<p>进入ADK的platform_tools目录下，运行<code>adb install apk文件</code>就可以完成安装。</p>
+
+<p>以安装微信安卓版本为例，假设我下载到了C:\weixin510android360.apk</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_entered.png" alt="Alt text" /></p>
+
+<p>我这里比较慢，可能是因为选择的模拟器内存参数没有调大导致的。</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk.png" alt="Alt text" /></p>
+
+<p>等待安装完成吧</p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_done.png" alt="Alt text" /></p>
+
+<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_done2.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[android webview helloworld分析]]></title>
@@ -2613,56 +2665,6 @@ netstat -l | grep csv
 <h4>参考链接：</h4>
 
 <p><a href="http://blog.csdn.net/lidongtang/article/details/8165574">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[rebar生成发布包后找不到noodtool]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/"/>
-    <updated>2013-11-07T15:08:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found</id>
-    <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">evoup</span><span class="p">@</span><span class="n">host63i386</span> <span class="n">erlang</span><span class="p">]</span><span class="o">&gt;</span><span class="n">sudo</span> <span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">madmonitor2</span> <span class="n">start</span>
-</span><span class='line'><span class="n">current</span> <span class="nb">node</span><span class="p">:</span> <span class="n">madmonitor2</span><span class="p">@</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">216</span><span class="p">.</span><span class="mi">165</span>
-</span><span class='line'><span class="n">release</span> <span class="n">vm</span><span class="p">.</span><span class="n">args</span> <span class="n">file</span> <span class="n">empty</span><span class="p">,</span><span class="n">recopy</span>
-</span><span class='line'><span class="nn">escript</span><span class="p">:</span> <span class="nv">Failed</span> <span class="n">to</span> <span class="n">open</span> <span class="nn">file</span><span class="p">:</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">evoup</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">rel</span><span class="o">/</span><span class="n">madmonitor2</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span>
-</span><span class='line'>
-</span><span class='line'><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">nodetool</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<!-- more -->
-
-
-<p>原来是少一个nodetool文件，进到目录一看发现有2个erts
-一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
-删除之前的剩余文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
-</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">9</span><span class="p">.</span><span class="mi">3</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
-都给删除了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">5</span><span class="p">.</span><span class="mi">1</span><span class="o">/</span>
-</span><span class='line'><span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">erlang</span><span class="o">/</span><span class="n">erts</span><span class="o">-</span><span class="mi">5</span><span class="p">.</span><span class="mi">6</span><span class="p">.</span><span class="mi">5</span><span class="o">/</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再次编译，问题解决,收工:)</p>
 ]]></content>
   </entry>
   

@@ -105,6 +105,82 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-05-22T16:31:00+08:00" pubdate data-updated="true">May 22<span>nd</span>, 2008</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2008/05/22/js-get-cookie/">Js获取cookie</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>直接参考网易的函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span>
+</span><span class='line'>   <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">offset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="nx">offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="nx">offset</span> <span class="o">+=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>
+</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="k">return</span> <span class="nx">unescape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">end</span><span class="p">))</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span> <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>   <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<hr>
+
+
+<p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-05-19T22:39:00+08:00" pubdate data-updated="true">May 19<span>th</span>, 2008</time>
         
       </p>
@@ -159,6 +235,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/01/20/install-apk-on-android-emulator/">在android模拟器上安装apk软件</a>
+    
     <a class="list-group-item " href="/blog/2014/01/19/android-webview-helloworld/">Android Webview Helloworld分析</a>
     
     <a class="list-group-item " href="/blog/2014/01/17/android-adt-development-deloy/">Win7 Android开发环境搭建</a>
@@ -167,15 +245,13 @@
     
     <a class="list-group-item " href="/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/">Cocos2d-x初心者阶段学习之一</a>
     
-    <a class="list-group-item " href="/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/">win7上搭建cocos2d-x2.2.2开发环境</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 107.5%'>Android(2)</a>  <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>
