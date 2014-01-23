@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-22T11:39:16+08:00</updated>
+  <updated>2014-01-23T18:25:05+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,427 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-html5-2.2.2初探]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/23/cocos2d-html52-dot-2-2-first-exploration/"/>
+    <updated>2014-01-23T13:14:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/23/cocos2d-html52-dot-2-2-first-exploration</id>
+    <content type="html"><![CDATA[<p>准备用最新的cocos2d-html5 2.2.2的框架作为游戏开发引擎，整个引擎还是逻辑相当清晰好理解。</p>
+
+<p>翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
+<a href="http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx">http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx</a></p>
+
+<p>其间有这么一段代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;platform/jsloader.js&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来改写,我们首先来讲解HelloWorld：</p>
+
+<p>首先看2.2.2的helloworld的代码分布情况：</p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-html5_2.2.2_code_layout.png" alt="Alt text" /></p>
+
+<p>其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。</p>
+
+<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。
+首先是index.html</p>
+
+<figure class='code'><figcaption><span>index.html </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;title&gt;</span>hello cocos2d-html5<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;icon&quot;</span> <span class="na">type=</span><span class="s">&quot;iamge/GIF&quot;</span> <span class="na">href=</span><span class="s">&quot;res/favicon.ico&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;user-scalable=no&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-mobile-web-app-capable&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;full-screen&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;screen-orientation&quot;</span> <span class="na">content=</span><span class="s">&quot;portrait&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;x5-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;360-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>        <span class="nt">body</span><span class="o">,</span> <span class="nt">canvas</span><span class="o">,</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">khtml</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">tap</span><span class="o">-</span><span class="n">highlight</span><span class="o">-</span><span class="k">color</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body</span> <span class="na">style=</span><span class="s">&quot;padding:0; margin: 0; background: #000;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;gameCanvas&quot;</span> <span class="na">width=</span><span class="s">&quot;800&quot;</span> <span class="na">height=</span><span class="s">&quot;450&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;cocos2d.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解释:</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;user-scalable=no&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>viewport这个是移动端的meta设置，content设置为user-scalable=no代表在移动设备上 不可缩放。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-mobile-web-app-capable&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>apple-mobile-web-app-capable这个是移动端的参数，全屏模式下content设置为yes，否则不用设置。可以通过window.navigator.standalone属性来得知是否网页是否处于全屏模式。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;full-screen&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个是给某些浏览器的全屏设置，比如说ucweb</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;screen-orientation&quot;</span> <span class="na">content=</span><span class="s">&quot;portrait&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>screen-orientation这个meta参数代表移动端的屏幕朝向，有2个portrait和landscape，分别代表竖向和横向,这portrait是竖向了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;x5-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个是腾讯qq浏览器的全屏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;360-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>360浏览器的全屏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;style&gt;</span>
+</span><span class='line'>    <span class="nt">body</span><span class="o">,</span> <span class="nt">canvas</span><span class="o">,</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">khtml</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">tap</span><span class="o">-</span><span class="n">highlight</span><span class="o">-</span><span class="k">color</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/style&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中-moz-user-select、-webkit-user-select、-ms-user-select和-khtml-user-select都取值none，代表文字都不选中。而-webkit-tap-highlight-color: rgba(0,0,0,0);其中rgba的最后一个参数0代表点击一个链接或者通过JavaScript定义可点击元素的时候禁止出现灰色背景。
+最后从同域引入cocos2d.js。</p>
+
+<hr />
+
+<p>接着创建第二个文件cocos2d.js</p>
+
+<figure class='code'><figcaption><span>cocos2d.js </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">COCOS2D_DEBUG</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="c1">//0 to turn debug off, 1 for basic debug, and 2 for full debug</span>
+</span><span class='line'>        <span class="nx">box2d</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">chipmunk</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">showFPS</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">frameRate</span><span class="o">:</span><span class="mi">60</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">loadExtension</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">renderMode</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>       <span class="c1">//Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)</span>
+</span><span class='line'>        <span class="nx">tag</span><span class="o">:</span><span class="s1">&#39;gameCanvas&#39;</span><span class="p">,</span> <span class="c1">//the dom element to run cocos2d on</span>
+</span><span class='line'>        <span class="nx">engineDir</span><span class="o">:</span><span class="s1">&#39;../cocos2d/&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">//SingleEngineFile:&#39;&#39;,</span>
+</span><span class='line'>        <span class="nx">appFiles</span><span class="o">:</span><span class="p">[</span>
+</span><span class='line'>            <span class="s1">&#39;src/resource.js&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;src/myApp.js&#39;</span><span class="c1">//add your own files in order here</span>
+</span><span class='line'>        <span class="p">]</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">){</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">s</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;h2&gt;Your browser does not support HTML5 canvas!&lt;/h2&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>            <span class="s1">&#39;&lt;p&gt;Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.Click the logo to download.&lt;/p&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>            <span class="s1">&#39;&lt;a href=&quot;http://www.google.com/chrome&quot; target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://www.google.com/intl/zh-CN/chrome/assets/common/images/chrome_logo_2x.png&quot; border=&quot;0&quot;/&gt;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">).</span><span class="nx">parentNode</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;#ffffff&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//first load engine file if specified</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;jsloader.js&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;You must specify either the single engine file OR the engine directory in &quot;cocos2d.js&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">//s.src = &#39;Packed_Release_File.js&#39;; //IMPORTANT: Un-comment this line if you have packed all files into one</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">document</span><span class="p">.</span><span class="nx">ccConfig</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">s</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;cocos2d-html5&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//else if single file specified, load singlefile</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">})();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解释:</h4>
+
+<p>这整个就是一个匿名函数,然后调用的写法。</p>
+
+<p>首先创建一个局部变量d，赋值为document</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后创建一个c对象，提供全部配置信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">COCOS2D_DEBUG</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="c1">//0 to turn debug off, 1 for basic debug, and 2 for full debug</span>
+</span><span class='line'>    <span class="nx">box2d</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">chipmunk</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">showFPS</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">frameRate</span><span class="o">:</span><span class="mi">60</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">loadExtension</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">renderMode</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>       <span class="c1">//Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)</span>
+</span><span class='line'>    <span class="nx">tag</span><span class="o">:</span><span class="s1">&#39;gameCanvas&#39;</span><span class="p">,</span> <span class="c1">//the dom element to run cocos2d on</span>
+</span><span class='line'>    <span class="nx">engineDir</span><span class="o">:</span><span class="s1">&#39;../cocos2d/&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">//SingleEngineFile:&#39;&#39;,</span>
+</span><span class='line'>    <span class="nx">appFiles</span><span class="o">:</span><span class="p">[</span>
+</span><span class='line'>        <span class="s1">&#39;src/resource.js&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;src/myApp.js&#39;</span><span class="c1">//add your own files in order here</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中:
+COCOS2D_DEBUG为调试等级（0关闭，1基本，2完全）；
+box2d为是否采用box2d物理引擎，这里不使用设置为no；
+chipmunk为一款物理引擎，同样不使用；
+showFPS是否显示FPS，是；
+loadExtension是否加载扩展，否；
+renderMode渲染，0为默认，1为仅Canvas方式，2为仅WebGL方式;
+tag为运行cocos2d的dom元素;
+engineDir为cocos2d的引擎目录;
+appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/myApp.js;</p>
+
+<p>下面这段为html5探测代码，如果探测失败，会出出现一个google的chrome浏览器的logo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">){</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;h2&gt;Your browser does not support HTML5 canvas!&lt;/h2&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s1">&#39;&lt;p&gt;Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.Click the logo to download.&lt;/p&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s1">&#39;&lt;a href=&quot;http://www.google.com/chrome&quot; target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://www.google.com/intl/zh-CN/chrome/assets/common/images/chrome_logo_2x.png&quot; border=&quot;0&quot;/&gt;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">).</span><span class="nx">parentNode</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;#ffffff&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再看下一段</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//first load engine file if specified</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;jsloader.js&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;You must specify either the single engine file OR the engine directory in &quot;cocos2d.js&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//s.src = &#39;Packed_Release_File.js&#39;; //IMPORTANT: Un-comment this line if you have packed all files into one</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">document</span><span class="p">.</span><span class="nx">ccConfig</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;cocos2d-html5&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//else if single file specified, load singlefile</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这段创建了DOMContentLoaded事件侦听器(未完待续)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Win7上Android模拟器上安装apk软件]]></title>
@@ -2532,142 +2953,6 @@ getenforce返回Disabled说明已经关闭</p>
 
 
 <p>或者指定一个实际存在路径。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos下CVS服务器的配置]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/08/centos-install-cvs/"/>
-    <updated>2013-11-08T13:20:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/08/centos-install-cvs</id>
-    <content type="html"><![CDATA[<p>由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
-
-<!-- more -->
-
-
-<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端</p>
-
-<h4>1.安装xinetd</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>rpm -q xinetd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>没有安装的话</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>yum install xinetd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>2.安装cvs</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>rpm -q cvs
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>我的系统显示
-cvs-1.11.23-15.el6.x86_64
-如果没有安装的话可以</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>yum install cvs
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>3.配置帐号</h4>
-
-<p>切换到root，执行：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd cvs
-</span><span class='line'>useradd -g cvs cvsroot
-</span><span class='line'>passwd cvsroot
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样帐号就配置好了。</p>
-
-<h4>4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># default: off</span>
-</span><span class='line'><span class="c"># description: The CVS service can record the history of your source \</span>
-</span><span class='line'><span class="c">#              files. CVS stores all the versions of a file in a single \</span>
-</span><span class='line'><span class="c">#              file in a clever way that only stores the differences \</span>
-</span><span class='line'><span class="c">#              between versions.</span>
-</span><span class='line'>service cvspserver
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>        <span class="nv">disable</span>                 <span class="o">=</span> no
-</span><span class='line'>        <span class="nv">port</span>                    <span class="o">=</span> 2401
-</span><span class='line'>        <span class="nv">socket_type</span>             <span class="o">=</span> stream
-</span><span class='line'>        <span class="nv">protocol</span>                <span class="o">=</span> tcp
-</span><span class='line'>        <span class="nb">wait</span>                    <span class="o">=</span> no
-</span><span class='line'>        <span class="nv">user</span>                    <span class="o">=</span> root
-</span><span class='line'>        <span class="nv">passenv</span>                 <span class="o">=</span> PATH
-</span><span class='line'>        <span class="nv">server</span>                  <span class="o">=</span> /usr/bin/cvs
-</span><span class='line'>        <span class="nv">env</span>                     <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot
-</span><span class='line'>        <span class="nv">server_args</span>             <span class="o">=</span> -f --allow-root<span class="o">=</span>/home/cvsroot pserver
-</span><span class='line'><span class="c">#       bind                    = 127.0.0.1</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。</p>
-
-<h4>5.初始化和启动</h4>
-
-<p>初始化项目仓库的命令为</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>cvs -d /home/cvsroot init
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>就是在刚才配置的env = HOME=/home/cvsroot目录长噢乖创建代码仓库</p>
-
-<p>接下来重启xinetd</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>/etc/rc.d/init.d/xinetd restart
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>测试cvs是否存在
-lsof -p 2401
-或者
-netstat -l | grep csv
-不能使用ps aux | grep cvs，因为这是在xinetd下！</p>
-
-<p>安装就完成了。</p>
-
-<p>接下来还要提一下客户端tortoise cvs使用的问题，需要把cvs.exe的路径加到环境变量PATH中方可使用或者把cvsnt这款软件的cvs.exe拷贝到tortoise cvs安装目录中，否则会报句柄错误。</p>
-
-<h4>参考链接：</h4>
-
-<p><a href="http://blog.csdn.net/lidongtang/article/details/8165574">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
 ]]></content>
   </entry>
   
