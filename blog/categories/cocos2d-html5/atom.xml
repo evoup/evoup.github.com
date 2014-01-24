@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-html5 | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-html5/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-23T18:25:05+08:00</updated>
+  <updated>2014-01-24T18:21:49+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -22,6 +22,9 @@
 
 <p>翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
 <a href="http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx">http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx</a></p>
+
+<!-- more -->
+
 
 <p>其间有这么一段代码
 <code>js
@@ -366,8 +369,132 @@ d.body.appendChild(s);
 </code></pre>
 
 <p>});
-```
-这段创建了DOMContentLoaded事件侦听器(未完待续)</p>
+```</p>
+
+<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js,然后把配置文件存到document.ccConfig元素中去。
+接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。</p>
+
+<hr />
+
+<p>接着创建主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>main.js </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">cocos2dApp</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">config</span><span class="o">:</span><span class="nb">document</span><span class="p">[</span><span class="s1">&#39;ccConfig&#39;</span><span class="p">],</span>
+</span><span class='line'><span class="nx">ctor</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">scene</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span> <span class="o">=</span> <span class="nx">scene</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">COCOS2D_DEBUG</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;COCOS2D_DEBUG&#39;</span><span class="p">];</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">initDebugSetting</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]);</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">AppController</span><span class="p">.</span><span class="nx">shareAppController</span><span class="p">().</span><span class="nx">didFinishLaunchingWithOptions</span><span class="p">();</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="nx">applicationDidFinishLaunching</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">RenderDoesnotSupport</span><span class="p">()){</span>
+</span><span class='line'>        <span class="c1">//show Information to user</span>
+</span><span class='line'>        <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Browser doesn&#39;t support WebGL&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">// initialize director</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">director</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">resizeWithBrowserSize</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">setDesignResolutionSize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RESOLUTION_POLICY</span><span class="p">.</span><span class="nx">SHOW_ALL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// turn on display FPS</span>
+</span><span class='line'>    <span class="nx">director</span><span class="p">.</span><span class="nx">setDisplayStats</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;showFPS&#39;</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// set FPS. the default value is 1.0/60 if you don&#39;t call this</span>
+</span><span class='line'>    <span class="nx">director</span><span class="p">.</span><span class="nx">setAnimationInterval</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;frameRate&#39;</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//load resources</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">LoaderScene</span><span class="p">.</span><span class="nx">preload</span><span class="p">(</span><span class="nx">g_resources</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">director</span><span class="p">.</span><span class="nx">replaceScene</span><span class="p">(</span><span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span><span class="p">());</span>
+</span><span class='line'>    <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">myApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cocos2dApp</span><span class="p">(</span><span class="nx">HelloWorldScene</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>主要的功能都在cc.Application.extend中实现。首先config配置参数为document[&lsquo;ccConfig&rsquo;]
+然后看ctor：（顾名思义：config to run 配置转为启动）以scene为参数的匿名函数，先调用_super()方法这个引擎方法进行初始化，然后指定startScene开始场景为scene。调试等级cc.COCOS2D_DEBUG为cocos2d.js中指定的调试等级，cc.initDebugSetting为初始化调试设置，cc.setup(this.config[&lsquo;tag&rsquo;])在名为tag的dom对象上创建cavas,cc.AppController.shareAppController().didFinishLaunchingWithOptions();这个是仿照cocos2d-iphone的函数命名的启动函数（顾名思义：就是启动结束会加载的函数）。</p>
+
+<p>在正式进入写代码之前，稍等再看一下applicationDidFinishLaunching这个函数</p>
+
+<p>先检查渲染是否支持，不支持就弹出“Browser doesn`t support WebGL”</p>
+
+<p>```javascript
+if(cc.RenderDoesnotSupport()){</p>
+
+<pre><code>//show Information to user
+alert("Browser doesn't support WebGL");
+return false;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>初始化director
+<code>javascript
+// initialize director
+var director = cc.Director.getInstance();
+</code></p>
+
+<p>重置浏览器大小
+<code>javascript
+cc.EGLView.getInstance().resizeWithBrowserSize(true);
+cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
+</code>
+打开显卡FPS
+<code>javascript
+// turn on display FPS
+director.setDisplayStats(this.config['showFPS']);
+</code></p>
 ]]></content>
   </entry>
   
