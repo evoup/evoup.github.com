@@ -11,6 +11,8 @@ categories:  [cocos2d-html5]
 翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
 http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx
 
+<!-- more -->
+
 其间有这么一段代码
 ```js
 s.src = c.engineDir + 'platform/jsloader.js';
@@ -250,6 +252,87 @@ window.addEventListener('DOMContentLoaded', function () {
     //else if single file specified, load singlefile
 });
 ```
-这段创建了DOMContentLoaded事件侦听器(未完待续)
+
+这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js,然后把配置文件存到document.ccConfig元素中去。
+接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。
+
+-------------------
+
+接着创建主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。
+
+{% codeblock lang:javascript main.js %}
+var cocos2dApp = cc.Application.extend({
+    config:document['ccConfig'],
+    ctor:function (scene) {
+        this._super();
+        this.startScene = scene;
+        cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
+        cc.initDebugSetting();
+        cc.setup(this.config['tag']);
+        cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+    },
+    applicationDidFinishLaunching:function () {
+        if(cc.RenderDoesnotSupport()){
+            //show Information to user
+            alert("Browser doesn't support WebGL");
+            return false;
+        }
+        // initialize director
+        var director = cc.Director.getInstance();
+
+        cc.EGLView.getInstance().resizeWithBrowserSize(true);
+        cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
+
+        // turn on display FPS
+        director.setDisplayStats(this.config['showFPS']);
+
+        // set FPS. the default value is 1.0/60 if you don't call this
+        director.setAnimationInterval(1.0 / this.config['frameRate']);
+
+        //load resources
+        cc.LoaderScene.preload(g_resources, function () {
+            director.replaceScene(new this.startScene());
+        }, this);
+
+        return true;
+    }
+});
+var myApp = new cocos2dApp(HelloWorldScene);
+{% endcodeblock %}
+
+主要的功能都在cc.Application.extend中实现。首先config配置参数为document['ccConfig']
+然后看ctor：（顾名思义：config to run 配置转为启动）以scene为参数的匿名函数，先调用_super()方法这个引擎方法进行初始化，然后指定startScene开始场景为scene。调试等级cc.COCOS2D_DEBUG为cocos2d.js中指定的调试等级，cc.initDebugSetting为初始化调试设置，cc.setup(this.config['tag'])在名为tag的dom对象上创建cavas,cc.AppController.shareAppController().didFinishLaunchingWithOptions();这个是仿照cocos2d-iphone的函数命名的启动函数（顾名思义：就是启动结束会加载的函数）。
+
+在正式进入写代码之前，稍等再看一下applicationDidFinishLaunching这个函数
+
+先检查渲染是否支持，不支持就弹出“Browser doesn`t support WebGL”
+
+```javascript
+if(cc.RenderDoesnotSupport()){
+    //show Information to user
+    alert("Browser doesn't support WebGL");
+    return false;
+}
+```
+
+初始化director
+```javascript
+// initialize director
+var director = cc.Director.getInstance();
+```
+
+重置浏览器大小
+```javascript
+cc.EGLView.getInstance().resizeWithBrowserSize(true);
+cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
+```
+打开显卡FPS
+```javascript
+// turn on display FPS
+director.setDisplayStats(this.config['showFPS']);
+```
+
+
+
 
 
