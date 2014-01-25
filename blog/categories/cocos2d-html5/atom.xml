@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-html5 | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-html5/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-01-24T18:21:49+08:00</updated>
+  <updated>2014-01-25T17:33:09+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -20,6 +20,9 @@
     <id>http://evoupsight.com/blog/2014/01/23/cocos2d-html52-dot-2-2-first-exploration</id>
     <content type="html"><![CDATA[<p>准备用最新的cocos2d-html5 2.2.2的框架作为游戏开发引擎，整个引擎还是逻辑相当清晰好理解。</p>
 
+<p>本文部分参考v2.1.1这篇分析文章
+<a href="http://blog.csdn.net/honghaier/article/details/8642553">http://blog.csdn.net/honghaier/article/details/8642553</a></p>
+
 <p>翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
 <a href="http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx">http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx</a></p>
 
@@ -30,7 +33,7 @@
 <code>js
 s.src = c.engineDir + 'platform/jsloader.js';
 </code>
-可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来改写,我们首先来讲解HelloWorld：</p>
+可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来掌了解2.2.2版本的api来给原来的教程动手术,我们首先来讲解HelloWorld：</p>
 
 <p>首先看2.2.2的helloworld的代码分布情况：</p>
 
@@ -38,8 +41,11 @@ s.src = c.engineDir + 'platform/jsloader.js';
 
 <p>其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。</p>
 
-<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。
-首先是index.html
+<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。</p>
+
+<hr />
+
+<p>首先是创建第一个文件index.html
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>index.html </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -371,12 +377,12 @@ d.body.appendChild(s);
 <p>});
 ```</p>
 
-<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js,然后把配置文件存到document.ccConfig元素中去。
+<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js(这个文件的作用是加载cocos2d需要用到的所有js文件，包括cocos2d.js,main.js,myApp.js),然后把配置文件存到document.ccConfig元素中去。
 接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。</p>
 
 <hr />
 
-<p>接着创建主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
+<p>接着创建第三个文件&mdash;主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>main.js </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -494,7 +500,298 @@ cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.
 <code>javascript
 // turn on display FPS
 director.setDisplayStats(this.config['showFPS']);
+</code>
+默认设置fps为1秒60帧
+<code>javascript
+// set FPS. the default value is 1.0/60 if you don't call this
+director.setAnimationInterval(1.0 / this.config['frameRate']);
 </code></p>
+
+<p>导演类的replaceScene方法来替换场景为startScene
+```javascript
+//load resources
+cc.LoaderScene.preload(g_resources, function () {</p>
+
+<pre><code>director.replaceScene(new this.startScene());
+</code></pre>
+
+<p>}, this);
+```</p>
+
+<p>最后实例化app
+```javascript
+var myApp = new cocos2dApp(HelloWorldScene);</p>
+
+<h2>```</h2>
+
+<p>在正式步入工程文件之前，别急，创建一个src文件夹，然后在该文件夹下创建一个resource.js
+```javascript
+var s_HelloWorld = &ldquo;res/HelloWorld.png&rdquo;;
+var s_CloseNormal = &ldquo;res/CloseNormal.png&rdquo;;
+var s_CloseSelected = &ldquo;res/CloseSelected.png&rdquo;;</p>
+
+<p>var g_resources = [</p>
+
+<pre><code>//image
+{src:s_HelloWorld},
+{src:s_CloseNormal},
+{src:s_CloseSelected}
+
+//plist
+
+//fnt
+
+//tmx
+
+//bgm
+
+//effect
+</code></pre>
+
+<p>];
+```
+然后在和src相同父目录下创建一个叫做res文件夹，把如下3个文件放入其中：</p>
+
+<p>HelloWorld.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/HelloWorld.png" alt="Alt text" /></p>
+
+<p>CloseNormal.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseNormal.png" alt="Alt text" /></p>
+
+<p>CloseSelected.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseSelected.png" alt="Alt text" /></p>
+
+<p>这就完成了资源文件的定义和提供。</p>
+
+<hr />
+
+<p>终于到工程主文件了，在src下创建一个叫做myApp.js的文件
+```javascript
+var Helloworld = cc.Layer.extend({</p>
+
+<pre><code>isMouseDown:false,
+helloImg:null,
+helloLabel:null,
+circle:null,
+sprite:null,
+
+init:function () {
+    //////////////////////////////
+    // 1. super init first
+    this._super();
+
+    /////////////////////////////
+    // 2. add a menu item with "X" image, which is clicked to quit the program
+    //    you may modify it.
+    // ask director the window size
+    var size = cc.Director.getInstance().getWinSize();
+
+    // add a "close" icon to exit the progress. it's an autorelease object
+    var closeItem = cc.MenuItemImage.create(
+        "res/CloseNormal.png",
+        "res/CloseSelected.png",
+        function () {
+            history.go(-1);
+        },this);
+    closeItem.setAnchorPoint(0.5, 0.5);
+
+    var menu = cc.Menu.create(closeItem);
+    menu.setPosition(0,0);
+    this.addChild(menu, 1);
+    closeItem.setPosition(size.width - 20, 20);
+
+    /////////////////////////////
+    // 3. add your codes below...
+    // add a label shows "Hello World"
+    // create and initialize a label
+    this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
+    // position the label on the center of the screen
+    this.helloLabel.setPosition(size.width / 2, 0);
+    // add the label as a child to this layer
+    this.addChild(this.helloLabel, 5);
+
+    var lazyLayer = cc.Layer.create();
+    this.addChild(lazyLayer);
+
+    // add "HelloWorld" splash screen"
+    this.sprite = cc.Sprite.create("res/HelloWorld.png");
+    this.sprite.setPosition(size.width / 2, size.height / 2);
+    this.sprite.setScale(0.5);
+    this.sprite.setRotation(180);
+
+    lazyLayer.addChild(this.sprite, 0);
+
+    var rotateToA = cc.RotateTo.create(2, 0);
+    var scaleToA = cc.ScaleTo.create(2, 1, 1);
+
+    this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
+    this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+
+    this.setTouchEnabled(true);
+    return true;
+},
+// a selector callback
+menuCloseCallback:function (sender) {
+    cc.Director.getInstance().end();
+},
+onTouchesBegan:function (touches, event) {
+    this.isMouseDown = true;
+},
+onTouchesMoved:function (touches, event) {
+    if (this.isMouseDown) {
+        if (touches) {
+            //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
+        }
+    }
+},
+onTouchesEnded:function (touches, event) {
+    this.isMouseDown = false;
+},
+onTouchesCancelled:function (touches, event) {
+    console.log("onTouchesCancelled");
+}
+</code></pre>
+
+<p>});</p>
+
+<p>var HelloWorldScene = cc.Scene.extend({</p>
+
+<pre><code>onEnter:function () {
+    this._super();
+    var layer = new Helloworld();
+    layer.init();
+    this.addChild(layer);
+}
+</code></pre>
+
+<p>});
+```</p>
+
+<h4>分析</h4>
+
+<p><code>javascript
+isMouseDown:false,
+helloImg:null,
+helloLabel:null,
+circle:null,
+sprite:null,
+</code>
+这是对接下来用到的成员变量的定义</p>
+
+<p>再看接下来的代码
+```javascript</p>
+
+<pre><code>init:function () {
+    //首先初始化超类
+    this._super();
+
+    //获取屏宽
+    var size = cc.Director.getInstance().getWinSize();
+
+    //添加一个关闭按钮到菜单项
+    var closeItem = cc.MenuItemImage.create(
+        "res/CloseNormal.png",
+        "res/CloseSelected.png",
+        function () {
+            history.go(-1);
+        },this);
+    //设置锚点，默认就是0.5，0.5
+    closeItem.setAnchorPoint(0.5, 0.5);
+    //创建关闭按钮
+    var menu = cc.Menu.create(closeItem);
+    //设置菜单项位置
+    menu.setPosition(0,0);
+    //添加菜单项到当前层上
+    this.addChild(menu, 1);
+    //设置菜单的位置为屏幕右下角
+    closeItem.setPosition(size.width - 20, 20);
+
+    //创建一个叫做helloworld的文本标签
+    this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
+    //把文本标签放到屏幕中央位置
+    this.helloLabel.setPosition(size.width / 2, 0);
+    //添加该文本标签放到当前层上
+    this.addChild(this.helloLabel, 5);
+    //创建一个新层lazylay并放入当前层
+    var lazyLayer = cc.Layer.create();
+    this.addChild(lazyLayer);
+
+    // 添加一个能旋转的helloworld精灵
+    this.sprite = cc.Sprite.create("res/HelloWorld.png");
+    this.sprite.setPosition(size.width / 2, size.height / 2);
+    //先缩小50%且倒过来
+    this.sprite.setScale(0.5);
+    this.sprite.setRotation(180);
+    //添加到lazyLayer层
+    lazyLayer.addChild(this.sprite, 0);
+    //定义2个动作分别为旋转2秒到0度和缩放2秒无x轴y轴缩放
+    var rotateToA = cc.RotateTo.create(2, 0);
+    var scaleToA = cc.ScaleTo.create(2, 1, 1);
+    //让helloworld精灵依次运行这2个动作
+    this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
+    //使文本标签同时运行ccMoveBy动作（后面讲）和CCTintTo动作（使文字）
+    this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+    //设置为支持触碰
+    this.setTouchEnabled(true);
+    return true;
+},
+</code></pre>
+
+<p>```
+需要注意的是
+1) cc.Sequence代表依次运行动作，而cc.Spawn代表同时运行动作
+2) CCMoveTo是“移动到这里”；而CCMoveBy则是“相对于之前点再移动”，比如说说这里需要两个坐标pos1（x1，y1），pos2（x2，y2），用CCMoveTo的话，就是将对象由pos1移动到pos2，而CCMOveBy则是对象的终坐标是在pos1的基础上再加上（矢量相加）pos2，终坐标pos3=pos1+pos2。</p>
+
+<p>接下来是一些触碰事件的回调函数
+```javascript</p>
+
+<pre><code>//点击关闭按钮的回调函数，退出实例
+menuCloseCallback:function (sender) {
+    cc.Director.getInstance().end();
+},
+//按下按钮的状态
+onTouchesBegan:function (touches, event) {
+    this.isMouseDown = true;
+},
+//按下按钮移动时
+onTouchesMoved:function (touches, event) {
+    if (this.isMouseDown) {
+        if (touches) {
+            //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
+        }
+    }
+},
+//放开按钮的状态
+onTouchesEnded:function (touches, event) {
+    this.isMouseDown = false;
+},
+//离开按钮的状态
+onTouchesCancelled:function (touches, event) {
+    console.log("onTouchesCancelled");
+}
+</code></pre>
+
+<p>```</p>
+
+<p>最后</p>
+
+<p>```javascript
+var HelloWorldScene = cc.Scene.extend({</p>
+
+<pre><code>onEnter:function () {
+    this._super();
+    var layer = new Helloworld();
+    layer.init();
+    this.addChild(layer);
+}
+</code></pre>
+
+<p>});
+```
+进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。</p>
 ]]></content>
   </entry>
   

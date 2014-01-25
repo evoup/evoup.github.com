@@ -116,6 +116,9 @@
 
 <div class="entry-content clearfix"><p>准备用最新的cocos2d-html5 2.2.2的框架作为游戏开发引擎，整个引擎还是逻辑相当清晰好理解。</p>
 
+<p>本文部分参考v2.1.1这篇分析文章
+<a href="http://blog.csdn.net/honghaier/article/details/8642553">http://blog.csdn.net/honghaier/article/details/8642553</a></p>
+
 <p>翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
 <a href="http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx">http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx</a></p>
 
@@ -129,7 +132,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来改写,我们首先来讲解HelloWorld：</p>
+<p>可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来掌了解2.2.2版本的api来给原来的教程动手术,我们首先来讲解HelloWorld：</p>
 
 <p>首先看2.2.2的helloworld的代码分布情况：</p>
 
@@ -137,8 +140,11 @@
 
 <p>其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。</p>
 
-<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。
-首先是index.html</p>
+<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。</p>
+
+<hr />
+
+<p>首先是创建第一个文件index.html</p>
 
 <figure class='code'><figcaption><span>index.html </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -529,12 +535,12 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js,然后把配置文件存到document.ccConfig元素中去。
+<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js(这个文件的作用是加载cocos2d需要用到的所有js文件，包括cocos2d.js,main.js,myApp.js),然后把配置文件存到document.ccConfig元素中去。
 接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。</p>
 
 <hr />
 
-<p>接着创建主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
+<p>接着创建第三个文件&mdash;主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
 
 <figure class='code'><figcaption><span>main.js </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -661,7 +667,498 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>默认设置fps为1秒60帧</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// set FPS. the default value is 1.0/60 if you don&#39;t call this</span>
+</span><span class='line'><span class="nx">director</span><span class="p">.</span><span class="nx">setAnimationInterval</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;frameRate&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>导演类的replaceScene方法来替换场景为startScene</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//load resources</span>
+</span><span class='line'><span class="nx">cc</span><span class="p">.</span><span class="nx">LoaderScene</span><span class="p">.</span><span class="nx">preload</span><span class="p">(</span><span class="nx">g_resources</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">director</span><span class="p">.</span><span class="nx">replaceScene</span><span class="p">(</span><span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span><span class="p">());</span>
+</span><span class='line'><span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后实例化app</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">myApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cocos2dApp</span><span class="p">(</span><span class="nx">HelloWorldScene</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>在正式步入工程文件之前，别急，创建一个src文件夹，然后在该文件夹下创建一个resource.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">s_HelloWorld</span> <span class="o">=</span> <span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s_CloseNormal</span> <span class="o">=</span> <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s_CloseSelected</span> <span class="o">=</span> <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">g_resources</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="c1">//image</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_HelloWorld</span><span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_CloseNormal</span><span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_CloseSelected</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//plist</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//fnt</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//tmx</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//bgm</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//effect</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在和src相同父目录下创建一个叫做res文件夹，把如下3个文件放入其中：</p>
+
+<p>HelloWorld.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/HelloWorld.png" alt="Alt text" /></p>
+
+<p>CloseNormal.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseNormal.png" alt="Alt text" /></p>
+
+<p>CloseSelected.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseSelected.png" alt="Alt text" /></p>
+
+<p>这就完成了资源文件的定义和提供。</p>
+
+<hr />
+
+<p>终于到工程主文件了，在src下创建一个叫做myApp.js的文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Helloworld</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">isMouseDown</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">helloImg</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">helloLabel</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">circle</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">sprite</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">init</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 1. super init first</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">/////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 2. add a menu item with &quot;X&quot; image, which is clicked to quit the program</span>
+</span><span class='line'>        <span class="c1">//    you may modify it.</span>
+</span><span class='line'>        <span class="c1">// ask director the window size</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">getWinSize</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// add a &quot;close&quot; icon to exit the progress. it&#39;s an autorelease object</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">closeItem</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">MenuItemImage</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setAnchorPoint</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">menu</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Menu</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">closeItem</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">menu</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">menu</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">/////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 3. add your codes below...</span>
+</span><span class='line'>        <span class="c1">// add a label shows &quot;Hello World&quot;</span>
+</span><span class='line'>        <span class="c1">// create and initialize a label</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">LabelTTF</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">,</span> <span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">38</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// position the label on the center of the screen</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// add the label as a child to this layer</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">lazyLayer</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">lazyLayer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// add &quot;HelloWorld&quot; splash screen&quot;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setScale</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setRotation</span><span class="p">(</span><span class="mi">180</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">lazyLayer</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">rotateToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RotateTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">scaleToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">ScaleTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Sequence</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">rotateToA</span><span class="p">,</span> <span class="nx">scaleToA</span><span class="p">));</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Spawn</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">MoveBy</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">p</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)),</span><span class="nx">cc</span><span class="p">.</span><span class="nx">TintTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">setTouchEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="c1">// a selector callback</span>
+</span><span class='line'>    <span class="nx">menuCloseCallback</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sender</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">end</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesBegan</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesMoved</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">//this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesEnded</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesCancelled</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onTouchesCancelled&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">HelloWorldScene</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Scene</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">onEnter</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">layer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Helloworld</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">layer</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">layer</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>分析</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">isMouseDown</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'><span class="nx">helloImg</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">helloLabel</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">circle</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">sprite</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是对接下来用到的成员变量的定义</p>
+
+<p>再看接下来的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">init</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//首先初始化超类</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//获取屏宽</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">getWinSize</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//添加一个关闭按钮到菜单项</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">closeItem</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">MenuItemImage</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+</span><span class='line'>        <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置锚点，默认就是0.5，0.5</span>
+</span><span class='line'>    <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setAnchorPoint</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//创建关闭按钮</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">menu</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Menu</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">closeItem</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置菜单项位置</span>
+</span><span class='line'>    <span class="nx">menu</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加菜单项到当前层上</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">menu</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置菜单的位置为屏幕右下角</span>
+</span><span class='line'>    <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//创建一个叫做helloworld的文本标签</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">LabelTTF</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">,</span> <span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">38</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//把文本标签放到屏幕中央位置</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加该文本标签放到当前层上</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//创建一个新层lazylay并放入当前层</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">lazyLayer</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">lazyLayer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// 添加一个能旋转的helloworld精灵</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//先缩小50%且倒过来</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setScale</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setRotation</span><span class="p">(</span><span class="mi">180</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加到lazyLayer层</span>
+</span><span class='line'>    <span class="nx">lazyLayer</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//定义2个动作分别为旋转2秒到0度和缩放2秒无x轴y轴缩放</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">rotateToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RotateTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">scaleToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">ScaleTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//让helloworld精灵依次运行这2个动作</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Sequence</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">rotateToA</span><span class="p">,</span> <span class="nx">scaleToA</span><span class="p">));</span>
+</span><span class='line'>    <span class="c1">//使文本标签同时运行ccMoveBy动作（后面讲）和CCTintTo动作（使文字）</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Spawn</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">MoveBy</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">p</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)),</span><span class="nx">cc</span><span class="p">.</span><span class="nx">TintTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>
+</span><span class='line'>    <span class="c1">//设置为支持触碰</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setTouchEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意的是
+1) cc.Sequence代表依次运行动作，而cc.Spawn代表同时运行动作
+2) CCMoveTo是“移动到这里”；而CCMoveBy则是“相对于之前点再移动”，比如说说这里需要两个坐标pos1（x1，y1），pos2（x2，y2），用CCMoveTo的话，就是将对象由pos1移动到pos2，而CCMOveBy则是对象的终坐标是在pos1的基础上再加上（矢量相加）pos2，终坐标pos3=pos1+pos2。</p>
+
+<p>接下来是一些触碰事件的回调函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//点击关闭按钮的回调函数，退出实例</span>
+</span><span class='line'><span class="nx">menuCloseCallback</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sender</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">end</span><span class="p">();</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//按下按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesBegan</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//按下按钮移动时</span>
+</span><span class='line'><span class="nx">onTouchesMoved</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">//this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//放开按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesEnded</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//离开按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesCancelled</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onTouchesCancelled&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">HelloWorldScene</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Scene</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">onEnter</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">layer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Helloworld</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">layer</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">layer</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。</p>
 </div>
 
 
