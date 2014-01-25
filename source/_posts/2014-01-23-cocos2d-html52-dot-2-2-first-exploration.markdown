@@ -28,11 +28,14 @@ s.src = c.engineDir + 'platform/jsloader.js';
 
 其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。
 
-接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。
+接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，创建一个叫做helloworld的文件夹。
+
+看一下运行截图
+![Alt text](/images/evoup/cocos2d-html52.2.2helloworld.png)
 
 ----------------------
 
-首先是创建第一个文件index.html
+首先是在该文件夹下创建第一个文件index.html
 {% codeblock lang:html index.html %}
 <!DOCTYPE html>
 <html>
@@ -605,6 +608,8 @@ var HelloWorldScene = cc.Scene.extend({
     }
 });
 ```
+
+
 进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。
 
 
