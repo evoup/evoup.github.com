@@ -8,6 +8,9 @@ categories:  [cocos2d-html5]
 
 准备用最新的cocos2d-html5 2.2.2的框架作为游戏开发引擎，整个引擎还是逻辑相当清晰好理解。
 
+本文部分参考v2.1.1这篇分析文章
+http://blog.csdn.net/honghaier/article/details/8642553
+
 翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
 http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx
 
@@ -256,7 +259,7 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 ```
 
-这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js,然后把配置文件存到document.ccConfig元素中去。
+这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js(这个文件的作用是加载cocos2d需要用到的所有js文件，包括cocos2d.js,main.js,myApp.js),然后把配置文件存到document.ccConfig元素中去。
 接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。
 
 -------------------
@@ -377,7 +380,7 @@ var g_resources = [
     //effect
 ];
 ```
-然后创建一个res文件夹，把如下3个文件放入其中：
+然后在和src相同父目录下创建一个叫做res文件夹，把如下3个文件放入其中：
 
 HelloWorld.png
 
@@ -395,7 +398,7 @@ CloseSelected.png
 
 -----------------
 
-终于到了最后的工程主文件了，在src下创建一个叫做myApp.js的文件
+终于到工程主文件了，在src下创建一个叫做myApp.js的文件
 ```javascript
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
@@ -490,6 +493,119 @@ var HelloWorldScene = cc.Scene.extend({
     }
 });
 ```
+
+####分析
+```javascript
+isMouseDown:false,
+helloImg:null,
+helloLabel:null,
+circle:null,
+sprite:null,
+```
+这是对接下来用到的成员变量的定义
+
+再看接下来的代码
+```javascript
+    init:function () {
+        //首先初始化超类
+        this._super();
+
+        //获取屏宽
+        var size = cc.Director.getInstance().getWinSize();
+
+        //添加一个关闭按钮到菜单项
+        var closeItem = cc.MenuItemImage.create(
+            "res/CloseNormal.png",
+            "res/CloseSelected.png",
+            function () {
+                history.go(-1);
+            },this);
+        //设置锚点，默认就是0.5，0.5
+        closeItem.setAnchorPoint(0.5, 0.5);
+        //创建关闭按钮
+        var menu = cc.Menu.create(closeItem);
+        //设置菜单项位置
+        menu.setPosition(0,0);
+        //添加菜单项到当前层上
+        this.addChild(menu, 1);
+        //设置菜单的位置为屏幕右下角
+        closeItem.setPosition(size.width - 20, 20);
+
+        //创建一个叫做helloworld的文本标签
+        this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
+        //把文本标签放到屏幕中央位置
+        this.helloLabel.setPosition(size.width / 2, 0);
+        //添加该文本标签放到当前层上
+        this.addChild(this.helloLabel, 5);
+        //创建一个新层lazylay并放入当前层
+        var lazyLayer = cc.Layer.create();
+        this.addChild(lazyLayer);
+
+        // 添加一个能旋转的helloworld精灵
+        this.sprite = cc.Sprite.create("res/HelloWorld.png");
+        this.sprite.setPosition(size.width / 2, size.height / 2);
+        //先缩小50%且倒过来
+        this.sprite.setScale(0.5);
+        this.sprite.setRotation(180);
+        //添加到lazyLayer层
+        lazyLayer.addChild(this.sprite, 0);
+        //定义2个动作分别为旋转2秒到0度和缩放2秒无x轴y轴缩放
+        var rotateToA = cc.RotateTo.create(2, 0);
+        var scaleToA = cc.ScaleTo.create(2, 1, 1);
+        //让helloworld精灵依次运行这2个动作
+        this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
+        //使文本标签同时运行ccMoveBy动作（后面讲）和CCTintTo动作（使文字）
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+        //设置为支持触碰
+        this.setTouchEnabled(true);
+        return true;
+    },
+```
+需要注意的是
+1) cc.Sequence代表依次运行动作，而cc.Spawn代表同时运行动作
+2) CCMoveTo是“移动到这里”；而CCMoveBy则是“相对于之前点再移动”，比如说说这里需要两个坐标pos1（x1，y1），pos2（x2，y2），用CCMoveTo的话，就是将对象由pos1移动到pos2，而CCMOveBy则是对象的终坐标是在pos1的基础上再加上（矢量相加）pos2，终坐标pos3=pos1+pos2。
+
+接下来是一些触碰事件的回调函数
+```javascript
+    //点击关闭按钮的回调函数，退出实例
+    menuCloseCallback:function (sender) {
+        cc.Director.getInstance().end();
+    },
+    //按下按钮的状态
+    onTouchesBegan:function (touches, event) {
+        this.isMouseDown = true;
+    },
+    //按下按钮移动时
+    onTouchesMoved:function (touches, event) {
+        if (this.isMouseDown) {
+            if (touches) {
+                //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
+            }
+        }
+    },
+    //放开按钮的状态
+    onTouchesEnded:function (touches, event) {
+        this.isMouseDown = false;
+    },
+    //离开按钮的状态
+    onTouchesCancelled:function (touches, event) {
+        console.log("onTouchesCancelled");
+    }
+```
+
+最后
+
+```javascript
+var HelloWorldScene = cc.Scene.extend({
+    onEnter:function () {
+        this._super();
+        var layer = new Helloworld();
+        layer.init();
+        this.addChild(layer);
+    }
+});
+```
+进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。
 
 
 
