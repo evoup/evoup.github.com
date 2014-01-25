@@ -17,7 +17,7 @@ http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-
 ```js
 s.src = c.engineDir + 'platform/jsloader.js';
 ```
-可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来改写,我们首先来讲解HelloWorld：
+可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来掌了解2.2.2版本的api来给原来的教程动手术,我们首先来讲解HelloWorld：
 
 首先看2.2.2的helloworld的代码分布情况：
 
@@ -26,7 +26,10 @@ s.src = c.engineDir + 'platform/jsloader.js';
 其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。
 
 接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，就叫做helloworld吧。
-首先是index.html
+
+----------------------
+
+首先是创建第一个文件index.html
 {% codeblock lang:html index.html %}
 <!DOCTYPE html>
 <html>
@@ -258,7 +261,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 -------------------
 
-接着创建主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。
+接着创建第三个文件--主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。
 
 {% codeblock lang:javascript main.js %}
 var cocos2dApp = cc.Application.extend({
@@ -330,6 +333,162 @@ cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.
 ```javascript
 // turn on display FPS
 director.setDisplayStats(this.config['showFPS']);
+```
+默认设置fps为1秒60帧
+```javascript
+// set FPS. the default value is 1.0/60 if you don't call this
+director.setAnimationInterval(1.0 / this.config['frameRate']);
+```
+
+导演类的replaceScene方法来替换场景为startScene
+```javascript
+//load resources
+cc.LoaderScene.preload(g_resources, function () {
+    director.replaceScene(new this.startScene());
+}, this);
+```
+
+最后实例化app
+```javascript
+var myApp = new cocos2dApp(HelloWorldScene);
+```
+-----------------
+
+在正式步入工程文件之前，别急，创建一个src文件夹，然后在该文件夹下创建一个resource.js
+```javascript
+var s_HelloWorld = "res/HelloWorld.png";
+var s_CloseNormal = "res/CloseNormal.png";
+var s_CloseSelected = "res/CloseSelected.png";
+
+var g_resources = [
+    //image
+    {src:s_HelloWorld},
+    {src:s_CloseNormal},
+    {src:s_CloseSelected}
+
+    //plist
+
+    //fnt
+
+    //tmx
+
+    //bgm
+
+    //effect
+];
+```
+然后创建一个res文件夹，把如下3个文件放入其中：
+
+HelloWorld.png
+
+![Alt text](/images/evoup/cocos2d-html5-res/HelloWorld.png)
+
+CloseNormal.png
+
+![Alt text](/images/evoup/cocos2d-html5-res/CloseNormal.png)
+
+CloseSelected.png
+
+![Alt text](/images/evoup/cocos2d-html5-res/CloseSelected.png)
+
+这就完成了资源文件的定义和提供。
+
+-----------------
+
+终于到了最后的工程主文件了，在src下创建一个叫做myApp.js的文件
+```javascript
+var Helloworld = cc.Layer.extend({
+    isMouseDown:false,
+    helloImg:null,
+    helloLabel:null,
+    circle:null,
+    sprite:null,
+
+    init:function () {
+        //////////////////////////////
+        // 1. super init first
+        this._super();
+
+        /////////////////////////////
+        // 2. add a menu item with "X" image, which is clicked to quit the program
+        //    you may modify it.
+        // ask director the window size
+        var size = cc.Director.getInstance().getWinSize();
+
+        // add a "close" icon to exit the progress. it's an autorelease object
+        var closeItem = cc.MenuItemImage.create(
+            "res/CloseNormal.png",
+            "res/CloseSelected.png",
+            function () {
+                history.go(-1);
+            },this);
+        closeItem.setAnchorPoint(0.5, 0.5);
+
+        var menu = cc.Menu.create(closeItem);
+        menu.setPosition(0,0);
+        this.addChild(menu, 1);
+        closeItem.setPosition(size.width - 20, 20);
+
+        /////////////////////////////
+        // 3. add your codes below...
+        // add a label shows "Hello World"
+        // create and initialize a label
+        this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
+        // position the label on the center of the screen
+        this.helloLabel.setPosition(size.width / 2, 0);
+        // add the label as a child to this layer
+        this.addChild(this.helloLabel, 5);
+
+        var lazyLayer = cc.Layer.create();
+        this.addChild(lazyLayer);
+
+        // add "HelloWorld" splash screen"
+        this.sprite = cc.Sprite.create("res/HelloWorld.png");
+        this.sprite.setPosition(size.width / 2, size.height / 2);
+        this.sprite.setScale(0.5);
+        this.sprite.setRotation(180);
+
+        lazyLayer.addChild(this.sprite, 0);
+
+        var rotateToA = cc.RotateTo.create(2, 0);
+        var scaleToA = cc.ScaleTo.create(2, 1, 1);
+
+        this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
+
+        this.setTouchEnabled(true);
+        return true;
+    },
+    // a selector callback
+    menuCloseCallback:function (sender) {
+        cc.Director.getInstance().end();
+    },
+    onTouchesBegan:function (touches, event) {
+        this.isMouseDown = true;
+    },
+    onTouchesMoved:function (touches, event) {
+        if (this.isMouseDown) {
+            if (touches) {
+                //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
+            }
+        }
+    },
+    onTouchesEnded:function (touches, event) {
+        this.isMouseDown = false;
+    },
+    onTouchesCancelled:function (touches, event) {
+        console.log("onTouchesCancelled");
+    }
+});
+
+var HelloWorldScene = cc.Scene.extend({
+    onEnter:function () {
+        this._super();
+        var layer = new Helloworld();
+        layer.init();
+        this.addChild(layer);
+    }
+});
 ```
 
 
