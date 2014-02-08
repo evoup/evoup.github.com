@@ -37,19 +37,19 @@ clientPort = 客户端连接端口
 
 clientPortAddress
 
-tickTime= 整形 不能为0
+tickTime= 整型 不能为0
 
-maxClientCnxns= 整形 最大客户端连接数
+maxClientCnxns= 整型 最大客户端连接数
 
-minSessionTimeout= 整形
+minSessionTimeout= 整型
 
-maxSessionTimeout= 整形
+maxSessionTimeout= 整型
 
-initLimit = 整形
+initLimit = 整型
 
-syncLimit = 整形
+syncLimit = 整型
 
-electionAlg = 整形
+electionAlg = 整型
 
 peerType = observer | participant
 
@@ -57,7 +57,7 @@ server. sid= host:port | host:port:port  | host:port:port:type (type值 observer
 
 group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)
 
-weight.sid=整形
+weight.sid=整型
 ```
 可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。
 
