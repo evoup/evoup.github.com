@@ -14,7 +14,7 @@ categories: [cocos2d-html5,cocos2d-iphone,cocos2d-html5]
 > <i>直接从图片创建：</i>
 {%codeblock lang:cpp cocos2d-x %}
 CCSprite *sprite=CCSprite::create("res/pic.png"); //从pic.png创建一个精灵
-sprite->setPosition( ccp(100, 240) ); //设置坐标为x=100,y=240
+sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240
 sprite->setScale(0.5); //缩小50%
 this->addChild(sprite,0); //加载到this场景对象下
 {% endcodeblock %}
