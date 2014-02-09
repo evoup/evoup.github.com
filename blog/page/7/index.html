@@ -105,6 +105,150 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-11-26T09:56:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/26/mysql-import-output-csv/">浅谈mysql导入导出csv的几种方法</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>有几种方法，这里一一列举：</p>
+
+<h3>第一种：使用phpmyadmin选择文件上传</h3>
+
+<p>此种方式很直观，只是要注意选择正确的换行符。假设我们在mysql的shell中采用如下方式先导出数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">test_info</span>
+</span><span class='line'><span class="k">into</span> <span class="n">outfile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'><span class="n">fields</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span> <span class="n">optionally</span> <span class="n">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="n">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'><span class="n">lines</span> <span class="n">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>则需要上传test_info.csv，点击CSV using LOAD DATA，然后按照如下设置进行导入
+（其中fields terminated为分隔字段，optionally enclosed为可选包裹字段，escaped为转移字段，line terminated为行终止字段）
+<img src="/images/evoup/phpmyadmin.png" alt="Alt text" /></p>
+
+<h3>第二种：mysql shell</h3>
+
+<p>其实就是刚刚导出的逆操作。在mysql的shell中操作：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='mysql'><span class='line'><span class="k">load</span> <span class="n">data</span> <span class="k">infile</span> <span class="s1">&#39;/tmp/test_info.csv&#39;</span>
+</span><span class='line'>  <span class="k">into</span> <span class="k">table</span> <span class="n">test_info</span>
+</span><span class='line'>  <span class="n">fields</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;,&#39;</span>  <span class="k">optionally</span> <span class="k">enclosed</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span> <span class="k">escaped</span> <span class="k">by</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span class='line'>  <span class="k">lines</span> <span class="k">terminated</span> <span class="k">by</span> <span class="s1">&#39;\r\n&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>第三种：php程序解析后插入</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;开始导入csv数据到工作表</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;导入test_info...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_host</span><span class="o">=</span><span class="s2">&quot;172.16.27.55&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$mysql_pass</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$db</span><span class="o">=</span><span class="s2">&quot;test_info&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$handle</span> <span class="o">=</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;/tmp/test_info.csv&#39;</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">=</span> <span class="nx">mysqli_init</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">options</span><span class="p">(</span><span class="nx">MYSQLI_OPT_CONNECT_TIMEOUT</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">real_connect</span><span class="p">(</span><span class="nv">$mysql_host</span><span class="p">,</span> <span class="nv">$mysql_user</span><span class="p">,</span> <span class="nv">$mysql_pass</span><span class="p">,</span> <span class="nv">$db</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="s2">&quot;SET NAMES utf8&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span><span class="nv">$data</span> <span class="o">=</span> <span class="nb">fgetcsv</span> <span class="p">(</span><span class="nv">$handle</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nv">$num</span> <span class="o">=</span> <span class="nb">count</span> <span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span><span class="o">&lt;</span><span class="nv">$num</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nv">$i</span> <span class="o">==</span> <span class="nv">$num</span><span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+</span><span class='line'>            <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">)&quot;</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nv">$query</span> <span class="o">.=</span> <span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">&quot;</span><span class="o">.</span><span class="nv">$data</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">,&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nv">$result</span><span class="o">=</span><span class="nv">$link</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$query</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="nv">$query</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">echo</span> <span class="p">(</span><span class="s2">&quot;[导入失败]</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">exit</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$query</span><span class="o">=</span><span class="s2">&quot;insert into `test_info` (`字段1`,`字段2`) values (&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意如果fgetcsv出错和到了行尾都是会返回false的。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-11-22T15:01:00+08:00" pubdate data-updated="true">Nov 22<span>nd</span>, 2012</time>
         
       </p>
@@ -530,64 +674,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-06-05T23:29:00+08:00" pubdate data-updated="true">Jun 5<span>th</span>, 2011</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/">C语言变参宏</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">buffer_copy_string_len</span><span class="p">(</span><span class="n">modules</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span> <span class="n">CONST_STR_LEN</span><span class="p">(</span><span class="s">&quot;server.modules&quot;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而此参数声明的时候是这样的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="nf">buffer_copy_string_len</span><span class="p">(</span><span class="n">buffer</span> <span class="o">*</span><span class="n">b</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">s_len</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这不就成了三个参了？记一笔&hellip;</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -611,6 +697,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/">Octopress2报错undefined Method `[] for nill:NilClass</a>
+    
     <a class="list-group-item " href="/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-sprite-and-animation-summary/">Cocos2d-x Cocos2d-iphone Cocos2d-html5下精灵加载和动画的总结</a>
     
     <a class="list-group-item " href="/blog/2014/01/23/cocos2d-html52-dot-2-2-first-exploration/">cocos2d-html5-2.2.2初探</a>
@@ -619,15 +707,13 @@
     
     <a class="list-group-item " href="/blog/2014/01/19/android-webview-helloworld/">Android Webview Helloworld分析</a>
     
-    <a class="list-group-item " href="/blog/2014/01/17/android-adt-development-deloy/">Win7 Android开发环境搭建</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 111.25%'>Cocos2d-html5(3)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 111.25%'>Octopress(3)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 111.25%'>Cocos2d-html5(3)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>
