@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd下hbase安装 - Evoup`s Blog</title>
+  <title>VS2010 LINK:fatal error LNK1123 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/02/10/vs2010-link-fatal-error-lnk1123">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,69 +101,33 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-10T15:22:00+08:00" pubdate data-updated="true">Feb 10<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Freebsd下hbase安装
+        VS2010 LINK:fatal Error LNK1123
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
-
-<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+<div class="entry-content clearfix"><p>因为要看cocostudio的实例代码，在原有vs2010的基础上又安装了vs2012，出现了项目不能编译的问题OMG
+<code>LINK : fatal error LNK1123: 转换到 COFF 期间失败: 文件无效或损坏</code></p>
 
 <!-- more -->
 
 
-<p>下完就放到/usr/port/distfile</p>
-
-<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
-
-<p>再装jdk16/usr/port/java/jdk16</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
-</span><span class='line'>sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
-
-<p>而且要有足够的SWAP空间！</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME /usr/local/jdk1.6.0/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>PATH我没有设置</p>
-
-<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
-
-<p>单个节点的启动方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/start-hbase.sh
-</span><span class='line'>sudo ./bin/hbase-daemon.sh start thrift
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>hshell的进入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./bin/hbase shell
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<blockquote><p>VS2010在经历一些更新后，建立Win32 Console Project时会出“error LNK1123” 错误，解决方案为将 项目|项目属性|配置属性|清单工具|输入和输出|嵌入清单 “是”改为“否”即可，但是没新建一个项目都要这样设置一次。
+在建立VS2010 Win32 Project项目时，按照上面解决方案依然发生了“error LNK1123”错误，经过上网查资料，解决方案为：
+第一步：与上相同。
+第二步：将 项目|项目属性|配置属性|连接器|清单文件|嵌入清单 “是”改为“否”。
+第三步：一般计算机经过上两步设置就能解决问题了，但是如果还有问题，那就按一下方法解决：
+计算机是否为64bit操作系统，如是，继续2。
+查找是否有两个cvtres.exe。一个是C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cvtres.exe， 另一个是C:\Windows\Microsoft.NET\Framework\v4.0.30319\cvtres.exe。右键属性|详细信息 查看两者版本号，删除/重命名较旧的版本，或者重新设置Path变量。
+删除或者重命名比较旧的版本的cvtres.exe即可。</p></blockquote>
 </div>
 
 
@@ -187,13 +151,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-07-30T21:51:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-10T15:22:00+08:00" pubdate data-updated="true">Feb 10<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/hbase/'>hbase</a>
+    <a class='category' href='/blog/categories/c-language/'>c-language</a>
   
 </span>
 
@@ -205,10 +169,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2011/06/05/lighttpd-change-parameter-define/" title="Previous Post: C语言变参宏">&laquo; C语言变参宏</a></li>
+            <li class="previous"><a href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/" title="Previous Post: octopress2报错undefined method `[] for nill:NilClass">&laquo; octopress2报错undefined method `[] for nill:NilClass</a></li>
             
-            
-            <li class="next"><a href="/blog/2011/09/11/nginx-upstream-sent-too-big-header/" title="Next Post: 遭遇nginx upstream sent too big header">遭遇nginx upstream sent too big header &raquo;</a></li>
             
           </ul>
         
@@ -245,7 +207,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/">VS2010 LINK:fatal Error LNK1123</a>
+    <a class="list-group-item active" href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/">VS2010 LINK:fatal Error LNK1123</a>
     
     <a class="list-group-item " href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/">Octopress2报错undefined Method `[] for nill:NilClass</a>
     

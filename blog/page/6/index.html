@@ -105,6 +105,50 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-03-01T13:39:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/03/01/erlang-c-nif/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-27T13:59:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2013</time>
         
       </p>
@@ -700,280 +744,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-12-11T11:08:00+08:00" pubdate data-updated="true">Dec 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2012/12/11/centos-install-net-snmp/">Centos上安装net-snmp</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><h3>引子</h3>
-
-<blockquote><p>Net-SNMP是一个免费的、开放源码的SNMP实现，以前称为UCD-SNMP。它包括agent和多个管理工具的源代码，支持多种扩展方式。[1]不仅扩展了获取方式，而且对于数据类型也有一定的扩展。</p></blockquote>
-
-<p>以上文字摘自百度百科。而所谓snmp agent，个人理解就是能够实现snmp的read和snmp和get等标准snmp协议交互操作的容器，它可以提供默认的MIB和自定义的MIB。</p>
-
-<h3>centos上安装net-snmp的过程</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>配置snmpd</h3>
-
-<p>配置的方法有2种，一个是<code>snmpconf -g basic_setup</code>,一个如下的方式（注:前一个我由于时间关系没有试过）：</p>
-
-<p>安装完成后编辑/etc/snmp/snmpd.conf文件，更改如下配置：</p>
-
-<p>主要是控制那台机器可以访问snmp</p>
-
-<h4>1、查找以下字段：</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sec.name <span class="nb">source          </span>community
-</span><span class='line'>com2sec notConfigUser default       public
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>将&#8221;comunity&#8221;字段改为你要设置的密码.比如&#8221;public&#8221;.                                          <br/>
-将“default”改为你想哪台机器可以看到你的snmp信息,如127.0.0.1</p>
-
-<h4>2、查找以下字段：</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># Finally, grant the group read-only access to the systemview view.</span>
-</span><span class='line'><span class="c">#       group          context sec.model sec.level prefix read   write notif</span>
-</span><span class='line'>access notConfigGroup <span class="s2">&quot;&quot;</span>      any       noauth    exact all none none
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>将&#8221;read&#8221;字段改为all.</p>
-
-<h4>3、查找以下字段：</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#           incl/excl subtree                          mask</span>
-</span><span class='line'><span class="c">#view all    included .1                               80</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>将该行前面的&#8221;#&ldquo;去掉.
-保存关闭.</p>
-
-<h3>snmpwalk和snmpget的区别</h3>
-
-<p>snmpwalk是对OID的遍历，必须从根节点一次遍历，而不能通过某个叶子节点遍历。
-而snmpget是取得具体的OID的值，必须是叶子节点。</p>
-
-<h3>用snmpwalk进行监控数据的获取</h3>
-
-<p>编辑完成之后可以测试，需要用到snmpwalk和snmpget</p>
-
-<p>缺少snmpwalk和snmpget的可以安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install net-snmp-utils
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动snmpd</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /etc/init.d/snmpd start
-</span><span class='line'><span class="nv">$ </span>sudo /sbin/chkconfig snmpd on
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>测试是否开启snmp服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c -c public 127.0.0.1 <span class="k">if</span>
-</span><span class='line'>IF-MIB::ifIndex.1 <span class="o">=</span> INTEGER: 1
-</span><span class='line'>IF-MIB::ifIndex.2 <span class="o">=</span> INTEGER: 2
-</span><span class='line'>IF-MIB::ifDescr.1 <span class="o">=</span> STRING: lo
-</span><span class='line'>IF-MIB::ifDescr.2 <span class="o">=</span> STRING: eth0
-</span><span class='line'>IF-MIB::ifType.1 <span class="o">=</span> INTEGER: softwareLoopback<span class="o">(</span>24<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifType.2 <span class="o">=</span> INTEGER: ethernetCsmacd<span class="o">(</span>6<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifMtu.1 <span class="o">=</span> INTEGER: 16436
-</span><span class='line'>IF-MIB::ifMtu.2 <span class="o">=</span> INTEGER: 1500
-</span><span class='line'>IF-MIB::ifSpeed.1 <span class="o">=</span> Gauge32: 10000000
-</span><span class='line'>IF-MIB::ifSpeed.2 <span class="o">=</span> Gauge32: 1000000000
-</span><span class='line'>IF-MIB::ifPhysAddress.1 <span class="o">=</span> STRING:
-</span><span class='line'>IF-MIB::ifPhysAddress.2 <span class="o">=</span> STRING: 0:c:29:e6:ed:27
-</span><span class='line'>IF-MIB::ifAdminStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifAdminStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifOperStatus.1 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifOperStatus.2 <span class="o">=</span> INTEGER: up<span class="o">(</span>1<span class="o">)</span>
-</span><span class='line'>IF-MIB::ifLastChange.1 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
-</span><span class='line'>IF-MIB::ifLastChange.2 <span class="o">=</span> Timeticks: <span class="o">(</span>0<span class="o">)</span> 0:00:00.00
-</span><span class='line'>IF-MIB::ifInOctets.1 <span class="o">=</span> Counter32: 784
-</span><span class='line'>IF-MIB::ifInOctets.2 <span class="o">=</span> Counter32: 4216979
-</span><span class='line'>IF-MIB::ifInUcastPkts.1 <span class="o">=</span> Counter32: 14
-</span><span class='line'>IF-MIB::ifInUcastPkts.2 <span class="o">=</span> Counter32: 5593
-</span><span class='line'>IF-MIB::ifInNUcastPkts.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInNUcastPkts.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInDiscards.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInDiscards.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInErrors.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInErrors.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInUnknownProtos.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifInUnknownProtos.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutOctets.1 <span class="o">=</span> Counter32: 784
-</span><span class='line'>IF-MIB::ifOutOctets.2 <span class="o">=</span> Counter32: 417463
-</span><span class='line'>IF-MIB::ifOutUcastPkts.1 <span class="o">=</span> Counter32: 14
-</span><span class='line'>IF-MIB::ifOutUcastPkts.2 <span class="o">=</span> Counter32: 3968
-</span><span class='line'>IF-MIB::ifOutNUcastPkts.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutNUcastPkts.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutDiscards.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutDiscards.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutErrors.1 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutErrors.2 <span class="o">=</span> Counter32: 0
-</span><span class='line'>IF-MIB::ifOutQLen.1 <span class="o">=</span> Gauge32: 0
-</span><span class='line'>IF-MIB::ifOutQLen.2 <span class="o">=</span> Gauge32: 0
-</span><span class='line'>IF-MIB::ifSpecific.1 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
-</span><span class='line'>IF-MIB::ifSpecific.2 <span class="o">=</span> OID: SNMPv2-SMI::zeroDotZero
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>获取load信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 2c 127.0.0.1 -c public .1.3.6.1.4.1.2021.10.1.3
-</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.03
-</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.03
-</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>同样可以尝试使用snmp版本1来获取</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>snmpwalk -v 1 -c public localhost .1.3.6.1.4.1.2021.10.1.3
-</span><span class='line'>UCD-SNMP-MIB::laLoad.1 <span class="o">=</span> STRING: 0.01
-</span><span class='line'>UCD-SNMP-MIB::laLoad.2 <span class="o">=</span> STRING: 0.02
-</span><span class='line'>UCD-SNMP-MIB::laLoad.3 <span class="o">=</span> STRING: 0.00
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>对外开放SNMP服务</h3>
-
-<p>得知本机已经安装完成，但是根据之前的设置，应该只有本机才有snmp的访问权限。可以通过修改/etc/snmp/snmpd.conf把刚才设置的127.0.0.1改为default</p>
-
-<p>确认本机开放snmp端口，由于snmp协议基于udp，所以采用基于tcp的telnet来测试是不奏效的，可以利用nc来测试，如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>nc -uvz 192.168.216.177 161
-</span><span class='line'>Connection to 192.168.216.177 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果打开了IPTABLES,确保本机的udp161端口对外开放，或者说入站通讯端口为udp161</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo /sbin/iptables -I INPUT -p udp --dport 161 -j ACCEPT
-</span><span class='line'><span class="nv">$ </span>sudo /etc/rc.d/init.d/iptables save
-</span><span class='line'><span class="nv">$ </span>sudo /etc/init.d/iptables restart
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者直接在/etc/sysconfig/iptable中增加一行：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>-A RH-Firewall-1-INPUT -m state –state NEW -m udp -p udp –dport 161 -j ACCEPT
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>小结</h3>
-
-<p>出于快速分析的目的，本文简单阐述了net-snmp在centos下的安装步骤，更加详细的内容可以参见net-snmp的<a href="http://www.net-snmp.org/">官方网站</a></p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -997,6 +767,8 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/">VS2010 LINK:fatal Error LNK1123</a>
+    
     <a class="list-group-item " href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/">Octopress2报错undefined Method `[] for nill:NilClass</a>
     
     <a class="list-group-item " href="/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-sprite-and-animation-summary/">Cocos2d-x Cocos2d-iphone Cocos2d-html5下精灵加载和动画的总结</a>
@@ -1005,15 +777,13 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     
     <a class="list-group-item " href="/blog/2014/01/20/win7-install-apk-on-android-emulator/">Win7上Android模拟器上安装apk软件</a>
     
-    <a class="list-group-item " href="/blog/2014/01/19/android-webview-helloworld/">Android Webview Helloworld分析</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 133.75%'>C-language(9)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 111.25%'>Cocos2d-html5(3)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 111.25%'>Cocos2d-html5(3)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 107.5%'>Cocos2d-x(2)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 118.75%'>Freebsd(5)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 111.25%'>Hadoop(3)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 133.75%'>Php(9)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
 </section>
 
 <section>
