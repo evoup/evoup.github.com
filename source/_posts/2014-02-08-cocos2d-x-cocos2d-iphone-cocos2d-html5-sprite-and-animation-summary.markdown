@@ -72,6 +72,14 @@ for (i=0;i<100;i++) { //载入100个精灵并分别加到批渲染节点
 -------------------------
 
 > <i>batchnode加framecache结合显示单帧图片</i>
+{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode *batchNode = CCSpriteBatchNode::create("resource.png"); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到this场景对象下
+CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("resources.plist"); //帧缓冲加入plist打包好的文件，用texture packer软件可以打包
+CCSprite * sprite = CCSprite::createWithSpriteFrameName("resources_00.png"); //读取单帧到精灵
+batchNode->addChild(sprite); //加到批渲染对象
+{% endcodeblock %}
+
 {%codeblock lang:objective-c cocos2d-iphone %}
 [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:
      @"res/resources.plist"]; //加载resource.plist文件到精灵帧缓冲区
