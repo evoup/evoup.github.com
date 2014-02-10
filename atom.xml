@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-10T14:32:35+08:00</updated>
+  <updated>2014-02-10T14:38:50+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -206,7 +206,7 @@ ruby 1.9.3p484 (2013-11-22) [i386-mingw32]</p>
 <span class='line-number'>6</span>
 </pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[[</span><span class="n">CCSpriteFrameCache</span> <span class="n">sharedSpriteFrameCache</span><span class="p">]</span> <span class="nl">addSpriteFramesWithFile:</span>
 </span><span class='line'>     <span class="s">@&quot;res/resources.plist&quot;</span><span class="p">];</span> <span class="c1">//加载resource.plist文件到精灵帧缓冲区</span>
-</span><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">spriteSheet</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSpriteBatchNode</span> <span class="nl">batchNodeWithFile:</span><span class="s">@&quot;resources.png&quot;</span><span class="p">];</span> <span class="c1">//从精灵批处理节点返会一个精灵表</span>
+</span><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">spriteSheet</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSpriteBatchNode</span> <span class="nl">batchNodeWithFile:</span><span class="s">@&quot;resources.png&quot;</span><span class="p">];</span> <span class="c1">//从精灵批渲染节点返会一个精灵表</span>
 </span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">spriteSheet</span> <span class="nl">z:</span><span class="mi">1</span><span class="p">];</span> <span class="c1">//把精灵表加载到self场景对象下，并设置Z轴顺序为1</span>
 </span><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSprite</span> <span class="nl">spriteWithSpriteFrameName:</span><span class="s">@&quot;resource_00.png&quot;</span><span class="p">];</span> <span class="c1">//再从缓冲加载单帧图片给精灵</span>
 </span><span class='line'><span class="p">[</span><span class="n">spriteSheet</span> <span class="nl">addChild:</span><span class="n">sprite</span><span class="p">];</span> <span class="c1">//精灵表将该精灵呈现出来   </span>
@@ -223,8 +223,8 @@ ruby 1.9.3p484 (2013-11-22) [i386-mingw32]</p>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 </pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">spriteFrameCache</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">SpriteFrameCache</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
-</span><span class='line'><span class="nx">spriteFrameCache</span><span class="p">.</span><span class="nx">addSpriteFrames</span><span class="p">(</span><span class="s2">&quot;res/resources.plist&quot;</span><span class="p">,</span><span class="s2">&quot;res/resources.png&quot;</span><span class="p">);</span> <span class="c1">//从精灵批处理节点返会一个精灵表</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">createWithSpriteFrameName</span><span class="p">(</span><span class="s2">&quot;resource_00.png&quot;</span><span class="p">);</span> <span class="c1">//将单帧精灵图片添加到self场景对象</span>
+</span><span class='line'><span class="nx">spriteFrameCache</span><span class="p">.</span><span class="nx">addSpriteFrames</span><span class="p">(</span><span class="s2">&quot;res/resources.plist&quot;</span><span class="p">,</span><span class="s2">&quot;res/resources.png&quot;</span><span class="p">);</span> <span class="c1">//从精灵批渲染节点返会一个精灵表</span>
+</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">createWithSpriteFrameName</span><span class="p">(</span><span class="s2">&quot;resource_00.png&quot;</span><span class="p">);</span> <span class="c1">//将单帧精灵图片添加到this场景对象</span>
 </span><span class='line'><span class="kd">var</span> <span class="nx">batchNode</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">SpriteBatchNode</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;res/resources.png&quot;</span><span class="p">);</span>
 </span><span class='line'><span class="nx">batchNode</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">);</span>
 </span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">batchNode</span><span class="p">);</span>
