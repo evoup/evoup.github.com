@@ -59,15 +59,13 @@ for (int i=0;i<100;i++) {
 {% endcodeblock %}
 
 {%codeblock lang:javascript cocos2d-html5 %}
-//首先定义好资源s_resource
-var batchNode = cc.SpriteBatchNode.create(s_resource, 50);
-this.addChild(batchNode, 0, TAG_SPRITE_BATCH_NODE);
-var batchNodeOld = this.getChildByTag(TAG_SPRITE_BATCH_NODE);
-var idx = 0 | (Math.random() * 14);
-var x = (idx % 5) * 85;
-var y = (0 | (idx / 5)) * 121;
-var sprite = cc.Sprite.createWithTexture(batchNodeOld.getTexture(), cc.rect(x, y, 85, 121));
-batchNodeOld.addChild(sprite);
+//首先定义好资源
+var batchNode = cc.SpriteBatchNode.create("pic.png", 50);
+this.addChild(batchNode,0);
+for (i=0;i<100;i++) {
+    var sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(0, 0, 85, 121));
+    batchNode.addChild(sprite);
+}
 {% endcodeblock %}
 
 
