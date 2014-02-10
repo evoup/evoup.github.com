@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-10T15:35:30+08:00</updated>
+  <updated>2014-02-10T17:42:53+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -219,6 +219,22 @@ ruby 1.9.3p484 (2013-11-22) [i386-mingw32]</p>
 <hr />
 
 <blockquote><p><i>batchnode加framecache结合显示单帧图片</i></p></blockquote>
+
+<figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;resource.png&quot;</span><span class="p">);</span> <span class="c1">//创建批渲染对象</span>
+</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">batchNode</span><span class="p">);</span> <span class="c1">//批渲染对象加载到this场景对象下</span>
+</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;resources.plist&quot;</span><span class="p">);</span> <span class="c1">//帧缓冲加入plist打包好的文件，用texture packer软件可以打包</span>
+</span><span class='line'><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">sprite</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;resources_00.png&quot;</span><span class="p">);</span> <span class="c1">//读取单帧到精灵</span>
+</span><span class='line'><span class="n">batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">);</span> <span class="c1">//加到批渲染对象</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 
 <figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

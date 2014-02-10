@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-html5 | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-html5/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-10T15:35:30+08:00</updated>
+  <updated>2014-02-10T17:42:53+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -140,7 +140,20 @@
 <hr />
 
 <blockquote><p><i>batchnode加framecache结合显示单帧图片</i>
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//创建批渲染对象</span>
+</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">batchNode</span><span class="p">);</span> <span class="c1">//批渲染对象加载到this场景对象下</span>
+</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources</span><span class="p">.</span><span class="n">plist</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//帧缓冲加入plist打包好的文件，用texture packer软件可以打包</span>
+</span><span class='line'><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">sprite</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//读取单帧到精灵</span>
+</span><span class='line'><span class="n">batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">);</span> <span class="c1">//加到批渲染对象</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -159,7 +172,7 @@
 </span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">spriteSheet</span> <span class="nl">z:</span><span class="mi">1</span><span class="p">];</span> <span class="c1">//把精灵表加载到self场景对象下，并设置Z轴顺序为1</span>
 </span><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSprite</span> <span class="nl">spriteWithSpriteFrameName:</span><span class="err">@</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;];</span> <span class="c1">//再从缓冲加载单帧图片给精灵</span>
 </span><span class='line'><span class="p">[</span><span class="n">spriteSheet</span> <span class="nl">addChild:</span><span class="n">sprite</span><span class="p">];</span> <span class="c1">//精灵表将该精灵呈现出来&lt;br/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-html5 </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -305,7 +318,20 @@
 <hr />
 
 <blockquote><p><i>batchnode加framecache结合显示单帧图片</i>
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//创建批渲染对象</span>
+</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">batchNode</span><span class="p">);</span> <span class="c1">//批渲染对象加载到this场景对象下</span>
+</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources</span><span class="p">.</span><span class="n">plist</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//帧缓冲加入plist打包好的文件，用texture packer软件可以打包</span>
+</span><span class='line'><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">sprite</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//读取单帧到精灵</span>
+</span><span class='line'><span class="n">batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">);</span> <span class="c1">//加到批渲染对象</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -324,7 +350,7 @@
 </span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">spriteSheet</span> <span class="nl">z:</span><span class="mi">1</span><span class="p">];</span> <span class="c1">//把精灵表加载到self场景对象下，并设置Z轴顺序为1</span>
 </span><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSprite</span> <span class="nl">spriteWithSpriteFrameName:</span><span class="err">@</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;];</span> <span class="c1">//再从缓冲加载单帧图片给精灵</span>
 </span><span class='line'><span class="p">[</span><span class="n">spriteSheet</span> <span class="nl">addChild:</span><span class="n">sprite</span><span class="p">];</span> <span class="c1">//精灵表将该精灵呈现出来&lt;br/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-html5 </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
