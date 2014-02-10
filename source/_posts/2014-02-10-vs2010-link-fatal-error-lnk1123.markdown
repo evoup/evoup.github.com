@@ -8,6 +8,7 @@ categories: c-language
 
 因为要看cocostudio的实例代码，在原有vs2010的基础上又安装了vs2012，出现了项目不能编译的问题OMG
 ` LINK : fatal error LNK1123: 转换到 COFF 期间失败: 文件无效或损坏 `
+以下为解决方法：
 
 <!-- more -->
 
