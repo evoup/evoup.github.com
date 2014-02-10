@@ -60,9 +60,9 @@ for (int i=0;i<100;i++) {
 
 {%codeblock lang:javascript cocos2d-html5 %}
 //首先定义好资源
-var batchNode = cc.SpriteBatchNode.create("pic.png", 50);
-this.addChild(batchNode,0);
-for (i=0;i<100;i++) {
+var batchNode = cc.SpriteBatchNode.create("pic.png", 50); //定义批渲染对象
+this.addChild(batchNode,0); //把批渲染节点加到this场景对象
+for (i=0;i<100;i++) { //载入100个精灵并分别加到批渲染节点
     var sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(0, 0, 85, 121));
     batchNode.addChild(sprite);
 }
@@ -71,10 +71,10 @@ for (i=0;i<100;i++) {
 
 -------------------------
 
-> <i>batchnode加framecache结合显示多帧动画</i>
+> <i>batchnode加framecache结合显示单帧图片</i>
 {%codeblock lang:objective-c cocos2d-iphone %}
 [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:
-     @"res/resource.plist"]; //加载resource.plist文件到精灵帧缓冲区
+     @"res/resources.plist"]; //加载resource.plist文件到精灵帧缓冲区
 CCSpriteBatchNode *spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"resources.png"]; //从精灵批处理节点返会一个精灵表
 [self addChild:spriteSheet z:1]; //把精灵表加载到self场景对象下，并设置Z轴顺序为1
 self.sprite = [CCSprite spriteWithSpriteFrameName:@"resource_00.png"]; //再从缓冲加载单帧图片给精灵
@@ -83,11 +83,11 @@ self.sprite = [CCSprite spriteWithSpriteFrameName:@"resource_00.png"]; //再从�
 
 {%codeblock lang:javascript cocos2d-html5 %}
 var spriteFrameCache = cc.SpriteFrameCache.getInstance();
-spriteFrameCache.addSpriteFrames("res/resource.plist","res/resource.png"); //从精灵批处理节点返会一个精灵表
-this.aniSprite = cc.Sprite.createWithSpriteFrameName("resource_00.png"); //将精灵表添加到self场景对象
-var spritebatch = cc.SpriteBatchNode.create("res/baseResource.png");
-spritebatch.addChild(this.aniSprite);
-this.addChild(spritebatch);
+spriteFrameCache.addSpriteFrames("res/resources.plist","res/resources.png"); //从精灵批处理节点返会一个精灵表
+this.sprite = cc.Sprite.createWithSpriteFrameName("resource_00.png"); //将单帧精灵图片添加到self场景对象
+var batchNode = cc.SpriteBatchNode.create("res/resources.png");
+batchNode.addChild(this.sprite);
+this.addChild(batchNode);
 {% endcodeblock %}
 
 
