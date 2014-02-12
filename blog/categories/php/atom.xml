@@ -4,7 +4,7 @@
   <title><![CDATA[Category: php | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-12T17:49:23+08:00</updated>
+  <updated>2014-02-12T17:57:09+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -18,7 +18,7 @@
     <link href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/"/>
     <updated>2014-02-12T17:27:00+08:00</updated>
     <id>http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension</id>
-    <content type="html"><![CDATA[<p>帮同事解决一个ffpmeg在freebsd下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展。</p>
+    <content type="html"><![CDATA[<p>帮同事解决一个开源音视频转换处理软件ffmpeg在freebsd8.1下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展浪费时间。</p>
 
 <!-- more -->
 
@@ -45,7 +45,7 @@ sudo pkg_add ffmpeg.tbz
 </code>
 用pkg_add一个一个装，直到ffmpeg安装完成。</p>
 
-<p>如果你也是这么装全部东西下完，大概有这么多依赖OMG
+<p>如果你也是这么装，那么全部东西下完，大概有这么多依赖OMG
 ```sh</p>
 
 <blockquote><p>ls
@@ -57,11 +57,13 @@ ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz
 fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
 ```</p></blockquote>
 
-<p>嫌麻烦的直接下好软件然后
+<p>嫌麻烦的可以先下好软件然后批量装
 <code>sh
 find . -name "*.tbz" -exec pkg_add {} \;
 </code>
-当然也免不了部分手动来。</p>
+当然也免不了部分手动来部分包，窃喜~</p>
+
+<hr />
 
 <h4>ffmpeg-php的安装</h4>
 
@@ -144,6 +146,8 @@ $ sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.s
 extension=ffmpeg.so
 </code></p>
 
+<hr />
+
 <p>观察劳动成果
 <code>sh
 $ /usr/local/php53/bin/php -i | grep ffmpeg
@@ -159,6 +163,8 @@ ffmpeg.show_warnings =&gt; 0 =&gt; 0
 </code></p>
 
 <p>没问题收工。</p>
+
+<p>参考互联网文章《编译FFMpeg和FFMpeg-php》linux版的</p>
 ]]></content>
   </entry>
   
