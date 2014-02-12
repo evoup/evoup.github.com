@@ -7,7 +7,7 @@ categories: [freebsd,php]
 ---
 
 
-帮同事解决一个ffpmeg在freebsd下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展。
+帮同事解决一个开源音视频转换处理软件ffmpeg在freebsd8.1下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展浪费时间。
 
 <!-- more -->
 
@@ -32,7 +32,7 @@ sudo pkg_add ffmpeg.tbz
 
 
 
-如果你也是这么装全部东西下完，大概有这么多依赖OMG
+如果你也是这么装，那么全部东西下完，大概有这么多依赖OMG
 ```sh
 >ls
 damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
@@ -43,12 +43,14 @@ ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz
 fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
 ```
 
-嫌麻烦的直接下好软件然后
+嫌麻烦的可以先下好软件然后批量装
 ```sh
 find . -name "*.tbz" -exec pkg_add {} \;
 ```
-当然也免不了部分手动来。
+当然也免不了部分手动来部分包，窃喜~
 
+
+----------------------------
 
 ####ffmpeg-php的安装
 装php，./configure的时候出现出错，查看config.log
@@ -114,7 +116,7 @@ make
 sudo make install
 Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
 ```
-安装ok,接下来加载到php,要做的是看下一php的ini位置，放进去就是
+安装ok,接下来加载到php,要做的是看下php的ini位置，放进去就是
 ```sh
 $ /usr/local/php53/bin/php -i | grep Conf
 Configure Command =>  './configure'  '--prefix=/usr/local/php53'
@@ -132,6 +134,8 @@ $ sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.s
 extension=ffmpeg.so
 ```
 
+-----------------------
+
 观察劳动成果
 ```sh
 $ /usr/local/php53/bin/php -i | grep ffmpeg
@@ -147,3 +151,7 @@ ffmpeg.show_warnings => 0 => 0
 ```
 
 没问题收工。
+
+
+
+参考互联网文章《编译FFMpeg和FFMpeg-php》linux版的
