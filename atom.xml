@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-12T15:20:02+08:00</updated>
+  <updated>2014-02-12T17:45:36+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,234 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/"/>
+    <updated>2014-02-12T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension</id>
+    <content type="html"><![CDATA[<p>帮同事解决一个ffpmeg在freebsd下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展。</p>
+
+<!-- more -->
+
+
+<h3>环境freebsd8.1 amd64</h3>
+
+<p>我拿个了干净的系统做试验，安装的时候选择了develop模式和customize，customize里只选择了ports,然后php是装在了/usr/local/php53目录下。</p>
+
+<h3>安装过程描述</h3>
+
+<h4>ffmpeg的安装</h4>
+
+<p>主要采用pkg_add ffmpeg.tbz的方式来安装。
+然后看报错的依赖缺少啥一个一个装上去，途中需要的包可以通过下面的命令来获取：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/ffmpeg.tbz
+</span><span class='line'>fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/x264.tbz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>采用pkg_add快速安装包
+安装的时候反正就是不断用下面的语句试探</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo pkg_add ffmpeg.tbz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>用pkg_add一个一个装，直到ffmpeg安装完成。</p>
+
+<p>如果你也是这么装全部东西下完，大概有这么多依赖OMG</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt;ls
+</span><span class='line'>damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
+</span><span class='line'>dri2proto.tbz    jpeg.tbz          libXdamage.tbz  libiconv.tbz          libxcb.tbz      schroedinger.tbz
+</span><span class='line'>expat.tbz        kbproto.tbz       libXdmcp.tbz    libogg.tbz            libxml.tbz      x264.tbz
+</span><span class='line'>faad2.tbz        libGL.tbz         libXext.tbz     libpthread-stubs.tbz  libxml2.tbz     xextproto.tbz
+</span><span class='line'>ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz         xf86vidmodeproto.tbz
+</span><span class='line'>fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>嫌麻烦的直接下好软件然后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.tbz&quot;</span> -exec pkg_add <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然也免不了部分手动来。</p>
+
+<h4>ffmpeg-php的安装</h4>
+
+<p>装php，./configure的时候出现出错，查看config.log
+<code>/usr/bin/ld: cannot find -liconv</code>
+需要再用pkg_add安装libxml，重新安装libiconv，用port安装，谈到要安装libtool213,再用pkg_add去装，卸掉libiconv，重新用port安装，下载php5.3编译通过，再去下载ffmpeg-php，用phpize的方式编译成动态库，会报告少autoconf，此时在到port里安装autoconf213，会让安装perl，等待安装完成就是。</p>
+
+<p>下载正确的扩展,不要用sf那个2005年的扩展，不能用。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch http://downloads.sourceforge.net/project/ffmpeg-php/ffmpeg-php/0.6.0/ffmpeg-php-0.6.0.tbz2
+</span><span class='line'>tar xjf ffmpeg-php-0.6.0.tbz2
+</span><span class='line'><span class="nb">cd </span>ffmpeg-php
+</span><span class='line'>phpize
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在phpize的时候可能出现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>evoup@freebsd81amd64 ffmpeg<span class="o">]</span>&gt;/usr/local/php53/bin/phpize
+</span><span class='line'>Configuring <span class="k">for</span>:
+</span><span class='line'>PHP Api Version:         20090626
+</span><span class='line'>Zend Module Api No:      20090626
+</span><span class='line'>Zend Extension Api No:   220090626
+</span><span class='line'>Cannot find autoconf. Please check your autoconf installation and the
+</span><span class='line'><span class="nv">$PHP_AUTOCONF</span> environment variable. Then, rerun this script.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>此时需要在环境变量中指定好autoconf和autoheader的路径，我是加载.cshrc文件中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenv PHP_AUTOCONF <span class="s2">&quot;/usr/local/bin/autoconf&quot;</span>
+</span><span class='line'>setenv PHP_AUTOHEADER <span class="s2">&quot;/usr/local/bin/autoheader&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完事之后不要忘记重载~/.cshrc</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.cshrc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>phpize完了之后可以开始configure了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --with-php-cofig<span class="o">=</span>/usr/local/php53/bin/php-config
+</span><span class='line'>/usr/local/include/ffmpeg/avcodec.h:30:30: error: libavutil/avutil.h: No such file or directory
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实这个是ffmpeg安装好应该有的库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>locate avutil.h
+</span><span class='line'>/usr/home/evoup/software/libavutil/avutil.h
+</span><span class='line'>/usr/local/include/ffmpeg/avutil.h
+</span><span class='line'>/usr/local/include/libavutil/avutil.h
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>怎么装上去？嘿嘿，直接把相关的路径做软连接</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec/
+</span><span class='line'>sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec
+</span><span class='line'>sudo ln -s /usr/local/include/libavdevice/ /usr/include/libavdevice
+</span><span class='line'>sudo ln -s /usr/local/include/libavfilter/ /usr/include/libavfilter
+</span><span class='line'>sudo ln -s /usr/local/include/libavformat/ /usr/include/libavformat
+</span><span class='line'>sudo ln -s /usr/local/include/libavutil/ /usr/include/libavutil
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后再次</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make
+</span><span class='line'>sudo make install
+</span><span class='line'>Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装ok,接下来加载到php,要做的是看下一php的ini位置，放进去就是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php53/bin/php -i | grep Conf
+</span><span class='line'>Configure <span class="nv">Command</span> <span class="o">=</span>&gt;  <span class="s1">&#39;./configure&#39;</span>  <span class="s1">&#39;--prefix=/usr/local/php53&#39;</span>
+</span><span class='line'>Configuration File <span class="o">(</span>php.ini<span class="o">)</span> <span class="nv">Path</span> <span class="o">=</span>&gt; /usr/local/php53/lib
+</span><span class='line'>Loaded Configuration <span class="nv">File</span> <span class="o">=</span>&gt; /usr/local/php53/lib/php.ini
+</span><span class='line'>Configuration
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>说明在/usr/local/php53/lib下，于是把编译好的so移到该目录下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.so /usr/local/php53/lib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后在php.ini中指定</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">extension</span><span class="o">=</span>ffmpeg.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>观察劳动成果</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php53/bin/php -i | grep ffmpeg
+</span><span class='line'>ffmpeg
+</span><span class='line'>ffmpeg-php <span class="nv">version</span> <span class="o">=</span>&gt; 0.6.0-svn
+</span><span class='line'>ffmpeg-php built <span class="nv">on</span> <span class="o">=</span>&gt; Feb 12 2014 17:10:47
+</span><span class='line'>ffmpeg-php gd <span class="nv">support</span>  <span class="o">=</span>&gt; disabled
+</span><span class='line'>ffmpeg libavcodec <span class="nv">version</span> <span class="o">=</span>&gt; Lavc52.20.1
+</span><span class='line'>ffmpeg libavformat <span class="nv">version</span> <span class="o">=</span>&gt; Lavf52.31.0
+</span><span class='line'>ffmpeg <span class="nv">swscaler</span> <span class="o">=</span>&gt; disabled
+</span><span class='line'>ffmpeg.allow_persistent <span class="o">=</span>&gt; <span class="nv">0</span> <span class="o">=</span>&gt; 0
+</span><span class='line'>ffmpeg.show_warnings <span class="o">=</span>&gt; <span class="nv">0</span> <span class="o">=</span>&gt; 0
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>没问题收工。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[VS2010 LINK:fatal error LNK1123]]></title>
@@ -3388,69 +3616,6 @@ getenforce返回Disabled说明已经关闭</p>
 </span><span class='line'>git pull origin master
 </span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
-    <updated>2013-11-29T10:52:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
-    <content type="html"><![CDATA[<p>安装最新版phpmyadmin4.1.0出现了访问非常缓慢的问题，记录一下</p>
-
-<!-- more -->
-
-
-<h3>第一步</h3>
-
-<p>文件名./libraries/Util.class.php文件
-查找</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>替换为</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">if</span><span class="p">(</span><span class="nb">extension_loaded</span><span class="p">(</span><span class="s1">&#39;gettext&#39;</span><span class="p">))</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nb">strftime</span><span class="p">(</span><span class="nv">$date</span><span class="p">,</span> <span class="nv">$timestamp</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>第二步</h3>
-
-<p>文件名./version_check.php文件
-注释掉以下代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$version</span> <span class="o">=</span> <span class="nx">PMA_Util</span><span class="o">::</span><span class="na">getLatestVersion</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">echo</span> <span class="nb">json_encode</span><span class="p">(</span>
-</span><span class='line'>    <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>        <span class="s1">&#39;version&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">version</span><span class="p">,</span>
-</span><span class='line'>        <span class="s1">&#39;date&#39;</span> <span class="o">=&gt;</span> <span class="nv">$version</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>    <span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>第三步</h3>
-
-<p>直接浏览器访问/setup路径，进行设置</p>
-
-<h3>第四步</h3>
-
-<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
 ]]></content>
   </entry>
   

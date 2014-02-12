@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-12T15:20:02+08:00</updated>
+  <updated>2014-02-12T17:45:36+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,155 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/"/>
+    <updated>2014-02-12T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension</id>
+    <content type="html"><![CDATA[<p>帮同事解决一个ffpmeg在freebsd下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展。</p>
+
+<!-- more -->
+
+
+<h3>环境freebsd8.1 amd64</h3>
+
+<p>我拿个了干净的系统做试验，安装的时候选择了develop模式和customize，customize里只选择了ports,然后php是装在了/usr/local/php53目录下。</p>
+
+<h3>安装过程描述</h3>
+
+<h4>ffmpeg的安装</h4>
+
+<p>主要采用pkg_add ffmpeg.tbz的方式来安装。
+然后看报错的依赖缺少啥一个一个装上去，途中需要的包可以通过下面的命令来获取：
+<code>sh
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/ffmpeg.tbz
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/x264.tbz
+</code></p>
+
+<p>采用pkg_add快速安装包
+安装的时候反正就是不断用下面的语句试探
+<code>sh
+sudo pkg_add ffmpeg.tbz
+</code>
+用pkg_add一个一个装，直到ffmpeg安装完成。</p>
+
+<p>如果你也是这么装全部东西下完，大概有这么多依赖OMG
+```sh</p>
+
+<blockquote><p>ls
+damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
+dri2proto.tbz    jpeg.tbz          libXdamage.tbz  libiconv.tbz          libxcb.tbz      schroedinger.tbz
+expat.tbz        kbproto.tbz       libXdmcp.tbz    libogg.tbz            libxml.tbz      x264.tbz
+faad2.tbz        libGL.tbz         libXext.tbz     libpthread-stubs.tbz  libxml2.tbz     xextproto.tbz
+ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz         xf86vidmodeproto.tbz
+fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
+```</p></blockquote>
+
+<p>嫌麻烦的直接下好软件然后
+<code>sh
+find . -name "*.tbz" -exec pkg_add {} \;
+</code>
+当然也免不了部分手动来。</p>
+
+<h4>ffmpeg-php的安装</h4>
+
+<p>装php，./configure的时候出现出错，查看config.log
+<code>/usr/bin/ld: cannot find -liconv</code>
+需要再用pkg_add安装libxml，重新安装libiconv，用port安装，谈到要安装libtool213,再用pkg_add去装，卸掉libiconv，重新用port安装，下载php5.3编译通过，再去下载ffmpeg-php，用phpize的方式编译成动态库，会报告少autoconf，此时在到port里安装autoconf213，会让安装perl，等待安装完成就是。</p>
+
+<p>下载正确的扩展,不要用sf那个2005年的扩展，不能用。
+<code>sh
+fetch http://downloads.sourceforge.net/project/ffmpeg-php/ffmpeg-php/0.6.0/ffmpeg-php-0.6.0.tbz2
+tar xjf ffmpeg-php-0.6.0.tbz2
+cd ffmpeg-php
+phpize
+</code></p>
+
+<p>在phpize的时候可能出现
+<code>
+[evoup@freebsd81amd64 ffmpeg]&gt;/usr/local/php53/bin/phpize
+Configuring for:
+PHP Api Version:         20090626
+Zend Module Api No:      20090626
+Zend Extension Api No:   220090626
+Cannot find autoconf. Please check your autoconf installation and the
+$PHP_AUTOCONF environment variable. Then, rerun this script.
+</code>
+此时需要在环境变量中指定好autoconf和autoheader的路径，我是加载.cshrc文件中
+<code>sh
+setenv PHP_AUTOCONF "/usr/local/bin/autoconf"
+setenv PHP_AUTOHEADER "/usr/local/bin/autoheader"
+</code>
+完事之后不要忘记重载~/.cshrc
+<code>sh
+source ~/.cshrc
+</code></p>
+
+<p>phpize完了之后可以开始configure了
+<code>sh
+./configure --with-php-cofig=/usr/local/php53/bin/php-config
+/usr/local/include/ffmpeg/avcodec.h:30:30: error: libavutil/avutil.h: No such file or directory
+</code></p>
+
+<p>其实这个是ffmpeg安装好应该有的库
+<code>sh
+$ locate avutil.h
+/usr/home/evoup/software/libavutil/avutil.h
+/usr/local/include/ffmpeg/avutil.h
+/usr/local/include/libavutil/avutil.h
+</code></p>
+
+<p>怎么装上去？嘿嘿，直接把相关的路径做软连接
+<code>sh
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec/
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec
+sudo ln -s /usr/local/include/libavdevice/ /usr/include/libavdevice
+sudo ln -s /usr/local/include/libavfilter/ /usr/include/libavfilter
+sudo ln -s /usr/local/include/libavformat/ /usr/include/libavformat
+sudo ln -s /usr/local/include/libavutil/ /usr/include/libavutil
+</code>
+然后再次
+<code>sh
+make
+sudo make install
+Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
+</code>
+安装ok,接下来加载到php,要做的是看下一php的ini位置，放进去就是
+<code>sh
+$ /usr/local/php53/bin/php -i | grep Conf
+Configure Command =&gt;  './configure'  '--prefix=/usr/local/php53'
+Configuration File (php.ini) Path =&gt; /usr/local/php53/lib
+Loaded Configuration File =&gt; /usr/local/php53/lib/php.ini
+Configuration
+</code></p>
+
+<p>说明在/usr/local/php53/lib下，于是把编译好的so移到该目录下
+<code>sh
+$ sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.so /usr/local/php53/lib
+</code>
+最后在php.ini中指定
+<code>sh
+extension=ffmpeg.so
+</code></p>
+
+<p>观察劳动成果
+<code>sh
+$ /usr/local/php53/bin/php -i | grep ffmpeg
+ffmpeg
+ffmpeg-php version =&gt; 0.6.0-svn
+ffmpeg-php built on =&gt; Feb 12 2014 17:10:47
+ffmpeg-php gd support  =&gt; disabled
+ffmpeg libavcodec version =&gt; Lavc52.20.1
+ffmpeg libavformat version =&gt; Lavf52.31.0
+ffmpeg swscaler =&gt; disabled
+ffmpeg.allow_persistent =&gt; 0 =&gt; 0
+ffmpeg.show_warnings =&gt; 0 =&gt; 0
+</code></p>
+
+<p>没问题收工。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[freebsd下安装vmware-tool]]></title>
@@ -241,41 +390,6 @@ make install
 sudo /usr/local/php4_admin/sbin/php-fpm start
 </code>
 看到就可以了，收工。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd下如何使用ctags为项目生成tag文件]]></title>
-    <link href="http://evoupsight.com/blog/2010/07/23/freebsd-ctags/"/>
-    <updated>2010-07-23T14:48:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2010/07/23/freebsd-ctags</id>
-    <content type="html"><![CDATA[<p>用vim写代码免不了使用ctags，但是在freebsd下稍稍有点区别，你需要Exuberant Ctags，它是ctags的扩展实现，比freebsd自带的ctags功能更加强大，老实说freebsd自带的ctags一点也不好用，除了不能直接ctags -R *以外，据说vim的taglist还不支持这个语法。</p>
-
-<!-- more -->
-
-
-<p>在freebsd里面，可以去ctags.sourceforge.net下载编译安装了ctags，还是要去下载的这个版本。但是和freebsd默认的ctags就冲突了。</p>
-
-<p>其实可以直接port安装了,装完之后这个软件其实叫做exctags。
-<code>sh
-whereis ctags
-/usr/ports/devel/ctags
-cd /usr/ports/devel/ctags
-sudo make install clean
-</code>
-以php语言为例
-<code>bash
-find . -name "*.php" -exec exctags --language-force=php {} +
-</code></p>
-
-<p>对于c语言可能包含的h文件的方法，我采用如下的方式：
-<code>bash
-find . -regex ".*\.\(c\|h\)" -exec exctags {} +
-</code>
-如果没有限制想把全部源码递归生成到一个tag文件则
-<code>bash
-cd /root/repos/httpd &amp;&amp; exctags -R　*
-</code></p>
 ]]></content>
   </entry>
   

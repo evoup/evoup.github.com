@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>HADOOP完全分布式搭建(VMware版) - Evoup`s Blog</title>
+  <title>64位freebsd8.1下安装ffmpeg和php扩展 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,89 +101,53 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-04T15:28:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-12T17:27:00+08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        HADOOP完全分布式搭建(VMware版)
+        64位freebsd8.1下安装ffmpeg和php扩展
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>vmware版本8.0.4 build-744019
-首先准备3台虚拟机</p>
+<div class="entry-content clearfix"><p>帮同事解决一个ffpmeg在freebsd下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展。</p>
 
-<p><img src="/images/evoup/hadoop_vmware.png" alt="Alt text" /></p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> |    usage    |        IP        |             Hostname              |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | namenode    | 192.168.174.132  |           mdn2.net                |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
-</span><span class='line'> |             |                  |                                   |
-</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
+<!-- more -->
 
 
-<p> <!-- more --></p>
+<h3>环境freebsd8.1 amd64</h3>
 
-<p>Ps:
-为节省资源关闭点不必要的服务</p>
+<p>我拿个了干净的系统做试验，安装的时候选择了develop模式和customize，customize里只选择了ports,然后php是装在了/usr/local/php53目录下。</p>
+
+<h3>安装过程描述</h3>
+
+<h4>ffmpeg的安装</h4>
+
+<p>主要采用pkg_add ffmpeg.tbz的方式来安装。
+然后看报错的依赖缺少啥一个一个装上去，途中需要的包可以通过下面的命令来获取：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/bash</span>
-</span><span class='line'><span class="k">for </span>SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
-</span><span class='line'><span class="k">do</span> /sbin/chkconfig <span class="k">${</span><span class="nv">SERVICES</span><span class="k">}</span> off;
-</span><span class='line'><span class="k">done</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/ffmpeg.tbz
+</span><span class='line'>fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/x264.tbz
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>准备工作</h3>
-
-<p>先安装JDK1.6
-linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p>
+<p>采用pkg_add快速安装包
+安装的时候反正就是不断用下面的语句试探</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#rpm -qa | grep jdk</span>
-</span><span class='line'>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
-</span><span class='line'><span class="c">#rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</span>
-</span><span class='line'><span class="c">#sudo chmod +x jdk-6u35-linux-x64-rpm.bin</span>
-</span><span class='line'><span class="c">#./jdk-6u35-linux-x64-rpm.bin</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo pkg_add ffmpeg.tbz
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
+<p>用pkg_add一个一个装，直到ffmpeg安装完成。</p>
 
-<p>hadoop所有操作都是用hadoop帐号，下面添加</p>
+<p>如果你也是这么装全部东西下完，大概有这么多依赖OMG</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -192,57 +156,45 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>linux:# groupadd hadoop
-</span><span class='line'>freebsd:# pw groupadd hadoop
-</span><span class='line'>linux:# useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
-</span><span class='line'>freebsd:# pw adduser hadoop -g hadoop -d /home/hadoop -m -s /bin/bash
-</span><span class='line'>
-</span><span class='line'>all:# mkdir -p /u01/app
-</span><span class='line'>all:# chgrp -R hadoop /u01/app
-</span><span class='line'>all:# chown -R hadoop /u01/app
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt;ls
+</span><span class='line'>damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
+</span><span class='line'>dri2proto.tbz    jpeg.tbz          libXdamage.tbz  libiconv.tbz          libxcb.tbz      schroedinger.tbz
+</span><span class='line'>expat.tbz        kbproto.tbz       libXdmcp.tbz    libogg.tbz            libxml.tbz      x264.tbz
+</span><span class='line'>faad2.tbz        libGL.tbz         libXext.tbz     libpthread-stubs.tbz  libxml2.tbz     xextproto.tbz
+</span><span class='line'>ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz         xf86vidmodeproto.tbz
+</span><span class='line'>fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>环境变量</p>
+<p>嫌麻烦的直接下好软件然后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.tbz&quot;</span> -exec pkg_add <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然也免不了部分手动来。</p>
+
+<h4>ffmpeg-php的安装</h4>
+
+<p>装php，./configure的时候出现出错，查看config.log
+<code>/usr/bin/ld: cannot find -liconv</code>
+需要再用pkg_add安装libxml，重新安装libiconv，用port安装，谈到要安装libtool213,再用pkg_add去装，卸掉libiconv，重新用port安装，下载php5.3编译通过，再去下载ffmpeg-php，用phpize的方式编译成动态库，会报告少autoconf，此时在到port里安装autoconf213，会让安装perl，等待安装完成就是。</p>
+
+<p>下载正确的扩展,不要用sf那个2005年的扩展，不能用。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span>vi ~/.profile
-</span><span class='line'>all:export <span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
-</span><span class='line'>all:export <span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch http://downloads.sourceforge.net/project/ffmpeg-php/ffmpeg-php/0.6.0/ffmpeg-php-0.6.0.tbz2
+</span><span class='line'>tar xjf ffmpeg-php-0.6.0.tbz2
+</span><span class='line'><span class="nb">cd </span>ffmpeg-php
+</span><span class='line'>phpize
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>进行免密码的ssh登录设置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
-</span><span class='line'>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
-</span><span class='line'>chmod 600 ~/.ssh/authorized_keys
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>到此准备工作完成</p>
-
-<p>安装Hadoop</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>all:<span class="nv">$ </span><span class="nb">cd</span> /u01/app
-</span><span class='line'>all:<span class="nv">$ </span>tar zxf hadoop-0.20.203.0rc1.tar.gz
-</span><span class='line'>all:<span class="nv">$ </span>ln -s hadoop-0.20.203.0 hadoop
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>正式开始</h3>
-
-<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
-(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
+<p>在phpize的时候可能出现</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -251,39 +203,55 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Do not remove the following line, or various programs</span>
-</span><span class='line'><span class="c"># that require network functionality will fail.</span>
-</span><span class='line'>
-</span><span class='line'>127.0.0.1       localhost.localdomain localhost
-</span><span class='line'>::1             localhost6.localdomain6 localhost6
-</span><span class='line'>192.168.174.132 mdn2.net
-</span><span class='line'>192.168.174.135 mdn2_datanode1.net
-</span><span class='line'>192.168.174.136 mdn2_datanode2.net
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>evoup@freebsd81amd64 ffmpeg<span class="o">]</span>&gt;/usr/local/php53/bin/phpize
+</span><span class='line'>Configuring <span class="k">for</span>:
+</span><span class='line'>PHP Api Version:         20090626
+</span><span class='line'>Zend Module Api No:      20090626
+</span><span class='line'>Zend Extension Api No:   220090626
+</span><span class='line'>Cannot find autoconf. Please check your autoconf installation and the
+</span><span class='line'><span class="nv">$PHP_AUTOCONF</span> environment variable. Then, rerun this script.
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码</p>
+<p>此时需要在环境变量中指定好autoconf和autoheader的路径，我是加载.cshrc文件中</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenv PHP_AUTOCONF <span class="s2">&quot;/usr/local/bin/autoconf&quot;</span>
+</span><span class='line'>setenv PHP_AUTOHEADER <span class="s2">&quot;/usr/local/bin/autoheader&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完事之后不要忘记重载~/.cshrc</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.cshrc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>phpize完了之后可以开始configure了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --with-php-cofig<span class="o">=</span>/usr/local/php53/bin/php-config
+</span><span class='line'>/usr/local/include/ffmpeg/avcodec.h:30:30: error: libavutil/avutil.h: No such file or directory
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实这个是ffmpeg安装好应该有的库</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
-</span><span class='line'><span class="nb">export </span><span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
-</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/:$PATH&quot;</span>
-</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/&quot;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>locate avutil.h
+</span><span class='line'>/usr/home/evoup/software/libavutil/avutil.h
+</span><span class='line'>/usr/local/include/ffmpeg/avutil.h
+</span><span class='line'>/usr/local/include/libavutil/avutil.h
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_37/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再编辑core-site.xml</p>
+<p>怎么装上去？嘿嘿，直接把相关的路径做软连接</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -291,36 +259,56 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>fs.default.name<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>hdfs://mdn2.net:9024<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hadoopTmp<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec/
+</span><span class='line'>sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec
+</span><span class='line'>sudo ln -s /usr/local/include/libavdevice/ /usr/include/libavdevice
+</span><span class='line'>sudo ln -s /usr/local/include/libavfilter/ /usr/include/libavfilter
+</span><span class='line'>sudo ln -s /usr/local/include/libavformat/ /usr/include/libavformat
+</span><span class='line'>sudo ln -s /usr/local/include/libavutil/ /usr/include/libavutil
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
+<p>然后再次</p>
 
-<p>再编辑hdfs-site.xml</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make
+</span><span class='line'>sudo make install
+</span><span class='line'>Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装ok,接下来加载到php,要做的是看下一php的ini位置，放进去就是</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php53/bin/php -i | grep Conf
+</span><span class='line'>Configure <span class="nv">Command</span> <span class="o">=</span>&gt;  <span class="s1">&#39;./configure&#39;</span>  <span class="s1">&#39;--prefix=/usr/local/php53&#39;</span>
+</span><span class='line'>Configuration File <span class="o">(</span>php.ini<span class="o">)</span> <span class="nv">Path</span> <span class="o">=</span>&gt; /usr/local/php53/lib
+</span><span class='line'>Loaded Configuration <span class="nv">File</span> <span class="o">=</span>&gt; /usr/local/php53/lib/php.ini
+</span><span class='line'>Configuration
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>说明在/usr/local/php53/lib下，于是把编译好的so移到该目录下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.so /usr/local/php53/lib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后在php.ini中指定</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">extension</span><span class="o">=</span>ffmpeg.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>观察劳动成果</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -332,89 +320,20 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
-</span><span class='line'><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>1<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>dfs.data.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>/u01/app/hdfsdata<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php53/bin/php -i | grep ffmpeg
+</span><span class='line'>ffmpeg
+</span><span class='line'>ffmpeg-php <span class="nv">version</span> <span class="o">=</span>&gt; 0.6.0-svn
+</span><span class='line'>ffmpeg-php built <span class="nv">on</span> <span class="o">=</span>&gt; Feb 12 2014 17:10:47
+</span><span class='line'>ffmpeg-php gd <span class="nv">support</span>  <span class="o">=</span>&gt; disabled
+</span><span class='line'>ffmpeg libavcodec <span class="nv">version</span> <span class="o">=</span>&gt; Lavc52.20.1
+</span><span class='line'>ffmpeg libavformat <span class="nv">version</span> <span class="o">=</span>&gt; Lavf52.31.0
+</span><span class='line'>ffmpeg <span class="nv">swscaler</span> <span class="o">=</span>&gt; disabled
+</span><span class='line'>ffmpeg.allow_persistent <span class="o">=</span>&gt; <span class="nv">0</span> <span class="o">=</span>&gt; 0
+</span><span class='line'>ffmpeg.show_warnings <span class="o">=</span>&gt; <span class="nv">0</span> <span class="o">=</span>&gt; 0
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录</p>
-
-<p>master里</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2.net
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>slaves里</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
-</span><span class='line'>mdn2_datanode2.net
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意点：
-修改hadoop-0.20.203.0/bin下的hadoop.
-vi  hadoop
-查找 –jvm . vi 下的命令模式： :/-jvm
-将-jvm server改成 –server .
-因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
-
-<p>到namenode上格式化hdfs</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>/bin/hadoop namenode -format
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/init.d/iptables stop
-</span><span class='line'>sudo /sbin/chkconfig iptables off
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-all.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者只启动dfs和mapreduce</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-dfs.sh
-</span><span class='line'>bin/start-mapred.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后发一个jps的进程图</p>
-
-<p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
+<p>没问题收工。</p>
 </div>
 
 
@@ -438,13 +357,13 @@ vi  hadoop
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-04T15:28:00+08:00" pubdate data-updated="true">Nov 4<span>th</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-12T17:27:00+08:00" pubdate data-updated="true">Feb 12<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>
+    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>, <a class='category' href='/blog/categories/php/'>php</a>
   
 </span>
 
@@ -456,10 +375,8 @@ vi  hadoop
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2013/11/04/erlang-open-port-error-enoent/" title="Previous Post: erlang open_port 错误之error enoent">&laquo; erlang open_port 错误之error enoent</a></li>
+            <li class="previous"><a href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/" title="Previous Post: VS2010 LINK:fatal error LNK1123">&laquo; VS2010 LINK:fatal error LNK1123</a></li>
             
-            
-            <li class="next"><a href="/blog/2013/11/04/hbase-full-distributed-case/" title="Next Post: HBASE完全分布式搭建(VMware版)">HBASE完全分布式搭建(VMware版) &raquo;</a></li>
             
           </ul>
         
@@ -496,7 +413,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/">64位freebsd8.1下安装ffmpeg和php扩展</a>
+    <a class="list-group-item active" href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/">64位freebsd8.1下安装ffmpeg和php扩展</a>
     
     <a class="list-group-item " href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/">VS2010 LINK:fatal Error LNK1123</a>
     
