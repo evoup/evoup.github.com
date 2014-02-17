@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "centos5.8 hadoop0.20.2+hive0.7 installation"
+title: "centos5.8下基于hadoop0.20.203的hive0.7安装"
 date: 2014-02-17 15:38
 comments: true
 categories: [hadoop] 
 ---
 
-hadoop0.20.203下hive0.7安装
+
 
 ###什么是hive
 
