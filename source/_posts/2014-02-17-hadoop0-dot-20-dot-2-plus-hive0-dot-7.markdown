@@ -3,7 +3,7 @@ layout: post
 title: "centos5.8 hadoop0.20.2+hive0.7 installation"
 date: 2014-02-17 15:38
 comments: true
-categories: 
+categories: [hadoop] 
 ---
 
 hadoop0.20.203下hive0.7安装
