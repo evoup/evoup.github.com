@@ -31,11 +31,11 @@ ln -s hive-0.7.1-bin.tar.gz hive
 export HIVE_HOME=/u01/app/hive
 export HIVE_CONF_DIR=/u01/app/hive/conf
 ```
-//在系统中指出hive的配置文件所在
+在系统中指出hive的配置文件所在
 ```sh
 export PATH=$HIVE_HOME/bin:PATH
 ```
-//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
 ```sh
 export HIVE_LIB=$HIVE_HOME/lib
 ```
