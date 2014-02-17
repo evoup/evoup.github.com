@@ -137,10 +137,15 @@ Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveCon
 
 需要修改$HADOOP/conf/的hadoop-env.sh
 中的
+```sh
 export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
-改成
-export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+```
 
+改成
+
+```sh
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+```
 
 然后可以启动hive了
 ```sh
