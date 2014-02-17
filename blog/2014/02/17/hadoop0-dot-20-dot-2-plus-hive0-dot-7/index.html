@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>shell收集 - Evoup`s Blog</title>
+  <title>centos5.8 hadoop0.20.2+hive0.7 installation - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2011/01/11/shell-gather">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,20 +101,94 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-17T15:38:00+08:00" pubdate data-updated="true">Feb 17<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Shell收集
+        centos5.8 hadoop0.20.2+hive0.7 Installation
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>批量拷贝文件到服务器bash版</p>
+<div class="entry-content clearfix"><p>hadoop0.20.203下hive0.7安装</p>
+
+<h3>什么是hive</h3>
+
+<blockquote><p>hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。</p></blockquote>
+
+<!-- more -->
+
+
+<h3>hive的安装</h3>
+
+<p>先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
+注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app
+</span><span class='line'>wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
+</span><span class='line'>tar xzf hive-0.7.1-bin.tar.gz
+</span><span class='line'>ln -s hive-0.7.1-bin.tar.gz hive
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>环境变量设置</h4>
+
+<p>在~/.profile中加入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/u01/app/hive
+</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span>/u01/app/hive/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//在系统中指出hive的配置文件所在</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/bin:PATH
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>记得用source让profile生效</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.profile
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后是进行hive配置文件的配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive/conf
+</span><span class='line'>cp hive-env.sh.template hive-env.sh
+</span><span class='line'>vim hive-env.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>安装依赖软件</h4>
+
+<p>发现有2种安装方式，一种是derby,另一种是mysql，这里先介绍mysql方式</p>
+
+<blockquote><p>关于什么是derby: 这是一个apache DB的子项目，是一个完全用java实现的开源关系型数据库。这里就不使用了，我们采用mysql。</p></blockquote>
+
+<h4>安装mysql</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -125,183 +199,68 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/local/bin/bash</span>
-</span><span class='line'><span class="k">for </span>hosts in <span class="sb">`</span>cat host.list<span class="sb">`</span> ;
-</span><span class='line'><span class="k">do</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;将处理&quot;</span><span class="nv">$hosts</span> ;
-</span><span class='line'>    scp /services/monitor_deal/madmonitor.current root@<span class="nv">$hosts</span>:/services/monitor_deal/ ;
-</span><span class='line'>    scp /services/monitor_deal/libphp5.so root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
-</span><span class='line'>    scp /services/monitor_deal/libmysqlclient.so.16 root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
-</span><span class='line'>    scp /services/monitor_deal/libz.so.6 root@<span class="nv">$hosts</span>:/usr/lib/ ;
-</span><span class='line'><span class="k">done</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>//卸载老版本的mysql软件包
+</span><span class='line'>yum remove mysql mysql-*
+</span><span class='line'>//安装mysql5.5的源
+</span><span class='line'>rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+</span><span class='line'>//安装MySQL客户端的支持包
+</span><span class='line'>yum install libmysqlclient15 --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//安装MySQL 5.5的客户端和服务端
+</span><span class='line'>yum install mysql55 mysql55-server --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//启动MySQL系统服务，更新数据库
+</span><span class='line'>/etc/init.d/mysqld restart
+</span><span class='line'>mysql_upgrade
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>取得fb6的网卡mac</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>获取文本的第三行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sed -n <span class="s1">&#39;3p&#39;</span> file
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>截取字符串</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;abcd&quot;</span> | cut -b 1-3
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>使用nc访问百度</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">printf</span> <span class="s2">&quot;GET / HTTP/1.0\r\n\r\n&quot;</span> | nc www.baidu.com 80
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>vim不加载vimrc</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim -u NONE
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>调用vim来把文件转换为utf-8格式，注意要和find连用，需加载vimrc不然乱码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim -c <span class="s2">&quot;set fileencoding=utf-8 | wq!&quot;</span> main.cpp
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>find查找c/c++的源文件和头文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -type f <span class="se">\(</span> -name <span class="s2">&quot;*.cpp&quot;</span> -o -name <span class="s2">&quot;*.h&quot;</span> -o -name <span class="s2">&quot;*.c&quot;</span> <span class="se">\)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>获取当前时间戳</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>date <span class="s2">&quot;+%s&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>把时间戳转换成系统时间</p>
+<h4>修改mysql用户密码</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#linux版本的</span>
-</span><span class='line'>date -d <span class="s1">&#39;1970-01-01 UTC 946684800 seconds&#39;</span> +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
-</span><span class='line'><span class="c">#freebsd版本的</span>
-</span><span class='line'>date -r 1384499085 +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># mysql -u root mysql   //默认的没有密码直接进去的</span>
+</span><span class='line'>mysql&gt;use mysql;
+</span><span class='line'>mysql&gt;desc user;
+</span><span class='line'>mysql&gt; GRANT ALL PRIVILEGES ON *.* TO root@<span class="s2">&quot;%&quot;</span> IDENTIFIED BY <span class="s2">&quot;root&quot;</span>;　　//为root添加远程连接的能力。
+</span><span class='line'>mysql&gt;update user <span class="nb">set </span><span class="nv">Password</span> <span class="o">=</span> password<span class="o">(</span><span class="s1">&#39;xxxxxx&#39;</span><span class="o">)</span> where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;select Host,User,Password  from user where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;flush privileges;
+</span><span class='line'>mysql&gt;exit
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在第三行之后插入指定数据</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4)print v1;print}&#39;</span> <span class="nx">file</span> <span class="o">&gt;</span> <span class="nx">file_translated</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
-
-<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>统计源码总行数</p>
+<h4>设置mysql为开机自动启动</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{print $1}&#39;</span>
-</span><span class='line'>find . -type f ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=sum+$1}END{print sum }&#39;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /sbin/chkconfig --add mysqld
+</span><span class='line'>sudo /sbin/chkconfig mysqld on
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>如果要给sum来个初值，那么</p>
+<h4>开始配置</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=0}{sum=sum+$1}END{print sum }&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>在conf目录下创建hive-site.xml</p>
 
-
-<p>寻找全部process开头的rrd文件，删除前确认</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;process*.rrd&quot;</span> -ok rm <span class="o">{}</span> <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>打印某网卡信息</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig | awk <span class="s1">&#39;{if(NR==5) print $2}&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>整个文件夹内替换字符串</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>找到的c头文件放到temp目录下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.h&quot;</span> -exec mv <span class="o">{}</span> temp/ <span class="se">\;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>AWK的入门</p>
-
-<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
-
-<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
-
-<p>AWK高级用法</p>
-
-<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
-
-<p>AWK一句话手册</p>
-
-<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
-
-<p>可以用得到的shell的脚本</p>
-
-<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
-
-<p>cshell参考</p>
-
-<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
-
-<p>数组的定义</p>
+<p>创建hive数据库给hive做元数据表</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">array</span><span class="o">=(</span>a b c d<span class="o">)</span>
-</span><span class='line'>居然下标是从1开始
-</span><span class='line'><span class="nb">echo</span> <span class="k">${</span><span class="nv">A</span><span class="p">[1]</span><span class="k">}</span>
-</span><span class='line'>a
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>create database hive;
+</span><span class='line'>grant all privileges on *.* to hive@localhost identified by <span class="s1">&#39;hive&#39;</span>;
+</span><span class='line'>flush privileges;
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash下实现的伪多进程(实际是用了&amp;后台执行)</p>
+<p>运行hive</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -316,41 +275,77 @@
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>　　#!/bin/bash
-</span><span class='line'>
-</span><span class='line'>　　for <span class="o">((</span><span class="nv">i</span><span class="o">=</span>0;i&lt;5;i++<span class="o">))</span>;<span class="k">do</span>
-</span><span class='line'>
-</span><span class='line'>　　<span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>    　　sleep 3;echo 1&gt;&gt;aa <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;done!&quot;</span>
-</span><span class='line'>
-</span><span class='line'>　　<span class="o">}</span> &amp;
-</span><span class='line'>
-</span><span class='line'>　　done
-</span><span class='line'>
-</span><span class='line'>　　wait
-</span><span class='line'>
-</span><span class='line'>　　cat aa|wc -l
-</span><span class='line'>
-</span><span class='line'>　　rm aa
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive
+</span><span class='line'>/bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: jline/ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span><span class='line'>        ... 3 more
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash的fifo实现的多线程</p>
+<p>这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。</p>
 
-<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+<p>再次启动</p>
 
-<p>多线程的实现是采用了有名管道mkfifo</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
 
-<p>shell判断文件是否存在</p>
+<p>需要修改$HADOOP/conf/的hadoop-env.sh
+中的
+export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+改成
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf</p>
 
-<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
+<p>然后可以启动hive了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
+</span><span class='line'>Hive <span class="nb">history </span><span class="nv">file</span><span class="o">=</span>/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
+</span><span class='line'>hive&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了:)</p>
+
+<h3>参考文章</h3>
+
+<p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
+
+<p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
 </div>
 
 
@@ -374,15 +369,8 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-17T15:38:00+08:00" pubdate data-updated="true">Feb 17<span>th</span>, 2014</time>
           
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/shell/'>shell</a>
-  
-</span>
 
 
         </p>
@@ -392,10 +380,8 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2010/12/15/header-file-variable-assign/" title="Previous Post: 头文件中变量赋值方法">&laquo; 头文件中变量赋值方法</a></li>
+            <li class="previous"><a href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/" title="Previous Post: 64位freebsd8.1下安装ffmpeg和php扩展">&laquo; 64位freebsd8.1下安装ffmpeg和php扩展</a></li>
             
-            
-            <li class="next"><a href="/blog/2011/01/16/c-common-define/" title="Next Post: C语言宏定义技巧(常用宏定义)(转)">C语言宏定义技巧(常用宏定义)(转) &raquo;</a></li>
             
           </ul>
         
@@ -432,7 +418,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">centos5.8 hadoop0.20.2+hive0.7 Installation</a>
+    <a class="list-group-item active" href="/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">centos5.8 hadoop0.20.2+hive0.7 Installation</a>
     
     <a class="list-group-item " href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/">64位freebsd8.1下安装ffmpeg和php扩展</a>
     

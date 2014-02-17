@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-17T15:34:22+08:00</updated>
+  <updated>2014-02-17T18:31:02+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,246 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[centos5.8 hadoop0.20.2+hive0.7 installation]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/"/>
+    <updated>2014-02-17T15:38:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7</id>
+    <content type="html"><![CDATA[<p>hadoop0.20.203下hive0.7安装</p>
+
+<h3>什么是hive</h3>
+
+<blockquote><p>hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。</p></blockquote>
+
+<!-- more -->
+
+
+<h3>hive的安装</h3>
+
+<p>先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
+注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app
+</span><span class='line'>wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
+</span><span class='line'>tar xzf hive-0.7.1-bin.tar.gz
+</span><span class='line'>ln -s hive-0.7.1-bin.tar.gz hive
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>环境变量设置</h4>
+
+<p>在~/.profile中加入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/u01/app/hive
+</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span>/u01/app/hive/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//在系统中指出hive的配置文件所在</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/bin:PATH
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>记得用source让profile生效</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.profile
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后是进行hive配置文件的配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive/conf
+</span><span class='line'>cp hive-env.sh.template hive-env.sh
+</span><span class='line'>vim hive-env.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>安装依赖软件</h4>
+
+<p>发现有2种安装方式，一种是derby,另一种是mysql，这里先介绍mysql方式</p>
+
+<blockquote><p>关于什么是derby: 这是一个apache DB的子项目，是一个完全用java实现的开源关系型数据库。这里就不使用了，我们采用mysql。</p></blockquote>
+
+<h4>安装mysql</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>//卸载老版本的mysql软件包
+</span><span class='line'>yum remove mysql mysql-*
+</span><span class='line'>//安装mysql5.5的源
+</span><span class='line'>rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+</span><span class='line'>//安装MySQL客户端的支持包
+</span><span class='line'>yum install libmysqlclient15 --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//安装MySQL 5.5的客户端和服务端
+</span><span class='line'>yum install mysql55 mysql55-server --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//启动MySQL系统服务，更新数据库
+</span><span class='line'>/etc/init.d/mysqld restart
+</span><span class='line'>mysql_upgrade
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>修改mysql用户密码</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># mysql -u root mysql   //默认的没有密码直接进去的</span>
+</span><span class='line'>mysql&gt;use mysql;
+</span><span class='line'>mysql&gt;desc user;
+</span><span class='line'>mysql&gt; GRANT ALL PRIVILEGES ON *.* TO root@<span class="s2">&quot;%&quot;</span> IDENTIFIED BY <span class="s2">&quot;root&quot;</span>;　　//为root添加远程连接的能力。
+</span><span class='line'>mysql&gt;update user <span class="nb">set </span><span class="nv">Password</span> <span class="o">=</span> password<span class="o">(</span><span class="s1">&#39;xxxxxx&#39;</span><span class="o">)</span> where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;select Host,User,Password  from user where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;flush privileges;
+</span><span class='line'>mysql&gt;exit
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>设置mysql为开机自动启动</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /sbin/chkconfig --add mysqld
+</span><span class='line'>sudo /sbin/chkconfig mysqld on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>开始配置</h4>
+
+<p>在conf目录下创建hive-site.xml</p>
+
+<p>创建hive数据库给hive做元数据表</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>create database hive;
+</span><span class='line'>grant all privileges on *.* to hive@localhost identified by <span class="s1">&#39;hive&#39;</span>;
+</span><span class='line'>flush privileges;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行hive</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive
+</span><span class='line'>/bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: jline/ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span><span class='line'>        ... 3 more
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。</p>
+
+<p>再次启动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要修改$HADOOP/conf/的hadoop-env.sh
+中的
+export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+改成
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf</p>
+
+<p>然后可以启动hive了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
+</span><span class='line'>Hive <span class="nb">history </span><span class="nv">file</span><span class="o">=</span>/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
+</span><span class='line'>hive&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了:)</p>
+
+<h3>参考文章</h3>
+
+<p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
+
+<p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
@@ -3494,134 +3734,6 @@ getenforce返回Disabled说明已经关闭</p>
 <p>最后登录前端界面密码为 admin/zabbix</p>
 
 <p>告一段落，接下来学习操作zabbix。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[克隆你的octopress博客到win7]]></title>
-    <link href="http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7/"/>
-    <updated>2013-12-01T18:25:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7</id>
-    <content type="html"><![CDATA[<p>由于之前octopress博客是在公司的机器上搭的，想到在家里笔记本上的win7也搞一个环境，方便及时写写技术博客。参考网文《【像黑客一样写博客之五】博客克隆》进行摸索，终于实践成功。</p>
-
-<p>但我的方法稍微有点区别,这里采用clone的方式比较快，主要省去一个remote add环节：）只要主要注意几个问题，就可以轻松搞定，顺序看就行。</p>
-
-<!-- more -->
-
-
-<h2>环境篇：</h2>
-
-<p>这个可以参考大多数搭建octopress博客的文章了，这里一笔带过，之把出现的问题记一笔方便日后查阅。</p>
-
-<h3>问题1（ruby的版本）</h3>
-
-<p>当我装到bundle install的时候，出现了如下问题</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
-</span><span class='line'>continue.</span></code></pre></td></tr></table></div></figure>
-
-
-<p>查阅README.markdown
-<strong>Note</strong>: Octopress requires a minimum Ruby version of <code>1.9.3-p0</code>.
-原来需要安装ruby1.9.3。</p>
-
-<h3>问题2 （在装完devkit之前utf-8环境变量不要设置）</h3>
-
-<p>而安装ruby1.9.3,相应需要安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
-直接解压到e:\devkit
-然后再</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">cd</span> <span class="ss">e</span><span class="p">:\</span><span class="n">devkit</span>
-</span><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">init</span>
-</span><span class='line'><span class="ss">C</span><span class="p">:</span><span class="sr">/Ruby193/</span><span class="n">lib</span><span class="o">/</span><span class="n">ruby</span><span class="o">/</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">1</span><span class="o">/</span><span class="n">win32</span><span class="o">/</span><span class="n">registry</span><span class="o">.</span><span class="n">rb</span><span class="p">:</span><span class="mi">173</span><span class="ss">:in</span> <span class="sb">`tr&#39;: invalid byte sequence in UTF-8 (ArgumentError)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>原来是环境变量不能先设置为UTF-8，这个是要特别注意的。</p>
-
-<p>然后就可以执行devkit的安装了：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">init</span>
-</span><span class='line'><span class="n">ruby</span> <span class="n">dk</span><span class="o">.</span><span class="n">rb</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">LANG</span><span class="o">=</span>zh_CN.UTF-8
-</span><span class='line'><span class="nv">LC_ALL</span><span class="o">=</span>zh_CN.UTF-8
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>继续安装2个必要的gem</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">gem</span> <span class="n">install</span> <span class="n">rdoc</span> <span class="n">bundler</span>
-</span><span class='line'><span class="n">bundle</span> <span class="n">install</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。</p>
-
-<h2>博客恢复篇</h2>
-
-<p>签出自己的octopress项目,我的放在e:\octopress</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>e:<span class="se">\o</span>ctopress<span class="se">\</span>
-</span><span class='line'>git clone git@github.com:you/you.github.com.git
-</span><span class='line'>git config --global user.email <span class="s2">&quot;you@example.com&quot;</span>
-</span><span class='line'>git config --global user.name <span class="s2">&quot;Your Name&quot;</span>
-</span><span class='line'><span class="nb">cd </span>you.github.com
-</span><span class='line'>git checkout <span class="nb">source</span>
-</span><span class='line'>rake setup_github_pages
-</span><span class='line'><span class="nb">cd </span>_deploy
-</span><span class='line'>git pull origin master
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>所有的资料都从远程origin仓库的master分支取回来了！
-然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> ..
-</span><span class='line'>git checkout <span class="nb">source</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
-
-<p>最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>e:<span class="se">\o</span>ctopress<span class="se">\y</span>ou.github.com
-</span><span class='line'>git pull origin <span class="nb">source </span>
-</span><span class='line'><span class="nb">cd </span>_deploy
-</span><span class='line'>git pull origin master
-</span></code></pre></td></tr></table></div></figure>
-
 ]]></content>
   </entry>
   
