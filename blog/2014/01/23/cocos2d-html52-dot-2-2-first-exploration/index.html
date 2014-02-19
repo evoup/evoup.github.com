@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>cocos2d-html5-2.2.2初探 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/23/cocos2d-html52-dot-2-2-first-exploration">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-23T13:14:00+08:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2014</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        cocos2d-html5-2.2.2初探
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>准备用最新的cocos2d-html5 2.2.2的框架作为游戏开发引擎，整个引擎还是逻辑相当清晰好理解。</p>
+
+<p>本文部分参考v2.1.1这篇分析文章
+<a href="http://blog.csdn.net/honghaier/article/details/8642553">http://blog.csdn.net/honghaier/article/details/8642553</a></p>
+
+<p>翻了几篇官网几篇文章，发现对应的教程没有同步起来，比如说这篇：
+<a href="http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx">http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-sprites-and-positioning.aspx</a></p>
+
+<!-- more -->
+
+
+<p>其间有这么一段代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;platform/jsloader.js&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来掌了解2.2.2版本的api来给原来的教程动手术,我们首先来讲解HelloWorld：</p>
+
+<p>首先看2.2.2的helloworld的代码分布情况：</p>
+
+<p><img src="/images/evoup/cocos2d-html5_2.2.2_code_layout.png" alt="Alt text" /></p>
+
+<p>其中项目必须的文件有cocos2d（cocos2d引擎）、extensions（GUI的扩展）、external（外部引擎如box2d）、lib（cocos2d基本库）。</p>
+
+<p>接下来在根目录下仿照HelloHTML5World中的布局开始做一个项目，创建一个叫做helloworld的文件夹。</p>
+
+<p>看一下运行截图
+<img src="/images/evoup/cocos2d-html52.2.2helloworld.png" alt="Alt text" /></p>
+
+<hr />
+
+<p>首先是在该文件夹下创建第一个文件index.html</p>
+
+<figure class='code'><figcaption><span>index.html </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span><span class='line'><span class="nt">&lt;html&gt;</span>
+</span><span class='line'><span class="nt">&lt;head&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;title&gt;</span>hello cocos2d-html5<span class="nt">&lt;/title&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;icon&quot;</span> <span class="na">type=</span><span class="s">&quot;iamge/GIF&quot;</span> <span class="na">href=</span><span class="s">&quot;res/favicon.ico&quot;</span><span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;user-scalable=no&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-mobile-web-app-capable&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;full-screen&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;screen-orientation&quot;</span> <span class="na">content=</span><span class="s">&quot;portrait&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;x5-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;360-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;style&gt;</span>
+</span><span class='line'>        <span class="nt">body</span><span class="o">,</span> <span class="nt">canvas</span><span class="o">,</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">khtml</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>            <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">tap</span><span class="o">-</span><span class="n">highlight</span><span class="o">-</span><span class="k">color</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="nt">&lt;/style&gt;</span>
+</span><span class='line'><span class="nt">&lt;/head&gt;</span>
+</span><span class='line'><span class="nt">&lt;body</span> <span class="na">style=</span><span class="s">&quot;padding:0; margin: 0; background: #000;&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'><span class="nt">&lt;canvas</span> <span class="na">id=</span><span class="s">&quot;gameCanvas&quot;</span> <span class="na">width=</span><span class="s">&quot;800&quot;</span> <span class="na">height=</span><span class="s">&quot;450&quot;</span><span class="nt">&gt;&lt;/canvas&gt;</span>
+</span><span class='line'><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;cocos2d.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span><span class='line'><span class="nt">&lt;/body&gt;</span>
+</span><span class='line'><span class="nt">&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解释:</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content=</span><span class="s">&quot;user-scalable=no&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>viewport这个是移动端的meta设置，content设置为user-scalable=no代表在移动设备上 不可缩放。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;apple-mobile-web-app-capable&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>apple-mobile-web-app-capable这个是移动端的参数，全屏模式下content设置为yes，否则不用设置。可以通过window.navigator.standalone属性来得知是否网页是否处于全屏模式。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;full-screen&quot;</span> <span class="na">content=</span><span class="s">&quot;yes&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个是给某些浏览器的全屏设置，比如说ucweb</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;screen-orientation&quot;</span> <span class="na">content=</span><span class="s">&quot;portrait&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>screen-orientation这个meta参数代表移动端的屏幕朝向，有2个portrait和landscape，分别代表竖向和横向,这portrait是竖向了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;x5-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个是腾讯qq浏览器的全屏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;360-fullscreen&quot;</span> <span class="na">content=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>360浏览器的全屏</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;style&gt;</span>
+</span><span class='line'>    <span class="nt">body</span><span class="o">,</span> <span class="nt">canvas</span><span class="o">,</span> <span class="nt">div</span> <span class="p">{</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">khtml</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">select</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+</span><span class='line'>        <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">tap</span><span class="o">-</span><span class="n">highlight</span><span class="o">-</span><span class="k">color</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="m">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="nt">&lt;/style&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中-moz-user-select、-webkit-user-select、-ms-user-select和-khtml-user-select都取值none，代表文字都不选中。而-webkit-tap-highlight-color: rgba(0,0,0,0);其中rgba的最后一个参数0代表点击一个链接或者通过JavaScript定义可点击元素的时候禁止出现灰色背景。
+最后从同域引入cocos2d.js。</p>
+
+<hr />
+
+<p>接着创建第二个文件cocos2d.js</p>
+
+<figure class='code'><figcaption><span>cocos2d.js </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">COCOS2D_DEBUG</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="c1">//0 to turn debug off, 1 for basic debug, and 2 for full debug</span>
+</span><span class='line'>        <span class="nx">box2d</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">chipmunk</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">showFPS</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">frameRate</span><span class="o">:</span><span class="mi">60</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">loadExtension</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">renderMode</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>       <span class="c1">//Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)</span>
+</span><span class='line'>        <span class="nx">tag</span><span class="o">:</span><span class="s1">&#39;gameCanvas&#39;</span><span class="p">,</span> <span class="c1">//the dom element to run cocos2d on</span>
+</span><span class='line'>        <span class="nx">engineDir</span><span class="o">:</span><span class="s1">&#39;../cocos2d/&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">//SingleEngineFile:&#39;&#39;,</span>
+</span><span class='line'>        <span class="nx">appFiles</span><span class="o">:</span><span class="p">[</span>
+</span><span class='line'>            <span class="s1">&#39;src/resource.js&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;src/myApp.js&#39;</span><span class="c1">//add your own files in order here</span>
+</span><span class='line'>        <span class="p">]</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">){</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">s</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;h2&gt;Your browser does not support HTML5 canvas!&lt;/h2&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>            <span class="s1">&#39;&lt;p&gt;Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.Click the logo to download.&lt;/p&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>            <span class="s1">&#39;&lt;a href=&quot;http://www.google.com/chrome&quot; target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://www.google.com/intl/zh-CN/chrome/assets/common/images/chrome_logo_2x.png&quot; border=&quot;0&quot;/&gt;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">).</span><span class="nx">parentNode</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;#ffffff&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//first load engine file if specified</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;jsloader.js&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;You must specify either the single engine file OR the engine directory in &quot;cocos2d.js&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="c1">//s.src = &#39;Packed_Release_File.js&#39;; //IMPORTANT: Un-comment this line if you have packed all files into one</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">document</span><span class="p">.</span><span class="nx">ccConfig</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">s</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;cocos2d-html5&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">//else if single file specified, load singlefile</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'><span class="p">})();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>解释:</h4>
+
+<p>这整个就是一个匿名函数,然后调用的写法。</p>
+
+<p>首先创建一个局部变量d，赋值为document</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后创建一个c对象，提供全部配置信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">COCOS2D_DEBUG</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span> <span class="c1">//0 to turn debug off, 1 for basic debug, and 2 for full debug</span>
+</span><span class='line'>    <span class="nx">box2d</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">chipmunk</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">showFPS</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">frameRate</span><span class="o">:</span><span class="mi">60</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">loadExtension</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">renderMode</span><span class="o">:</span><span class="mi">0</span><span class="p">,</span>       <span class="c1">//Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)</span>
+</span><span class='line'>    <span class="nx">tag</span><span class="o">:</span><span class="s1">&#39;gameCanvas&#39;</span><span class="p">,</span> <span class="c1">//the dom element to run cocos2d on</span>
+</span><span class='line'>    <span class="nx">engineDir</span><span class="o">:</span><span class="s1">&#39;../cocos2d/&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">//SingleEngineFile:&#39;&#39;,</span>
+</span><span class='line'>    <span class="nx">appFiles</span><span class="o">:</span><span class="p">[</span>
+</span><span class='line'>        <span class="s1">&#39;src/resource.js&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;src/myApp.js&#39;</span><span class="c1">//add your own files in order here</span>
+</span><span class='line'>    <span class="p">]</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其中:
+COCOS2D_DEBUG为调试等级（0关闭，1基本，2完全）；
+box2d为是否采用box2d物理引擎，这里不使用设置为no；
+chipmunk为一款物理引擎，同样不使用；
+showFPS是否显示FPS，是；
+loadExtension是否加载扩展，否；
+renderMode渲染，0为默认，1为仅Canvas方式，2为仅WebGL方式;
+tag为运行cocos2d的dom元素;
+engineDir为cocos2d的引擎目录;
+appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/myApp.js;</p>
+
+<p>下面这段为html5探测代码，如果探测失败，会出出现一个google的chrome浏览器的logo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">).</span><span class="nx">getContext</span><span class="p">){</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;&lt;h2&gt;Your browser does not support HTML5 canvas!&lt;/h2&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s1">&#39;&lt;p&gt;Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.Click the logo to download.&lt;/p&gt;&#39;</span> <span class="o">+</span>
+</span><span class='line'>        <span class="s1">&#39;&lt;a href=&quot;http://www.google.com/chrome&quot; target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://www.google.com/intl/zh-CN/chrome/assets/common/images/chrome_logo_2x.png&quot; border=&quot;0&quot;/&gt;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">).</span><span class="nx">parentNode</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">border</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">p</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span><span class="nx">d</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">tag</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">background</span> <span class="o">=</span> <span class="s1">&#39;#ffffff&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再看下一段</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">removeEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">callee</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//first load engine file if specified</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">c</span><span class="p">.</span><span class="nx">SingleEngineFile</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">c</span><span class="p">.</span><span class="nx">engineDir</span> <span class="o">+</span> <span class="s1">&#39;jsloader.js&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;You must specify either the single engine file OR the engine directory in &quot;cocos2d.js&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="cm">/*********Delete this section if you have packed all files into one*******/</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//s.src = &#39;Packed_Release_File.js&#39;; //IMPORTANT: Un-comment this line if you have packed all files into one</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nb">document</span><span class="p">.</span><span class="nx">ccConfig</span> <span class="o">=</span> <span class="nx">c</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="s1">&#39;cocos2d-html5&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">d</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//else if single file specified, load singlefile</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这段创建了DOMContentLoaded事件侦听器，干掉全部DOM对象。SingleEngineFile这个参数是如果要把cocos2d这个文件夹下的引擎程序打包成一个文件，则需要指定这个文件的路径。指定好了引擎路径engineDir为../cocos2d这个文件夹，然后加载jsloader.js(这个文件的作用是加载cocos2d需要用到的所有js文件，包括cocos2d.js,main.js,myApp.js),然后把配置文件存到document.ccConfig元素中去。
+接着把cocos2d-html5这个id赋到创建到script标签上，然后加载到body标签中。</p>
+
+<hr />
+
+<p>接着创建第三个文件&mdash;主程序文件main.js,注意这还不是实现逻辑，而是cocos2d-html5初始化的套路。</p>
+
+<figure class='code'><figcaption><span>main.js </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">cocos2dApp</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Application</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">config</span><span class="o">:</span><span class="nb">document</span><span class="p">[</span><span class="s1">&#39;ccConfig&#39;</span><span class="p">],</span>
+</span><span class='line'>    <span class="nx">ctor</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">scene</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span> <span class="o">=</span> <span class="nx">scene</span><span class="p">;</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">COCOS2D_DEBUG</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;COCOS2D_DEBUG&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">initDebugSetting</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">setup</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;tag&#39;</span><span class="p">]);</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">AppController</span><span class="p">.</span><span class="nx">shareAppController</span><span class="p">().</span><span class="nx">didFinishLaunchingWithOptions</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">applicationDidFinishLaunching</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">RenderDoesnotSupport</span><span class="p">()){</span>
+</span><span class='line'>            <span class="c1">//show Information to user</span>
+</span><span class='line'>            <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Browser doesn&#39;t support WebGL&quot;</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="c1">// initialize director</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">director</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">resizeWithBrowserSize</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">setDesignResolutionSize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RESOLUTION_POLICY</span><span class="p">.</span><span class="nx">SHOW_ALL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// turn on display FPS</span>
+</span><span class='line'>        <span class="nx">director</span><span class="p">.</span><span class="nx">setDisplayStats</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;showFPS&#39;</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// set FPS. the default value is 1.0/60 if you don&#39;t call this</span>
+</span><span class='line'>        <span class="nx">director</span><span class="p">.</span><span class="nx">setAnimationInterval</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;frameRate&#39;</span><span class="p">]);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//load resources</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">LoaderScene</span><span class="p">.</span><span class="nx">preload</span><span class="p">(</span><span class="nx">g_resources</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">director</span><span class="p">.</span><span class="nx">replaceScene</span><span class="p">(</span><span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span><span class="p">());</span>
+</span><span class='line'>        <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">myApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cocos2dApp</span><span class="p">(</span><span class="nx">HelloWorldScene</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>主要的功能都在cc.Application.extend中实现。首先config配置参数为document[&lsquo;ccConfig&rsquo;]
+然后看ctor：（顾名思义：config to run 配置转为启动）以scene为参数的匿名函数，先调用_super()方法这个引擎方法进行初始化，然后指定startScene开始场景为scene。调试等级cc.COCOS2D_DEBUG为cocos2d.js中指定的调试等级，cc.initDebugSetting为初始化调试设置，cc.setup(this.config[&lsquo;tag&rsquo;])在名为tag的dom对象上创建cavas,cc.AppController.shareAppController().didFinishLaunchingWithOptions();这个是仿照cocos2d-iphone的函数命名的启动函数（顾名思义：就是启动结束会加载的函数）。</p>
+
+<p>在正式进入写代码之前，稍等再看一下applicationDidFinishLaunching这个函数</p>
+
+<p>先检查渲染是否支持，不支持就弹出“Browser doesn`t support WebGL”</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="k">if</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">RenderDoesnotSupport</span><span class="p">()){</span>
+</span><span class='line'>    <span class="c1">//show Information to user</span>
+</span><span class='line'>    <span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;Browser doesn&#39;t support WebGL&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>初始化director</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// initialize director</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">director</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重置浏览器大小</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">resizeWithBrowserSize</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'><span class="nx">cc</span><span class="p">.</span><span class="nx">EGLView</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">setDesignResolutionSize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">450</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RESOLUTION_POLICY</span><span class="p">.</span><span class="nx">SHOW_ALL</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打开显卡FPS</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// turn on display FPS</span>
+</span><span class='line'><span class="nx">director</span><span class="p">.</span><span class="nx">setDisplayStats</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;showFPS&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>默认设置fps为1秒60帧</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">// set FPS. the default value is 1.0/60 if you don&#39;t call this</span>
+</span><span class='line'><span class="nx">director</span><span class="p">.</span><span class="nx">setAnimationInterval</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="s1">&#39;frameRate&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>导演类的replaceScene方法来替换场景为startScene</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//load resources</span>
+</span><span class='line'><span class="nx">cc</span><span class="p">.</span><span class="nx">LoaderScene</span><span class="p">.</span><span class="nx">preload</span><span class="p">(</span><span class="nx">g_resources</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">director</span><span class="p">.</span><span class="nx">replaceScene</span><span class="p">(</span><span class="k">new</span> <span class="k">this</span><span class="p">.</span><span class="nx">startScene</span><span class="p">());</span>
+</span><span class='line'><span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后实例化app</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">myApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cocos2dApp</span><span class="p">(</span><span class="nx">HelloWorldScene</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>在正式步入工程文件之前，别急，创建一个src文件夹，然后在该文件夹下创建一个resource.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">s_HelloWorld</span> <span class="o">=</span> <span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s_CloseNormal</span> <span class="o">=</span> <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s_CloseSelected</span> <span class="o">=</span> <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">g_resources</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="c1">//image</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_HelloWorld</span><span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_CloseNormal</span><span class="p">},</span>
+</span><span class='line'>    <span class="p">{</span><span class="nx">src</span><span class="o">:</span><span class="nx">s_CloseSelected</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//plist</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//fnt</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//tmx</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//bgm</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//effect</span>
+</span><span class='line'><span class="p">];</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在和src相同父目录下创建一个叫做res文件夹，把如下3个文件放入其中：</p>
+
+<p>HelloWorld.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/HelloWorld.png" alt="Alt text" /></p>
+
+<p>CloseNormal.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseNormal.png" alt="Alt text" /></p>
+
+<p>CloseSelected.png</p>
+
+<p><img src="/images/evoup/cocos2d-html5-res/CloseSelected.png" alt="Alt text" /></p>
+
+<p>这就完成了资源文件的定义和提供。</p>
+
+<hr />
+
+<p>终于到工程主文件了，在src下创建一个叫做myApp.js的文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Helloworld</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">isMouseDown</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">helloImg</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">helloLabel</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">circle</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">sprite</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">init</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 1. super init first</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">/////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 2. add a menu item with &quot;X&quot; image, which is clicked to quit the program</span>
+</span><span class='line'>        <span class="c1">//    you may modify it.</span>
+</span><span class='line'>        <span class="c1">// ask director the window size</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">getWinSize</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// add a &quot;close&quot; icon to exit the progress. it&#39;s an autorelease object</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">closeItem</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">MenuItemImage</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setAnchorPoint</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">menu</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Menu</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">closeItem</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">menu</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">menu</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">/////////////////////////////</span>
+</span><span class='line'>        <span class="c1">// 3. add your codes below...</span>
+</span><span class='line'>        <span class="c1">// add a label shows &quot;Hello World&quot;</span>
+</span><span class='line'>        <span class="c1">// create and initialize a label</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">LabelTTF</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">,</span> <span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">38</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// position the label on the center of the screen</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="c1">// add the label as a child to this layer</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">lazyLayer</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">lazyLayer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">// add &quot;HelloWorld&quot; splash screen&quot;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setScale</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setRotation</span><span class="p">(</span><span class="mi">180</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nx">lazyLayer</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">rotateToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RotateTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">scaleToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">ScaleTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Sequence</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">rotateToA</span><span class="p">,</span> <span class="nx">scaleToA</span><span class="p">));</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Spawn</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">MoveBy</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">p</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)),</span><span class="nx">cc</span><span class="p">.</span><span class="nx">TintTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">setTouchEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="c1">// a selector callback</span>
+</span><span class='line'>    <span class="nx">menuCloseCallback</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sender</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">end</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesBegan</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesMoved</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                <span class="c1">//this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesEnded</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">onTouchesCancelled</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onTouchesCancelled&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">HelloWorldScene</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Scene</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">onEnter</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">layer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Helloworld</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">layer</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">layer</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>分析</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">isMouseDown</span><span class="o">:</span><span class="kc">false</span><span class="p">,</span>
+</span><span class='line'><span class="nx">helloImg</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">helloLabel</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">circle</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span><span class='line'><span class="nx">sprite</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是对接下来用到的成员变量的定义</p>
+
+<p>再看接下来的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">init</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">//首先初始化超类</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//获取屏宽</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">getWinSize</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//添加一个关闭按钮到菜单项</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">closeItem</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">MenuItemImage</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span>
+</span><span class='line'>        <span class="s2">&quot;res/CloseNormal.png&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s2">&quot;res/CloseSelected.png&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">history</span><span class="p">.</span><span class="nx">go</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">},</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置锚点，默认就是0.5，0.5</span>
+</span><span class='line'>    <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setAnchorPoint</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//创建关闭按钮</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">menu</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Menu</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">closeItem</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置菜单项位置</span>
+</span><span class='line'>    <span class="nx">menu</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加菜单项到当前层上</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">menu</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//设置菜单的位置为屏幕右下角</span>
+</span><span class='line'>    <span class="nx">closeItem</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">-</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//创建一个叫做helloworld的文本标签</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">LabelTTF</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">,</span> <span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">38</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//把文本标签放到屏幕中央位置</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加该文本标签放到当前层上</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//创建一个新层lazylay并放入当前层</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">lazyLayer</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Layer</span><span class="p">.</span><span class="nx">create</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">lazyLayer</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// 添加一个能旋转的helloworld精灵</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="s2">&quot;res/HelloWorld.png&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="nx">size</span><span class="p">.</span><span class="nx">width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//先缩小50%且倒过来</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setScale</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setRotation</span><span class="p">(</span><span class="mi">180</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//添加到lazyLayer层</span>
+</span><span class='line'>    <span class="nx">lazyLayer</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//定义2个动作分别为旋转2秒到0度和缩放2秒无x轴y轴缩放</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">rotateToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">RotateTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">scaleToA</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">ScaleTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//让helloworld精灵依次运行这2个动作</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Sequence</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">rotateToA</span><span class="p">,</span> <span class="nx">scaleToA</span><span class="p">));</span>
+</span><span class='line'>    <span class="c1">//使文本标签同时运行ccMoveBy动作（后面讲）和CCTintTo动作（使文字）</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">helloLabel</span><span class="p">.</span><span class="nx">runAction</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">Spawn</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">cc</span><span class="p">.</span><span class="nx">MoveBy</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">p</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">size</span><span class="p">.</span><span class="nx">height</span> <span class="o">-</span> <span class="mi">40</span><span class="p">)),</span><span class="nx">cc</span><span class="p">.</span><span class="nx">TintTo</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">125</span><span class="p">,</span><span class="mi">0</span><span class="p">)));</span>
+</span><span class='line'>    <span class="c1">//设置为支持触碰</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setTouchEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要注意的是
+1) cc.Sequence代表依次运行动作，而cc.Spawn代表同时运行动作
+2) CCMoveTo是“移动到这里”；而CCMoveBy则是“相对于之前点再移动”，比如说说这里需要两个坐标pos1（x1，y1），pos2（x2，y2），用CCMoveTo的话，就是将对象由pos1移动到pos2，而CCMOveBy则是对象的终坐标是在pos1的基础上再加上（矢量相加）pos2，终坐标pos3=pos1+pos2。</p>
+
+<p>接下来是一些触碰事件的回调函数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//点击关闭按钮的回调函数，退出实例</span>
+</span><span class='line'><span class="nx">menuCloseCallback</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">sender</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">cc</span><span class="p">.</span><span class="nx">Director</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">().</span><span class="nx">end</span><span class="p">();</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//按下按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesBegan</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//按下按钮移动时</span>
+</span><span class='line'><span class="nx">onTouchesMoved</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">touches</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="c1">//this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//放开按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesEnded</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">isMouseDown</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'><span class="p">},</span>
+</span><span class='line'><span class="c1">//离开按钮的状态</span>
+</span><span class='line'><span class="nx">onTouchesCancelled</span><span class="o">:</span><span class="kd">function</span> <span class="p">(</span><span class="nx">touches</span><span class="p">,</span> <span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;onTouchesCancelled&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">HelloWorldScene</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Scene</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+</span><span class='line'>    <span class="nx">onEnter</span><span class="o">:</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">_super</span><span class="p">();</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">layer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Helloworld</span><span class="p">();</span>
+</span><span class='line'>        <span class="nx">layer</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">layer</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-23T13:14:00+08:00" pubdate data-updated="true">Jan 23<span>rd</span>, 2014</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cocos2d-html5/'>cocos2d-html5</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/01/20/win7-install-apk-on-android-emulator/" title="Previous Post: Win7上Android模拟器上安装apk软件">&laquo; Win7上Android模拟器上安装apk软件</a></li>
+            
+            
+            <li class="next"><a href="/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/" title="Next Post: cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结">cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">centos5.8下基于hadoop0.20.203的hive0.7安装</a>
+    
+    <a class="list-group-item " href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/">64位freebsd8.1下安装ffmpeg和php扩展</a>
+    
+    <a class="list-group-item " href="/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/">VS2010 LINK:fatal Error LNK1123</a>
+    
+    <a class="list-group-item " href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/">Octopress2报错undefined Method `[] for nill:NilClass</a>
+    
+    <a class="list-group-item " href="/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/">Cocos2d-x Cocos2d-iphone Cocos2d-html5下加载精灵的总结</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 111.25%'>Android(3)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 122.5%'>Freebsd(6)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 115.0%'>Hadoop(4)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 107.5%'>Hbase(2)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 122.5%'>Nginx(6)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 137.5%'>Php(10)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 107.5%'>Version_control(2)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 103.75%'>Zookeeper(1)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

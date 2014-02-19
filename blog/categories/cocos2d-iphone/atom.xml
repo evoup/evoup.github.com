@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cocos2d-iphone | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/cocos2d-iphone/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-02-17T21:58:34+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/"/>
+    <updated>2014-02-08T13:10:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary</id>
+    <content type="html"><![CDATA[<p>加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：</p>
+
+<!-- more -->
+
+
+<blockquote><p><i>直接从图片创建：</i>
+{%codeblock lang:cpp cocos2d-x %}
+CCSprite *sprite=CCSprite::create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240
+sprite->setScale(0.5); //缩小50%
+this->addChild(sprite,0); //加载到this场景对象下
+{% endcodeblock %}</p></blockquote>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSprite *sprite = [CCSprite spriteWithFile:@&ldquo;res/pic.png&rdquo;]; //从pic.png创建一个精灵
+sprite.position = ccp(100, 240); //设置坐标为x=100,y=240
+sprite.scale = 0.5; //缩小50%
+[self addChild:sprite z:0]; //加载到self场景对象下
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var sprite; //定义sprite变量
+this.sprite = cc.Sprite.create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+this.sprite.setPosition(new cc.Point(100,240)); //设置坐标为x=100,y=240
+this.sprite.scale = 0.5; //缩小50%
+this.addChild(this.sprite, 0); //加载到this场景对象下
+{% endcodeblock %}</p>
+
+<hr />
+
+<blockquote><p><i>batchnode显示大量精灵：</i>
+<br />注意：batchnode的限制是所有添加到它里面的CCSprite节点的Z轴顺序必须相同，且须使用相同纹理。</p></blockquote>
+
+<p>{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode * batchNode = CCSpriteBatchNode::create(&ldquo;pic.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
+
+<pre><code>CCSprite *sprite = CCSprite::create("pic.png"); //载入图片到精灵，方法效率看起来可以优化（code来自《cocos2d-x游戏开发之旅》）
+batchNode-&gt;addChild(sprite); //将精灵添加到批渲染对象
+</code></pre>
+
+<p>}
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSpriteBatchNode * batchNode = [CCSpriteBatchNode batchNodeWithFile:</p>
+
+<pre><code>@"pic.png"]; //创建批渲染对象
+</code></pre>
+
+<p>[self addChild:batch]; //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
+
+<pre><code>CCSprite *sprite = [CCSpriteBatchNode batchNodeWithFile:@"pic.png"]; //载入图片到精灵
+[batchNode addChild:sprite]; //将精灵添加到批渲染对象
+</code></pre>
+
+<p>} <br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+//首先定义好资源
+var batchNode = cc.SpriteBatchNode.create(&ldquo;pic.png&rdquo;, 50); //定义批渲染对象
+this.addChild(batchNode,0); //把批渲染节点加到this场景对象
+for (i=0;i&lt;100;i++) { //载入100个精灵并分别加到批渲染节点</p>
+
+<pre><code>var sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(0, 0, 85, 121));
+batchNode.addChild(sprite);
+</code></pre>
+
+<p>}
+{% endcodeblock %}</p>
+
+<hr />
+
+<blockquote><p><i>batchnode加framecache结合显示单帧图片</i>
+{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode *batchNode = CCSpriteBatchNode::create(&ldquo;resource.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到this场景对象下
+CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;resources.plist&rdquo;); //帧缓冲加入plist打包好的文件，用texture packer软件可以打包
+CCSprite * sprite = CCSprite::createWithSpriteFrameName(&ldquo;resources_00.png&rdquo;); //读取单帧到精灵
+batchNode->addChild(sprite); //加到批渲染对象
+{% endcodeblock %}</p></blockquote>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:</p>
+
+<pre><code> @"res/resources.plist"]; //加载resource.plist文件到精灵帧缓冲区
+</code></pre>
+
+<p>CCSpriteBatchNode *spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@&ldquo;resources.png&rdquo;]; //从精灵批渲染节点返会一个精灵表
+[self addChild:spriteSheet z:1]; //把精灵表加载到self场景对象下，并设置Z轴顺序为1
+self.sprite = [CCSprite spriteWithSpriteFrameName:@&ldquo;resource_00.png&rdquo;]; //再从缓冲加载单帧图片给精灵
+[spriteSheet addChild:sprite]; //精灵表将该精灵呈现出来<br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+spriteFrameCache.addSpriteFrames(&ldquo;res/resources.plist&rdquo;,&ldquo;res/resources.png&rdquo;); //从精灵批渲染节点返会一个精灵表
+this.sprite = cc.Sprite.createWithSpriteFrameName(&ldquo;resource_00.png&rdquo;); //将单帧精灵图片添加到this场景对象
+var batchNode = cc.SpriteBatchNode.create(&ldquo;res/resources.png&rdquo;);
+batchNode.addChild(this.sprite);
+this.addChild(batchNode);
+{% endcodeblock %}</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: vim | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/vim/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-02-17T21:58:34+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[gvim无法打开交换文件]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/12/gvim-unable-to-open-swap-file/"/>
+    <updated>2013-11-12T12:21:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/12/gvim-unable-to-open-swap-file</id>
+    <content type="html"><![CDATA[<p>最近在windows下使用gvim，直接按照之前在freebsd上的配置搬回来，发现问题多多。每次打开文件都会报错E303，非常碍事。</p>
+
+<p>```vim
+:help E303
+Unable to open swap file for &ldquo;{filename}&rdquo;, recovery impossible</p>
+
+<p>Vim was not able to create a swap file.  You can still edit the file, but if
+Vim unexpected exits the changes will be lost.  And Vim may consume a lot of
+memory when editing a big file.  You may want to change the &lsquo;directory&rsquo; option
+to avoid this error.  See |swap-file|.
+<code>
+说是无法创建交换文件。
+其实只要这么解决：
+</code>vim
+:set directory=.,$TEMP
+```
+或者指定一个实际存在路径。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[编译rebar项目中单个erlang源文件的vim脚本]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim/"/>
+    <updated>2013-10-24T12:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/24/erlang-rebar-single-file-compile-with-vim</id>
+    <content type="html"><![CDATA[<p>本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。</p>
+
+<!-- more -->
+
+
+<p>方法也很EZ
+<code>bash
+erlc -o ./ebin foo.erl
+</code></p>
+
+<h3>小试牛刀</h3>
+
+<p>于是我如法炮制，初步写出了如下vim脚本。（我的是cshell，如果是bash请把对应的set变量部分改成bash的风格）
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp %"
+  exec "!set bar = \"</code>ls apps/<code>\""
+  exec "!mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/<code>ls apps/</code>/src/<code>ls apps/</code>.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/"
+  exec "!</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct</p>
+
+<p>```
+基本思路是先找到当前文件所在的路径，然后使用erlang的独立编译器erlc直接编译出该文件的beam字节码，最后拷贝到部署目录rel所在的位置，当然部署是有版本的，版本的信息到apps目录下的.app.src的vsn中提取。</p>
+
+<h3>进一步优化</h3>
+
+<p>对CompileErlDeploy合并有：
+<code>``bash
+"编译当前erlang文件且部署到rebar项目的rel目录的对应位置
+map bd :call CompileErlDeploy()&lt;CR&gt;
+func! CompileErlDeploy()
+  exec "w"
+  exec "!erlc -o /tmp % &amp;&amp; set bar = \"</code>ls apps/<code>\" &amp;&amp; mv /tmp/</code>basename %&lt;.beam<code>rel/</code>ls apps/<code>/lib/</code>ls apps/<code>-</code>grep vsn apps/{$bar}/src/{$bar}.app.src | sed &rsquo;s/{vsn, \&ldquo;//g' | sed &rsquo;s/\&rdquo;},//g'<code>/ebin/ &amp;&amp;</code>pwd<code>/rel/</code>ls apps/<code>/bin/</code>ls apps/` stop"
+endfunc</p>
+
+<p>map bf :call RunErl()<CR>
+func! RunErl()
+  exec &ldquo;!<code>pwd</code>/rel/<code>ls apps/</code>/bin/<code>ls apps/</code> start&rdquo;
+endfunct
+```</p>
+
+<h3>使用的方法</h3>
+
+<p>进入rebar项目的根目录，sudo vim apps/项目名/src/源码.erl
+随后使用bd即可编译出源码.beam,并且移到rel目录下beam应该的位置,而bf则可以启动该rebar应用程序。
+需要注意的是，至少要rebar generate成功生成一次rel目录的文件，对于新建文件时尤其要做这一步，否则替换啥呢：）</p>
+
+<h3>后续</h3>
+
+<p>如果能再加入热部署，整个过程就更加轻松了</p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/"><a href="http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/">http://www.ibm.com/developerworks/cn/linux/l-vim-script-1/</a></a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[解决gvim菜单乱码问题]]></title>
+    <link href="http://evoupsight.com/blog/2012/11/12/gvim-unreadable-codes/"/>
+    <updated>2012-11-12T11:15:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/11/12/gvim-unreadable-codes</id>
+    <content type="html"><![CDATA[<p>windows下的gvim在使用过程中还有一个问题，就是当我设置了set encoding=utf-8之后，菜单就出现了乱码。如果不设置呢，那么编辑文件就不能是utf-8，网上搜了一圈之后，终于发现比较满意的解决方法。</p>
+
+<!-- more -->
+
+
+<p>```
+&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;
+&ldquo;vim7.1在windows下的编码设置。
+&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;&ldquo;&rdquo;"</p>
+
+<p>set encoding=utf-8</p>
+
+<p>set fileencodings=utf-8,chinese,latin-1</p>
+
+<p>if has(&ldquo;win32&rdquo;)</p>
+
+<p> set fileencoding=chinese</p>
+
+<p>else</p>
+
+<p> set fileencoding=utf-8</p>
+
+<p>endif</p>
+
+<p>&ldquo;解决菜单乱码</p>
+
+<p>source $VIMRUNTIME/delmenu.vim</p>
+
+<p>source $VIMRUNTIME/menu.vim</p>
+
+<p>&ldquo;解决consle输出乱码</p>
+
+<p>language messages zh_CN.utf-8
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[windows：Gvim关闭声音警报和屏闪]]></title>
+    <link href="http://evoupsight.com/blog/2012/10/26/gvim-turn-off-beep-and-alert/"/>
+    <updated>2012-10-26T12:07:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/10/26/gvim-turn-off-beep-and-alert</id>
+    <content type="html"><![CDATA[<p><code>vim
+if has("win32")
+  set visualbell t_vb=  "关闭visual bell
+  au GuiEnter * set t_vb= "关闭beep
+endif
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[vim在sudo下的使用当前用户的配置文件]]></title>
+    <link href="http://evoupsight.com/blog/2011/11/06/vim-sudo-use-vimrc-env/"/>
+    <updated>2011-11-06T15:15:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/11/06/vim-sudo-use-vimrc-env</id>
+    <content type="html"><![CDATA[<p>部门配备了freebsd做为统一的开发环境，大家登上各自的jail进行软件开发任务。但是发现执行sudo vim之后，居然使用的是root的vim配置文件。</p>
+
+<p>那么有什么办法能够使用自己的配置文件呢？其实再简单不过,使用-E参数
+```</p>
+
+<pre><code>   -E  The -E (preserve environment) option will override the env_reset
+       option in sudoers(5)).  It is only available when either the match-
+       ing command has the SETENV tag or the setenv option is set in sudo-
+       ers(5).
+</code></pre>
+
+<p>```</p>
+
+<p><code>bash
+sudo -E vim file
+</code>
+然后就可以使用自己的配置文件了。</p>
+]]></content>
+  </entry>
+  
+</feed>
