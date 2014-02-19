@@ -71,6 +71,7 @@ all:$ vi ~/.profile
 all:export HADOOP_HOME=/u01/app/hadoop
 all:export HBASE_HOME=/u01/app/hbase
 ```
+（补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）
 
 
 进行免密码的ssh登录设置

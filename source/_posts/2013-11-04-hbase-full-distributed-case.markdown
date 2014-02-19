@@ -28,6 +28,15 @@ export HBASE_MANAGES_ZK=true
 
 注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。
 
+--------------
+
+(补充：2014-2-19 发现这么写还不能加载，放到~/.bashrc中才对，见下)
+```bash
+export HADOOP_HOME=/u01/app/hadoop
+```
+
+--------------
+
 编辑hbase-site.xml
 ```xml
 <?xml version="1.0"?>

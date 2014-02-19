@@ -31,11 +31,11 @@ ln -s hive-0.7.1-bin.tar.gz hive
 export HIVE_HOME=/u01/app/hive
 export HIVE_CONF_DIR=/u01/app/hive/conf
 ```
-在系统中指出hive的配置文件所在
+//在系统中指出hive的配置文件所在
 ```sh
 export PATH=$HIVE_HOME/bin:PATH
 ```
-这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
 ```sh
 export HIVE_LIB=$HIVE_HOME/lib
 ```
@@ -154,7 +154,61 @@ WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use or
 Hive history file=/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
 hive>
 ```
-有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了:)
+有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。
+
+•建立测试表test
+```sh
+> create table test (key string);
+> show tables;
+FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
+NestedThrowables:
+java.lang.reflect.InvocationTargetException
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+```
+
+原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。
+
+``sh
+> show tables;
+OK
+Time taken: 0.082 seconds
+```
+
+一个表也没有，创建表吧
+···sh
+> create table test (key string);
+FAILED: Error in metadata: MetaException(message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
+```
+
+namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态
+```sh
+bin/hadoop dfsadmin –safemode get
+ON
+```
+
+那就关了
+```sh
+bin/hadoop dfsadmin -safemode leave
+```
+
+再次查看
+```sh
+bin/hadoop dfsadmin –safemode get
+OFF
+```
+
+已经关了，再次建表测试
+```sh
+bin/hive
+hive> create table test (key string);
+OK
+Time taken: 0.521 seconds
+hive> show tables;
+OK
+test
+Time taken: 0.14 seconds
+```
 
 
 ###参考文章
@@ -163,3 +217,4 @@ http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/
 
 http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4
 
+http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html
