@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-17T21:56:07+08:00</updated>
+  <updated>2014-02-19T13:41:05+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -52,14 +52,14 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在系统中指出hive的配置文件所在</p>
+<p>//在系统中指出hive的配置文件所在</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/bin:PATH
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
+<p>//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
@@ -250,13 +250,98 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了:)</p>
+<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。</p>
+
+<p>•建立测试表test</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>&gt; show tables;
+</span><span class='line'>FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
+</span><span class='line'>NestedThrowables:
+</span><span class='line'>java.lang.reflect.InvocationTargetException
+</span><span class='line'>FAILED: Execution Error, <span class="k">return </span>code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
+
+<p>&#8220;sh</p>
+
+<blockquote><p>show tables;
+OK
+Time taken: 0.082 seconds</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>一个表也没有，创建表吧
+</span><span class='line'>···sh
+</span><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>FAILED: Error in metadata: MetaException<span class="o">(</span>message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
+</span><span class='line'>ON
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>那就关了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin -safemode leave
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次查看</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
+</span><span class='line'>OFF
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>已经关了，再次建表测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>OK
+</span><span class='line'>Time taken: 0.521 seconds
+</span><span class='line'>hive&gt; show tables;
+</span><span class='line'>OK
+</span><span class='line'><span class="nb">test</span>
+</span><span class='line'>Time taken: 0.14 seconds
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h3>参考文章</h3>
 
 <p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
 
 <p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
+
+<p><a href="http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html">http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html</a></p>
 ]]></content>
   </entry>
   

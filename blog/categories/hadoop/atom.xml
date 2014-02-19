@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-17T21:58:34+08:00</updated>
+  <updated>2014-02-19T13:41:05+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -43,11 +43,11 @@ ln -s hive-0.7.1-bin.tar.gz hive
 export HIVE_HOME=/u01/app/hive
 export HIVE_CONF_DIR=/u01/app/hive/conf
 </code>
-在系统中指出hive的配置文件所在
+//在系统中指出hive的配置文件所在
 <code>sh
 export PATH=$HIVE_HOME/bin:PATH
 </code>
-这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
 <code>sh
 export HIVE_LIB=$HIVE_HOME/lib
 </code></p>
@@ -183,13 +183,72 @@ WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use or
 Hive history file=/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
 hive&gt;
 </code>
-有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了:)</p>
+有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。</p>
+
+<p>•建立测试表test
+```sh</p>
+
+<blockquote><p>create table test (key string);
+show tables;
+FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
+NestedThrowables:
+java.lang.reflect.InvocationTargetException
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+```</p></blockquote>
+
+<p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
+
+<p>``sh</p>
+
+<blockquote><p>show tables;
+OK
+Time taken: 0.082 seconds
+```</p></blockquote>
+
+<p>一个表也没有，创建表吧
+···sh</p>
+
+<blockquote><p>create table test (key string);
+FAILED: Error in metadata: MetaException(message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
+```</p></blockquote>
+
+<p>namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态
+<code>sh
+bin/hadoop dfsadmin –safemode get
+ON
+</code></p>
+
+<p>那就关了
+<code>sh
+bin/hadoop dfsadmin -safemode leave
+</code></p>
+
+<p>再次查看
+<code>sh
+bin/hadoop dfsadmin –safemode get
+OFF
+</code></p>
+
+<p>已经关了，再次建表测试
+<code>sh
+bin/hive
+hive&gt; create table test (key string);
+OK
+Time taken: 0.521 seconds
+hive&gt; show tables;
+OK
+test
+Time taken: 0.14 seconds
+</code></p>
 
 <h3>参考文章</h3>
 
 <p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
 
 <p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
+
+<p><a href="http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html">http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html</a></p>
 ]]></content>
   </entry>
   
@@ -287,6 +346,15 @@ export HBASE_MANAGES_ZK=true
 </code></p>
 
 <p>注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。</p>
+
+<hr />
+
+<p>(补充：2014-2-19 发现这么写还不能加载，放到~/.bashrc中才对，见下)
+<code>bash
+export HADOOP_HOME=/u01/app/hadoop
+</code></p>
+
+<hr />
 
 <p>编辑hbase-site.xml
 ```xml
@@ -459,7 +527,8 @@ all:# chown -R hadoop /u01/app
 all:$ vi ~/.profile
 all:export HADOOP_HOME=/u01/app/hadoop
 all:export HBASE_HOME=/u01/app/hbase
-</code></p>
+</code>
+（补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）</p>
 
 <p>进行免密码的ssh登录设置
 <code>bash
