@@ -7,7 +7,6 @@ categories: [hadoop]
 ---
 
 
-
 ###什么是hive
 
 > hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。
@@ -31,11 +30,12 @@ ln -s hive-0.7.1-bin.tar.gz hive
 export HIVE_HOME=/u01/app/hive
 export HIVE_CONF_DIR=/u01/app/hive/conf
 ```
-//在系统中指出hive的配置文件所在
+
+在系统中指出hive的配置文件所在
 ```sh
 export PATH=$HIVE_HOME/bin:PATH
 ```
-//这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
 ```sh
 export HIVE_LIB=$HIVE_HOME/lib
 ```
@@ -51,7 +51,6 @@ cd /u01/app/hive/conf
 cp hive-env.sh.template hive-env.sh
 vim hive-env.sh
 ```
-
 
 
 ####安装依赖软件
@@ -135,8 +134,7 @@ Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveCon
         at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
 ```
 
-需要修改$HADOOP/conf/的hadoop-env.sh
-中的
+需要修改$HADOOP/conf/的hadoop-env.sh中的
 ```sh
 export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
 ```
