@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-20T10:16:01+08:00</updated>
+  <updated>2014-02-20T16:35:39+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,99 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hive初试--导入数据和查询]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/20/hive-import-data/"/>
+    <updated>2014-02-20T10:50:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/20/hive-import-data</id>
+    <content type="html"><![CDATA[<p>hive虽然是基于hadoop的map/reduce进行云计算，但是自身需要依赖一个元数据表，要么是derby，要么是mysql，相同点总归是要先导入数据，然后才能进行处理。其原理是把结构化的数据文件映射为一张数据库表，然后将SQL语句转化为MapReduce任务进行运行，以绕过专门开发MapReduce这样一个逆向思维的产物。</p>
+
+<p>Hive不可以改写、插入和删除数据，换句话说hive完全就是用来进行计算的。</p>
+
+<p>Hive的数据是存在hdfs上的,所以数据导入之后除了元数据之外，还有另一份本体数据（通常比较大的）存在hdfs上。</p>
+
+<p>有了基础概念之后，开始正题了。</p>
+
+<!-- more -->
+
+
+<h3>任务描述</h3>
+
+<p>本次目的，是把以下二维表导入到hive中后，根据编号查询对应的单词。</p>
+
+<h3>过程描述</h3>
+
+<p>假设有这样一个文件</p>
+
+<p>cat test.txt
+1   hello
+2   world
+3   test
+4   case
+(vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)</p>
+
+<p>启动hive建表:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt;  CREATE EXTERNAL TABLE MYTEST<span class="o">(</span>id INT, name STRING<span class="o">)</span>
+</span><span class='line'>&gt; COMMENT <span class="s1">&#39;this is a test&#39;</span>
+</span><span class='line'>&gt; ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;\t&#39;</span>
+</span><span class='line'>&gt; STORED AS TEXTFILE
+</span><span class='line'>&gt;LOCATION <span class="s1">&#39;/data/test&#39;</span>;
+</span><span class='line'>OK
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意这一步要求原本的hdfs目录下没有/data/test文件夹，如果有的话，hive是要报错的。
+还有存储格式有三种textfile、rcfile和sequencefile。其中多数情况用textfile就可以了，如果要压缩，可以考虑后两者。</p>
+
+<p>进入hadoop，开始导入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>/bin/hadoop fs -put test.txt /data/test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>回到hive，用简单的HQL查询语句查询id为4的记录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select</span> * from mytest where <span class="nv">id</span> <span class="o">=</span> 4;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks is <span class="nb">set </span>to 0 since there<span class="err">&#39;</span>s no reduce operator
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201402191826_0007, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201402191826_0007
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201402191826_0007
+</span><span class='line'>2014-02-20 00:16:34,842 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-02-20 00:16:40,889 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-02-20 00:16:46,936 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201402191826_0007
+</span><span class='line'>OK
+</span><span class='line'>4       <span class="k">case</span>
+</span><span class='line'>Time taken: 21.36 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是&lt;1秒的。好啦，收工。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[centos5.8下基于hadoop0.20.203的hive0.7安装]]></title>
@@ -3511,320 +3604,6 @@ new install后一路回车,安装完成。
 
 <p>确保/var/www/html/cacti/rra目录下有可写权限。
 重启点击graph菜单观察发现已经出现图表了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos6.4下搭建zabbix2.0.6]]></title>
-    <link href="http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix/"/>
-    <updated>2013-12-03T13:37:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix</id>
-    <content type="html"><![CDATA[<p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
-
-<!-- more -->
-
-
-<p>关闭iptables和selinux</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service iptables stop
-</span><span class='line'>sudo chkconfig iptables off
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>临时关闭selinux</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenfoce 0  <span class="c">##设置为permissive模式</span>
-</span><span class='line'>             <span class="c">##setenforce 1设置SELunix为enforcing模式</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>永久关闭
-修改/etc/selinux/config 文件
-将SELINUX=enforcing改为SELINUX=disabled
-重启机器看到
-getenforce返回Disabled说明已经关闭</p>
-
-<p>再次进入centos6.4，先安装LAMP环境。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php-mbstring php-gd php-odbc php-xml php-pear
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后下载zabbix</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>继续安装需要的组件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建zabbix用户帐号</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo useradd zabbix
-</span><span class='line'>sudo usermod -s /sbin/nologin zabbix
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动mysql</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service mysqld start
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>登录mysql</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uroot -p123456
-</span><span class='line'>mysql&gt; create database zabbix;
-</span><span class='line'>mysql&gt; grant all on zabbix.* to zabbix@localhost identified by <span class="s1">&#39;123456&#39;</span>;
-</span><span class='line'>mysql&gt; use zabbix;
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/schema.sql
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/images.sql
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/data.sql
-</span><span class='line'>mysql&gt; <span class="nb">exit</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装zabbix</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl
-</span><span class='line'>Configuration:
-</span><span class='line'>
-</span><span class='line'>  Detected OS:           linux-gnu
-</span><span class='line'>  Install path:          /usr/local
-</span><span class='line'>  Compilation arch:      linux
-</span><span class='line'>
-</span><span class='line'>  Compiler:              gcc
-</span><span class='line'>  Compiler flags:        -g -O2  -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE<span class="o">=</span>2 -fexceptions -fstack-protector --param<span class="o">=</span>ssp-buffer-size<span class="o">=</span>4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS<span class="o">=</span>64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX       -I/usr/include/rpm -I/usr/local/include -I/usr/lib64/perl5/CORE -I. -I/usr/include
-</span><span class='line'>
-</span><span class='line'>  Enable server:         yes
-</span><span class='line'>  Server details:
-</span><span class='line'>    With database:         MySQL
-</span><span class='line'>    WEB Monitoring via:    cURL
-</span><span class='line'>    Native Jabber:         no
-</span><span class='line'>    SNMP:                  net-snmp
-</span><span class='line'>    IPMI:                  no
-</span><span class='line'>    SSH:                   no
-</span><span class='line'>    ODBC:                  no
-</span><span class='line'>    Linker flags:          -rdynamic      -L/usr/lib64/mysql       -L/usr/lib64  -L/usr/lib64
-</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lmysqlclient       -lcurl  -lnetsnmp -lcrypto  -lnetsnmp -lcrypto
-</span><span class='line'>
-</span><span class='line'>  Enable proxy:          no
-</span><span class='line'>
-</span><span class='line'>  Enable agent:          yes
-</span><span class='line'>  Agent details:
-</span><span class='line'>    Linker flags:          -rdynamic
-</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lcurl
-</span><span class='line'>
-</span><span class='line'>  Enable Java gateway:   no
-</span><span class='line'>
-</span><span class='line'>  LDAP support:          no
-</span><span class='line'>  IPv6 support:          no
-</span><span class='line'>
-</span><span class='line'>***********************************************************
-</span><span class='line'>*            Now run <span class="s1">&#39;make install&#39;</span>                       *
-</span><span class='line'>*                                                         *
-</span><span class='line'>*            Thank you <span class="k">for </span>using Zabbix!                  *
-</span><span class='line'>*              &lt;http://www.zabbix.com&gt;                    *
-</span><span class='line'>***********************************************************
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>好了，我们正式安装</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>接下来编辑配置文件
-可以不用sudo，直接切换到root做</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /usr/local/etc
-</span><span class='line'>cat zabbix_server.conf
-</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix_server.log
-</span><span class='line'><span class="nv">DBHost</span><span class="o">=</span>localhost
-</span><span class='line'><span class="nv">DBName</span><span class="o">=</span>zabbix
-</span><span class='line'><span class="nv">DBUser</span><span class="o">=</span>zabbix
-</span><span class='line'><span class="nv">DBPassword</span><span class="o">=</span>123456
-</span><span class='line'>
-</span><span class='line'>cat zabbix_agent.conf
-</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/tmp/zabbix_agentd.log
-</span><span class='line'><span class="nv">Server</span><span class="o">=</span>127.0.0.1
-</span><span class='line'><span class="nv">UnsafeUserParameters</span><span class="o">=</span>1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建日志文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>touch /var/log/zabbix_server.log
-</span><span class='line'>touch /var/log/zabbix_agent.log
-</span><span class='line'>
-</span><span class='line'><span class="nb">cd</span> -
-</span><span class='line'>cp misc/init.d/tru64/zabbix_server /etc/init.d/
-</span><span class='line'>cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>2个文件的文件头改成如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c">#chkconfig: 35 95 95</span>
-</span><span class='line'><span class="c">#description:zabbix Agent server</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>添加服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig --add zabbix_server
-</span><span class='line'>chkconfig --add zabbix_agentd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>开机自动启动</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig zabbix_server on
-</span><span class='line'>chkconfig zabbix_agent on
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>文件执行权限</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chmod +x zabbix_server
-</span><span class='line'>chmod +x zabbix_agentd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /etc/init.d/zabbix_server start
-</span><span class='line'>sudo /etc/init.d/zabbix_agentd start
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装zabbix web</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp -r frontends/php/ /var/www/html/zabbix
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>访问<a href="http://ip/zabbix">http://ip/zabbix</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim /etc/php.ini
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>指定</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">timezone</span><span class="o">=</span><span class="nx">Asia</span><span class="o">/</span><span class="nx">Shanghai</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>根据提示修改php配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y php-bcmath
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后再次重启httpd</p>
-
-<p>最后登录前端界面密码为 admin/zabbix</p>
-
-<p>告一段落，接下来学习操作zabbix。</p>
 ]]></content>
   </entry>
   
