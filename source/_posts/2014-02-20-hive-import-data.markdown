@@ -25,11 +25,12 @@ hadoop0.20.203+hive0.7
 
 ```sh
 cat test.txt
+```
+
 1	hello
 2	world
 3	test
 4	case
-```
 
 (vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)
 
