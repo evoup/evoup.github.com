@@ -21,16 +21,9 @@ hadoop0.20.203+hive0.7
 本次目的，是把一张二维表导入到hive中后，然后根据编号查询对应的单词。
 
 ###过程描述
-假设有这样一个文件
+假设有这样一个文件test.txt
 
-```sh
-cat test.txt
-```
-
-1	hello
-2	world
-3	test
-4	case
+![Alt text](/images/evoup/hive_test_txt.png)
 
 (vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)
 
