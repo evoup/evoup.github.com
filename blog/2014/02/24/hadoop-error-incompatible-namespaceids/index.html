@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>cocos2d-x初心者阶段学习之一 - Evoup`s Blog</title>
+  <title>hadoop报错：Incompatible namespaceIDs - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,62 +101,31 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-14T14:24:00+08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2014</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-24T17:08:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Cocos2d-x初心者阶段学习之一
+        hadoop报错：Incompatible namespaceIDs
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><h3>序言</h3>
+<div class="entry-content clearfix"><p>今天在修改hadoop主机名重新格式化namenode之后，重新启动hadoop，发现datanode无法启动起来。</p>
 
-<p>通过一个阶段的cocos2d-iphone的学习，对Objective-C（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocostudio这一套的东西，应该是时候投入该框架的学习。</p>
+<p>报错：HADOOP报错<code>Incompatible namespaceIDs</code></p>
+
+<p>查看报告发现没有启动一个datanode</p>
 
 <!-- more -->
 
 
-<h5>本文参考</h5>
-
-<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
-
-<p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发，然后动手术加载一个飞船。</p>
-
-<h3>加载精灵</h3>
-
-<h4>准备工作</h4>
-
-<p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
-然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
-可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
-然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
-（但是在项目管理器里无法看到，如何添加？TODO）</p>
-
-<h4>添加代码</h4>
-
-<p>在头文件中添加</p>
-
-<figure class='code'><figcaption><span>HelloWorldScene.h </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">private</span><span class="o">:</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
 
 
-<p>为什么需要2行代码？因为一个是批渲染对象，用来涵盖全部用到的资源，以及对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
-
-<p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：</p>
-
-<figure class='code'><figcaption><span>HelloWorldScene.cpp </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -165,36 +134,56 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">_batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Sprites.pvr.ccz&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_batchNode</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;Sprites.plist&quot;</span><span class="p">);</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop dfsadmin -report
+</span><span class='line'>Configured Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>Present Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Remaining: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Used: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Used%: �%
+</span><span class='line'>Under replicated blocks: 0
+</span><span class='line'>Blocks with corrupt replicas: 0
+</span><span class='line'>Missing blocks: 0
 </span><span class='line'>
-</span><span class='line'><span class="n">_ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;SpaceFlier_sm_1.png&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
-</span><span class='line'><span class="n">_ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
-</span><span class='line'><span class="n">_batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>-------------------------------------------------
+</span><span class='line'>Datanodes available: 0 <span class="o">(</span>0 total, 0 dead<span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h4>简单的分析</h4>
+<p>原来是要求datanode的VERSION文件和datanode的要一致</p>
 
-<p>按流程分析下吧，内存稍微提一下。
-首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
-addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
-接着，确定帧和帧缓冲的关系，通过用addSpriteFramesWithFile函数读取plist文件来实现。
-然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
-只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
+<p>于是到namenode上看文件</p>
 
-<h4>编译看结果</h4>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 current<span class="o">]</span><span class="nv">$more</span> /u01/app/hadoopTmp/dfs/name/current/VERSION
+</span><span class='line'><span class="c">#Mon Feb 24 16:48:12 CST 2014</span>
+</span><span class='line'><span class="nv">namespaceID</span><span class="o">=</span>1235115105
+</span><span class='line'><span class="nv">cTime</span><span class="o">=</span>0
+</span><span class='line'><span class="nv">storageType</span><span class="o">=</span>NAME_NODE
+</span><span class='line'><span class="nv">layoutVersion</span><span class="o">=</span>-31
+</span></code></pre></td></tr></table></div></figure>
 
-<p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一艘太空飞船，目的达成。下篇学习如何移动和发射子弹。</p>
 
-<p><img src="/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
+<p>namespaceID为1235115105</p>
 
-<h4>参考阅读</h4>
+<p>到datanode里查看发现不存在</p>
 
-<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
+<h3>解决方法：</h3>
+
+<p>1）在datanode的&lt;dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode</p>
+
+<p>2）在格式化namenode的时候要清空/tmp目录下所有有关hadoop的目录，不论是namenode还是datanode所在的机器</p>
+
+<h4>参考文章</h4>
+
+<p><a href="http://blog.csdn.net/wanghai__/article/details/5752199">http://blog.csdn.net/wanghai__/article/details/5752199</a></p>
 </div>
 
 
@@ -218,13 +207,13 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-14T14:24:00+08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2014</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-24T17:08:00+08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cocos2d-x/'>cocos2d-x</a>
+    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>
   
 </span>
 
@@ -236,10 +225,8 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/" title="Previous Post: win7上搭建cocos2d-x2.2.2开发环境">&laquo; win7上搭建cocos2d-x2.2.2开发环境</a></li>
+            <li class="previous"><a href="/blog/2014/02/20/hive-import-data/" title="Previous Post: hive初试--导入数据和查询">&laquo; hive初试--导入数据和查询</a></li>
             
-            
-            <li class="next"><a href="/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file/" title="Next Post: git clone失败警告unprotected private key file">git clone失败警告unprotected private key file &raquo;</a></li>
             
           </ul>
         
@@ -276,7 +263,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/02/24/hadoop-error-incompatible-namespaceids/">hadoop报错：Incompatible namespaceIDs</a>
+    <a class="list-group-item active" href="/blog/2014/02/24/hadoop-error-incompatible-namespaceids/">hadoop报错：Incompatible namespaceIDs</a>
     
     <a class="list-group-item " href="/blog/2014/02/20/hive-import-data/">Hive初试--导入数据和查询</a>
     

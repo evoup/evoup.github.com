@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-21T15:18:22+08:00</updated>
+  <updated>2014-02-24T17:14:11+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,84 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop报错：Incompatible namespaceIDs]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids/"/>
+    <updated>2014-02-24T17:08:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids</id>
+    <content type="html"><![CDATA[<p>今天在修改hadoop主机名重新格式化namenode之后，重新启动hadoop，发现datanode无法启动起来。</p>
+
+<p>报错：HADOOP报错<code>Incompatible namespaceIDs</code></p>
+
+<p>查看报告发现没有启动一个datanode</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop dfsadmin -report
+</span><span class='line'>Configured Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>Present Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Remaining: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Used: 0 <span class="o">(</span>0 KB<span class="o">)</span>
+</span><span class='line'>DFS Used%: �%
+</span><span class='line'>Under replicated blocks: 0
+</span><span class='line'>Blocks with corrupt replicas: 0
+</span><span class='line'>Missing blocks: 0
+</span><span class='line'>
+</span><span class='line'>-------------------------------------------------
+</span><span class='line'>Datanodes available: 0 <span class="o">(</span>0 total, 0 dead<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原来是要求datanode的VERSION文件和datanode的要一致</p>
+
+<p>于是到namenode上看文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 current<span class="o">]</span><span class="nv">$more</span> /u01/app/hadoopTmp/dfs/name/current/VERSION
+</span><span class='line'><span class="c">#Mon Feb 24 16:48:12 CST 2014</span>
+</span><span class='line'><span class="nv">namespaceID</span><span class="o">=</span>1235115105
+</span><span class='line'><span class="nv">cTime</span><span class="o">=</span>0
+</span><span class='line'><span class="nv">storageType</span><span class="o">=</span>NAME_NODE
+</span><span class='line'><span class="nv">layoutVersion</span><span class="o">=</span>-31
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>namespaceID为1235115105</p>
+
+<p>到datanode里查看发现不存在</p>
+
+<h3>解决方法：</h3>
+
+<p>1）在datanode的&lt;dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode</p>
+
+<p>2）在格式化namenode的时候要清空/tmp目录下所有有关hadoop的目录，不论是namenode还是datanode所在的机器</p>
+
+<h4>参考文章</h4>
+
+<p><a href="http://blog.csdn.net/wanghai__/article/details/5752199">http://blog.csdn.net/wanghai__/article/details/5752199</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hive初试--导入数据和查询]]></title>
@@ -3400,211 +3478,6 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 <h3>扩展阅读</h3>
 
 <p>请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos6.4 install cacti0.8]]></title>
-    <link href="http://evoupsight.com/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/"/>
-    <updated>2013-12-04T10:37:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8</id>
-    <content type="html"><![CDATA[<h3>简介</h3>
-
-<p>cacti号称一款完全采用rrdtool和snmp实现的监控软件，与同为自由软件的nagios相比，它能够呈现大量直观的监控图表，功能主要体现在了数据的量化上。该软件最初完全采用php写成，采用crontab调用poller.php脚本进行数据的定时收集，如今已经有c语言写成的改良版spine收集器进行数据的收集可供选择。</p>
-
-<!-- more -->
-
-
-<p>接下来开始安装，一开始还是一样先把可能妨碍安装成功的iptables和selinux关闭掉</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>service iptables stop
-</span><span class='line'>chkconfig iptables off
-</span><span class='line'>vim /etc/selinux/config
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后SELINUX=enforcing改成SELINUX=disabled
-重启机器getenforce 为disable
-正式开篇</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum -y install mysql mysql-server mysql-devel
-</span><span class='line'>yum -y install httpd
-</span><span class='line'>yum -y install php php-mysql
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动服务并加入到启动列表</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>service httpd start
-</span><span class='line'>service mysqld start
-</span><span class='line'>chkconfig httpd on
-</span><span class='line'>chkconfig mysqld on
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装需要的库文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum -y install zlib
-</span><span class='line'>yum -y install freetype
-</span><span class='line'>yum -y install libjpeg
-</span><span class='line'>yum -y install fontconfig
-</span><span class='line'>yum -y install gd
-</span><span class='line'>yum -y install libxml2
-</span><span class='line'>yum -y install php-gd
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装rrdtool</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum -y install rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装snmp支持工具</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum -y install net-snmp
-</span><span class='line'>yum -y install net-snmp-utils
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动snmpd服务</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>service snmpd start
-</span><span class='line'>chkconfig snmpd on
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装cacti
-下载wget <a href="http://www.cacti.net/downloads/cacti-0.8.7e.tar.gz">http://www.cacti.net/downloads/cacti-0.8.7e.tar.gz</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>tar xzf cacti-0.8.7e.tar.gz
-</span><span class='line'>mv cacti-0.8.7e /var/www/html/cacti
-</span><span class='line'><span class="nb">cd</span> /var/www/html
-</span><span class='line'>vim cacti/include/config.php
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑为下面的配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$database_type</span> <span class="o">=</span> <span class="s2">&quot;mysql&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$database_default</span> <span class="o">=</span> <span class="s2">&quot;cacti&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$database_hostname</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$database_username</span> <span class="o">=</span> <span class="s2">&quot;cacti&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$database_password</span> <span class="o">=</span> <span class="s2">&quot;cacti&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$database_port</span> <span class="o">=</span> <span class="s2">&quot;3306&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>添加cacti用户
-useradd cacti</p>
-
-<p>添加计划任务
-编辑/etc/crontab</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>* * * * * cacti /usr/bin/php /var/www/html/cacti/poller.php &gt;&gt; /dev/null 2&gt;&amp;1
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>更改属组
-将web目录的所属组改为cacti</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#chgrp -R cacti /var/www/html/cacti</span>
-</span><span class='line'><span class="c">#chown -R cacti /var/www/html/cacti/rra</span>
-</span><span class='line'><span class="c">#chown -R cacti /var/www/html/cacti/log</span>
-</span><span class='line'><span class="c">#chown -R cacti /var/www/html/cacti/poller.php</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建cacti数据库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql
-</span><span class='line'>mysql&gt; create database cacti;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>导入cacti.sql</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uroot -p cacti &lt; /var/www/html/cacti/cacti.sql
-</span><span class='line'>mysql&gt; use cacti
-</span><span class='line'>mysql&gt; grant all on cacti.* to cacti@localhost identified by <span class="s1">&#39;cacti&#39;</span>;
-</span><span class='line'>mysql&gt; flush privileges;
-</span><span class='line'>mysql&gt; <span class="nb">exit</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>浏览器登录cacti
-<a href="http://ip/cacti">http://ip/cacti</a>
-new install后一路回车,安装完成。
-默认登录密码为admin/admin</p>
-
-<h3>疑难杂症之cacti不出图</h3>
-
-<p>首先检查log文件权限</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /var/www/html/cacti/log
-</span><span class='line'>ll
-</span><span class='line'>-rw-r--r-- 1 cacti cacti 438 Dec  3 02:14 cacti.log
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>校正时间</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#cp -f /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span>
-</span><span class='line'><span class="c">#reboot</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>确保/var/www/html/cacti/rra目录下有可写权限。
-重启点击graph菜单观察发现已经出现图表了。</p>
 ]]></content>
   </entry>
   
