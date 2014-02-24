@@ -45,7 +45,7 @@ namespaceID为1235115105
 到datanode里查看发现不存在
 
 
-###解决方法：
+###解决方法两种任选其一：
 
 1）在datanode的<dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode
 
