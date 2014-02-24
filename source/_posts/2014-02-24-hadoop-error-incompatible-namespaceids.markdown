@@ -29,7 +29,7 @@ Missing blocks: 0
 Datanodes available: 0 (0 total, 0 dead)
 ```
 
-原来是要求datanode的VERSION文件和datanode的要一致
+原来是要求datanode的VERSION文件和namenode的要一致
 
 于是到namenode上看文件
 ```sh
