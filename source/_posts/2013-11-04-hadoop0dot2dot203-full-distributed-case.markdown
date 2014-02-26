@@ -91,8 +91,8 @@ all:$ ln -s hadoop-0.20.203.0 hadoop
 
 ###正式开始
 
-编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
-(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)
+编辑所有机器的/etc/hosts文件（最好也编辑一下这个文件，不是必须，centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
+(PS:也可以先在namenode上编辑好了，分发到其他机器上去)
 
 ```bash
 # Do not remove the following line, or various programs
