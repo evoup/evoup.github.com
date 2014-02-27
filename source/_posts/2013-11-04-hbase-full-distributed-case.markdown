@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "HBASE完全分布式搭建(VMware版)"
+title: "HBASE0.90.6完全分布式搭建(VMware版)"
 date: 2013-11-04 16:28
 comments: true
 categories: hadoop 
@@ -20,6 +20,7 @@ cd hbase/conf
 ```
 
 编辑hbase-env.sh
+指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper
 ```bash
 export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
 export JAVA_HOME=/usr/java/jdk1.6.0_29
@@ -77,7 +78,7 @@ export HADOOP_HOME=/u01/app/hadoop
     </property>
     <property>
         <name>hbase.zookeeper.quorum</name>
-        <value>mdn2.net,mdn2_datanode1.net,mdn2_datanode2.net</value>
+        <value>mdn2.net,mdn2datanode1.net,mdn2datanode2.net</value>
     </property>
 </configuration>
 ```
@@ -88,8 +89,8 @@ export HADOOP_HOME=/u01/app/hadoop
 
 修改regionservers文件（同hadoop的slaves文件）
 ```bash
-mdn2_datanode1.net
-mdn2_datanode2.net
+mdn2datanode1.net
+mdn2datanode2.net
 ```
 
 然后分发到各点，就可以启动了。
@@ -104,7 +105,16 @@ ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to co
 看来不要使用hbase托管的zookeeper转而再装一个试试。
 
 ```bash
-wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+export HBASE_MANAGES_ZK=true
+```
+
+改为
+
+```bash
+export HBASE_MANAGES_ZK=false
+```
+
+```bash
 ```
 
 编辑~/.profile,加入关于zk环境变量的设置
@@ -113,6 +123,12 @@ wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookee
 export ZOOKEEPER_HOME="/u01/app/zookeeper/"
 PATH=$ZOOKEEPER_HOME/bin:$PATH
 export PATH
+```
+```bash
+cd /u01/app
+wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+tar xzf zookeeper-3.4.4.tar.gz
+ln -s zookeeper-3.4.4 zookeeper
 cd /u01/app/zookeeper/conf
 cp zoo_sample.cfg zoo.cfg
 cd ../bin

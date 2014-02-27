@@ -19,12 +19,14 @@ vmware版本8.0.4 build-744019
  | namenode    | 192.168.174.132  |           mdn2.net                |
  |             |                  |                                   |
  |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
- | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+ | datanode01  | 192.168.174.135  |        mdn2datanode1.net          |
  |             |                  |                                   |
  |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
- | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+ | datanode02  | 192.168.174.136  |        mdn2datanode2.net          |
  |             |                  |                                   |
-  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+  ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+  （2014-02-27注意取的名不要出现下划线，否则hive会报错）
 ```
 
  <!-- more -->
@@ -101,8 +103,8 @@ all:$ ln -s hadoop-0.20.203.0 hadoop
 127.0.0.1       localhost.localdomain localhost
 ::1             localhost6.localdomain6 localhost6
 192.168.174.132 mdn2.net
-192.168.174.135 mdn2_datanode1.net
-192.168.174.136 mdn2_datanode2.net
+192.168.174.135 mdn2datanode1.net
+192.168.174.136 mdn2datanode2.net
 ```
 
 假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码
@@ -167,8 +169,8 @@ mdn2.net
 
 slaves里
 ```bash
-mdn2_datanode1.net
-mdn2_datanode2.net
+mdn2datanode1.net
+mdn2datanode2.net
 ```
 
 注意点：
