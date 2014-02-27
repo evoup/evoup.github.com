@@ -132,6 +132,8 @@
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'> ,''''''''''''':'''''''''''''''''':'''''''''''''''''''''''''''''''''''|
 </span><span class='line'> |    usage    |        IP        |             Hostname              |
 </span><span class='line'> |             |                  |                                   |
@@ -139,12 +141,14 @@
 </span><span class='line'> | namenode    | 192.168.174.132  |           mdn2.net                |
 </span><span class='line'> |             |                  |                                   |
 </span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2_datanode1.net         |
+</span><span class='line'> | datanode01  | 192.168.174.135  |        mdn2datanode1.net          |
 </span><span class='line'> |             |                  |                                   |
 </span><span class='line'> |'''''''''''''|''''''''''''''''''|'''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2_datanode2.net         |
+</span><span class='line'> | datanode02  | 192.168.174.136  |        mdn2datanode2.net          |
 </span><span class='line'> |             |                  |                                   |
-</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>  ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</span><span class='line'>
+</span><span class='line'>  （2014-02-27注意取的名不要出现下划线，否则hive会报错）</span></code></pre></td></tr></table></div></figure>
 
 
 <p> <!-- more --></p>
@@ -243,8 +247,8 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 
 <h3>正式开始</h3>
 
-<p>编辑所有机器的/etc/hosts文件（host的centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
-(PS:也可以选择现在namenode上编辑好了，分发到其他机器上去)</p>
+<p>编辑所有机器的/etc/hosts文件（最好也编辑一下这个文件，不是必须，centos下为/etc/sysconfig/network，bsd的要设置/etc/rc.conf）
+(PS:也可以先在namenode上编辑好了，分发到其他机器上去)</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -260,8 +264,8 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 </span><span class='line'>127.0.0.1       localhost.localdomain localhost
 </span><span class='line'>::1             localhost6.localdomain6 localhost6
 </span><span class='line'>192.168.174.132 mdn2.net
-</span><span class='line'>192.168.174.135 mdn2_datanode1.net
-</span><span class='line'>192.168.174.136 mdn2_datanode2.net
+</span><span class='line'>192.168.174.135 mdn2datanode1.net
+</span><span class='line'>192.168.174.136 mdn2datanode2.net
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -370,8 +374,8 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
-</span><span class='line'>mdn2_datanode2.net
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2datanode1.net
+</span><span class='line'>mdn2datanode2.net
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -461,7 +465,7 @@ vi  hadoop
             <li class="previous"><a href="/blog/2013/11/04/erlang-open-port-error-enoent/" title="Previous Post: erlang open_port 错误之error enoent">&laquo; erlang open_port 错误之error enoent</a></li>
             
             
-            <li class="next"><a href="/blog/2013/11/04/hbase-full-distributed-case/" title="Next Post: HBASE完全分布式搭建(VMware版)">HBASE完全分布式搭建(VMware版) &raquo;</a></li>
+            <li class="next"><a href="/blog/2013/11/04/hbase-full-distributed-case/" title="Next Post: HBASE0.90.6完全分布式搭建(VMware版)">HBASE0.90.6完全分布式搭建(VMware版) &raquo;</a></li>
             
           </ul>
         

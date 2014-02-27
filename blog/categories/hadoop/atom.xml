@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-02-24T18:21:30+08:00</updated>
+  <updated>2014-02-27T16:17:33+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -454,7 +454,7 @@ dataDir = 数据存放路径</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[HBASE完全分布式搭建(VMware版)]]></title>
+    <title type="html"><![CDATA[HBASE0.90.6完全分布式搭建(VMware版)]]></title>
     <link href="http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case/"/>
     <updated>2013-11-04T16:28:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case</id>
@@ -473,6 +473,7 @@ cd hbase/conf
 </code></p>
 
 <p>编辑hbase-env.sh
+指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper
 <code>bash
 export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
 export JAVA_HOME=/usr/java/jdk1.6.0_29
@@ -534,7 +535,7 @@ export HADOOP_HOME=/u01/app/hadoop
 &lt;/property&gt;
 &lt;property&gt;
     &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
-    &lt;value&gt;mdn2.net,mdn2_datanode1.net,mdn2_datanode2.net&lt;/value&gt;
+    &lt;value&gt;mdn2.net,mdn2datanode1.net,mdn2datanode2.net&lt;/value&gt;
 &lt;/property&gt;
 </code></pre>
 
@@ -547,8 +548,8 @@ export HADOOP_HOME=/u01/app/hadoop
 
 <p>修改regionservers文件（同hadoop的slaves文件）
 <code>bash
-mdn2_datanode1.net
-mdn2_datanode2.net
+mdn2datanode1.net
+mdn2datanode2.net
 </code></p>
 
 <p>然后分发到各点，就可以启动了。</p>
@@ -563,7 +564,16 @@ ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to co
 看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
 
 <p><code>bash
-wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+export HBASE_MANAGES_ZK=true
+</code></p>
+
+<p>改为</p>
+
+<p><code>bash
+export HBASE_MANAGES_ZK=false
+</code></p>
+
+<p><code>bash
 </code></p>
 
 <p>编辑~/.profile,加入关于zk环境变量的设置</p>
@@ -572,6 +582,12 @@ wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookee
 export ZOOKEEPER_HOME="/u01/app/zookeeper/"
 PATH=$ZOOKEEPER_HOME/bin:$PATH
 export PATH
+</code>
+<code>bash
+cd /u01/app
+wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+tar xzf zookeeper-3.4.4.tar.gz
+ln -s zookeeper-3.4.4 zookeeper
 cd /u01/app/zookeeper/conf
 cp zoo_sample.cfg zoo.cfg
 cd ../bin

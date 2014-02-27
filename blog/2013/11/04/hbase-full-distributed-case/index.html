@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>HBASE完全分布式搭建(VMware版) - Evoup`s Blog</title>
+  <title>HBASE0.90.6完全分布式搭建(VMware版) - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -107,7 +107,7 @@
     
     
     <h1 class="entry-title">
-        HBASE完全分布式搭建(VMware版)
+        HBASE0.90.6完全分布式搭建(VMware版)
         
     </h1>
     
@@ -134,7 +134,8 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>编辑hbase-env.sh</p>
+<p>编辑hbase-env.sh
+指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -239,7 +240,7 @@
 </span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;property&gt;</span>
 </span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.zookeeper.quorum<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn2.net,mdn2_datanode1.net,mdn2_datanode2.net<span class="nt">&lt;/value&gt;</span>
+</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn2.net,mdn2datanode1.net,mdn2datanode2.net<span class="nt">&lt;/value&gt;</span>
 </span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
 </span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -253,8 +254,8 @@
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2_datanode1.net
-</span><span class='line'>mdn2_datanode2.net
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mdn2datanode1.net
+</span><span class='line'>mdn2datanode2.net
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -272,11 +273,32 @@ ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to co
 看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HBASE_MANAGES_ZK</span><span class="o">=</span><span class="nb">true</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>编辑~/.profile,加入关于zk环境变量的设置</p>
+<p>改为</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HBASE_MANAGES_ZK</span><span class="o">=</span><span class="nb">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">```</span>
+</span><span class='line'>
+</span><span class='line'>编辑~/.profile,加入关于zk环境变量的设置
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+export ZOOKEEPER_HOME=&ldquo;/u01/app/zookeeper/&rdquo;
+PATH=$ZOOKEEPER_HOME/bin:$PATH
+export PATH</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -285,9 +307,13 @@ ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to co
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">ZOOKEEPER_HOME</span><span class="o">=</span><span class="s2">&quot;/u01/app/zookeeper/&quot;</span>
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ZOOKEEPER_HOME</span>/bin:<span class="nv">$PATH</span>
-</span><span class='line'><span class="nb">export </span>PATH
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="sb">```</span>bash
+</span><span class='line'><span class="nb">cd</span> /u01/app
+</span><span class='line'>wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+</span><span class='line'>tar xzf zookeeper-3.4.4.tar.gz
+</span><span class='line'>ln -s zookeeper-3.4.4 zookeeper
 </span><span class='line'><span class="nb">cd</span> /u01/app/zookeeper/conf
 </span><span class='line'>cp zoo_sample.cfg zoo.cfg
 </span><span class='line'><span class="nb">cd</span> ../bin
