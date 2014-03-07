@@ -135,7 +135,7 @@ lzop test.txt
 
 在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再
 ```sh
-bin/hadoop lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /testlzo/test.txt.lzo
+bin/hadoop jar lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /testlzo/test.txt.lzo
 ```
 而直接使用
 ```sh
