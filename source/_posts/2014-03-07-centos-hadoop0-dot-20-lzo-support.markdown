@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "centos下hadoop的LZO压缩支持"
+title: "centos下hadoop0.20的LZO压缩支持"
 date: 2014-03-07 11:00
 comments: true
 categories: 
@@ -33,7 +33,7 @@ liblzo2.so.2.0.0
 在/etc/ld.so.conf.d/目录下新建lzo.conf文件，写入lzo库文件的路径/usr/local/lib，然后运行/sbin/ldconfig -v，使配置生效。
 
 ###然后安装hadoop-LZO
-如果是hadoop0.20版本，就下kevinweil的版本
+我这里是hadoop0.20版本，就下kevinweil的版本
 git clone https://github.com/kevinweil/hadoop-lzo
 
 然后安装ant
@@ -122,7 +122,9 @@ mapred-site.xml
  </property>
 ```
 
-###启动hadoop并测试lzo,用lzop压缩一个文件，然后上传到hdfs
+###启动hadoop并测试lzo
+
+用lzop压缩一个文件，然后上传到hdfs
 ```
 bin/start-all.sh
 lzop test.txt
