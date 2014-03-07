@@ -328,7 +328,7 @@ git clone <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/k
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>然后测试lzo是否已经支持</p>
+<p>然后通过创建lzo索引来测试lzo是否已经支持</p>
 
 <p>在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再</p>
 
@@ -341,6 +341,13 @@ git clone <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/k
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/test.log.lzo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也可以使用分布式版本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.DistributedLzoIndexer /testlzo/test.log.lzo
 </span></code></pre></td></tr></table></div></figure>
 
 
