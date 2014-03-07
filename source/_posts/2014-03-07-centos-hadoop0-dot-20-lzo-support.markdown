@@ -131,7 +131,7 @@ lzop test.txt
 /u01/app/hadoop/bin/hadoop -put test.txt.lzo /testlzo/test.txt.lzo
 ```
 
-然后测试lzo是否已经支持
+然后通过创建lzo索引来测试lzo是否已经支持
 
 在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再
 ```sh
@@ -141,6 +141,12 @@ bin/hadoop jar lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /
 ```sh
 bin/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/test.log.lzo
 ```
+
+也可以使用分布式版本
+```sh
+bin/hadoop com.hadoop.compression.lzo.DistributedLzoIndexer /testlzo/test.log.lzo
+```
+
 
 报错
 > 14/03/06 18:37:14 ERROR lzo.GPLNativeCodeLoader: Could not load native gpl library
