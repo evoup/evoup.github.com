@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-07T14:43:15+08:00</updated>
+  <updated>2014-03-10T18:26:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,126 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[导入nginx日志并采用hive进行统计]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/"/>
+    <updated>2014-03-10T16:07:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate</id>
+    <content type="html"><![CDATA[<p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+
+<p>下面描述一下过程</p>
+
+<!-- more -->
+
+
+<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表
+<code>sh
+create external table nginxlog (ipaddress string, ...更多字段省略) COMMENT 'nginx log' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as textfile    location '/data/log';
+</code></p>
+
+<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。
+<code>sh
+$ tar xjf server01-20140131.txt.bz2
+$ tar xjf server02-20140131.txt.bz2
+$ lzop server01-20140131.txt
+$ lzop server02-20140131.txt
+$ server01-20140131.txt.lzo server02-20140131.txt.lzo
+$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server01-20140131.txt.lzo
+$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server02-20140131.txt.lzo
+$/u01/app/hadoop/bin/hadoop fs -ls /data/log/
+Found 2 items
+-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/log/server01-20140131.txt.lzo
+-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/log/server02-20140201.txt.lzo
+</code></p>
+
+<p>然后马上就可以查询了
+<code>
+hive&gt; select count(*) from nginxlog;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=&lt;number&gt;
+Starting Job = job_201403101051_0004, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0004
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0004
+2014-03-10 14:17:41,179 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 14:18:20,815 Stage-1 map = 50%,  reduce = 0%
+2014-03-10 14:18:32,927 Stage-1 map = 100%,  reduce = 0%
+2014-03-10 14:18:38,971 Stage-1 map = 100%,  reduce = 17%
+2014-03-10 14:18:41,991 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0004
+OK
+2492916
+Time taken: 75.321 seconds
+</code></p>
+
+<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询
+<code>
+bin/hive&gt; create external table nginxlog2 (ipaddress string, ...,更多字段) COMMENT 'nginx log rcfile format' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as RCFile    location '/data/log2';
+</code></p>
+
+<p>然后用
+<code>
+hive&gt; SET hive.exec.compress.output=true;
+hive&gt; SET io.rcfile.compression.type=BLOCK;
+hive&gt; insert overwrite table nginxlog2 select * from nginxlog;
+Total MapReduce jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201403101051_0007, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0007
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0007
+2014-03-10 15:20:20,959 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:21:21,267 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:22:21,627 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:23:22,320 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:23:36,542 Stage-1 map = 100%,  reduce = 0%
+2014-03-10 15:23:42,665 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0007
+Ended Job = -1308159129, job is filtered out (removed at runtime).
+Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000
+Loading data to table default.nginxlog2
+Deleted hdfs://mdn2.net:9024/data/log2
+Table default.nginxlog2 stats: [num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0]
+2492916 Rows loaded to nginxlog2
+OK
+Time taken: 209.088 seconds
+</code></p>
+
+<p>然后再次select，对比一下时间
+<code>
+hive&gt; select count(*) from nginxlog2;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=&lt;number&gt;
+Starting Job = job_201403101051_0008, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0008
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0008
+2014-03-10 15:26:21,984 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:26:31,031 Stage-1 map = 33%,  reduce = 0%
+2014-03-10 15:26:43,107 Stage-1 map = 67%,  reduce = 0%
+2014-03-10 15:26:49,140 Stage-1 map = 67%,  reduce = 17%
+2014-03-10 15:26:52,153 Stage-1 map = 100%,  reduce = 22%
+2014-03-10 15:27:04,225 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0008
+OK
+2492916
+Time taken: 55.656 seconds
+</code>
+我这里是2个节点， 55.656，不用rcfile是可以省去20秒的时间，当然并行计算的节点越多，时间就越省。</p>
+
+<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hadoop报错：Incompatible namespaceIDs]]></title>
@@ -450,153 +570,6 @@ dataDir = 数据存放路径</p>
 <h3>总结</h3>
 
 <p>这个案例告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[HBASE0.90.6完全分布式搭建(VMware版)]]></title>
-    <link href="http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case/"/>
-    <updated>2013-11-04T16:28:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case</id>
-    <content type="html"><![CDATA[<p>接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a></p>
-
-<p>参考 <a href="http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html">http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html</a></p>
-
-<!-- more -->
-
-
-<p><code>bash
-cd /u01/app
-tar xzf hbase-0.90.6.tgz
-ln -s hbase-0.90.6 hbase
-cd hbase/conf
-</code></p>
-
-<p>编辑hbase-env.sh
-指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper
-<code>bash
-export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
-export JAVA_HOME=/usr/java/jdk1.6.0_29
-export HBASE_MANAGES_ZK=true
-</code></p>
-
-<p>注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。</p>
-
-<hr />
-
-<p>(补充：2014-2-19 发现这么写还不能加载，放到~/.bashrc中才对，见下)
-<code>bash
-export HADOOP_HOME=/u01/app/hadoop
-</code></p>
-
-<hr />
-
-<p>编辑hbase-site.xml
-```xml
-&lt;?xml version=&ldquo;1.0&rdquo;?>
-&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
-
-<!--
-/**
- * Copyright 2010 The Apache Software Foundation
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
--->
-
-
-<p><configuration></p>
-
-<pre><code>&lt;property&gt;
-    &lt;name&gt;hbase.rootdir&lt;/name&gt;
-    &lt;value&gt;hdfs://mdn2.net:9024/hbase&lt;/value&gt;
-&lt;/property&gt;
-&lt;property&gt;
-    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
-    &lt;value&gt;true&lt;/value&gt;
-&lt;/property&gt;
-&lt;property&gt;
-    &lt;name&gt;hbase.master&lt;/name&gt;
-    &lt;value&gt;mdn2.net:60000&lt;/value&gt;
-&lt;/property&gt;
-&lt;property&gt;
-    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
-    &lt;value&gt;mdn2.net,mdn2datanode1.net,mdn2datanode2.net&lt;/value&gt;
-&lt;/property&gt;
-</code></pre>
-
-<p></configuration>
-```</p>
-
-<p>注意点：
- 1.其中首先需要注意hdfs://mdn2.net:9024/hbase这里，必须与你的Hadoop集群的core-site.xml文件配置保持完全一致才行，如果你Hadoop的hdfs使用了其它端口，请在这里也修改。再者就是Hbase该项并不识别机器IP，只能使用机器hostname才可行，即若使用IP是会抛出java错误。
- 2.hbase.zookeeper.quorum 的个数必须是奇数。</p>
-
-<p>修改regionservers文件（同hadoop的slaves文件）
-<code>bash
-mdn2datanode1.net
-mdn2datanode2.net
-</code></p>
-
-<p>然后分发到各点，就可以启动了。</p>
-
-<p><code>bash
-bin/start hbase
-bin/hbase shell
-</code></p>
-
-<p>报错
-ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to connect to ZooKeeper but the connection closes immediately. This could be a sign that the server has too many connections (30 is the default). Consider inspecting your ZK server logs for that error and then make sure you are reusing HBaseConfiguration as often as you can. See HTable&rsquo;s javadoc for more information.
-看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
-
-<p><code>bash
-export HBASE_MANAGES_ZK=true
-</code></p>
-
-<p>改为</p>
-
-<p><code>bash
-export HBASE_MANAGES_ZK=false
-</code></p>
-
-<p><code>bash
-</code></p>
-
-<p>编辑~/.profile,加入关于zk环境变量的设置</p>
-
-<p><code>bash
-export ZOOKEEPER_HOME="/u01/app/zookeeper/"
-PATH=$ZOOKEEPER_HOME/bin:$PATH
-export PATH
-</code>
-<code>bash
-cd /u01/app
-wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
-tar xzf zookeeper-3.4.4.tar.gz
-ln -s zookeeper-3.4.4 zookeeper
-cd /u01/app/zookeeper/conf
-cp zoo_sample.cfg zoo.cfg
-cd ../bin
-./zkServer.sh start
-</code></p>
-
-<p>最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。</p>
-
-<p><img src="/images/evoup/hbase_vmware.png" alt="Alt text" /></p>
 ]]></content>
   </entry>
   

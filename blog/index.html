@@ -89,6 +89,65 @@
     <header>
   
   <h1 class="beta">
+    <a href="/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/">导入nginx日志并采用hive进行统计</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2014-03-10T16:07:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Mar 10<span>th</span>, 2014</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/hadoop/">hadoop</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+<div class="entry-content clearfix">
+  <p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+
+<p>下面描述一下过程</p>
+
+
+  <a class="btn pull-right" href="/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/">Read on &rarr;</a>
+</div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
     <a href="/blog/2014/03/07/centos-hadoop0-dot-20-lzo-support/">centos下hadoop0.20的LZO压缩支持</a>
   </h1>
   

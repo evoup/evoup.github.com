@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-07T14:43:15+08:00</updated>
+  <updated>2014-03-10T18:26:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,212 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[导入nginx日志并采用hive进行统计]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/"/>
+    <updated>2014-03-10T16:07:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate</id>
+    <content type="html"><![CDATA[<p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+
+<p>下面描述一下过程</p>
+
+<!-- more -->
+
+
+<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>create external table nginxlog <span class="o">(</span>ipaddress string, ...更多字段省略<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as textfile    location <span class="s1">&#39;/data/log&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>tar xjf server01-20140131.txt.bz2
+</span><span class='line'><span class="nv">$ </span>tar xjf server02-20140131.txt.bz2
+</span><span class='line'><span class="nv">$ </span>lzop server01-20140131.txt
+</span><span class='line'><span class="nv">$ </span>lzop server02-20140131.txt
+</span><span class='line'><span class="nv">$ </span>server01-20140131.txt.lzo server02-20140131.txt.lzo
+</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server01-20140131.txt.lzo
+</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server02-20140131.txt.lzo
+</span><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop fs -ls /data/log/
+</span><span class='line'>Found 2 items
+</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/log/server01-20140131.txt.lzo
+</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/log/server02-20140201.txt.lzo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后马上就可以查询了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
+</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
+</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0004
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0004
+</span><span class='line'>2014-03-10 14:17:41,179 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:20,815 Stage-1 <span class="nv">map</span> <span class="o">=</span> 50%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:32,927 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:38,971 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
+</span><span class='line'>2014-03-10 14:18:41,991 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004
+</span><span class='line'>OK
+</span><span class='line'>2492916
+</span><span class='line'>Time taken: 75.321 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive&gt; create external table nginxlog2 <span class="o">(</span>ipaddress string, ...,更多字段<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log rcfile format&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as RCFile    location <span class="s1">&#39;/data/log2&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; SET hive.exec.compress.output<span class="o">=</span><span class="nb">true</span>;
+</span><span class='line'>hive&gt; SET io.rcfile.compression.type<span class="o">=</span>BLOCK;
+</span><span class='line'>hive&gt; insert overwrite table nginxlog2 <span class="k">select</span> * from nginxlog;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 2
+</span><span class='line'>Launching Job 1 out of 2
+</span><span class='line'>Number of reduce tasks is <span class="nb">set </span>to 0 since there<span class="err">&#39;</span>s no reduce operator
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0007
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0007
+</span><span class='line'>2014-03-10 15:20:20,959 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:21:21,267 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:22:21,627 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:22,320 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:36,542 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:42,665 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> -1308159129, job is filtered out <span class="o">(</span>removed at runtime<span class="o">)</span>.
+</span><span class='line'>Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000
+</span><span class='line'>Loading data to table default.nginxlog2
+</span><span class='line'>Deleted hdfs://mdn2.net:9024/data/log2
+</span><span class='line'>Table default.nginxlog2 stats: <span class="o">[</span>num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0<span class="o">]</span>
+</span><span class='line'>2492916 Rows loaded to nginxlog2
+</span><span class='line'>OK
+</span><span class='line'>Time taken: 209.088 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后再次select，对比一下时间</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog2;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
+</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
+</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0008
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0008
+</span><span class='line'>2014-03-10 15:26:21,984 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:31,031 Stage-1 <span class="nv">map</span> <span class="o">=</span> 33%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:43,107 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:49,140 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
+</span><span class='line'>2014-03-10 15:26:52,153 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 22%
+</span><span class='line'>2014-03-10 15:27:04,225 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008
+</span><span class='line'>OK
+</span><span class='line'>2492916
+</span><span class='line'>Time taken: 55.656 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我这里是2个节点， 55.656，不用rcfile是可以省去20秒的时间，当然并行计算的节点越多，时间就越省。</p>
+
+<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[centos下hadoop0.20的LZO压缩支持]]></title>
@@ -3491,132 +3697,6 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 <h3>总结</h3>
 
 <p>这个案例告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos安装erlang R16b03]]></title>
-    <link href="http://evoupsight.com/blog/2013/12/12/centos-install-erlangr16b03/"/>
-    <updated>2013-12-12T16:43:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/12/12/centos-install-erlangr16b03</id>
-    <content type="html"><![CDATA[<h3>起因</h3>
-
-<p>原本以为centos上简单敲几个yum install erlang就可以完成，结果事与愿违，没有package，那么只要乖乖下载源码编译，记录若干步骤备查。</p>
-
-<!-- more -->
-
-
-<h3>首先安装必要的依赖</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum groupinstall Base <span class="s2">&quot;Development Tools&quot;</span> <span class="s2">&quot;Perl Support&quot;</span>
-</span><span class='line'><span class="nv">$ </span>sudo yum install gcc glibc-devel make ncurses-devel openssl-devel autoconf
-</span><span class='line'><span class="nv">$ </span>sudo yum install unixODBC unixODBC-devel
-</span><span class='line'><span class="nv">$ </span>wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>源码下载</h3>
-
-<p>并且下载erlang的源码，我这里选择的是最新的R16B03</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>tar xzf otp_src_R16B03.tar.gz
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>安装</h3>
-
-<p>注意,如果没有先</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo ln -s /usr/bin/gcc /usr/local/bin/gcc44
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>会收到` checking for C compiler default output file name&hellip; configure: error: C compiler cannot create</p>
-
-<p>的错误</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd </span>otp_src_R16B03
-</span><span class='line'><span class="nv">$ </span>./configure --prefix<span class="o">=</span>/home/erlang --without-javac //不用装java
-</span><span class='line'>make
-</span><span class='line'><span class="nv">$ </span>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>等待安装完成。</p>
-
-<h3>设置环境变量</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>vim ~/.profile
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo vim /etc/profiles
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>加入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/home/erlang/bin
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>加完如果要立即生效忘记去source /etc/profile和source ~/.bash_profile，否则要等到下次登录再可以。</p>
-
-<p>(ps: bash是根据/etc/profile、~/.bash_profile、~/.bash_login或~/.profile的顺序进行读取的。)</p>
-
-<p>(ADDED IN 2013-12-16,今日发现以上代码必须加到~/.bashrc中才行，否则重启后还是不予加载原因未明)</p>
-
-<h3>测试</h3>
-
-<p>接下来输入erl,应该就可以看见erlang的提示符了。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>Eshell V5.10.4  <span class="o">(</span>abort with ^G<span class="o">)</span>
-</span><span class='line'>1&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>写一个test.erl测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">test</span><span class="p">).</span>
-</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">sayhello</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
-</span><span class='line'><span class="nf">sayhello</span><span class="p">()</span><span class="o">-&gt;</span>
-</span><span class='line'>  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;hello world</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编译运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>erlc test.erl
-</span><span class='line'>erl -noshell -s <span class="nb">test </span>sayhello -s init stop
-</span><span class='line'>hello world
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ok，完成收工，还不算太复杂，比freebsd上安装顺利点:)</p>
 ]]></content>
   </entry>
   
