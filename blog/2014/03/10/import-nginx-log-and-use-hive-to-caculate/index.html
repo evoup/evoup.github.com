@@ -309,7 +309,7 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>我这里是2个节点， 55.656，不用rcfile是可以省去20秒的时间，当然并行计算的节点越多，时间就越省。</p>
+<p>我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
 
 <p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
 </div>
