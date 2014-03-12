@@ -221,12 +221,14 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p
 
 <p>（补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）</p>
 
-<p>进行免密码的ssh登录设置</p>
+<p>切换到hadoop帐号，进行免密码的ssh登录设置</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>su hadoop
+</span><span class='line'>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
 </span><span class='line'>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
 </span><span class='line'>chmod 600 ~/.ssh/authorized_keys
 </span></code></pre></td></tr></table></div></figure>
