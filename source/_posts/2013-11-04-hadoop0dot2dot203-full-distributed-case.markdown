@@ -76,8 +76,9 @@ all:export HBASE_HOME=/u01/app/hbase
 （补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）
 
 
-进行免密码的ssh登录设置
+切换到hadoop帐号，进行免密码的ssh登录设置
 ```bash
+su hadoop
 ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
 cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
