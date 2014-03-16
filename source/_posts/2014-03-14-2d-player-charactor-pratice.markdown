@@ -70,6 +70,18 @@ categories: [gamedev-cg]
 
 ![Alt text](/images/evoup/2dcharactor_cg/16.png)
 
-已经完成了。
+16.到最后还不是最后(哈哈，孙艺真的《共犯》台词嘛)，其实下面才是重要的活啊，线稿太粗了，我们要用钢笔来修正
 
-不足：下脚轮廓线其实可以去掉，像素外框线可以在圆润点。
+方法是用钢笔工具去照瞄，可以用ctrl点一下旁边来起新的路径，全部描绘好后，用以下设置
+
+![Alt text](/images/evoup/2dcharactor_cg/18.png)
+
+然后点击右键->描边路径，可以选压力（我这里没有选），就可以得到下面的结果了
+
+![Alt text](/images/evoup/2dcharactor_cg/17.png)
+
+如果觉得路径碍事，可以用ctrl+shift+h来关闭显示，或者点击视图->显示->目标路径。
+
+总结不足：下脚轮廓线其实可以去掉，像素外框线可以在圆润点，我只处理了头发那个图层，可以用第16步骤来修正。
+
+<a href="http://pan.baidu.com/s/1hqKFQ1e" target=_BLANK>PS源文件</a>
