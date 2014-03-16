@@ -7,6 +7,7 @@ categories: [gamedev-cg]
 ---
 目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。
 最终稿（完成时间2小时+修正1小时，初次尝试，PS）
+
 ![Alt text](/images/evoup/2dcharactor_cg/01.png)
 
 1.用2b铅笔绘制头部轮廓线，然后用柔边圆压力大小上次，这里的技巧是可以先用魔棒工具选择头部轮廓线图层内部，然后转到头部图层用alt + del填充，接着使用锁定透明色的方法继续用柔边圆压力大小上色，这样叠上去的颜色就不会画到轮廓线外面了。
@@ -81,6 +82,7 @@ categories: [gamedev-cg]
 ![Alt text](/images/evoup/2dcharactor_cg/17.png)
 
 就可以得到下面的结果了
+
 ![Alt text](/images/evoup/2dcharactor_cg/01.png)
 
 如果觉得路径碍事，可以用ctrl+shift+h来关闭显示，或者点击视图->显示->目标路径。
