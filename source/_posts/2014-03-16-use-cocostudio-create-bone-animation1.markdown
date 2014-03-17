@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "使用cocostudio创建骨骼动画"
+title: "使用CocoStudio创建骨骼动画"
 date: 2014-03-16 00:28
 comments: true
 categories: [gamedev-cg]
 ---
 
-需要给哥么介绍怎么倒腾美术使用的美术创作工具cocostudio（版本1.3）的Animation Editor，所以得先打个头阵研究一番，备忘一下。
+需要给哥么介绍怎么倒腾美术使用的美术创作工具CocoStudio（版本1.3）的Animation Editor，所以得先打个头阵研究一番，备忘一下。
 
 <!-- more -->
 
@@ -35,9 +35,9 @@ categories: [gamedev-cg]
 发箍+发箍轮廓线=》发箍<br>
 
 最后得到这些图素<a href="http://pan.baidu.com/s/1bnzlv9X" target=_BLANK>cuted_player.zip</a>
-###打开cocostudio操作
+###打开CocoStudio操作
 
-接下来让我们打开cocostudio开始编辑动画，首先进入Animation Editor<br>
+接下来让我们打开CocoStudio开始编辑动画，首先进入Animation Editor<br>
 ![Alt text](/images/evoup/cocostudio_bone_animation/01.png)
 
 然后创建新项目，名为player_swordgirl<br>
