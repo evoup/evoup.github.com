@@ -120,6 +120,8 @@ categories: [gamedev-cg]
 右脚绑定父关系到右小腿<br>
 ![Alt text](/images/evoup/cocostudio_bone_animation/27.png)
 
+<a href="http://pan.baidu.com/s/1dDIKi1V" target=_BLANK>CocoStudio项目源文件下载</a>
+
 下一篇将怎么做骨骼动画
 
 思考：眨眼动画要怎么处理呢？
