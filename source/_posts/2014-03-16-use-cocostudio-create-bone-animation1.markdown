@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "使用CocoStudio创建骨骼动画"
+title: "使用CocoStudio创建骨骼动画（一）"
 date: 2014-03-16 00:28
 comments: true
 categories: [gamedev-cg]
@@ -120,6 +120,6 @@ categories: [gamedev-cg]
 右脚绑定父关系到右小腿<br>
 ![Alt text](/images/evoup/cocostudio_bone_animation/27.png)
 
-未完待续
+下一篇将怎么做骨骼动画
 
 思考：眨眼动画要怎么处理呢？
