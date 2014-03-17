@@ -93,6 +93,33 @@ categories: [gamedev-cg]
 右手臂绑定父关系到身体<br>
 ![Alt text](/images/evoup/cocostudio_bone_animation/18.png)
 
+右手下臂绑定父关系到右手臂<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/19.png)
+
+左手臂绑定父关系到身体<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/20.png)
+
+兜裆布绑定父关系到身体<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/21.png)
+
+左大腿绑定父关系到身体<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/22.png)
+
+右大腿绑定父关系到身体<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/23.png)
+
+左小腿绑定父关系到左大腿<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/24.png)
+
+右小腿绑定父关系到右大腿<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/25.png)
+
+左脚绑定父关系到左小腿<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/26.png)
+
+右脚绑定父关系到右小腿<br>
+![Alt text](/images/evoup/cocostudio_bone_animation/27.png)
+
 未完待续
 
 思考：眨眼动画要怎么处理呢？
