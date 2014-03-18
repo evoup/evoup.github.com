@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-17T23:47:26+08:00</updated>
+  <updated>2014-03-18T23:29:40+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,57 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（二）]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2/"/>
+    <updated>2014-03-18T22:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2</id>
+    <content type="html"><![CDATA[<p>上次的《使用CocoStudio创建骨骼动画》讨论到了如何创建骨骼和绑定骨骼关系，这节开始谈怎么创建帧动画。</p>
+
+<p>我把上次的每个图层命名成每个骨骼后，更新后的：<a href="http://pan.baidu.com/s/1mg0UXJi" target=_blank>工作cocostudio源文件下载</a></p>
+
+<!-- more -->
+
+
+<p><img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/01.png" alt="Alt text" /></p>
+
+<p>点击形体模式之后切换到动画模式<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/02.png" alt="Alt text" /></p>
+
+<p>开始第一个帧动画的制作，右键点击动作列表Animation1<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/03.png" alt="Alt text" /></p>
+
+<p>改名为stand,注意不要改成中文，否则以后写代码调用的时候可能会出现问题<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/04.png" alt="Alt text" /></p>
+
+<p>用鼠标框选全部的帧<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/05.png" alt="Alt text" /></p>
+
+<p>选择复制帧<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/06.png" alt="Alt text" /></p>
+
+<p>在60帧处右键，然后点击粘帖帧<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/07.png" alt="Alt text" /></p>
+
+<p>同样的方法，在30帧处右键点击粘帖帧<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/08.png" alt="Alt text" /></p>
+
+<p>然后把时间轴移到到30帧<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/09.png" alt="Alt text" /></p>
+
+<p>接下来编辑造型了，轻微旋转各个关节<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/10.png" alt="Alt text" /></p>
+
+<p>点击隐藏骨骼，可以展现整体角色<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/11.png" alt="Alt text" /></p>
+
+<p>看效果<br>
+<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/animation.gif" alt="Alt text" /></p>
+
+<p>然后再创建一个run的动作，如法炮制，未完待续&hellip;</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（一）]]></title>
@@ -3733,77 +3784,6 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 
 
 <p>这样就妥妥的了，祝各位看官好运，收工:)</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用expect脚本检测telnet瞬断]]></title>
-    <link href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/"/>
-    <updated>2014-01-08T18:17:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately</id>
-    <content type="html"><![CDATA[<p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
-
-<p>直接上代码了</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/usr/local/bin/expect</span>
-</span><span class='line'>spawn telnet 127.0.0.1 9090
-</span><span class='line'><span class="nb">set </span>timeout  1
-</span><span class='line'>expect <span class="o">{</span>
-</span><span class='line'>        <span class="s2">&quot;*Escape character is*&quot;</span> <span class="o">{</span>
-</span><span class='line'>                exp_continue
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        <span class="s2">&quot;*Connection closed by foreign host*&quot;</span> <span class="o">{</span>
-</span><span class='line'>                send <span class="s2">&quot;note: 1) detect a unsafe connection&quot;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>expect <span class="o">{</span>
-</span><span class='line'>        <span class="s2">&quot;*Connection closed by foreign host*&quot;</span> <span class="o">{</span>
-</span><span class='line'>                send <span class="s2">&quot;note: 2) detect a unsafe connection&quot;</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>        send <span class="s2">&quot;\\003&quot;</span>
-</span><span class='line'>        <span class="nb">exit</span>
-</span><span class='line'><span class="o">}</span>
-</span><span class='line'>expect <span class="s2">&quot;*Connection closed by foreign host*&quot;</span>
-</span><span class='line'>send <span class="s2">&quot;note: 3) disconnect by client cause timeout or not immediately exit expect&quot;</span>
-</span><span class='line'><span class="nb">exit</span>
-</span><span class='line'>expect eof
-</span><span class='line'>
-</span><span class='line'><span class="nb">exit</span>
-</span><span class='line'>expect eof
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>调用者程序可以根据expect输出的note: 3) disconnect by client cause timeout or not immediately exit expect得知telnet上去瞬间失去连接。</p>
 ]]></content>
   </entry>
   
