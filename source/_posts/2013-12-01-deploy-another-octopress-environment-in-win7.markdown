@@ -69,7 +69,11 @@ rake setup_github_pages
 cd _deploy
 git pull origin master
 ```
-所有的资料都从远程origin仓库的master分支取回来了！
+所有的资料都从远程origin仓库的master分支取回来了！<br>
+(注意如果出现setup_github_pages不能用的话，可能要把ruby软链接下,见下图)
+![Alt text](/images/evoup/octopress_rake_setup_github_pages.png)
+
+
 然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。
 ```sh
 cd ..
