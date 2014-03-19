@@ -161,12 +161,31 @@ public class HelloJni extends Activity //HelloJni继承自活动对象事件调�
 {% endcodeblock %}
 C++的代码暂时就不看了，一步一步来，我们还没装cdt，不急着搞清楚，有兴趣的到文章最后去看链接
 
+###什么是CDT
+> Eclipse CDT是 Eclipse 插件，它将把 Eclipse 转换为功能强大的 C/C++ IDE。它被设计为将 Java 开发人员喜爱的许多 Eclipse 优秀功能提供给 C/C++ 开发人员，例如项目管理、集成调试、类向导、自动构建、语法着色和代码完成。当 Eclipse 被用作 Java IDE 时，它将利用 JDK 并与之集成。同样地，CDT 将利用标准的 C/C++ 工具并与之集成，例如 g++、make 和 GDB。这使得 CDT 在 Linux 中变得非常流行，这些工具都可在 Linux 中使用并用于大多数 C++ 开发。可以在 Windows 上设置 CDT 以使用相同的工具。目前还在努力将 CDT 与 Microsoft 的 C++ 工具结合使用，以使 CDT 对 Windows C++ 开发人员更有吸引力。总之有了cdt，可以在一个工程里，同时开发C/C++的native代码的java外壳，并且2种代码能够同时编译。
 
-###在Eclilse编辑器中继承CDT
+###在Eclipse编辑器中集成CDT
 
+首先在此下载http://www.eclipse.org/cdt/downloads.php<br>
+直接下载cdt-master-x.x.x.zip的就可以了，我的是Eclipse版本为Kepler，可以下载以下版本<br>
+http://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/kepler/sr2/cdt-master-8.3.0.zip
 
+![Alt text](/images/evoup/android_cdt_ndk/13.png)
 
+然后通过Eclipse -> Help -> Install New Software -> add -> Achive,选择下载的zip文件
 
+![Alt text](/images/evoup/android_cdt_ndk/14.png)
+
+等待安装完成<br>
+![Alt text](/images/evoup/android_cdt_ndk/15.png)
+
+安装完成后如果在Eclipse中可以创建C++项目证明安装完成<br>
+![Alt text](/images/evoup/android_cdt_ndk/16.png)
+
+###安装Sequoyah插件
+官网地址
+https://projects.eclipse.org/projects/tools.sequoyah
+不装也罢，下载连接已经失效，看来已经作废了
 
 
 
