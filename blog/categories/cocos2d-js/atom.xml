@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cocos2d-js | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/cocos2d-js/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-03-19T16:11:13+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Win7 Android开发环境搭建之二(NDK+CDT)]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/18/android-install-ndk-cdt/"/>
+    <updated>2014-03-18T15:08:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/18/android-install-ndk-cdt</id>
+    <content type="html"><![CDATA[<p>由于cocos2d-js用到了android的一些生产软件，比如android sdk、adt、cdt和ndk，前面两个已经在之前的《Win7 Android开发环境搭建之一(SDK+ADT)》说过了，这次主要介绍下怎么安装cdt和ndk。</p>
+
+<!-- more -->
+
+
+<h3>什么是NDK</h3>
+
+<blockquote><p>NDK 提供了一系列的工具，帮助开发者快速开发C（或C++）的动态库，并能自动将so 和java 应用一起打包成apk。这些工具对开发者的帮助是巨大的。</p></blockquote>
+
+<h3>NDK的安装</h3>
+
+<p>这个安装其实就是解压（环境变量的添加要等装好了cygwin再添加，这是后话），下载android NDK。<a href="http://developer.android.com/tools/sdk/ndk/index.html">http://developer.android.com/tools/sdk/ndk/index.html</a></p>
+
+<p>我下载的版本是android-ndk-r9d-windows-x86_64.zip<br>
+下载后解压到例如：c:\android\android-ndk-r9d-windows-x86_64.zip，结果如下图：<br>
+<img src="/images/evoup/android_cdt_ndk/01.png" alt="Alt text" /></p>
+
+<h3>安装cygwin与ndk编译</h3>
+
+<p>（插一句：cygwin安装后与octopress的环境可能冲突，建议先安装octopress)</p>
+
+<h4>安装cygwin</h4>
+
+<p>ndk开发需要gcc环境，在windows下可以用是cygwin模拟linux编译环境。</p>
+
+<p>Cygwin的下载地址：<a href="http://www.cygwin.com/">http://www.cygwin.com/</a></p>
+
+<p>这个直接一路装，选择163的镜像<br>
+<img src="/images/evoup/android_cdt_ndk/02.png" alt="Alt text" /></p>
+
+<p>选择Devel-Default，然后点击变成Devel-Install，然后持续点击下一步，耐心等待安装完成，时间是比较长的<br>
+或者可以选择像网上许多教程说的那样只下载12个包，这个我就不这么做了<br>
+<img src="/images/evoup/android_cdt_ndk/03.png" alt="Alt text" /></p>
+
+<h4>加入环境变量(可选，这样可以直接在cmd里进行cygwin.bat的操作)</h4>
+
+<p>完成之后，需要把cygwin加入环境变量,我这里是安装在了c:/cygwin64,把c:/cygwin64/bin加入环境变量PATH<br>
+<img src="/images/evoup/android_cdt_ndk/04.png" alt="Alt text" /></p>
+
+<h4>测试cygwin环境</h4>
+
+<p>运行c:/cygwin64/Cygwin.bat,输入
+<code>sh
+cygcheck -c cygwin
+make -v
+gcc -v
+</code></p>
+
+<p>如果显示ok就可以了，之前的报错cygheap base mismatch detected可以先忽略。<br>
+<img src="/images/evoup/android_cdt_ndk/05.png" alt="Alt text" /></p>
+
+<h4>设置NDK路径：</h4>
+
+<p>接下来在windows系统环境变量ndk中添加NDK的路径,刚刚我把NDK解压到C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d<br>
+然后在环境变量ndk加上它在cygwin shell里的对应路径/cygdrive/c/android/android-ndk-r9d-windows-x86_64/android-ndk-r9d<br>
+<img src="/images/evoup/android_cdt_ndk/06.png" alt="Alt text" /></p>
+
+<p>编辑完成后，进入cygwin.bat输入<br>
+<code>
+cd $ndk
+</code>
+可以看到如下结果<br>
+<img src="/images/evoup/android_cdt_ndk/07.png" alt="Alt text" /></p>
+
+<h4>测试NDK，编译一个例子</h4>
+
+<p>例子可以在$ndk/sample/hello-jni中找到<br>
+进入cygwin.bat中输入编译指令
+<code>
+cd $ndk/sample/hello-jni
+$ndk/ndk-build
+</code>
+一会儿就能编译完成，见下<br>
+<img src="/images/evoup/android_cdt_ndk/08.png" alt="Alt text" /></p>
+
+<p>进入libs目录查看结果,观察是否生成了so文件，如果生成则说明你的NDK已经运行正常了。<br>
+<code>
+$ cd libs/armeabi/
+$ ls
+gdb.setup  gdbserver  libhello-jni.so
+</code></p>
+
+<h4>在Eclipse中完成代码调用</h4>
+
+<p>接下来进入Eclipse，测试该项目
+在Create Android Project时勾选“Create project from existing source”，Root Directory中填C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\samples\hello-jni,如下<br>
+<img src="/images/evoup/android_cdt_ndk/09.png" alt="Alt text" /><br>
+<img src="/images/evoup/android_cdt_ndk/10.png" alt="Alt text" /><br>
+<img src="/images/evoup/android_cdt_ndk/11.png" alt="Alt text" /><br></p>
+
+<p>看到如下字符串就代表NDK的例子运行成功了<br>
+<img src="/images/evoup/android_cdt_ndk/12.png" alt="Alt text" /></p>
+
+<p>分析一下调用代码
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>HelloJni.java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Copyright</span> <span class="o">&amp;</span><span class="n">copy</span><span class="o">;</span> <span class="mi">2009</span> <span class="n">The</span> <span class="n">Android</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Project</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">Apache</span> <span class="n">License</span><span class="o">,</span> <span class="n">Version</span> <span class="mf">2.0</span> <span class="o">(</span><span class="n">the</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="o">;</span><span class="n">License</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="o">;);</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">you</span> <span class="n">may</span> <span class="n">not</span> <span class="n">use</span> <span class="k">this</span> <span class="n">file</span> <span class="n">except</span> <span class="n">in</span> <span class="n">compliance</span> <span class="n">with</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">You</span> <span class="n">may</span> <span class="n">obtain</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span> <span class="n">at</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span>      <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;</span><span class="o">&gt;</span><span class="nl">http:</span><span class="c1">//www.apache.org/licenses/LICENSE-2.0&lt;/a&gt;</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Unless</span> <span class="n">required</span> <span class="n">by</span> <span class="n">applicable</span> <span class="n">law</span> <span class="n">or</span> <span class="n">agreed</span> <span class="n">to</span> <span class="n">in</span> <span class="n">writing</span><span class="o">,</span> <span class="n">software</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">distributed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span> <span class="n">is</span> <span class="n">distributed</span> <span class="n">on</span> <span class="n">an</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="o">;</span><span class="n">AS</span> <span class="n">IS</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="o">;</span> <span class="n">BASIS</span><span class="o">,</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">WITHOUT</span> <span class="n">WARRANTIES</span> <span class="n">OR</span> <span class="n">CONDITIONS</span> <span class="n">OF</span> <span class="n">ANY</span> <span class="n">KIND</span><span class="o">,</span> <span class="n">either</span> <span class="n">express</span> <span class="n">or</span> <span class="n">implied</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">See</span> <span class="n">the</span> <span class="n">License</span> <span class="k">for</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">language</span> <span class="n">governing</span> <span class="n">permissions</span> <span class="n">and</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">limitations</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">hellojni</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">android.app.Activity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.widget.TextView</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.os.Bundle</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloJni</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="c1">//HelloJni继承自活动对象事件调度类</span>
+</span><span class='line'><span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/** Called when the activity is first created. */</span>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="c1">//重写onCreate方法</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/* Create a TextView and set its content.</span>
+</span><span class='line'><span class="cm">     * the text is retrieved by calling a native</span>
+</span><span class='line'><span class="cm">     * function.</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="n">TextView</span>  <span class="n">tv</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">//创建一个文字view</span>
+</span><span class='line'>    <span class="n">tv</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span> <span class="n">stringFromJNI</span><span class="o">()</span> <span class="o">);</span> <span class="c1">//调用自定义方法stringFromJNI</span>
+</span><span class='line'>    <span class="n">setContentView</span><span class="o">(</span><span class="n">tv</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* A native method that is implemented by the</span>
+</span><span class='line'><span class="cm"> * &#39;hello-jni&#39; native library, which is packaged</span>
+</span><span class='line'><span class="cm"> * with this application.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">native</span> <span class="n">String</span>  <span class="nf">stringFromJNI</span><span class="o">();</span> <span class="c1">//有native代表是c++的代码，这里仅仅是声明</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* This is another native method declaration that is *not*</span>
+</span><span class='line'><span class="cm"> * implemented by &#39;hello-jni&#39;. This is simply to show that</span>
+</span><span class='line'><span class="cm"> * you can declare as many native methods in your Java code</span>
+</span><span class='line'><span class="cm"> * as you want, their implementation is searched in the</span>
+</span><span class='line'><span class="cm"> * currently loaded native libraries only the first time</span>
+</span><span class='line'><span class="cm"> * you call them.</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * Trying to call this function will result in a</span>
+</span><span class='line'><span class="cm"> * java.lang.UnsatisfiedLinkError exception !</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">native</span> <span class="n">String</span>  <span class="nf">unimplementedStringFromJNI</span><span class="o">();</span> <span class="c1">//同样是C++的代码</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* this is used to load the &#39;hello-jni&#39; library on application</span>
+</span><span class='line'><span class="cm"> * startup. The library has already been unpacked into</span>
+</span><span class='line'><span class="cm"> * /data/data/com.example.hellojni/lib/libhello-jni.so at</span>
+</span><span class='line'><span class="cm"> * installation time by the package manager.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">static</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&quot;hello-jni&quot;</span><span class="o">);</span> <span class="c1">//调用刚才ndk生成的hello-jni.so</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+C++的代码暂时就不看了，有兴趣的到文章最后去看链接</p>
+
+<h3>在Eclilse编辑器中继承CDT</h3>
+
+<h3>参考文章</h3>
+
+<p>《Android: NDK编程入门笔记》
+<a href="http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html">http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>
