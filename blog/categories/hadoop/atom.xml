@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-03-18T23:29:40+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[导入nginx日志并采用hive进行统计]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/"/>
+    <updated>2014-03-10T16:07:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate</id>
+    <content type="html"><![CDATA[<p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+
+<p>下面描述一下过程</p>
+
+<!-- more -->
+
+
+<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表
+<code>sh
+create external table nginxlog (ipaddress string, ...更多字段省略) COMMENT 'nginx log' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as textfile    location '/data/log';
+</code></p>
+
+<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。
+<code>sh
+$ tar xjf server01-20140131.txt.bz2
+$ tar xjf server02-20140131.txt.bz2
+$ lzop server01-20140131.txt
+$ lzop server02-20140131.txt
+$ server01-20140131.txt.lzo server02-20140131.txt.lzo
+$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server01-20140131.txt.lzo
+$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server02-20140131.txt.lzo
+$/u01/app/hadoop/bin/hadoop fs -ls /data/log/
+Found 2 items
+-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/log/server01-20140131.txt.lzo
+-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/log/server02-20140201.txt.lzo
+</code></p>
+
+<p>然后马上就可以查询了
+<code>
+hive&gt; select count(*) from nginxlog;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=&lt;number&gt;
+Starting Job = job_201403101051_0004, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0004
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0004
+2014-03-10 14:17:41,179 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 14:18:20,815 Stage-1 map = 50%,  reduce = 0%
+2014-03-10 14:18:32,927 Stage-1 map = 100%,  reduce = 0%
+2014-03-10 14:18:38,971 Stage-1 map = 100%,  reduce = 17%
+2014-03-10 14:18:41,991 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0004
+OK
+2492916
+Time taken: 75.321 seconds
+</code></p>
+
+<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询
+<code>
+bin/hive&gt; create external table nginxlog2 (ipaddress string, ...,更多字段) COMMENT 'nginx log rcfile format' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as RCFile    location '/data/log2';
+</code></p>
+
+<p>然后用
+<code>
+hive&gt; SET hive.exec.compress.output=true;
+hive&gt; SET io.rcfile.compression.type=BLOCK;
+hive&gt; insert overwrite table nginxlog2 select * from nginxlog;
+Total MapReduce jobs = 2
+Launching Job 1 out of 2
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201403101051_0007, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0007
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0007
+2014-03-10 15:20:20,959 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:21:21,267 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:22:21,627 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:23:22,320 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:23:36,542 Stage-1 map = 100%,  reduce = 0%
+2014-03-10 15:23:42,665 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0007
+Ended Job = -1308159129, job is filtered out (removed at runtime).
+Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000
+Loading data to table default.nginxlog2
+Deleted hdfs://mdn2.net:9024/data/log2
+Table default.nginxlog2 stats: [num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0]
+2492916 Rows loaded to nginxlog2
+OK
+Time taken: 209.088 seconds
+</code></p>
+
+<p>然后再次select，对比一下时间
+<code>
+hive&gt; select count(*) from nginxlog2;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+  set mapred.reduce.tasks=&lt;number&gt;
+Starting Job = job_201403101051_0008, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0008
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0008
+2014-03-10 15:26:21,984 Stage-1 map = 0%,  reduce = 0%
+2014-03-10 15:26:31,031 Stage-1 map = 33%,  reduce = 0%
+2014-03-10 15:26:43,107 Stage-1 map = 67%,  reduce = 0%
+2014-03-10 15:26:49,140 Stage-1 map = 67%,  reduce = 17%
+2014-03-10 15:26:52,153 Stage-1 map = 100%,  reduce = 22%
+2014-03-10 15:27:04,225 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201403101051_0008
+OK
+2492916
+Time taken: 55.656 seconds
+</code>
+我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
+
+<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop报错：Incompatible namespaceIDs]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids/"/>
+    <updated>2014-02-24T17:08:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids</id>
+    <content type="html"><![CDATA[<p>今天在修改hadoop主机名重新格式化namenode之后，重新启动hadoop，发现datanode无法启动起来。</p>
+
+<p>报错：HADOOP报错<code>Incompatible namespaceIDs</code></p>
+
+<p>查看报告发现没有启动一个datanode</p>
+
+<!-- more -->
+
+
+<p>```sh
+$/u01/app/hadoop/bin/hadoop dfsadmin -report
+Configured Capacity: 0 (0 KB)
+Present Capacity: 0 (0 KB)
+DFS Remaining: 0 (0 KB)
+DFS Used: 0 (0 KB)
+DFS Used%: �%
+Under replicated blocks: 0
+Blocks with corrupt replicas: 0
+Missing blocks: 0</p>
+
+<hr />
+
+<p>Datanodes available: 0 (0 total, 0 dead)
+```</p>
+
+<p>原来是要求datanode的VERSION文件和namenode的要一致</p>
+
+<p>于是到namenode上看文件
+```sh
+[hadoop@mdn2 current]$more /u01/app/hadoopTmp/dfs/name/current/VERSION</p>
+
+<h1>Mon Feb 24 16:48:12 CST 2014</h1>
+
+<p>namespaceID=1235115105
+cTime=0
+storageType=NAME_NODE
+layoutVersion=-31
+```
+namespaceID为1235115105</p>
+
+<p>到datanode里查看发现不存在</p>
+
+<h3>解决方法两种任选其一：</h3>
+
+<p>1）在datanode的&lt;dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode</p>
+
+<p>2）在格式化namenode的时候要清空/tmp目录下所有有关hadoop的目录，不论是namenode还是datanode所在的机器</p>
+
+<h4>参考文章</h4>
+
+<p><a href="http://blog.csdn.net/wanghai__/article/details/5752199">http://blog.csdn.net/wanghai__/article/details/5752199</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hive初试--导入数据和查询]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/20/hive-import-data/"/>
+    <updated>2014-02-20T10:50:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/20/hive-import-data</id>
+    <content type="html"><![CDATA[<p>hive虽然是基于hadoop的map/reduce进行云计算，但是自身需要依赖一个元数据表，要么是derby，要么是mysql，相同点总归是要先导入数据，然后才能进行处理。其原理是把结构化的数据文件映射为一张数据库表，然后将SQL语句转化为MapReduce任务进行运行，以绕过专门开发MapReduce这样一个逆向思维的产物。</p>
+
+<p>Hive不可以改写、插入和删除数据，换句话说hive完全就是用来进行计算的。</p>
+
+<p>Hive的数据是存在hdfs上的,所以数据导入之后除了元数据之外，还有另一份本体数据（通常比较大的）存在hdfs上。</p>
+
+<p>有了基础概念之后，开始正题了。</p>
+
+<!-- more -->
+
+
+<h3>环境描述</h3>
+
+<p>hadoop0.20.203+hive0.7</p>
+
+<h3>任务描述</h3>
+
+<p>本次目的，是把一张二维表导入到hive中后，然后根据编号查询对应的单词。</p>
+
+<h3>过程描述</h3>
+
+<p>假设有这样一个文件test.txt</p>
+
+<p><img src="/images/evoup/hive_test_txt.png" alt="Alt text" /></p>
+
+<p>(vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)</p>
+
+<p>启动hive建表:
+```sh
+hive>  CREATE EXTERNAL TABLE MYTEST(id INT, name STRING)</p>
+
+<blockquote><p>COMMENT &lsquo;this is a test&rsquo;
+ROW FORMAT DELIMITED FIELDS TERMINATED BY &lsquo;\t&rsquo;
+STORED AS TEXTFILE
+LOCATION &lsquo;/data/test&rsquo;;
+OK
+```
+注意这一步要求原本的hdfs目录下没有/data/test文件夹，如果有的话，hive是要报错的。
+还有存储格式有三种textfile、rcfile和sequencefile。其中多数情况用textfile就可以了，如果要压缩，可以考虑后两者。</p></blockquote>
+
+<p>进入hadoop，开始导入
+<code>sh
+/bin/hadoop fs -put test.txt /data/test
+</code></p>
+
+<p>回到hive，用简单的HQL查询语句查询id为4的记录
+<code>sh
+hive&gt; select * from mytest where id = 4;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_201402191826_0007, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201402191826_0007
+Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201402191826_0007
+2014-02-20 00:16:34,842 Stage-1 map = 0%,  reduce = 0%
+2014-02-20 00:16:40,889 Stage-1 map = 100%,  reduce = 0%
+2014-02-20 00:16:46,936 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_201402191826_0007
+OK
+4       case
+Time taken: 21.36 seconds
+</code></p>
+
+<p>hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是&lt;1秒的。好啦，收工。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[centos5.8下基于hadoop0.20.203的hive0.7安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/"/>
+    <updated>2014-02-17T15:38:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7</id>
+    <content type="html"><![CDATA[<h3>什么是hive</h3>
+
+<blockquote><p>hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。</p></blockquote>
+
+<h3>hive使用场景</h3>
+
+<blockquote><p>HIVE 不适合用于联机(online)事务处理,也不提供实时查询功能。它最适合应用在基于大量不可变数据的批处理作业。</p></blockquote>
+
+<!-- more -->
+
+
+<h3>hive的安装</h3>
+
+<p>先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
+注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0
+<code>sh
+cd /u01/app
+wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
+tar xzf hive-0.7.1-bin.tar.gz
+ln -s hive-0.7.1-bin.tar.gz hive
+</code></p>
+
+<h4>环境变量设置</h4>
+
+<p>在~/.profile中加入
+<code>sh
+export HIVE_HOME=/u01/app/hive
+export HIVE_CONF_DIR=/u01/app/hive/conf
+</code></p>
+
+<p>在系统中指出hive的配置文件所在
+<code>sh
+export PATH=$HIVE_HOME/bin:PATH
+</code>
+这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+<code>sh
+export HIVE_LIB=$HIVE_HOME/lib
+</code></p>
+
+<p>记得用source让profile生效
+<code>sh
+source ~/.profile
+</code></p>
+
+<p>然后是进行hive配置文件的配置
+<code>sh
+cd /u01/app/hive/conf
+cp hive-env.sh.template hive-env.sh
+vim hive-env.sh
+</code></p>
+
+<h4>安装依赖软件</h4>
+
+<p>发现有2种安装方式，一种是derby,另一种是mysql，这里先介绍mysql方式</p>
+
+<blockquote><p>关于什么是derby: 这是一个apache DB的子项目，是一个完全用java实现的开源关系型数据库。这里就不使用了，我们采用mysql。</p></blockquote>
+
+<h4>安装mysql</h4>
+
+<p><code>sh
+//卸载老版本的mysql软件包
+yum remove mysql mysql-*
+//安装mysql5.5的源
+rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+//安装MySQL客户端的支持包
+yum install libmysqlclient15 --enablerepo=webtatic
+//安装MySQL 5.5的客户端和服务端
+yum install mysql55 mysql55-server --enablerepo=webtatic
+//启动MySQL系统服务，更新数据库
+/etc/init.d/mysqld restart
+mysql_upgrade
+</code></p>
+
+<h4>修改mysql用户密码</h4>
+
+<p>```sh</p>
+
+<h1>mysql -u root mysql   //默认的没有密码直接进去的</h1>
+
+<p>mysql>use mysql;
+mysql>desc user;
+mysql> GRANT ALL PRIVILEGES ON <em>.</em> TO root@&ldquo;%&rdquo; IDENTIFIED BY &ldquo;root&rdquo;;　　//为root添加远程连接的能力。
+mysql>update user set Password = password(&lsquo;xxxxxx&rsquo;) where User=&lsquo;root&rsquo;;
+mysql>select Host,User,Password  from user where User=&lsquo;root&rsquo;;
+mysql>flush privileges;
+mysql>exit
+```</p>
+
+<h4>设置mysql为开机自动启动</h4>
+
+<p><code>sh
+sudo /sbin/chkconfig --add mysqld
+sudo /sbin/chkconfig mysqld on
+</code></p>
+
+<h4>开始配置</h4>
+
+<p>在conf目录下创建hive-site.xml</p>
+
+<p>创建hive数据库给hive做元数据表
+<code>sh
+create database hive;
+grant all privileges on *.* to hive@localhost identified by 'hive';
+flush privileges;
+</code></p>
+
+<p>运行hive
+```sh
+cd /u01/app/hive
+/bin/hive
+Exception in thread &ldquo;main&rdquo; java.lang.NoClassDefFoundError: jline/ArgumentCompletor$ArgumentDelimiter</p>
+
+<pre><code>    at java.lang.Class.forName0(Native Method)
+    at java.lang.Class.forName(Class.java:247)
+    at org.apache.hadoop.util.RunJar.main(RunJar.java:149)
+</code></pre>
+
+<p>Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor$ArgumentDelimiter</p>
+
+<pre><code>    at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+    ... 3 more
+</code></pre>
+
+<p>```
+这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。</p>
+
+<p>再次启动
+```sh
+bin/hive
+Exception in thread &ldquo;main&rdquo; java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf</p>
+
+<pre><code>    at java.lang.Class.forName0(Native Method)
+    at java.lang.Class.forName(Class.java:247)
+    at org.apache.hadoop.util.RunJar.main(RunJar.java:149)
+</code></pre>
+
+<p>Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf</p>
+
+<pre><code>    at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+    at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+</code></pre>
+
+<p>```</p>
+
+<p>需要修改$HADOOP/conf/的hadoop-env.sh中的
+<code>sh
+export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+</code></p>
+
+<p>改成</p>
+
+<p><code>sh
+export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
+</code></p>
+
+<p>然后可以启动hive了
+<code>sh
+bin/hive
+WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
+Hive history file=/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
+hive&gt;
+</code>
+有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。</p>
+
+<p>•建立测试表test
+```sh</p>
+
+<blockquote><p>create table test (key string);
+show tables;
+FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
+NestedThrowables:
+java.lang.reflect.InvocationTargetException
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+```</p></blockquote>
+
+<p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
+
+<p>``sh</p>
+
+<blockquote><p>show tables;
+OK
+Time taken: 0.082 seconds
+```</p></blockquote>
+
+<p>一个表也没有，创建表吧
+···sh</p>
+
+<blockquote><p>create table test (key string);
+FAILED: Error in metadata: MetaException(message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
+```</p></blockquote>
+
+<p>namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态
+<code>sh
+bin/hadoop dfsadmin –safemode get
+ON
+</code></p>
+
+<p>那就关了
+<code>sh
+bin/hadoop dfsadmin -safemode leave
+</code></p>
+
+<p>再次查看
+<code>sh
+bin/hadoop dfsadmin –safemode get
+OFF
+</code></p>
+
+<p>已经关了，再次建表测试
+<code>sh
+bin/hive
+hive&gt; create table test (key string);
+OK
+Time taken: 0.521 seconds
+hive&gt; show tables;
+OK
+test
+Time taken: 0.14 seconds
+</code></p>
+
+<h3>参考文章</h3>
+
+<p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
+
+<p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
+
+<p><a href="http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html">http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hbase连zookeeper瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/"/>
+    <updated>2013-12-31T11:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip</id>
+    <content type="html"><![CDATA[<h3>问题</h3>
+
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。</p>
+
+<p><code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247]</code>
+<code>- Too many connections from /10.10.8.136 - max is 10</code></p>
+
+<p>这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。</p>
+
+<!-- more -->
+
+
+<h3>解决</h3>
+
+<p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
+
+<h3>原因</h3>
+
+<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper，进而无法显示该页面。</p>
+
+<p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件
+```
+dataDir = 数据存放路径</p>
+
+<p>dataLogDir = 日志存放路径</p>
+
+<p>clientPort = 客户端连接端口</p>
+
+<p>clientPortAddress</p>
+
+<p>tickTime= 整型 不能为0</p>
+
+<p>maxClientCnxns= 整型 最大客户端连接数</p>
+
+<p>minSessionTimeout= 整型</p>
+
+<p>maxSessionTimeout= 整型</p>
+
+<p>initLimit = 整型</p>
+
+<p>syncLimit = 整型</p>
+
+<p>electionAlg = 整型</p>
+
+<p>peerType = observer | participant</p>
+
+<p>server. sid= host:port | host:port:port  | host:port:port:type (type值 observer | participant)</p>
+
+<p>group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)</p>
+
+<p>weight.sid=整型
+```
+可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。</p>
+
+<p>同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。</p>
+
+<h3>总结</h3>
+
+<p>这个案例告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置。</p>
+]]></content>
+  </entry>
+  
+</feed>
