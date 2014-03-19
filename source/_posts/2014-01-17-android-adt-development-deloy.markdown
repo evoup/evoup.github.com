@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Win7 Android开发环境搭建"
+title: "Win7 Android开发环境搭建之一(SDK+ADT)"
 date: 2014-01-17 17:48
 comments: true
 categories: [android]
