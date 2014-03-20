@@ -5,13 +5,15 @@ date: 2014-03-14 23:47
 comments: true
 categories: [gamedev-cg] 
 ---
-目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。
+目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。<br>
 最终稿（完成时间2小时+修正1小时，初次尝试，PS）
+
+<!-- more -->
 
 ![Alt text](/images/evoup/2dcharactor_cg/01.png)
 
 1.用2b铅笔绘制头部轮廓线，然后用柔边圆压力大小上次，这里的技巧是可以先用魔棒工具选择头部轮廓线图层内部，然后转到头部图层用alt + del填充，接着使用锁定透明色的方法继续用柔边圆压力大小上色，这样叠上去的颜色就不会画到轮廓线外面了。
-<!-- more -->
+
 ![Alt text](/images/evoup/2dcharactor_cg/02.png)
 
 
@@ -71,9 +73,7 @@ categories: [gamedev-cg]
 
 ![Alt text](/images/evoup/2dcharactor_cg/16.png)
 
-16.到最后还不是最后(哈哈，孙艺真的《共犯》台词嘛)，其实下面才是重要的活啊，线稿太粗了，我们要用钢笔来修正
-
-方法是用钢笔工具去照描，可以用ctrl点一下旁边来起新的路径，全部描绘好后，用以下设置
+16.到最后还不是最后(哈哈，孙艺真的《共犯》台词嘛)，其实下面才是重要的活啊，线稿太粗了，我们要用钢笔来修正。方法是用钢笔工具去照描，可以用ctrl点一下旁边来起新的路径，全部描绘好后，用以下设置
 
 ![Alt text](/images/evoup/2dcharactor_cg/18.png)
 
