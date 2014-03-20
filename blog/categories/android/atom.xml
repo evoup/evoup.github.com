@@ -4,7 +4,7 @@
   <title><![CDATA[Category: android | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-19T18:31:44+08:00</updated>
+  <updated>2014-03-20T16:00:07+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -102,7 +102,7 @@ gdb.setup  gdbserver  libhello-jni.so
 
 <h4>在Eclipse中完成代码调用</h4>
 
-<p>接下来进入Eclipse，测试该项目
+<p>接下来进入Eclipse，测试该项目,创建项目路径为C:\android\project\HelloJni<br>
 在Create Android Project时勾选“Create project from existing source”，Root Directory中填C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\samples\hello-jni,如下<br>
 <img src="/images/evoup/android_cdt_ndk/09.png" alt="Alt text" /><br>
 <img src="/images/evoup/android_cdt_ndk/10.png" alt="Alt text" /><br>
@@ -274,13 +274,47 @@ C++的代码暂时就不看了，一步一步来，我们还没装cdt，不急�
 <p>安装完成后如果在Eclipse中可以创建C++项目证明安装完成<br>
 <img src="/images/evoup/android_cdt_ndk/16.png" alt="Alt text" /></p>
 
-<h3>安装Sequoyah插件</h3>
+<h3>安装Sequoyah插件（事实证明，kepler+ndk9已经无须这个插件了）</h3>
 
-<p>官网地址
-<a href="https://projects.eclipse.org/projects/tools.sequoyah">https://projects.eclipse.org/projects/tools.sequoyah</a>
-不装也罢，下载连接已经失效，看来已经作废了</p>
+<p><del> 官网地址 </del> <br>
+<del> <a href="https://projects.eclipse.org/projects/tools.sequoyah">https://projects.eclipse.org/projects/tools.sequoyah</a> </del></p>
+
+<p><del> 这个地址其实已经作废了,正确的连接如下 </del> <br>
+<del> <a href="http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/sequoyah/updates/2.0/">http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/sequoyah/updates/2.0/</a> </del> <br>
+<del> Eclipse-Help-Install New Software-Add,在Location里输入上面的地址，name就指定为sequoyah</del> <br>
+<img src="/images/evoup/android_cdt_ndk/17.png" alt="Alt text" />
+<img src="/images/evoup/android_cdt_ndk/18.png" alt="Alt text" /></p>
+
+<p><del> 然后取消下面的Group By Item，之后选择Select All，按下Next安装（没有研究下去，发现这个要求的eclipse版本为3.7以下，我的kepler为4.3，不得以暂时放弃） </del></p>
+
+<h3>JNI编译环境配置</h3>
+
+<p>还是打开HelloJni这个项目，现在转换为C/C++的native的代码<br>
+&ldquo;Eclipse->File->New->Other&rdquo;,选择"C/C++&ldquo;下的"Convert to a c/C++ Project(Add C/C++ Nature)&rdquo;,然后点击"Next"<br>
+<img src="/images/evoup/android_cdt_ndk/19.png" alt="Alt text" /></p>
+
+<p>然后在Makefile project中选择Cygwin GCC,点击Finish<br>
+<img src="/images/evoup/android_cdt_ndk/20.png" alt="Alt text" /></p>
+
+<p>右键项目的Properties，在"C/C++ Build"中取消默认的" Use default build command &ldquo;的打勾，在Build Command中输入对应bash加空格加ndk-build的路径，我这里是C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build<br>
+<code>sh
+bash C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build
+</code>
+<img src="/images/evoup/android_cdt_ndk/21.png" alt="Alt text" /></p>
+
+<p>在"C/C++ General"的Paths and Symbols中：在Includes下add新的GNU C依赖路径,根据自己的avd（andriod virtual device）的版本设置对应的头文件，我这里是android17的，则C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\platforms\android-17\arch-arm\usr\include,其他项目可以安装实际环境酌情调整依赖头文件的版本<br>
+<img src="/images/evoup/android_cdt_ndk/22.png" alt="Alt text" /></p>
+
+<p>验证：
+将“/HelloJni/jni/hello-jni.c”中的字符串“Hello from JNI !”如改为“Hello JNI from test!”，运行后在模拟器上输出的字符串改变即说明配置成功。<br>
+<img src="/images/evoup/android_cdt_ndk/23.png" alt="Alt text" /></p>
+
+<hr />
 
 <h3>参考文章</h3>
+
+<p>《Android NDK 安装与配置》
+<a href="http://my.oschina.net/owen123456/blog/85658">http://my.oschina.net/owen123456/blog/85658</a></p>
 
 <p>《Android: NDK编程入门笔记》
 <a href="http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html">http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html</a></p>
