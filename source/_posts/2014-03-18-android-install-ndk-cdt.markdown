@@ -81,7 +81,7 @@ gdb.setup  gdbserver  libhello-jni.so
 
 ####在Eclipse中完成代码调用
 
-接下来进入Eclipse，测试该项目
+接下来进入Eclipse，测试该项目,创建项目路径为C:\android\project\HelloJni<br>
 在Create Android Project时勾选“Create project from existing source”，Root Directory中填C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\samples\hello-jni,如下<br>
 ![Alt text](/images/evoup/android_cdt_ndk/09.png)<br>
 ![Alt text](/images/evoup/android_cdt_ndk/10.png)<br>
@@ -182,15 +182,44 @@ http://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/kepler/sr
 安装完成后如果在Eclipse中可以创建C++项目证明安装完成<br>
 ![Alt text](/images/evoup/android_cdt_ndk/16.png)
 
-###安装Sequoyah插件
-官网地址
-https://projects.eclipse.org/projects/tools.sequoyah
-不装也罢，下载连接已经失效，看来已经作废了
+###安装Sequoyah插件（事实证明，kepler+ndk9已经无须这个插件了）
+~~ 官网地址 ~~ <br>
+~~ https://projects.eclipse.org/projects/tools.sequoyah ~~
 
+~~ 这个地址其实已经作废了,正确的连接如下 ~~ <br>
+~~ http://www.mirrorservice.org/sites/download.eclipse.org/eclipseMirror/sequoyah/updates/2.0/ ~~ <br>
+~~ Eclipse-Help-Install New Software-Add,在Location里输入上面的地址，name就指定为sequoyah~~ <br>
+![Alt text](/images/evoup/android_cdt_ndk/17.png)
+![Alt text](/images/evoup/android_cdt_ndk/18.png)
 
+~~ 然后取消下面的Group By Item，之后选择Select All，按下Next安装（没有研究下去，发现这个要求的eclipse版本为3.7以下，我的kepler为4.3，不得以暂时放弃） ~~
 
+###JNI编译环境配置
+还是打开HelloJni这个项目，现在转换为C/C++的native的代码<br>
+"Eclipse->File->New->Other",选择"C/C++"下的"Convert to a c/C++ Project(Add C/C++ Nature)",然后点击"Next"<br>
+![Alt text](/images/evoup/android_cdt_ndk/19.png)
+
+然后在Makefile project中选择Cygwin GCC,点击Finish<br>
+![Alt text](/images/evoup/android_cdt_ndk/20.png)
+
+右键项目的Properties，在"C/C++ Build"中取消默认的" Use default build command "的打勾，在Build Command中输入对应bash加空格加ndk-build的路径，我这里是C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build<br>
+```sh
+bash C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build
+```
+![Alt text](/images/evoup/android_cdt_ndk/21.png)
+
+在"C/C++ General"的Paths and Symbols中：在Includes下add新的GNU C依赖路径,根据自己的avd（andriod virtual device）的版本设置对应的头文件，我这里是android17的，则C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\platforms\android-17\arch-arm\usr\include,其他项目可以安装实际环境酌情调整依赖头文件的版本<br>
+![Alt text](/images/evoup/android_cdt_ndk/22.png)
+
+验证：
+将“/HelloJni/jni/hello-jni.c”中的字符串“Hello from JNI !”如改为“Hello JNI from test!”，运行后在模拟器上输出的字符串改变即说明配置成功。<br> 
+![Alt text](/images/evoup/android_cdt_ndk/23.png)
+
+--------------------------
 
 ###参考文章
+《Android NDK 安装与配置》
+http://my.oschina.net/owen123456/blog/85658
 
 《Android: NDK编程入门笔记》
 http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html
