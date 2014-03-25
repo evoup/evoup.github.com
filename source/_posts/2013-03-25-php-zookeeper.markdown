@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "php和zookeeper交互获取hbase的master状态"
-date: 2014-03-25 10:54
+date: 2013-03-25 10:54
 comments: true
-categories: [hadoop,zookeeper] 
+categories: [php,hadoop,zookeeper] 
 ---
 
 ###为什么要使用zookeeper扩展
