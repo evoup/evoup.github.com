@@ -39,7 +39,7 @@ python setup.py
 在ANT_ROOT中环境变量中输入c:\ant\apache-ant-1.9.3\bin<br>
 ![Alt text](/images/evoup/cocos2d-js_android/05.png)
 
-这些操作完成后，你会发现win7好像并没有加载出这些环境变量，我的方法是重启（嗯！你没听错，反正我是重启才能加载，晕）。<br>
+这些操作完成后，你会发现win7好像并没有加载出这些环境变量，我的方法是重启（嗯！你没看错，反正我是重启才能加载，晕）。<br>
 
 重启完成之后,我们试一下这些环境变量是否OK，注意windows下批处理程序变量的命名方式为%变量名%<br>
 
