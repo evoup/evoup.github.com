@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-25T13:50:24+08:00</updated>
+  <updated>2014-03-25T18:24:34+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,103 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[win7下cocos2d-js3.0 alpha生成android项目]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/"/>
+    <updated>2014-03-25T14:37:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android</id>
+    <content type="html"><![CDATA[<p>折腾了比较长的时间，主要是从cocos2d-html5入门开始做demo，然后到jsb的部分，发现走不通，于是又去研究了cocos2d-x3.0 v3.0 rc0如何生成android项目，发现发布是可以的，但是安装到模拟器又是闪退。花了两三天时间（间断）终于完成，放这里共享下。</p>
+
+<!-- more -->
+
+
+<h3>需要的软件</h3>
+
+<p>首先当然是下载好cocos2d-js了，放到c:\cocos2d-jsb中：<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/01.png" alt="Alt text" /></p>
+
+<p>然后请安装好这些工具NDK（r9b）, android SDK（20131030）, ANT（1.9.3），Python（2.7.6）<br>
+下图中红色框住的部分为实际使用到的软件</p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/02.png" alt="Alt text" /></p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/03.png" alt="Alt text" /></p>
+
+<p>python要配置好环境变量，在cmd命令调出python，可以看到版本号:<br></p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/04.png" alt="Alt text" /></p>
+
+<h3>安装</h3>
+
+<p>万事俱备，到了见证奇迹的时刻,在这之前，请先安装好命令行，其实就是写入几个环境变量<br>
+方法是：开始-运行-cmd，进入控制台，然后定位到C:\cocos2d-jsb\Cocos2d-JS-v3.0-alpha,接下来输入:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>python setup.py
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后在对应的NDK_ROOT环境变量中输入c:\android\android-ndk-r9b-windows-x86_64\android-ndk-r9b,<br>
+在ANDROID_SDK_ROOT环境变量中输入c:\android\adt-bundle-windows-x86_64-20131030\sdk<br>
+在ANT_ROOT中环境变量中输入c:\ant\apache-ant-1.9.3\bin<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/05.png" alt="Alt text" /></p>
+
+<p>这些操作完成后，你会发现win7好像并没有加载出这些环境变量，我的方法是重启（嗯！你没听错，反正我是重启才能加载，晕）。<br></p>
+
+<p>重启完成之后,我们试一下这些环境变量是否OK，注意windows下批处理程序变量的命名方式为%变量名%<br></p>
+
+<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/06.png" alt="Alt text" /></p>
+
+<h3>产生项目</h3>
+
+<p>比如说要在c:/projects下创建一个有native编译支持的，名为prohectFoo的项目，需要在控制台输入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>%COCOS_CONSOLE_ROOT%/cocos new projectFoo -l js -d c:/projects
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>等一会儿就创建完毕<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/07.png" alt="Alt text" /></p>
+
+<h3>编译项目</h3>
+
+<p>如果要编译成android项目，只要执行如下指令即可：<br></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; <span class="nb">cd </span>c:<span class="se">\p</span>rojects<span class="se">\p</span>rojectFirst
+</span><span class='line'>&gt; %COCOS_CONSOLE_ROOT%/cocos compile -p android
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>之后要耐心等待项目编译完成，顺便说一句，没有vc2012是不能够编译cocos2d-js3.0的，因为现在引擎支持C++11了。<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/08.png" alt="Alt text" /></p>
+
+<p>等待编译完成<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/09.png" alt="Alt text" /></p>
+
+<p>这样就在runtime\android\下生成了projectFirst-debug-unaligned.apk</p>
+
+<h3>在android模拟器测试</h3>
+
+<p>这个只要注意如果是2d-js的项目，在模拟器里面是需要打开use host gpu<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
+
+<p>启动模拟器后，用adb安装软件进去<br></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>%ANDROID_SDK_ROOT%/platform-tools/adb install c:<span class="se">\p</span>rojects<span class="se">\p</span>rojectFirst<span class="se">\r</span>untime<span class="se">\a</span>ndroid<span class="se">\p</span>rojectFirst-debug-unaligned.apk
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装完成后运行程序<br>
+<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
+
+<p>告一段落。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（二）]]></title>
@@ -3949,55 +4046,6 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 <h4>参考阅读</h4>
 
 <p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[win7上搭建cocos2d-x2.2.2开发环境]]></title>
-    <link href="http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/"/>
-    <updated>2014-01-13T00:25:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2</id>
-    <content type="html"><![CDATA[<p>在win7上搭建cocos2d-x的开发环境，主要用到的开发IDE为visual C++2010，为什么不再使用vc6？第一，cocos2d-x本身不支持。第二，支持C++0x的特性。对于现代游戏游戏引擎来说，这是必要的。安装vc
-2010这里就不再讨论。</p>
-
-<!-- more -->
-
-
-<p>直接讲如何进行cocos2d-x的编译了。</p>
-
-<h3>1）下载</h3>
-
-<p>首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
-
-<h3>2）解压和编译cocos2d-x</h3>
-
-<p>接下来是解压,注意不要解压到中文目录，否则接下来生成项目会报错。我解压到了D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2。随后进入cocos2d-x2.2.2文件夹下的cocos2d-x2.2.2文件夹。因为我们是使用vc2010，所以就双击cocos2d-win32.vc2010.sln。
-进到IDE之后，选择解决方案资源管理器下的cocos2d-win32.vc2010,右击选择配置属性-配置，确保每个项目都为debug，可以看到共有17个项目。然后按下F7开始生成解决方案。
-慢慢等，我是等来10来分钟。可以看到17个项目都生成成功了。</p>
-
-<h3>3）创建工程</h3>
-
-<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\t</span>ools<span class="se">\p</span>roject-creator<span class="se">\</span>
-</span><span class='line'>create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
-
-<h3>4）编译工程</h3>
-
-<p>最后进入刚刚取名为HelloWorld的项目中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\p</span>rojects/HelloWorld
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。</p>
 ]]></content>
   </entry>
   
