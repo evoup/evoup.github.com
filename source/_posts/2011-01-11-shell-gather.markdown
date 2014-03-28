@@ -58,6 +58,10 @@ find . -type f \( -name "*.cpp" -o -name "*.h" -o -name "*.c" \)
 ```sh
 date "+%s"
 ```
+不用scp，而使用rsync把本地文件传到远程服务器的一个目录
+```sh
+rsync -avze 'ssh -p 2203' logfile user@172.16.30.112:/logfiles/
+```
 
 把时间戳转换成系统时间
 ```sh
