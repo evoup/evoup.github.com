@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-03-28T17:30:51+08:00</updated>
+  <updated>2014-04-01T14:34:19+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -113,8 +113,9 @@ LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 </code></p>
 
-<p>继续安装2个必要的gem
-<code>ruby
+<p>继续安装2个必要的gem（rdoc和bundler），注意bundle install的时候要进入octopress的目录，因为其中的Gemfile文件是要被读取的，否则会报错<code>could not locate gemfile</code></p>
+
+<p><code>ruby
 gem install rdoc bundler
 bundle install
 </code>
@@ -187,7 +188,15 @@ git pull origin master
 然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
 在source/_layouts/post.html中，将对应的disqus代码改为：
 ```js
+{% if site.duoshuo_name and page.comments == true %}
+  <section id="comment"></p>
 
+<pre><code>&lt;h1&gt;发表评论&lt;/h1&gt;
+{% include post/duoshuo.html %}
+</code></pre>
+
+<p>  </section>
+{% endif %}
 <code>
 在source/\_config/yml中，添加：
 </code>sh
