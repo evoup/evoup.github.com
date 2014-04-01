@@ -70,7 +70,11 @@ date -d '1970-01-01 UTC 946684800 seconds' +"%Y-%m-%d %T %z"
 #freebsd版本的
 date -r 1384499085 +"%Y-%m-%d %T %z"
 ```
-
+按压缩包内的文件名,从bz2格式精确解压出指定文件
+```sh
+//解压bz2CompressedFile文件，提取其中的文件fileName重定向到destFile
+bzcat bz2CompressedFile | tar xOf - fileName > destFile
+```
 
 在第三行之后插入指定数据
 ```awk
