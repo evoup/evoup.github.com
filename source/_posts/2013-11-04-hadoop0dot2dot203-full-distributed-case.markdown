@@ -183,7 +183,7 @@ vi  hadoop
 
 到namenode上格式化hdfs
 ```bash
-/bin/hadoop namenode -format
+bin/hadoop namenode -format
 ```
 注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭
 ```bash
