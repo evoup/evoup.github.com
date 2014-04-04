@@ -48,7 +48,8 @@ LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
 ```
 
-继续安装2个必要的gem
+继续安装2个必要的gem（rdoc和bundler），注意bundle install的时候要进入octopress的目录，因为其中的Gemfile文件是要被读取的，否则会报错` could not locate gemfile ` 
+
 ```ruby
 gem install rdoc bundler
 bundle install

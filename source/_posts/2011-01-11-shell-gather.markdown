@@ -58,6 +58,10 @@ find . -type f \( -name "*.cpp" -o -name "*.h" -o -name "*.c" \)
 ```sh
 date "+%s"
 ```
+不用scp，而使用rsync把本地文件传到远程服务器的一个目录
+```sh
+rsync -avze 'ssh -p 2203' logfile user@172.16.30.112:/logfiles/
+```
 
 把时间戳转换成系统时间
 ```sh
@@ -66,7 +70,11 @@ date -d '1970-01-01 UTC 946684800 seconds' +"%Y-%m-%d %T %z"
 #freebsd版本的
 date -r 1384499085 +"%Y-%m-%d %T %z"
 ```
-
+按压缩包内的文件名,从bz2格式精确解压出指定文件
+```sh
+//解压bz2CompressedFile文件，提取其中的文件fileName重定向到destFile
+bzcat bz2CompressedFile | tar xOf - fileName > destFile
+```
 
 在第三行之后插入指定数据
 ```awk
