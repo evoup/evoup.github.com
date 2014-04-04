@@ -52,7 +52,7 @@ java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
 #./jdk-6u35-linux-x64-rpm.bin
 ```
 
-freebsd:直接在/usr/port/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）
+freebsd:直接在/usr/ports/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）
 
 hadoop所有操作都是用hadoop帐号，下面添加
 
