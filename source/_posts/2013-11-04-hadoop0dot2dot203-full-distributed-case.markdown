@@ -108,15 +108,15 @@ all:$ ln -s hadoop-0.20.203.0 hadoop
 192.168.174.136 mdn2datanode2.net
 ```
 
-假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码
+假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码(以下的/usr/java/jdk1.6.0_37/为linux下java的可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)
 ```bash
 export HADOOP_HOME=/u01/app/hadoop
 export HBASE_HOME=/u01/app/hbase
 export PATH="/usr/java/jdk1.6.0_37/bin/:$PATH"
-export JAVA_HOME="/usr/java/jdk1.6.0_37/bin/"
+export JAVA_HOME="/usr/java/jdk1.6.0_37/"
 ```
 
-下载hadoop解压之后，在hadoop-env.sh指定java的目录
+下载hadoop解压之后，在hadoop-env.sh指定java的目录(以下的/usr/java/jdk1.6.0_37/为linux下java可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)
 ```bash
 export JAVA_HOME=/usr/java/jdk1.6.0_37/
 ```
