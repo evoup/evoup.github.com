@@ -3,7 +3,7 @@ layout: post
 title: "HBASE0.90.6完全分布式搭建(VMware版)"
 date: 2013-11-04 16:28
 comments: true
-categories: hadoop 
+categories: [hadoop,hbase] 
 ---
 接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a>
 
