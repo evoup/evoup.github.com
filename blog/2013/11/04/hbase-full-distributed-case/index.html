@@ -248,7 +248,7 @@
 
 <p>注意点：
  1.其中首先需要注意hdfs://mdn2.net:9024/hbase这里，必须与你的Hadoop集群的core-site.xml文件配置保持完全一致才行，如果你Hadoop的hdfs使用了其它端口，请在这里也修改。再者就是Hbase该项并不识别机器IP，只能使用机器hostname才可行，即若使用IP是会抛出java错误。
- 2.hbase.zookeeper.quorum 的个数必须是奇数。</p>
+ 2.hbase.zookeeper.quorum 的个数必须是奇数，否则也可以启动hbase，只不过用thrift接口时无法使用，会类似这样的错<code>INFO org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation:</code> <br> <code>ZooKeeper available but no active master location found</code></p>
 
 <p>修改regionservers文件（同hadoop的slaves文件）</p>
 
