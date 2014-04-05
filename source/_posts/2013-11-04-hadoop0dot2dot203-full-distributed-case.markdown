@@ -83,6 +83,7 @@ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
 cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 ```
+此外，各台机器之间的信任也要做好，推荐用ssh-copy-id来做，很简单用“ssh-copy-id hadoop@机器名”就可以了。<br>
 到此准备工作完成
 
 安装Hadoop
@@ -139,8 +140,9 @@ export JAVA_HOME=/usr/java/jdk1.6.0_37/
     </property>
 </configuration>
 ```
-
-注意：hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。
+说明：<br>
+1)fs.default.name为hdfs默认的namenode的地址<br>
+2)hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。
 
 再编辑hdfs-site.xml
 ```xml
@@ -161,7 +163,7 @@ export JAVA_HOME=/usr/java/jdk1.6.0_37/
 </configuration>
 ```
 
-注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录
+注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录,启动hdfs时该文件夹会自行创建，如果手动创建，请保证权限为755
 
 master里
 ```bash
