@@ -31,8 +31,8 @@ mysqldump -uusername -p*** -h 192.168.1.123 dbname tablename > table_backup.sql
 #导入整个库
 mysql -uusername -p*** dbname < db_backup.sql
 
-#导入单个表
-mysql -uusername -p*** dbname < tablename < table_backup.sql
+#导入单个表(2014-4-6补充：windows下可以这样c:\> mysql -uusername -p*** dbname < tablename < f:/table_backup.sql)
+mysql -uusername -p*** dbname < table_backup.sql
 ```
 备注：其实也可以用source，不过要进入mysql的shell中操作。
 
