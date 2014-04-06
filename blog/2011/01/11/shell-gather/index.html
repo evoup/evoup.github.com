@@ -137,6 +137,35 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>远程备份MySQL数据库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#备份整个库</span>
+</span><span class='line'>mysqldump -uusername -p*** -h 192.168.1.123 dbname &gt; db_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#备份单个表</span>
+</span><span class='line'>mysqldump -uusername -p*** -h 192.168.1.123 dbname tablename &gt; table_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#导入整个库</span>
+</span><span class='line'>mysql -uusername -p*** dbname &lt; db_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#导入单个表</span>
+</span><span class='line'>mysql -uusername -p*** dbname &lt; tablename &lt; table_backup.sql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>备注：其实也可以用source，不过要进入mysql的shell中操作。</p>
+
 <p>取得fb6的网卡mac</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
