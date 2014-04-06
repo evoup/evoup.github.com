@@ -20,6 +20,22 @@ done
 
 ```
 
+远程备份MySQL数据库
+```sh
+#备份整个库
+mysqldump -uusername -p*** -h 192.168.1.123 dbname > db_backup.sql
+
+#备份单个表
+mysqldump -uusername -p*** -h 192.168.1.123 dbname tablename > table_backup.sql
+
+#导入整个库
+mysql -uusername -p*** dbname < db_backup.sql
+
+#导入单个表
+mysql -uusername -p*** dbname < tablename < table_backup.sql
+```
+备注：其实也可以用source，不过要进入mysql的shell中操作。
+
 取得fb6的网卡mac
 ```sh
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
