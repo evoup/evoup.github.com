@@ -41,6 +41,14 @@ mysql -uusername -p*** dbname < table_backup.sql
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
 ```
 
+查看目录里的每个子目录的大小
+```sh
+#for freebsd
+du -h -d 1
+#for linux
+du -h –max-depth=1 
+```
+
 获取文本的第三行
 ```sh
 sed -n '3p' file 
