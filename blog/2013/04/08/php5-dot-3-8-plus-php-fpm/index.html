@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd下安装vmware-tool - Evoup`s Blog</title>
+  <title>Php5.3.8+php-fpm源码安装 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/04/08/php5-dot-3-8-plus-php-fpm">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,47 +101,72 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-05T13:22:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T01:03:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Freebsd下安装vmware-tool
+        Php5.3.8+php-fpm源码安装
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+<div class="entry-content clearfix"><p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
 
-<!-- more -->
+<h3>pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3>
 
-
-<h3>消极的方法</h3>
-
-<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
-
-<p>在crontab内加入</p>
+<p>i.memcache-3.0.4->memcache<br>
+ii.APC-3.1.4->apc<br>
+iii.imagick-3.0.0->imagick<br>
+(已经把memcache,apc模块源码放到ext子目录中,名称如上)</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /your/phpsrcdir
+</span><span class='line'><span class="nv">$ </span>rm configure
+</span><span class='line'><span class="nv">$ </span>./buildconf --force
+</span><span class='line'><span class="nv">$ </span>./configure --help   <span class="c">#(选项出现了!)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>以及在/etc/rc.conf中</p>
+<h3>预装软件：</h3>
+
+<p>ImageMagick</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">ntpdate_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make <span class="nv">WITHOUT_X11</span><span class="o">=</span>yes install clean
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>积极的方法</h3>
+<p>(时间较长，干点别的去)
+libevent(php-fpm需要,ports)</p>
 
-<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
-首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
-vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>curl(ports)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>libmcrypt(ports)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>● 手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，
+&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -150,68 +175,134 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/port/dist
-</span><span class='line'>sudo fetch ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz
-</span><span class='line'>sudo pkg_add compat6x-amd64.tbz
-</span><span class='line'>*******************************************************************************
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* Do not forget to add COMPAT_FREEBSD6 into                                   *
-</span><span class='line'>* your kernel configuration <span class="o">(</span>enabled by default<span class="o">)</span>.                             *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>* To configure and recompile your kernel see:                                 *
-</span><span class='line'>* http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html *
-</span><span class='line'>*                                                                             *
-</span><span class='line'>*******************************************************************************
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$.</span>/configure<span class="s1">&#39; &#39;</span>--prefix<span class="o">=</span>/usr/local/php5_admin<span class="s1">&#39; &#39;</span>--with-layout<span class="o">=</span>GNU<span class="s1">&#39; </span>
+</span><span class='line'><span class="s1">&#39;</span>--with-config-file-scan-dir<span class="o">=</span>/usr/local/php5_admin/etc/php<span class="s1">&#39; &#39;</span>--disable-all<span class="s1">&#39; &#39;</span>--enable-dom<span class="s1">&#39;  </span>
+</span><span class='line'><span class="s1">&#39;</span>--enable-filter<span class="s1">&#39; &#39;</span>--enable-hash<span class="s1">&#39; &#39;</span>--enable-json<span class="s1">&#39; &#39;</span>--with-mcrypt<span class="s1">&#39; &#39;</span>--with-curl<span class="s1">&#39;  </span>
+</span><span class='line'><span class="s1">&#39;</span>--with-pcre-regex<span class="s1">&#39; &#39;</span>--enable-mbstring<span class="s1">&#39; &#39;</span>--enable-ctype<span class="s1">&#39; &#39;</span>--enable-session<span class="s1">&#39; </span>
+</span><span class='line'><span class="s1">&#39;</span>--enable-libxml<span class="s1">&#39; &#39;</span>--enable-simplexml<span class="s1">&#39; &#39;</span>--enable-pdo<span class="s1">&#39; &#39;</span>--with-pdo-mysql<span class="o">=</span>mysqlnd<span class="s1">&#39; </span>
+</span><span class='line'><span class="s1">&#39;</span>--with-mysqli<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--enable-sysvsem<span class="s1">&#39; &#39;</span>--enable-sysvshm<span class="s1">&#39; &#39;</span>--enable-apc<span class="s1">&#39; </span>
+</span><span class='line'><span class="s1">&#39;</span>--enable-memcache<span class="s1">&#39; &#39;</span>--with-imagick<span class="o">=</span>/usr/local<span class="s1">&#39; &#39;</span>--enable-fpm<span class="err">&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>安装依赖库后，切换到root后，执行如下指令：</p>
+<p>注意
+make时候会报错
+解决方法：
+修改fpm_sockets.c代码：
+1 . i n f o . t c p i _ s a c k e d     = >   i n f o . _ _ t c p i _ s a c k e d<br/>
+2 . i n f o . t c p i _ u n a c k e d   = >   i n f o . _ _ t c p i _ u n a c k e d<br/>
+● 配置
+● #cp /usr/local/php5_admin/etc/php-fpm.conf.default
+/usr/local/php5_admin/etc/php-fpm.conf
+  ●
+● 几个需要配置的参数
+● pm.max_children
+● pm.start_servers
+● pm.min_spare_servers
+● pm.max_spare_servers
+启动脚本
+/usr/local/etc/rc.d/phpfpm</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mount /cdrom
-</span><span class='line'><span class="nb">cd</span> /tmp
-</span><span class='line'>tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
-</span><span class='line'><span class="nb">cd </span>vmware-tools-distrib
-</span><span class='line'>./vmware-install.pl
-</span></code></pre></td></tr></table></div></figure>
+<h1>!/bin/sh</h1>
 
+<h1>PROVIDE: phpfpm</h1>
 
-<p>这样vmware-tool就搞定了。
-最后为了保险起先，关闭系统后，编辑.vmx文件
-加上下面的时间同步的代码</p>
+<h1>REQUIRE: DAEMON</h1>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tools.syncTime <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.continue <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.restore <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.disk <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.shrink <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.startup <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.tools.enable <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span><span class='line'>time.synchronize.resume.host <span class="o">=</span> <span class="s2">&quot;TRUE&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>#</p>
 
+<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
 
-<p>参考链接</p>
+<p>#</p>
 
-<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
-<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
+<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+
+<h1>Default is &ldquo;NO&rdquo;.</h1>
+
+<p>#</p>
+
+<h1>Last-Modified: 2010-09-14 23:30:20</h1>
+
+<p>name=&ldquo;phpfpm&rdquo;
+. /etc/rc.subr
+rcvar=<code>set_rcvar</code>
+load_rc_config ${name}
+eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
+eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
+command=${server}
+extra_commands=&ldquo;reload&rdquo;
+sig_reload=&ldquo;USR2&rdquo;
+pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm.pid&rdquo;</p>
+
+<h1>command_args=&ldquo;&rdquo;</h1>
+
+<p>run_rc_command &ldquo;$1&rdquo;
+   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动
+创建
+在/etc/rc.conf中加入phpfpm_enable=&ldquo;YES&rdquo;</p>
+
+<h1>/usr/local/etc/rc.d/phpfpm start</h1>
+
+<p>启动ok
+备注，其实：上面的phpfpm配置文件是错误的，原因如下：
+php 5.3.3以上的php版本源码中已经内嵌了 php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
+configure的时候添加编译参数即可。
+但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm
+(start|stop|reload)等命令，需要使用信号控制：
+master进程可以理解以下信号：
+● INT, TERM 立刻终止
+● QUIT 平滑终止
+● USR1 重新打开日志文件
+● USR2 平滑重载所有worker进程并重新载入配置和二进制模块
+示例：
+注意这边的单引号为“esc下面那个键（~）”
+php-fpm 关闭：
+k i l l   &ndash; I N T   <code>c a t   / u s r / l o c a l / p h p / v a r / r u n / p h p - f p m . p i d</code>
+php-fpm 重启：
+k i l l   &ndash; U S R 2   <code>c a t   / u s r / l o c a l / p h p / v a r / r u n / p h p - f p m . p i d</code>
+查看php-fpm进程：
+p s   a u x   |   g r e p   &ndash; c   p h p &ndash; f p m
+查看php-fpm进程数：
+p s   a u x   |   g r e p   &ndash; c   p h p &ndash; f p m   |   w c   &ndash; l
+正确的脚本应该是这样的</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>PROVIDE: phpfpm</h1>
+
+<h1>REQUIRE: DAEMON</h1>
+
+<p>#</p>
+
+<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
+
+<p>#</p>
+
+<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+
+<h1>Default is &ldquo;NO&rdquo;.</h1>
+
+<p>#</p>
+
+<h1>Last-Modified: 2012-11-22 10:27:43</h1>
+
+<p>name=&ldquo;phpfpm_monitor_client&rdquo;
+. /etc/rc.subr
+rcvar=<code>set_rcvar</code>
+load_rc_config ${name}
+eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
+eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
+command=${server}
+extra_commands=&ldquo;reload&rdquo;
+sig_reload=&ldquo;USR2&rdquo;
+sig_stop=&ldquo;INT&rdquo;
+pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm-monitor-client.pid&rdquo;
+fpmconffile=&ldquo;/usr/local/php5_admin/etc/php-fpm_monitor_client.conf&rdquo;
+command_args=&ldquo;-g ${pidfile} -y ${fpmconffile}&rdquo;</p>
+
+<h1>run_rc_command $1</h1>
+
+<p>run_rc_command $*</p>
 </div>
 
 
@@ -235,13 +326,13 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-05T13:22:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T01:03:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>
+    <a class='category' href='/blog/categories/php/'>php</a>
   
 </span>
 
@@ -253,10 +344,10 @@ vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2013/11/04/hbase-full-distributed-case/" title="Previous Post: HBASE0.90.6完全分布式搭建(VMware版)">&laquo; HBASE0.90.6完全分布式搭建(VMware版)</a></li>
+            <li class="previous"><a href="/blog/2013/03/25/php-zookeeper/" title="Previous Post: php和zookeeper交互获取hbase的master状态">&laquo; php和zookeeper交互获取hbase的master状态</a></li>
             
             
-            <li class="next"><a href="/blog/2013/11/05/erl-crash-webtool-usage/" title="Next Post: 使用webtool查看erl_crash.dump">使用webtool查看erl_crash.dump &raquo;</a></li>
+            <li class="next"><a href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/" title="Next Post: rrdtool graph报错Cannot parse vname from DEF">rrdtool graph报错Cannot parse vname from DEF &raquo;</a></li>
             
           </ul>
         
