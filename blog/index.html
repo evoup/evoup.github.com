@@ -3969,8 +3969,50 @@ libevent(php-fpm需要,ports)</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>● 手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，
-&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
+<h4>手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，</h4>
+
+<p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$.</span>/configure<span class="s1">&#39; &#39;</span>--prefix<span class="o">=</span>/usr/local/php5_admin<span class="s1">&#39; &#39;</span>--with-layout<span class="o">=</span>GNU<span class="s1">&#39; &#39;</span>--with-config-file-scan-dir<span class="o">=</span>/usr/local/php5_admin/etc/php<span class="s1">&#39; &#39;</span>--disable-all<span class="s1">&#39; &#39;</span>--enable-dom<span class="s1">&#39; &#39;</span>--enable-filter<span class="s1">&#39; &#39;</span>--enable-hash<span class="s1">&#39; &#39;</span>--enable-json<span class="s1">&#39; &#39;</span>--with-mcrypt<span class="s1">&#39; &#39;</span>--with-curl<span class="s1">&#39; &#39;</span>--with-pcre-regex<span class="s1">&#39; &#39;</span>--enable-mbstring<span class="s1">&#39; &#39;</span>--enable-ctype<span class="s1">&#39; &#39;</span>--enable-session<span class="s1">&#39; &#39;</span>--enable-libxml<span class="s1">&#39; &#39;</span>--enable-simplexml<span class="s1">&#39; &#39;</span>--enable-pdo<span class="s1">&#39; &#39;</span>--with-pdo-mysql<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--with-mysqli<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--enable-sysvsem<span class="s1">&#39; &#39;</span>--enable-sysvshm<span class="s1">&#39; &#39;</span>--enable-apc<span class="s1">&#39; &#39;</span>--enable-memcache<span class="s1">&#39; &#39;</span>--with-imagick<span class="o">=</span>/usr/local<span class="s1">&#39; &#39;</span>--enable-fpm<span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意
+make时候会报错
+解决方法：
+修改fpm_sockets.c代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>info.tcpi_sacked <span class="o">=</span>&gt; info.__tcpi_sacked
+</span><span class='line'>info.tcpi_unacked <span class="o">=</span>&gt; info.__tcpi_unacked
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>配置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cp /usr/local/php5_admin/etc/php-fpm.conf.default
+</span><span class='line'><span class="nv">$ </span>/usr/local/php5_admin/etc/php-fpm.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>几个需要配置的参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>pm.max_children
+</span><span class='line'>pm.start_servers
+</span><span class='line'>pm.min_spare_servers
+</span><span class='line'>pm.max_spare_servers
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑启动脚本/usr/local/etc/rc.d/phpfpm</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -3979,134 +4021,160 @@ libevent(php-fpm需要,ports)</p>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$.</span>/configure<span class="s1">&#39; &#39;</span>--prefix<span class="o">=</span>/usr/local/php5_admin<span class="s1">&#39; &#39;</span>--with-layout<span class="o">=</span>GNU<span class="s1">&#39; </span>
-</span><span class='line'><span class="s1">&#39;</span>--with-config-file-scan-dir<span class="o">=</span>/usr/local/php5_admin/etc/php<span class="s1">&#39; &#39;</span>--disable-all<span class="s1">&#39; &#39;</span>--enable-dom<span class="s1">&#39;  </span>
-</span><span class='line'><span class="s1">&#39;</span>--enable-filter<span class="s1">&#39; &#39;</span>--enable-hash<span class="s1">&#39; &#39;</span>--enable-json<span class="s1">&#39; &#39;</span>--with-mcrypt<span class="s1">&#39; &#39;</span>--with-curl<span class="s1">&#39;  </span>
-</span><span class='line'><span class="s1">&#39;</span>--with-pcre-regex<span class="s1">&#39; &#39;</span>--enable-mbstring<span class="s1">&#39; &#39;</span>--enable-ctype<span class="s1">&#39; &#39;</span>--enable-session<span class="s1">&#39; </span>
-</span><span class='line'><span class="s1">&#39;</span>--enable-libxml<span class="s1">&#39; &#39;</span>--enable-simplexml<span class="s1">&#39; &#39;</span>--enable-pdo<span class="s1">&#39; &#39;</span>--with-pdo-mysql<span class="o">=</span>mysqlnd<span class="s1">&#39; </span>
-</span><span class='line'><span class="s1">&#39;</span>--with-mysqli<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--enable-sysvsem<span class="s1">&#39; &#39;</span>--enable-sysvshm<span class="s1">&#39; &#39;</span>--enable-apc<span class="s1">&#39; </span>
-</span><span class='line'><span class="s1">&#39;</span>--enable-memcache<span class="s1">&#39; &#39;</span>--with-imagick<span class="o">=</span>/usr/local<span class="s1">&#39; &#39;</span>--enable-fpm<span class="err">&#39;</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># PROVIDE: phpfpm</span>
+</span><span class='line'><span class="c"># REQUIRE: DAEMON</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class='line'><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Last-Modified: 2010-09-14 23:30:20</span>
+</span><span class='line'><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class='line'>. /etc/rc.subr
+</span><span class='line'><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class='line'>load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class='line'><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class='line'><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class='line'><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class='line'><span class="c">#command_args=&quot;&quot; </span>
+</span><span class='line'>run_rc_command <span class="s2">&quot;$1&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>注意
-make时候会报错
-解决方法：
-修改fpm_sockets.c代码：
-1 . i n f o . t c p i _ s a c k e d     = >   i n f o . _ _ t c p i _ s a c k e d<br/>
-2 . i n f o . t c p i _ u n a c k e d   = >   i n f o . _ _ t c p i _ u n a c k e d<br/>
-● 配置
-● #cp /usr/local/php5_admin/etc/php-fpm.conf.default
-/usr/local/php5_admin/etc/php-fpm.conf
-  ●
-● 几个需要配置的参数
-● pm.max_children
-● pm.start_servers
-● pm.min_spare_servers
-● pm.max_spare_servers
-启动脚本
-/usr/local/etc/rc.d/phpfpm</p>
+<p>   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动创建</p>
 
-<h1>!/bin/sh</h1>
+<p>在/etc/rc.conf中加入</p>
 
-<h1>PROVIDE: phpfpm</h1>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">phpfpm_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h1>REQUIRE: DAEMON</h1>
 
-<p>#</p>
+<p>然后启动</p>
 
-<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/etc/rc.d/phpfpm start
+</span></code></pre></td></tr></table></div></figure>
 
-<p>#</p>
 
-<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+<p>备注，其实：上面的phpfpm配置文件是错误的，原因如下：</p>
 
-<h1>Default is &ldquo;NO&rdquo;.</h1>
-
-<p>#</p>
-
-<h1>Last-Modified: 2010-09-14 23:30:20</h1>
-
-<p>name=&ldquo;phpfpm&rdquo;
-. /etc/rc.subr
-rcvar=<code>set_rcvar</code>
-load_rc_config ${name}
-eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
-eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
-command=${server}
-extra_commands=&ldquo;reload&rdquo;
-sig_reload=&ldquo;USR2&rdquo;
-pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm.pid&rdquo;</p>
-
-<h1>command_args=&ldquo;&rdquo;</h1>
-
-<p>run_rc_command &ldquo;$1&rdquo;
-   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动
-创建
-在/etc/rc.conf中加入phpfpm_enable=&ldquo;YES&rdquo;</p>
-
-<h1>/usr/local/etc/rc.d/phpfpm start</h1>
-
-<p>启动ok
-备注，其实：上面的phpfpm配置文件是错误的，原因如下：
-php 5.3.3以上的php版本源码中已经内嵌了 php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
+<blockquote><p>php 5.3.3以上的php版本源码中已经内嵌了php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
 configure的时候添加编译参数即可。
 但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm
 (start|stop|reload)等命令，需要使用信号控制：
 master进程可以理解以下信号：
-● INT, TERM 立刻终止
-● QUIT 平滑终止
-● USR1 重新打开日志文件
-● USR2 平滑重载所有worker进程并重新载入配置和二进制模块
-示例：
+INT, TERM 立刻终止
+QUIT 平滑终止
+USR1 重新打开日志文件
+USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p></blockquote>
+
+<p>示例：
 注意这边的单引号为“esc下面那个键（~）”
-php-fpm 关闭：
-k i l l   &ndash; I N T   <code>c a t   / u s r / l o c a l / p h p / v a r / r u n / p h p - f p m . p i d</code>
-php-fpm 重启：
-k i l l   &ndash; U S R 2   <code>c a t   / u s r / l o c a l / p h p / v a r / r u n / p h p - f p m . p i d</code>
-查看php-fpm进程：
-p s   a u x   |   g r e p   &ndash; c   p h p &ndash; f p m
-查看php-fpm进程数：
-p s   a u x   |   g r e p   &ndash; c   p h p &ndash; f p m   |   w c   &ndash; l
-正确的脚本应该是这样的</p>
+php-fpm 关闭：</p>
 
-<h1>!/bin/sh</h1>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">kill</span> -INT <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h1>PROVIDE: phpfpm</h1>
 
-<h1>REQUIRE: DAEMON</h1>
+<p>php-fpm 重启：</p>
 
-<p>#</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">kill</span> -USR2 <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
 
-<p>#</p>
+<p>查看php-fpm进程：</p>
 
-<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>ps aux | grep -c php-fpm
+</span></code></pre></td></tr></table></div></figure>
 
-<h1>Default is &ldquo;NO&rdquo;.</h1>
 
-<p>#</p>
+<p>查看php-fpm进程数：</p>
 
-<h1>Last-Modified: 2012-11-22 10:27:43</h1>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>ps aux | grep -c php-fpm | wc -l
+</span></code></pre></td></tr></table></div></figure>
 
-<p>name=&ldquo;phpfpm_monitor_client&rdquo;
-. /etc/rc.subr
-rcvar=<code>set_rcvar</code>
-load_rc_config ${name}
-eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
-eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
-command=${server}
-extra_commands=&ldquo;reload&rdquo;
-sig_reload=&ldquo;USR2&rdquo;
-sig_stop=&ldquo;INT&rdquo;
-pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm-monitor-client.pid&rdquo;
-fpmconffile=&ldquo;/usr/local/php5_admin/etc/php-fpm_monitor_client.conf&rdquo;
-command_args=&ldquo;-g ${pidfile} -y ${fpmconffile}&rdquo;</p>
 
-<h1>run_rc_command $1</h1>
+<p>正确的脚本应该是这样的</p>
 
-<p>run_rc_command $*</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># PROVIDE: phpfpm</span>
+</span><span class='line'><span class="c"># REQUIRE: DAEMON</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class='line'><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Last-Modified: 2012-11-22 10:27:43</span>
+</span><span class='line'><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class='line'>. /etc/rc.subr
+</span><span class='line'><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class='line'>load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class='line'><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class='line'><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class='line'><span class="nv">sig_stop</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span>
+</span><span class='line'><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class='line'><span class="nv">fpmconffile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/etc/php-fpm.conf&quot;</span>
+</span><span class='line'><span class="nv">command_args</span><span class="o">=</span><span class="s2">&quot;-g ${pidfile} -y ${fpmconffile}&quot;</span>
+</span><span class='line'><span class="c">#run_rc_command $1</span>
+</span><span class='line'>run_rc_command <span class="nv">$*</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完。</p>
 
 
   </article>
