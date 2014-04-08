@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "nginx+Php5.3.8+php-fpm源码安装之二"
-date: 2014-04-08 16:33
+date: 2013-04-08 16:33
 comments: true
 categories: [php,nginx]
 ---
@@ -18,7 +18,10 @@ phpinfo();
 安装nginx
 安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf
 
-添加一个前缀test，我们访问http://192.168.216.198/test/index.php或者http://192.168.216.198/test/即可看到php输出的信息。
+添加一个前缀test，我们访问http://192.168.216.198/test/index.php
+或者
+http://192.168.216.198/test/
+即可看到php输出的信息。
 
 默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
 ```sh
