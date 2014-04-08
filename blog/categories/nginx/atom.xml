@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-08T16:47:26+08:00</updated>
+  <updated>2014-04-08T16:56:18+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,63 +12,6 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
-  
-  <entry>
-    <title type="html"><![CDATA[nginx+Php5.3.8+php-fpm源码安装之二]]></title>
-    <link href="http://evoupsight.com/blog/2014/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/"/>
-    <updated>2014-04-08T16:33:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/04/08/nginx-php5-dot-3-8-plus-php-fpm-2</id>
-    <content type="html"><![CDATA[<p>nginx端的配置
-首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
-
-<p><code>
-&lt;?php
-phpinfo();
-</code></p>
-
-<p>安装nginx
-安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
-
-<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php%E6%88%96%E8%80%85http://192.168.216.198/test/%E5%8D%B3%E5%8F%AF%E7%9C%8B%E5%88%B0php%E8%BE%93%E5%87%BA%E7%9A%84%E4%BF%A1%E6%81%AF%E3%80%82">http://192.168.216.198/test/index.php%E6%88%96%E8%80%85http://192.168.216.198/test/%E5%8D%B3%E5%8F%AF%E7%9C%8B%E5%88%B0php%E8%BE%93%E5%87%BA%E7%9A%84%E4%BF%A1%E6%81%AF%E3%80%82</a></p>
-
-<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
-```sh</p>
-
-<h1>fastcgi.conf</h1>
-
-<p>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                 <br/>
-fastcgi_param  SERVER_SOFTWARE    nginx;                                                                                                                   <br/>
-fastcgi_param  QUERY_STRING       $query_string;                                                                                                           <br/>
-fastcgi_param  REQUEST_METHOD     $request_method;                                                                                                         <br/>
-fastcgi_param  CONTENT_TYPE       $content_type;                                                                                                           <br/>
-fastcgi_param  CONTENT_LENGTH     $content_length;                                                                                                         <br/>
-fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;                                                                                      <br/>
-fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;</p>
-
-<h1>fastcgi_param  SCRIPT_NAME        $request_uri;</h1>
-
-<p>fastcgi_param  PATH_INFO          $fastcgi_script_name;                                                                                                    <br/>
-fastcgi_param  REQUEST_URI        $request_uri;                                                                                                            <br/>
-fastcgi_param  DOCUMENT_URI       $document_uri;                                                                                                           <br/>
-fastcgi_param  DOCUMENT_ROOT      $document_root;                                                                                                          <br/>
-fastcgi_param  SERVER_PROTOCOL    $server_protocol;                                                                                                        <br/>
-fastcgi_param  REMOTE_ADDR        $remote_addr;                                                                                                            <br/>
-fastcgi_param  REMOTE_PORT        $remote_port;                                                                                                            <br/>
-fastcgi_param  SERVER_ADDR        $server_addr;                                                                                                            <br/>
-fastcgi_param  SERVER_PORT        $server_port;                                                                                                            <br/>
-fastcgi_param  SERVER_NAME        $server_name;</p>
-
-<h1>PHP only, required if PHP was built with &mdash;enable-force-cgi-redirect</h1>
-
-<p>fastcgi_param  REDIRECT_STATUS    200;</p>
-
-<p>fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;</p>
-
-<p>```</p>
-
-<p>以下是修改后的nginx配置</p>
-]]></content>
-  </entry>
   
   <entry>
     <title type="html"><![CDATA[配置nginx支持rrdcgi]]></title>
@@ -207,6 +150,66 @@ cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
 <p><a href="http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html">http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html</a></p>
 
 <p><a href="http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample">http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nginx+Php5.3.8+php-fpm源码安装之二]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/"/>
+    <updated>2013-04-08T16:33:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2</id>
+    <content type="html"><![CDATA[<p>nginx端的配置
+首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
+
+<p><code>
+&lt;?php
+phpinfo();
+</code></p>
+
+<p>安装nginx
+安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
+
+<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
+或者
+<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
+即可看到php输出的信息。</p>
+
+<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
+```sh</p>
+
+<h1>fastcgi.conf</h1>
+
+<p>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                 <br/>
+fastcgi_param  SERVER_SOFTWARE    nginx;                                                                                                                   <br/>
+fastcgi_param  QUERY_STRING       $query_string;                                                                                                           <br/>
+fastcgi_param  REQUEST_METHOD     $request_method;                                                                                                         <br/>
+fastcgi_param  CONTENT_TYPE       $content_type;                                                                                                           <br/>
+fastcgi_param  CONTENT_LENGTH     $content_length;                                                                                                         <br/>
+fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;                                                                                      <br/>
+fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;</p>
+
+<h1>fastcgi_param  SCRIPT_NAME        $request_uri;</h1>
+
+<p>fastcgi_param  PATH_INFO          $fastcgi_script_name;                                                                                                    <br/>
+fastcgi_param  REQUEST_URI        $request_uri;                                                                                                            <br/>
+fastcgi_param  DOCUMENT_URI       $document_uri;                                                                                                           <br/>
+fastcgi_param  DOCUMENT_ROOT      $document_root;                                                                                                          <br/>
+fastcgi_param  SERVER_PROTOCOL    $server_protocol;                                                                                                        <br/>
+fastcgi_param  REMOTE_ADDR        $remote_addr;                                                                                                            <br/>
+fastcgi_param  REMOTE_PORT        $remote_port;                                                                                                            <br/>
+fastcgi_param  SERVER_ADDR        $server_addr;                                                                                                            <br/>
+fastcgi_param  SERVER_PORT        $server_port;                                                                                                            <br/>
+fastcgi_param  SERVER_NAME        $server_name;</p>
+
+<h1>PHP only, required if PHP was built with &mdash;enable-force-cgi-redirect</h1>
+
+<p>fastcgi_param  REDIRECT_STATUS    200;</p>
+
+<p>fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;</p>
+
+<p>```</p>
+
+<p>以下是修改后的nginx配置</p>
 ]]></content>
   </entry>
   

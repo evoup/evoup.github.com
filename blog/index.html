@@ -89,128 +89,6 @@
     <header>
   
   <h1 class="beta">
-    <a href="/blog/2014/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/">nginx+Php5.3.8+php-fpm源码安装之二</a>
-  </h1>
-  
-
-  
-  <div class="meta clearfix">
-    
-
-
-
-
-
-
-
-
-  
-
-
-<time class="pull-left" datetime="2014-04-08T16:33:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Apr 8<span>th</span>, 2014</time>
-    
-
-
-
-  
-  <div class="pull-left">
-    <i class="icon-tags"></i>
-    <ul class="tags unstyled">
-    
-      <li><a href="/blog/categories/nginx/">nginx</a></li>
-    
-      <li><a href="/blog/categories/php/">php</a></li>
-    
-    </ul>
-  </div>
-  
-
-    
-  </div>
-  
-</header>
-
-
-
-
-  <p>nginx端的配置
-首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?php
-</span><span class='line'>phpinfo();</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装nginx
-安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
-
-<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php%E6%88%96%E8%80%85http://192.168.216.198/test/%E5%8D%B3%E5%8F%AF%E7%9C%8B%E5%88%B0php%E8%BE%93%E5%87%BA%E7%9A%84%E4%BF%A1%E6%81%AF%E3%80%82">http://192.168.216.198/test/index.php%E6%88%96%E8%80%85http://192.168.216.198/test/%E5%8D%B3%E5%8F%AF%E7%9C%8B%E5%88%B0php%E8%BE%93%E5%87%BA%E7%9A%84%E4%BF%A1%E6%81%AF%E3%80%82</a></p>
-
-<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#fastcgi.conf                                                                                                                                                </span>
-</span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
-</span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
-</span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
-</span><span class='line'>fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
-</span><span class='line'>fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
-</span><span class='line'>fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
-</span><span class='line'>fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
-</span><span class='line'>fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
-</span><span class='line'>fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
-</span><span class='line'>fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
-</span><span class='line'>fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
-</span><span class='line'><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
-</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
-</span><span class='line'>
-</span><span class='line'>fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以下是修改后的nginx配置</p>
-
-
-  </article>
-  <hr>
-
-  
-  <article class="listing">
-    <header>
-  
-  <h1 class="beta">
     <a href="/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/">win7下cocos2d-js3.0 alpha生成android项目</a>
   </h1>
   
@@ -3989,6 +3867,131 @@ long2ip（3232290954).
 
   <a class="btn pull-right" href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/">Read on &rarr;</a>
 </div>
+
+  </article>
+  <hr>
+
+  
+  <article class="listing">
+    <header>
+  
+  <h1 class="beta">
+    <a href="/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/">nginx+Php5.3.8+php-fpm源码安装之二</a>
+  </h1>
+  
+
+  
+  <div class="meta clearfix">
+    
+
+
+
+
+
+
+
+
+  
+
+
+<time class="pull-left" datetime="2013-04-08T16:33:00+08:00" pubdate data-updated="true"><i class="icon-calendar"></i> Apr 8<span>th</span>, 2013</time>
+    
+
+
+
+  
+  <div class="pull-left">
+    <i class="icon-tags"></i>
+    <ul class="tags unstyled">
+    
+      <li><a href="/blog/categories/nginx/">nginx</a></li>
+    
+      <li><a href="/blog/categories/php/">php</a></li>
+    
+    </ul>
+  </div>
+  
+
+    
+  </div>
+  
+</header>
+
+
+
+
+  <p>nginx端的配置
+首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?php
+</span><span class='line'>phpinfo();</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装nginx
+安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
+
+<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
+或者
+<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
+即可看到php输出的信息。</p>
+
+<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#fastcgi.conf                                                                                                                                                </span>
+</span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+</span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
+</span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
+</span><span class='line'>fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
+</span><span class='line'>fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
+</span><span class='line'>fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
+</span><span class='line'>fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
+</span><span class='line'>fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
+</span><span class='line'><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
+</span><span class='line'>fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
+</span><span class='line'>fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
+</span><span class='line'>fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
+</span><span class='line'>fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
+</span><span class='line'>fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
+</span><span class='line'>fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
+</span><span class='line'>fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
+</span><span class='line'>fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
+</span><span class='line'>fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
+</span><span class='line'>fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
+</span><span class='line'><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
+</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
+</span><span class='line'>
+</span><span class='line'>fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以下是修改后的nginx配置</p>
+
 
   </article>
   <hr>

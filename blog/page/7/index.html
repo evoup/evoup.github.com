@@ -105,53 +105,6 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/21/ssh-authorized-keys/">创建ssh信任失败的原因分析和改进</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
-
-<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
-
-<p>由此推断：</p>
-
-<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
-
-<p>二，ssh-copy-id这个工具可以改进。</p>
-
-<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
-</div>
-  
-  
-
-
-        </article>
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-13T14:55:00+08:00" pubdate data-updated="true">Apr 13<span>th</span>, 2013</time>
         
       </p>
@@ -181,6 +134,113 @@
     <footer>
       <a class="btn btn-default" rel="full-article" href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/">Read on &rarr;</a>
     </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T16:33:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/">nginx+Php5.3.8+php-fpm源码安装之二</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>nginx端的配置
+首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?php
+</span><span class='line'>phpinfo();</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装nginx
+安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
+
+<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
+或者
+<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
+即可看到php输出的信息。</p>
+
+<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#fastcgi.conf                                                                                                                                                </span>
+</span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+</span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
+</span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
+</span><span class='line'>fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
+</span><span class='line'>fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
+</span><span class='line'>fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
+</span><span class='line'>fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
+</span><span class='line'>fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
+</span><span class='line'><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
+</span><span class='line'>fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
+</span><span class='line'>fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
+</span><span class='line'>fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
+</span><span class='line'>fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
+</span><span class='line'>fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
+</span><span class='line'>fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
+</span><span class='line'>fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
+</span><span class='line'>fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
+</span><span class='line'>fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
+</span><span class='line'>fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
+</span><span class='line'><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
+</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
+</span><span class='line'>
+</span><span class='line'>fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以下是修改后的nginx配置</p>
+</div>
+  
   
 
 
@@ -1036,8 +1096,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/">nginx+Php5.3.8+php-fpm源码安装之二</a>
-    
     <a class="list-group-item " href="/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/">win7下cocos2d-js3.0 Alpha生成android项目</a>
     
     <a class="list-group-item " href="/blog/2014/03/18/use-cocostudio-create-bone-animation2/">使用CocoStudio创建骨骼动画（二）</a>
@@ -1045,6 +1103,8 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     <a class="list-group-item " href="/blog/2014/03/18/android-install-ndk-cdt/">Win7 Android开发环境搭建之二(NDK+CDT)</a>
     
     <a class="list-group-item " href="/blog/2014/03/16/use-cocostudio-create-bone-animation1/">使用CocoStudio创建骨骼动画（一）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/14/2d-player-charactor-pratice/">设计2D游戏玩家角色</a>
     
   </div>
 </section>
