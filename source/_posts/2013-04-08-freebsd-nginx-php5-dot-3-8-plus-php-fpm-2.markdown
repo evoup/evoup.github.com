@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "nginx+Php5.3.8+php-fpm源码安装之二"
+title: "freebsd下nginx+Php5.3.8+php-fpm源码安装之二"
 date: 2013-04-08 16:33
 comments: true
 categories: [php,nginx]
@@ -25,7 +25,7 @@ http://192.168.216.198/test/
 
 默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
 ```sh
-#fastcgi.conf                                                                                                                                                
+#php_fcgi_params.conf                                                                                                                                              
 fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                   
 fastcgi_param  SERVER_SOFTWARE    nginx;                                                                                                                     
 fastcgi_param  QUERY_STRING       $query_string;                                                                                                             
@@ -52,5 +52,25 @@ fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
 
 ```
 
+在nginx.conf中的server上下文中添加
+```
+        location ~ ^/pma/.*$ {
+            #access_log /var/log/access_beta.log access1;
+            index index.php index.html index.htm;
+            root /services/www/;
+            fastcgi_index   index.php;
+            include /usr/local/etc/nginx/php_fcgi_params.conf;
+            fastcgi_pass 127.0.0.1:9000;
+        }
+```
 
-以下是修改后的nginx配置
+启动nignx
+```sh
+$ /usr/local/etc/rc.d/ngnix start
+```
+
+访问浏览器http://192.168.216.198/pma/
+
+![Alt text](/images/evoup/php-fpm-pma.png)
+
+done!

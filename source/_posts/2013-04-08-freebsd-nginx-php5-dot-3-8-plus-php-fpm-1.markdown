@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "nginx+Php5.3.8+php-fpm源码安装之一"
+title: "freebsd下nginx+Php5.3.8+php-fpm源码安装之一"
 date: 2013-04-08 01:03
 comments: true
 categories: [php,nginx]
