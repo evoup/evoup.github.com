@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "Php5.3.8+php-fpm源码安装"
+title: "nginx+Php5.3.8+php-fpm源码安装之一"
 date: 2013-04-08 01:03
 comments: true
-categories: php
+categories: [php,nginx]
 ---
  
 本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译
@@ -168,4 +168,4 @@ command_args="-g ${pidfile} -y ${fpmconffile}"
 run_rc_command $*
 ```
 
-完。
+下篇讲nginx的配置
