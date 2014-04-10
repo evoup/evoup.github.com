@@ -64,9 +64,19 @@ echo "abcd" | cut -b 1-3
 printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
 ```
 
+移除UTF-8的BOM
+```sh
+ sed -e '1s/^\xef\xbb\xbf//' < bomfile > newfile
+```
+
 vim不加载vimrc
 ```sh
 vim -u NONE
+```
+
+sudo的时候使用本用户的vimrc配置
+```sh
+sudo 
 ```
 
 调用vim来把文件转换为utf-8格式，注意要和find连用，需加载vimrc不然乱码
