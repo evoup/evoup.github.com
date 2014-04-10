@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>nginx+Php5.3.8+php-fpm源码安装之一 - Evoup`s Blog</title>
+  <title>freebsd下nginx+Php5.3.8+php-fpm源码安装之一 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-1">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -107,7 +107,7 @@
     
     
     <h1 class="entry-title">
-        nginx+Php5.3.8+php-fpm源码安装之一
+        freebsd下nginx+Php5.3.8+php-fpm源码安装之一
         
     </h1>
     
@@ -170,7 +170,7 @@ libevent(php-fpm需要,ports)</p>
 <p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$.</span>/configure<span class="s1">&#39; &#39;</span>--prefix<span class="o">=</span>/usr/local/php5_admin<span class="s1">&#39; &#39;</span>--with-layout<span class="o">=</span>GNU<span class="s1">&#39; &#39;</span>--with-config-file-scan-dir<span class="o">=</span>/usr/local/php5_admin/etc/php<span class="s1">&#39; &#39;</span>--disable-all<span class="s1">&#39; &#39;</span>--enable-dom<span class="s1">&#39; &#39;</span>--enable-filter<span class="s1">&#39; &#39;</span>--enable-hash<span class="s1">&#39; &#39;</span>--enable-json<span class="s1">&#39; &#39;</span>--with-mcrypt<span class="s1">&#39; &#39;</span>--with-curl<span class="s1">&#39; &#39;</span>--with-pcre-regex<span class="s1">&#39; &#39;</span>--enable-mbstring<span class="s1">&#39; &#39;</span>--enable-ctype<span class="s1">&#39; &#39;</span>--enable-session<span class="s1">&#39; &#39;</span>--enable-libxml<span class="s1">&#39; &#39;</span>--enable-simplexml<span class="s1">&#39; &#39;</span>--enable-pdo<span class="s1">&#39; &#39;</span>--with-pdo-mysql<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--with-mysqli<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--enable-sysvsem<span class="s1">&#39; &#39;</span>--enable-sysvshm<span class="s1">&#39; &#39;</span>--enable-apc<span class="s1">&#39; &#39;</span>--enable-memcache<span class="s1">&#39; &#39;</span>--with-imagick<span class="o">=</span>/usr/local<span class="s1">&#39; &#39;</span>--enable-fpm<span class="err">&#39;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="s1">$&#39;./configure&#39;</span> <span class="s1">&#39;--prefix=/usr/local/php5_admin&#39;</span> <span class="s1">&#39;--with-layout=GNU&#39;</span> <span class="s1">&#39;--with-config-file-scan-dir=/usr/local/php5_admin/etc/php&#39;</span> <span class="s1">&#39;--disable-all&#39;</span> <span class="s1">&#39;--enable-dom&#39;</span> <span class="s1">&#39;--enable-filter&#39;</span> <span class="s1">&#39;--enable-hash&#39;</span> <span class="s1">&#39;--enable-json&#39;</span> <span class="s1">&#39;--with-mcrypt&#39;</span> <span class="s1">&#39;--with-curl&#39;</span> <span class="s1">&#39;--with-pcre-regex&#39;</span> <span class="s1">&#39;--enable-mbstring&#39;</span> <span class="s1">&#39;--enable-ctype&#39;</span> <span class="s1">&#39;--enable-session&#39;</span> <span class="s1">&#39;--enable-libxml&#39;</span> <span class="s1">&#39;--enable-simplexml&#39;</span> <span class="s1">&#39;--enable-pdo&#39;</span> <span class="s1">&#39;--with-pdo-mysql=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysqli=mysqlnd&#39;</span> <span class="s1">&#39;--enable-sysvsem&#39;</span> <span class="s1">&#39;--enable-sysvshm&#39;</span> <span class="s1">&#39;--enable-apc&#39;</span> <span class="s1">&#39;--enable-memcache&#39;</span> <span class="s1">&#39;--with-imagick=/usr/local&#39;</span> <span class="s1">&#39;--enable-fpm&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -415,7 +415,7 @@ php-fpm 关闭：</p>
             <li class="previous"><a href="/blog/2013/03/25/php-zookeeper/" title="Previous Post: php和zookeeper交互获取hbase的master状态">&laquo; php和zookeeper交互获取hbase的master状态</a></li>
             
             
-            <li class="next"><a href="/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/" title="Next Post: nginx+Php5.3.8+php-fpm源码安装之二">nginx+Php5.3.8+php-fpm源码安装之二 &raquo;</a></li>
+            <li class="next"><a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2/" title="Next Post: freebsd下nginx+Php5.3.8+php-fpm源码安装之二">freebsd下nginx+Php5.3.8+php-fpm源码安装之二 &raquo;</a></li>
             
           </ul>
         

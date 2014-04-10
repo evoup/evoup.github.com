@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-08T16:56:18+08:00</updated>
+  <updated>2014-04-10T13:10:35+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -154,10 +154,10 @@ cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[nginx+Php5.3.8+php-fpm源码安装之二]]></title>
-    <link href="http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/"/>
+    <title type="html"><![CDATA[freebsd下nginx+Php5.3.8+php-fpm源码安装之二]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2/"/>
     <updated>2013-04-08T16:33:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2</id>
+    <id>http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2</id>
     <content type="html"><![CDATA[<p>nginx端的配置
 首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
 
@@ -177,7 +177,7 @@ phpinfo();
 <p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
 ```sh</p>
 
-<h1>fastcgi.conf</h1>
+<h1>php_fcgi_params.conf</h1>
 
 <p>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                 <br/>
 fastcgi_param  SERVER_SOFTWARE    nginx;                                                                                                                   <br/>
@@ -209,15 +209,39 @@ fastcgi_param  SERVER_NAME        $server_name;</p>
 
 <p>```</p>
 
-<p>以下是修改后的nginx配置</p>
+<p>在nginx.conf中的server上下文中添加
+```</p>
+
+<pre><code>    location ~ ^/pma/.*$ {
+        #access_log /var/log/access_beta.log access1;
+        index index.php index.html index.htm;
+        root /services/www/;
+        fastcgi_index   index.php;
+        include /usr/local/etc/nginx/php_fcgi_params.conf;
+        fastcgi_pass 127.0.0.1:9000;
+    }
+</code></pre>
+
+<p>```</p>
+
+<p>启动nignx
+<code>sh
+$ /usr/local/etc/rc.d/ngnix start
+</code></p>
+
+<p>访问浏览器<a href="http://192.168.216.198/pma/">http://192.168.216.198/pma/</a></p>
+
+<p><img src="/images/evoup/php-fpm-pma.png" alt="Alt text" /></p>
+
+<p>done!</p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[nginx+Php5.3.8+php-fpm源码安装之一]]></title>
-    <link href="http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-1/"/>
+    <title type="html"><![CDATA[freebsd下nginx+Php5.3.8+php-fpm源码安装之一]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/"/>
     <updated>2013-04-08T01:03:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-1</id>
+    <id>http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1</id>
     <content type="html"><![CDATA[<p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
 
 <h3>pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3>
@@ -261,7 +285,7 @@ make install clean
 
 <p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd
 <code>sh
-$./configure' '--prefix=/usr/local/php5_admin' '--with-layout=GNU' '--with-config-file-scan-dir=/usr/local/php5_admin/etc/php' '--disable-all' '--enable-dom' '--enable-filter' '--enable-hash' '--enable-json' '--with-mcrypt' '--with-curl' '--with-pcre-regex' '--enable-mbstring' '--enable-ctype' '--enable-session' '--enable-libxml' '--enable-simplexml' '--enable-pdo' '--with-pdo-mysql=mysqlnd' '--with-mysqli=mysqlnd' '--enable-sysvsem' '--enable-sysvshm' '--enable-apc' '--enable-memcache' '--with-imagick=/usr/local' '--enable-fpm'
+$'./configure' '--prefix=/usr/local/php5_admin' '--with-layout=GNU' '--with-config-file-scan-dir=/usr/local/php5_admin/etc/php' '--disable-all' '--enable-dom' '--enable-filter' '--enable-hash' '--enable-json' '--with-mcrypt' '--with-curl' '--with-pcre-regex' '--enable-mbstring' '--enable-ctype' '--enable-session' '--enable-libxml' '--enable-simplexml' '--enable-pdo' '--with-pdo-mysql=mysqlnd' '--with-mysqli=mysqlnd' '--enable-sysvsem' '--enable-sysvshm' '--enable-apc' '--enable-memcache' '--with-imagick=/usr/local' '--enable-fpm'
 </code></p>
 
 <p>注意

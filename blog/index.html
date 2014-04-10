@@ -3876,7 +3876,7 @@ long2ip（3232290954).
     <header>
   
   <h1 class="beta">
-    <a href="/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-2/">nginx+Php5.3.8+php-fpm源码安装之二</a>
+    <a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2/">freebsd下nginx+Php5.3.8+php-fpm源码安装之二</a>
   </h1>
   
 
@@ -3963,7 +3963,7 @@ long2ip（3232290954).
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#fastcgi.conf                                                                                                                                                </span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#php_fcgi_params.conf                                                                                                                                              </span>
 </span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
 </span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
 </span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
@@ -3990,7 +3990,39 @@ long2ip（3232290954).
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>以下是修改后的nginx配置</p>
+<p>在nginx.conf中的server上下文中添加</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>    location ~ ^/pma/.*<span class="nv">$ </span><span class="o">{</span>
+</span><span class='line'>        <span class="c">#access_log /var/log/access_beta.log access1;</span>
+</span><span class='line'>        index index.php index.html index.htm;
+</span><span class='line'>        root /services/www/;
+</span><span class='line'>        fastcgi_index   index.php;
+</span><span class='line'>        include /usr/local/etc/nginx/php_fcgi_params.conf;
+</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
+</span><span class='line'>    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>启动nignx</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/etc/rc.d/ngnix start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>访问浏览器<a href="http://192.168.216.198/pma/">http://192.168.216.198/pma/</a></p>
+
+<p><img src="/images/evoup/php-fpm-pma.png" alt="Alt text" /></p>
+
+<p>done!</p>
 
 
   </article>
@@ -4001,7 +4033,7 @@ long2ip（3232290954).
     <header>
   
   <h1 class="beta">
-    <a href="/blog/2013/04/08/nginx-php5-dot-3-8-plus-php-fpm-1/">nginx+Php5.3.8+php-fpm源码安装之一</a>
+    <a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/">freebsd下nginx+Php5.3.8+php-fpm源码安装之一</a>
   </h1>
   
 
@@ -4101,7 +4133,7 @@ libevent(php-fpm需要,ports)</p>
 <p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$.</span>/configure<span class="s1">&#39; &#39;</span>--prefix<span class="o">=</span>/usr/local/php5_admin<span class="s1">&#39; &#39;</span>--with-layout<span class="o">=</span>GNU<span class="s1">&#39; &#39;</span>--with-config-file-scan-dir<span class="o">=</span>/usr/local/php5_admin/etc/php<span class="s1">&#39; &#39;</span>--disable-all<span class="s1">&#39; &#39;</span>--enable-dom<span class="s1">&#39; &#39;</span>--enable-filter<span class="s1">&#39; &#39;</span>--enable-hash<span class="s1">&#39; &#39;</span>--enable-json<span class="s1">&#39; &#39;</span>--with-mcrypt<span class="s1">&#39; &#39;</span>--with-curl<span class="s1">&#39; &#39;</span>--with-pcre-regex<span class="s1">&#39; &#39;</span>--enable-mbstring<span class="s1">&#39; &#39;</span>--enable-ctype<span class="s1">&#39; &#39;</span>--enable-session<span class="s1">&#39; &#39;</span>--enable-libxml<span class="s1">&#39; &#39;</span>--enable-simplexml<span class="s1">&#39; &#39;</span>--enable-pdo<span class="s1">&#39; &#39;</span>--with-pdo-mysql<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--with-mysqli<span class="o">=</span>mysqlnd<span class="s1">&#39; &#39;</span>--enable-sysvsem<span class="s1">&#39; &#39;</span>--enable-sysvshm<span class="s1">&#39; &#39;</span>--enable-apc<span class="s1">&#39; &#39;</span>--enable-memcache<span class="s1">&#39; &#39;</span>--with-imagick<span class="o">=</span>/usr/local<span class="s1">&#39; &#39;</span>--enable-fpm<span class="err">&#39;</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="s1">$&#39;./configure&#39;</span> <span class="s1">&#39;--prefix=/usr/local/php5_admin&#39;</span> <span class="s1">&#39;--with-layout=GNU&#39;</span> <span class="s1">&#39;--with-config-file-scan-dir=/usr/local/php5_admin/etc/php&#39;</span> <span class="s1">&#39;--disable-all&#39;</span> <span class="s1">&#39;--enable-dom&#39;</span> <span class="s1">&#39;--enable-filter&#39;</span> <span class="s1">&#39;--enable-hash&#39;</span> <span class="s1">&#39;--enable-json&#39;</span> <span class="s1">&#39;--with-mcrypt&#39;</span> <span class="s1">&#39;--with-curl&#39;</span> <span class="s1">&#39;--with-pcre-regex&#39;</span> <span class="s1">&#39;--enable-mbstring&#39;</span> <span class="s1">&#39;--enable-ctype&#39;</span> <span class="s1">&#39;--enable-session&#39;</span> <span class="s1">&#39;--enable-libxml&#39;</span> <span class="s1">&#39;--enable-simplexml&#39;</span> <span class="s1">&#39;--enable-pdo&#39;</span> <span class="s1">&#39;--with-pdo-mysql=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysqli=mysqlnd&#39;</span> <span class="s1">&#39;--enable-sysvsem&#39;</span> <span class="s1">&#39;--enable-sysvshm&#39;</span> <span class="s1">&#39;--enable-apc&#39;</span> <span class="s1">&#39;--enable-memcache&#39;</span> <span class="s1">&#39;--with-imagick=/usr/local&#39;</span> <span class="s1">&#39;--enable-fpm&#39;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
