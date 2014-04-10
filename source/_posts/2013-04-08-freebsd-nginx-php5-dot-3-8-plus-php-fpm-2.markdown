@@ -23,7 +23,8 @@ phpinfo();
 http://192.168.216.198/test/
 即可看到php输出的信息。
 
-默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
+默认nginx的fastcgi脚本似乎不直接支持php，需要创建一个文件php_fcgi_params.conf，然后在此文件中加入类似如下的代码：
+
 ```sh
 #php_fcgi_params.conf                                                                                                                                              
 fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                   
@@ -49,7 +50,6 @@ fastcgi_param  SERVER_NAME        $server_name;
 fastcgi_param  REDIRECT_STATUS    200;
 
 fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
-
 ```
 
 在nginx.conf中的server上下文中添加
