@@ -60,8 +60,7 @@ info.tcpi_unacked => info.__tcpi_unacked
 
 ####配置
 ```sh
-$ cp /usr/local/php5_admin/etc/php-fpm.conf.default 
-$ /usr/local/php5_admin/etc/php-fpm.conf
+$ cp /usr/local/php5_admin/etc/php-fpm.conf.default /usr/local/php5_admin/etc/php-fpm.conf
 ```
 
 几个需要配置的参数
