@@ -46,7 +46,7 @@ make install clean
 ####手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，
 --enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd
 ```sh
-$'./configure' '--prefix=/usr/local/php5_admin' '--with-layout=GNU' '--with-config-file-scan-dir=/usr/local/php5_admin/etc/php' '--disable-all' '--enable-dom' '--enable-filter' '--enable-hash' '--enable-json' '--with-mcrypt' '--with-curl' '--with-pcre-regex' '--enable-mbstring' '--enable-ctype' '--enable-session' '--enable-libxml' '--enable-simplexml' '--enable-pdo' '--with-pdo-mysql=mysqlnd' '--with-mysqli=mysqlnd' '--enable-sysvsem' '--enable-sysvshm' '--enable-apc' '--enable-memcache' '--with-imagick=/usr/local' '--enable-fpm'
+$'./configure' '--prefix=/usr/local/php5_admin' '--with-layout=GNU' '--with-config-file-scan-dir=/usr/local/php5_admin/etc/php' '--disable-all' '--enable-dom' '--enable-filter' '--enable-hash' '--enable-json' '--with-mcrypt' '--with-curl' '--with-pcre-regex' '--enable-mbstring' '--enable-ctype' '--enable-session' '--enable-libxml' '--enable-simplexml' '--enable-pdo' '--with-pdo-mysql=mysqlnd' '--with-mysqli=mysqlnd' '--with-mysql' '--enable-sysvsem' '--enable-sysvshm' '--enable-apc' '--enable-memcache' '--with-imagick=/usr/local' '--enable-fpm'
 ```
 
 注意
