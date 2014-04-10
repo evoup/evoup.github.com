@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-10T17:44:34+08:00</updated>
+  <updated>2014-04-10T18:16:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -174,8 +174,9 @@ phpinfo();
 <a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
 即可看到php输出的信息。</p>
 
-<p>默认nginx的fastcgi脚本似乎不直接支持php，需要改成类似如下的方式：
-```sh</p>
+<p>默认nginx的fastcgi脚本似乎不直接支持php，需要创建一个文件php_fcgi_params.conf，然后在此文件中加入类似如下的代码：</p>
+
+<p>```sh</p>
 
 <h1>php_fcgi_params.conf</h1>
 
@@ -205,9 +206,8 @@ fastcgi_param  SERVER_NAME        $server_name;</p>
 
 <p>fastcgi_param  REDIRECT_STATUS    200;</p>
 
-<p>fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;</p>
-
-<p>```</p>
+<p>fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
+```</p>
 
 <p>在nginx.conf中的server上下文中添加
 ```</p>
