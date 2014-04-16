@@ -114,7 +114,7 @@
   </header>
 
 
-<div class="entry-content clearfix"><p>手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+<div class="entry-content clearfix"><p>ssh-copy-id在版本比较高的freebsd的port中提供了，安装即可。手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
 
 <!-- more -->
 
@@ -235,6 +235,121 @@
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-copy-id <span class="s2">&quot;-p8887 user@211.136.221.207&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就可以了。</p>
+
+<h3>port中没有怎么办？</h3>
+
+<p>直接创建一个文件叫做/usr/local/bin/ssh-copy-id，注意文件权限要为555，以及所有者为root</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Shell script to install your public key on a remote machine</span>
+</span><span class='line'><span class="c"># Takes the remote machine name as an argument.</span>
+</span><span class='line'><span class="c"># Obviously, the remote machine must accept password authentication,</span>
+</span><span class='line'><span class="c"># or one of the other keys in your ssh-agent, for this to work.</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">ID_FILE</span><span class="o">=</span><span class="s2">&quot;${HOME}/.ssh/id_rsa.pub&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;-i&quot;</span> <span class="o">=</span> <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span><span class="nb">shift</span>
+</span><span class='line'>  <span class="c"># check if we have 2 parameters left, if so the first is the new ID file</span>
+</span><span class='line'>  <span class="k">if</span> <span class="o">[</span> -n <span class="s2">&quot;$2&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">    if </span>expr <span class="s2">&quot;$1&quot;</span> : <span class="s2">&quot;.*\.pub&quot;</span> &gt; /dev/null ; <span class="k">then</span>
+</span><span class='line'><span class="k">      </span><span class="nv">ID_FILE</span><span class="o">=</span><span class="s2">&quot;$1&quot;</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'><span class="k">      </span><span class="nv">ID_FILE</span><span class="o">=</span><span class="s2">&quot;$1.pub&quot;</span>
+</span><span class='line'>    <span class="k">fi</span>
+</span><span class='line'><span class="k">    </span><span class="nb">shift</span>         <span class="c"># and this should leave $1 as the target name</span>
+</span><span class='line'>  <span class="k">fi</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="k">  if</span> <span class="o">[</span> x<span class="nv">$SSH_AUTH_SOCK</span> !<span class="o">=</span> x <span class="o">]</span> <span class="o">&amp;&amp;</span> ssh-add -L &gt;/dev/null 2&gt;&amp;1; <span class="k">then</span>
+</span><span class='line'><span class="k">    </span><span class="nv">GET_ID</span><span class="o">=</span><span class="s2">&quot;$GET_ID ssh-add -L&quot;</span>
+</span><span class='line'>  <span class="k">fi</span>
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;`eval $GET_ID`&quot;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> -r <span class="s2">&quot;${ID_FILE}&quot;</span> <span class="o">]</span> ; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span><span class="nv">GET_ID</span><span class="o">=</span><span class="s2">&quot;cat ${ID_FILE}&quot;</span>
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;`eval $GET_ID`&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span><span class="nb">echo</span> <span class="s2">&quot;$0: ERROR: No identities found&quot;</span> &gt;&amp;2
+</span><span class='line'>  <span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;$#&quot;</span> -lt 1 <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">=</span> <span class="s2">&quot;-h&quot;</span> <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="s2">&quot;$1&quot;</span> <span class="o">=</span> <span class="s2">&quot;--help&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">  </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 [-i [identity_file]] [user@]machine&quot;</span> &gt;&amp;2
+</span><span class='line'>  <span class="nb">exit </span>1
+</span><span class='line'><span class="k">fi</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># strip any trailing colon</span>
+</span><span class='line'><span class="nv">host</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="nv">$1</span> | sed <span class="s1">&#39;s/:$//&#39;</span><span class="sb">`</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span> <span class="nb">eval</span> <span class="s2">&quot;$GET_ID&quot;</span> ; <span class="o">}</span> | ssh <span class="nv">$host</span> <span class="s2">&quot;umask 077; test -d ~/.ssh || mkdir ~/.ssh ; cat &gt;&gt; ~/.ssh/authorized_keys&quot;</span> <span class="o">||</span> <span class="nb">exit </span>1
+</span><span class='line'>
+</span><span class='line'>cat <span class="s">&lt;&lt;EOF</span>
+</span><span class='line'><span class="s">Now try logging into the machine, with &quot;ssh &#39;$host&#39;&quot;, and check in:</span>
+</span><span class='line'>
+</span><span class='line'><span class="s">  ~/.ssh/authorized_keys</span>
+</span><span class='line'>
+</span><span class='line'><span class="s">to make sure we haven&#39;t added extra keys that you weren&#39;t expecting.</span>
+</span><span class='line'>
+</span><span class='line'><span class="s">EOF</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
