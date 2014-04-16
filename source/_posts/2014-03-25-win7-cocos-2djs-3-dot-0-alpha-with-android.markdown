@@ -46,9 +46,9 @@ python setup.py
 ![Alt text](/images/evoup/cocos2d-js_android/06.png)
 
 ###产生项目
-比如说要在c:/projects下创建一个有native编译支持的，名为prohectFoo的项目，需要在控制台输入
+比如说要在c:/projects下创建一个有native编译支持的，名为projectFirst的项目，需要在控制台输入
 ```sh
-%COCOS_CONSOLE_ROOT%/cocos new projectFoo -l js -d c:/projects
+%COCOS_CONSOLE_ROOT%/cocos new projectFirst -l js -d c:/projects
 
 ```
 等一会儿就创建完毕<br>
