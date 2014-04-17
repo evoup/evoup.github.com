@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-16T15:00:43+08:00</updated>
+  <updated>2014-04-17T14:54:08+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -339,63 +339,54 @@ ntpdate ntp.sjtu.edu.cn</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[freebsd下安装nginx+php4.4.9的方法]]></title>
-    <link href="http://evoupsight.com/blog/2011/01/18/nginx-php4/"/>
-    <updated>2011-01-18T15:10:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2011/01/18/nginx-php4</id>
-    <content type="html"><![CDATA[<p>首先是php4.4
-<a href="http://cn.php.net/distributions/php-4.4.9.tar.bz2">http://cn.php.net/distributions/php-4.4.9.tar.bz2</a></p>
+    <title type="html"><![CDATA[freebsd6.2i386安装subversion]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion/"/>
+    <updated>2013-04-17T14:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion</id>
+    <content type="html"><![CDATA[<p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code>Could not find bsd.port.options.mk</code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
+
+<p>注意编译subversion的时候会出现
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
 
 <!-- more -->
 
 
-<p>（ps:更老的版本可以到museum.php.net去找。）</p>
-
-<p>装之前别忘为&mdash;enable的几个找下pecl
-编译php4（先不打补丁）的时候先使用这样的参数
-```makefile
-./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
-
-<p>make
-make install
-```</p>
-
-<p>然后打补丁
-同时候准备好补丁文件，<a href="http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz">http://php-fpm.org/downloads/php-4.4.9-fpm-0.5.10.diff.gz</a>
+<p>对g++做个软连接
 <code>sh
-gzip -cd php-4.4.9-fpm-0.5.10.diff.gz  | patch -d php-4.4.9 -p1
-</code>
-再次
-```makefile
-./configure &mdash;prefix=/usr/local/php4_admin &mdash;enable-versioning &mdash;enable-memory-limit &mdash;with-layout=GNU &mdash;with-config-file-scan-dir=/usr/local/php4_admin/etc/php &mdash;enable-force-cgi-redirect &mdash;with-mysql=/usr/local -enable-mbstring &mdash;enable-ctype &mdash;with-gd=/usr/local &mdash;with-freetype-dir=/usr/local &mdash;enable-ftp &mdash;with-mcrypt=/usr/local &mdash;enable-memcache &mdash;enable-apc &mdash;enable-xml &mdash;with-pcre-regex &mdash;enable-bcompiler &mdash;with-bz2 &mdash;with-zlib &mdash;enable-fastcgi &mdash;enable-fpm</p>
-
-<p>make
-make install
-```</p>
-
-<p>这个php-fpm.conf要改的
-<code>sh
- 62             Unix user of processes
- 63         &lt;!--    &lt;value name="user"&gt;nobody&lt;/value&gt;       --&gt;
- 64
- 65             Unix group of processes
- 66         &lt;!--    &lt;value name="group"&gt;nobody&lt;/value&gt;      --&gt;
+sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
 </code></p>
 
-<p>换成
-<code>sh
- 62             Unix user of processes
- 63             &lt;value name="user"&gt;www&lt;/value&gt;
- 64
- 65             Unix group of processes
- 66             &lt;value name="group"&gt;www&lt;/value&gt;
+<h3>安装依赖</h3>
+
+<p><code>sh
+axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
+tar xzf apr-1.5.0.tar.gz
+cd apr-1.5.0
+./configure
+make
+sudo make install
+fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
+tar xjf apr-util-1.5.3.tar.gz
+cd apr-util-1.5.3
+make
+sudo make install
 </code></p>
 
-<p>然后到目录sbin下试一试
-<code>sh
-sudo /usr/local/php4_admin/sbin/php-fpm start
-</code>
-看到就可以了，收工。</p>
+<h3>安装subversion</h3>
+
+<p><code>sh
+fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
+tar xzf subversion-1.8.8.tar.gz
+cd subversion-1.8.8
+fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
+unzip sqlite-amalgamation-3071501.zip
+mv sqlite-amalgamation-3071501 sqlite-amalgamation
+./configure --with-apr=/usr/local/apr/ --with-apr-util=/usr/local/apr/
+make
+sudo make install
+</code></p>
+
+<p>收工！</p>
 ]]></content>
   </entry>
   

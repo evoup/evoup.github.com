@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>gcc静态编译 - Evoup`s Blog</title>
+  <title>freebsd6.2i386安装subversion - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2010/11/18/gcc-static-compile">
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,23 +101,35 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-17T14:45:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        Gcc静态编译
+        freebsd6.2i386安装subversion
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
-<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
-编译静态库
-先找一下源文件</p>
+<div class="entry-content clearfix"><p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code>Could not find bsd.port.options.mk</code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
+
+<p>注意编译subversion的时候会出现
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+
+<!-- more -->
+
+
+<p>对g++做个软连接</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装依赖</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -125,52 +137,49 @@
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
-</span><span class='line'>./sfhashfcn.c
-</span><span class='line'>./test.c
-</span><span class='line'>./sfmemcap.c
-</span><span class='line'>./sfxhash.c
-</span><span class='line'>./sfprimetable.c
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
+</span><span class='line'>tar xzf apr-1.5.0.tar.gz
+</span><span class='line'><span class="nb">cd </span>apr-1.5.0
+</span><span class='line'>./configure
+</span><span class='line'>make
+</span><span class='line'>sudo make install
+</span><span class='line'>fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
+</span><span class='line'>tar xjf apr-util-1.5.3.tar.gz
+</span><span class='line'><span class="nb">cd </span>apr-util-1.5.3
+</span><span class='line'>make
+</span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>生成中间文件</p>
+<h3>安装subversion</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
-</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
-</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
-</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
+</span><span class='line'>tar xzf subversion-1.8.8.tar.gz
+</span><span class='line'><span class="nb">cd </span>subversion-1.8.8
+</span><span class='line'>fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
+</span><span class='line'>unzip sqlite-amalgamation-3071501.zip
+</span><span class='line'>mv sqlite-amalgamation-3071501 sqlite-amalgamation
+</span><span class='line'>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/
+</span><span class='line'>make
+</span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>生成静态库</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
-</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p>收工！</p>
 </div>
 
 
@@ -194,13 +203,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-17T14:45:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/gcc/'>gcc</a>
+    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>, <a class='category' href='/blog/categories/version-control/'>version_control</a>
   
 </span>
 
@@ -212,10 +221,10 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2010/11/05/socket-server-experience/" title="Previous Post: socket服务器开发心得[长连接线程版]">&laquo; socket服务器开发心得[长连接线程版]</a></li>
+            <li class="previous"><a href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/" title="Previous Post: rrdtool graph报错Cannot parse vname from DEF">&laquo; rrdtool graph报错Cannot parse vname from DEF</a></li>
             
             
-            <li class="next"><a href="/blog/2010/11/19/php-myadmin1045-error/" title="Next Post: php myadmin1045 error">php myadmin1045 error &raquo;</a></li>
+            <li class="next"><a href="/blog/2013/04/21/ssh-authorized-keys/" title="Next Post: 创建ssh信任失败的原因分析和改进">创建ssh信任失败的原因分析和改进 &raquo;</a></li>
             
           </ul>
         
