@@ -69,6 +69,12 @@ printf "GET / HTTP/1.0\r\n\r\n" | nc www.baidu.com 80
  sed -e '1s/^\xef\xbb\xbf//' < bomfile > newfile
 ```
 
+无输出在后台静默执行命令
+```sh
+nohup sh command >> /dev/null
+#注意如果command是一个脚本，所在脚本可以写成&后台执行的方式以获得主调代码异步的机制
+```
+
 vim不加载vimrc
 ```sh
 vim -u NONE
