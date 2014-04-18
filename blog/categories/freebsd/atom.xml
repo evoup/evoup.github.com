@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-18T14:25:37+08:00</updated>
+  <updated>2014-04-18T18:49:26+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -339,54 +339,93 @@ ntpdate ntp.sjtu.edu.cn</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[freebsd6.2i386安装subversion]]></title>
-    <link href="http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion/"/>
-    <updated>2013-04-17T14:45:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion</id>
-    <content type="html"><![CDATA[<p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code>Could not find bsd.port.options.mk</code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
+    <title type="html"><![CDATA[在操作系统之间迁移二进制程序]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os/"/>
+    <updated>2013-04-18T17:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os</id>
+    <content type="html"><![CDATA[<h3>写在前面</h3>
 
-<p>注意编译subversion的时候会出现
-<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+<p>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br>
+单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把程序直接移植到另一台机器HostB上去？答案是肯定的。</p>
 
 <!-- more -->
 
 
-<p>对g++做个软连接
+<h3>程序定位和复制</h3>
+
+<h4>主程序的复制</h4>
+
+<p>这个程序就是pcc，首先找一下pcc的路径。
 <code>sh
-sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
+$ whereis pcc
+pcc: /usr/bin/pcc /usr/ports/lang/pcc
 </code></p>
 
-<h3>安装依赖</h3>
+<p>可见pcc所在/usr/bin/目录下，先把这个复制过去
+<code>sh
+$ sudo scp user@hostA:/usr/bin/pcc /usr/bin/
+</code></p>
+
+<h4>程序依赖库的复制</h4>
+
+<p>如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：
+```sh
+$ ldd /usr/bin/pcc
+/usr/bin/pcc:</p>
+
+<pre><code>    libphp-runtime_u.so =&gt; /usr/lib/libphp-runtime_u.so (0x28083000)
+    libprofiler_u.so =&gt; /usr/lib/libprofiler_u.so (0x280ee000)
+    libwebconnect_u.so =&gt; /usr/lib/libwebconnect_u.so (0x280f2000)
+    libphpeval_u.so =&gt; /usr/lib/libphpeval_u.so (0x28108000)
+    libbigloo_u-2.6f.so =&gt; /usr/lib/libbigloo_u-2.6f.so (0x28250000)
+    libbigloogc-2.6f.so =&gt; /usr/lib/libbigloogc-2.6f.so (0x2833a000)
+    libm.so.4 =&gt; /lib/libm.so.4 (0x2835c000)
+    libc.so.6 =&gt; /lib/libc.so.6 (0x28372000)
+</code></pre>
+
+<p>```
+好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
 
 <p><code>sh
-axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
-tar xzf apr-1.5.0.tar.gz
-cd apr-1.5.0
-./configure
-make
-sudo make install
-fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
-tar xjf apr-util-1.5.3.tar.gz
-cd apr-util-1.5.3
-make
-sudo make install
+$ cd /home/software
+$ fetch https://pkgs.fedoraproject.org/repo/pkgs/bigloo/bigloo2.6f.tar.gz/bc99b1919adee864dd371aeebc36862c/bigloo2.6f.tar.gz
+$ tar xzf bigloo2.6f.tar.gz
+$ cd bigloo2.6f
+$ ./configure --jvm=no
+*** ERROR:configure:the C compiler (/usr/local/bin/gcc44) does not seem to work. Aborting
+$ whereis gcc
+gcc: /usr/bin/gcc /usr/share/man/man1/gcc.1.gz /usr/src/contrib/gcc
+$ sudo ln -s /usr/bin/gcc /usr/local/bin/gcc44
+$ ./configure --jvm=no
+$ gmake
+$ sudo gmake install
 </code></p>
 
-<h3>安装subversion</h3>
+<p>安装完成返回来继续复制，要注意已经存在的不能去盖了
+```sh
+$ ldd /usr/bin/pcc
+/usr/bin/pcc:</p>
 
-<p><code>sh
-fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
-tar xzf subversion-1.8.8.tar.gz
-cd subversion-1.8.8
-fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
-unzip sqlite-amalgamation-3071501.zip
-mv sqlite-amalgamation-3071501 sqlite-amalgamation
-./configure --with-apr=/usr/local/apr/ --with-apr-util=/usr/local/apr/
-make
-sudo make install
-</code></p>
+<pre><code>    libphp-runtime_u.so =&gt; not found (0x0)
+    libprofiler_u.so =&gt; not found (0x0)
+    libwebconnect_u.so =&gt; not found (0x0)
+    libphpeval_u.so =&gt; not found (0x0)
+    libbigloo_u-2.6f.so =&gt; /usr/local/lib/libbigloo_u-2.6f.so (0x28083000)
+    libbigloogc-2.6f.so =&gt; /usr/local/lib/libbigloogc-2.6f.so (0x2816d000)
+    libm.so.4 =&gt; /lib/libm.so.4 (0x2818f000)
+    libc.so.6 =&gt; /lib/libc.so.6 (0x281a5000)
+</code></pre>
 
-<p>收工！</p>
+<p>```</p>
+
+<p>好的，只要not found的我们从HostA复制过来
+<code>sh
+sudo scp yin@211.136.104.179:/usr/lib/libphp-runtime_u.so /usr/lib/
+sudo scp yin@211.136.104.179:/usr/lib/libprofiler_u.so /usr/lib/
+sudo scp yin@211.136.104.179:/usr/lib/libwebconnect_u.so /usr/lib/
+sudo scp yin@211.136.104.179:/usr/lib/libphpeval_u.so /usr/lib/
+</code>
+然后对于每个新的so，需要再进一步检查依赖，如果没有的也要复制过来</p>
 ]]></content>
   </entry>
   
