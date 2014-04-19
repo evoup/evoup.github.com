@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>在操作系统之间迁移二进制程序 - Evoup`s Blog</title>
+  <title>在操作系统之间迁移二进制程序之一 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -107,7 +107,7 @@
     
     
     <h1 class="entry-title">
-        在操作系统之间迁移二进制程序
+        在操作系统之间迁移二进制程序之一
         
     </h1>
     
@@ -229,14 +229,415 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo scp yin@211.136.104.179:/usr/lib/libphp-runtime_u.so /usr/lib/
-</span><span class='line'>sudo scp yin@211.136.104.179:/usr/lib/libprofiler_u.so /usr/lib/
-</span><span class='line'>sudo scp yin@211.136.104.179:/usr/lib/libwebconnect_u.so /usr/lib/
-</span><span class='line'>sudo scp yin@211.136.104.179:/usr/lib/libphpeval_u.so /usr/lib/
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
+</span><span class='line'><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/
+</span><span class='line'><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/
+</span><span class='line'><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>然后对于每个新的so，需要再进一步检查依赖，如果没有的也要复制过来</p>
+<p>然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
+试试看，其实已经可以了：
+<img src="/images/evoup/pcc_result.png" alt="Alt text" /></p>
+
+<p>但是要真正能使用这个软件，还需要复制/opt过来</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>scp -dr user@hostA:/opt /
+</span><span class='line'>sudo chown root -R /opt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后写一个php测试脚本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nb">phpinfo</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>pcc --static index.php -o index
+</span><span class='line'>&gt;./index
+</span><span class='line'>Runtime error in file index.php on line 2: lookup-function - undefined <span class="k">function</span>: phpinfo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来还有些库没有包含,进入/opt/roadsend/pcc/libs/果然发现很多库，要放在什么地方呢？一般是/usr/lib/
+再看一下/opt/roadsend/pcc/bin/roadsend-pcc-uninstall.sh</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#
+</span><span class='line'># This is an automatically generated uninstaller script for the
+</span><span class='line'># Roadsend PHP Compiler package
+</span><span class='line'>#
+</span><span class='line'>
+</span><span class='line'>## require root
+</span><span class='line'>me=`id -u`
+</span><span class='line'>if [ "$me" -ne 0 ]
+</span><span class='line'>then
+</span><span class='line'>    echo "You must be root to run uninstaller"
+</span><span class='line'>    exit 1
+</span><span class='line'>fi
+</span><span class='line'>
+</span><span class='line'>echo "Uninstalling Roadsend Compiler Runtime..."
+</span><span class='line'>
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libcgi_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-std_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphpeval_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libprofiler_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libcgi_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-std_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphpeval_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libprofiler_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-curl.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-mysql.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-pcre.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-runtime.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-std.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.sch
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/cgi.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/fastcgi.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/mhttpd.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-curl.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-mysql.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-pcre.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.h
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo_config.h
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-runtime.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-std.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/phpeval.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/profiler.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/webconnect.heap
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.init
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.init
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/phpeval.init
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmyapp_s.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebserver.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebserver.a
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/web_server.h
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libbigloo_u-2.6f.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libbigloogc-2.6f.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/modules/fastcgi/pcc.fcgi
+</span><span class='line'>rm -f /./opt/roadsend/pcc/modules/apache1.3.x/mod_pcc.so
+</span><span class='line'>rm -f /./opt/roadsend/pcc/bin/bigloo
+</span><span class='line'>rm -f /usr/lib/libbigloo_u-2.6f.so
+</span><span class='line'>rm -f /usr/lib/libbigloogc-2.6f.so
+</span><span class='line'>rm -f /usr/lib/libcgi_u.so
+</span><span class='line'>rm -f /usr/lib/libfastcgi_u.so
+</span><span class='line'>rm -f /usr/lib/libmhttpd_u.so
+</span><span class='line'>rm -f /usr/lib/libmyapp_s.so
+</span><span class='line'>rm -f /usr/lib/libphp-curl_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-gtk_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-mysql_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-pcre_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-runtime_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-std_u.so
+</span><span class='line'>rm -f /usr/lib/libphp-xml_u.so
+</span><span class='line'>rm -f /usr/lib/libphpeval_u.so
+</span><span class='line'>rm -f /usr/lib/libprofiler_u.so
+</span><span class='line'>rm -f /usr/lib/libwebconnect_u.so
+</span><span class='line'>rm -f /usr/lib/libwebserver.so
+</span><span class='line'>rm -f /usr/lib/libcgi_u.a
+</span><span class='line'>rm -f /usr/lib/libfastcgi_u.a
+</span><span class='line'>rm -f /usr/lib/libmhttpd_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-curl_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-gtk_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-mysql_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-pcre_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-runtime_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-std_u.a
+</span><span class='line'>rm -f /usr/lib/libphp-xml_u.a
+</span><span class='line'>rm -f /usr/lib/libphpeval_u.a
+</span><span class='line'>rm -f /usr/lib/libprofiler_u.a
+</span><span class='line'>rm -f /usr/lib/libwebconnect_u.a
+</span><span class='line'>rm -f /usr/lib/libwebserver.a
+</span><span class='line'>    if [ -f "/sbin/ldconfig" ]; then
+</span><span class='line'>        echo "running ldconfig ..."
+</span><span class='line'>        /sbin/ldconfig
+</span><span class='line'>    fi
+</span><span class='line'>rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来还有一些项目要复制或者软连接到/usr/lib/去</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libcgi_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libfastcgi_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libmyapp_s.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-std_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphpeval_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libprofiler_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libwebserver.so /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libcgi_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-std_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libphpeval_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libprofiler_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.a /usr/lib/
+</span><span class='line'>sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除此之外，还需要复制配置文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo scp user@hostA:/etc/pcc.conf /etc/
+</span><span class='line'>sudo scp user@hostA:/etc/pcc_conf.conf /etc/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>pcc --static index.php -o index
+</span><span class='line'>
+</span><span class='line'>*** ERROR:bigloo:error-handler:
+</span><span class='line'>Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn<span class="err">&#39;</span>t load because: Shared object <span class="s2">&quot;libpcre.so.0&quot;</span> not found, required by <span class="s2">&quot;libphp-pcre_u.so&quot;</span>, dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so
+</span><span class='line'>You may wish to remove this extension from /etc/pcc.conf <span class="k">if </span>it exists. -- error-handler
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>又出现一个</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
+</span><span class='line'>sudo scp user@hostA:/usr/local/lib/libgcc_s.so.1 /usr/local/lib/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再编译</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>pcc --static index.php -o index
+</span><span class='line'>Error: problem running <span class="nb">command</span> <span class="s1">&#39;gcc&#39;</span>, <span class="nb">exit </span>status 1
+</span><span class='line'>Rerunning with debug level 2 may provide more information.
+</span><span class='line'><span class="nv">$ </span>pcc --static index.php -o index -d 2
+</span><span class='line'>...
+</span><span class='line'>&gt;&gt;&gt;   /usr/bin/ld: cannot find -lcurl
+</span><span class='line'>ERR:
+</span><span class='line'>Error: problem running <span class="nb">command</span> <span class="s1">&#39;gcc&#39;</span>, <span class="nb">exit </span>status 1
+</span><span class='line'>&gt;&gt;&gt;   cleaning up...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp /usr/local/lib/libcurl.a /lib/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就肯定能找到了,再次编译运行终于出现php的信息了。
+<img src="/images/evoup/pcc_result2.png" alt="Alt text" /></p>
+
+<p>告一段落，下一篇写怎么把这些东西做成rpm直接安装</p>
 </div>
 
 
