@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-20T00:51:40+08:00</updated>
+  <updated>2014-04-22T14:30:19+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,283 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[golang使用syslog日志系统和安装使用第三方包log4go]]></title>
+    <link href="http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go/"/>
+    <updated>2014-04-22T11:25:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go</id>
+    <content type="html"><![CDATA[<h3>使用syslog</h3>
+
+<p>首先介绍下golang的syslog的用法，因为这个其实也很好用，只不过比log4go缺点在于要用syslog那一套（如newsyslog）来手工设置syslog.conf来轮询日志。接下来是一个基本的用法，只有serverity的场景:</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// syslog init</span>
+</span><span class='line'><span class="kd">func</span> <span class="nx">LogInit</span><span class="p">()</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">Log</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">syslog</span><span class="p">.</span><span class="nx">NewLogger</span><span class="p">(</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_DEBUG</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span><span class="p">)</span> <span class="c1">//设置log facility为LOG_DEBUG</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">Log</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">//然后打印日志的时候可以调用对应的log level</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者使用shell调用的方式，理论上效率会低一点:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">/// using logger</span>
+</span><span class='line'><span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nx">Command</span><span class="p">(</span><span class="s">&quot;logger&quot;</span><span class="p">,</span> <span class="s">&quot;-p&quot;</span><span class="p">,</span> <span class="s">&quot;local0.err&quot;</span><span class="p">,</span> <span class="s">&quot;-t&quot;</span><span class="p">,</span> <span class="s">&quot;bash&quot;</span><span class="p">,</span> <span class="s">&quot;hello bash&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="nx">err</span> <span class="p">=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Run</span><span class="p">()</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;error running cmd!&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后是一个可以log serverity和log facility都可以用上的例子:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
+</span><span class='line'><span class="kn">import</span><span class="p">(</span>
+</span><span class='line'>    <span class="s">&quot;log/syslog&quot;</span>
+</span><span class='line'>  <span class="s">&quot;fmt&quot;</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="nx">testLogger</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">syslog</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_WARNING</span><span class="p">|</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_LOCAL0</span><span class="p">,</span> <span class="s">&quot;mytag&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">defer</span> <span class="nx">testLogger</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class='line'><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;New() failed: %v\n&quot;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;logger ok&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">test</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;test go syslog&quot;</span><span class="p">))</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>log4go的安装</h3>
+
+<p>言归正传讲安装，不要被log4go的README搞晕了</p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">Please</span> <span class="nx">see</span> <span class="nx">http</span><span class="p">:</span><span class="c1">//log4go.googlecode.com/</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Installation</span><span class="p">:</span>
+</span><span class='line'><span class="o">-</span> <span class="nx">Run</span> <span class="s">`goinstall log4go.googlecode.com/hg`</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Usage</span><span class="p">:</span>
+</span><span class='line'><span class="o">-</span> <span class="nx">Add</span> <span class="nx">the</span> <span class="nx">following</span> <span class="kn">import</span><span class="p">:</span>
+</span><span class='line'><span class="kn">import</span> <span class="nx">l4g</span> <span class="s">&quot;log4go.googlecode.com/hg&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Acknowledgements</span><span class="p">:</span>
+</span><span class='line'><span class="o">-</span> <span class="nx">pomack</span>
+</span><span class='line'>  <span class="nx">For</span> <span class="nx">providing</span> <span class="nx">awesome</span> <span class="nx">patches</span> <span class="nx">to</span> <span class="nx">bring</span> <span class="nx">log4go</span> <span class="nx">up</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">latest</span> <span class="nx">Go</span> <span class="nx">spec</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实正确的安装方法如下：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>go get code.google.com/p/log4go
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装完成后默认路径位于</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>/usr/local/go/src/pkg/code.google.com/p/log4go
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>使用log4go</h3>
+
+<p>打开文档看怎么用，有2种方法：</p>
+
+<h4>第一种</h4>
+
+<p>在安装好log4go的机器上运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>godoc -http<span class="o">=</span>:6060
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后用浏览器查看
+<a href="http://host:6060/src/pkg/code.google.com/p/log4go/examples/">http://host:6060/src/pkg/code.google.com/p/log4go/examples/</a></p>
+
+<h4>第二种</h4>
+
+<p>直接查看该目录下的例子
+/usr/local/go/src/pkg/code.google.com/p/log4go/examples</p>
+
+<p>主要来看一个日志轮询的怎么做</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="p">(</span>
+</span><span class='line'>  <span class="s">&quot;bufio&quot;</span>
+</span><span class='line'>  <span class="s">&quot;fmt&quot;</span>
+</span><span class='line'>  <span class="s">&quot;io&quot;</span>
+</span><span class='line'>  <span class="s">&quot;os&quot;</span>
+</span><span class='line'>  <span class="s">&quot;time&quot;</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nx">l4g</span> <span class="s">&quot;code.google.com/p/log4go&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">const</span> <span class="p">(</span>
+</span><span class='line'>  <span class="nx">filename</span> <span class="p">=</span> <span class="s">&quot;flw.log&quot;</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="c1">// Get a new logger instance</span>
+</span><span class='line'>  <span class="nx">log</span> <span class="o">:=</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewLogger</span><span class="p">()</span> <span class="c1">//实例化日志对象</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Create a default logger that is logging messages of FINE or higher</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">AddFilter</span><span class="p">(</span><span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">FINE</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewFileLogWriter</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/* Can also specify manually via the following: (these are the defaults) */</span>
+</span><span class='line'>  <span class="nx">flw</span> <span class="o">:=</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewFileLogWriter</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetFormat</span><span class="p">(</span><span class="s">&quot;[%D %T] [%L] (%S) %M&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotate</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateSize</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateLines</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateDaily</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">AddFilter</span><span class="p">(</span><span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">FINE</span><span class="p">,</span> <span class="nx">flw</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Log some experimental messages</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Finest</span><span class="p">(</span><span class="s">&quot;Everything is created now (notice that I will not be printing to the file)&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;The time is now: %s&quot;</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">().</span><span class="nx">Format</span><span class="p">(</span><span class="s">&quot;15:04:05 MST 2006/01/02&quot;</span><span class="p">))</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Critical</span><span class="p">(</span><span class="s">&quot;Time to close out!&quot;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Close the log</span>
+</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Print what was logged to the file (yes, I know I&#39;m skipping error checking)</span>
+</span><span class='line'>  <span class="nx">fd</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">in</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">fd</span><span class="p">)</span>
+</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="s">&quot;Messages logged to file were: (line numbers not included)\n&quot;</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">for</span> <span class="nx">lineno</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">;</span> <span class="nx">lineno</span><span class="o">++</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">in</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">break</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%3d:\t%s&quot;</span><span class="p">,</span> <span class="nx">lineno</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">fd</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Remove the file so it&#39;s not lying around</span>
+</span><span class='line'>  <span class="nx">os</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>代码就不多说了，唯一值得注意的是log4go貌似达到指定的日志数上限了之后就不会再去掉旧的文件，更新新的文件了，也就是再也无法记录日志，这个是需要程序考虑的，完。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[win7下cocos2d-js3.0 alpha生成android项目]]></title>
@@ -3957,95 +4234,6 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 
 
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[cocos2d-x初心者阶段学习之一]]></title>
-    <link href="http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/"/>
-    <updated>2014-01-14T14:24:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1</id>
-    <content type="html"><![CDATA[<h3>序言</h3>
-
-<p>通过一个阶段的cocos2d-iphone的学习，对Objective-C（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocostudio这一套的东西，应该是时候投入该框架的学习。</p>
-
-<!-- more -->
-
-
-<h5>本文参考</h5>
-
-<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
-
-<p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发，然后动手术加载一个飞船。</p>
-
-<h3>加载精灵</h3>
-
-<h4>准备工作</h4>
-
-<p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
-然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
-可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
-然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
-（但是在项目管理器里无法看到，如何添加？TODO）</p>
-
-<h4>添加代码</h4>
-
-<p>在头文件中添加</p>
-
-<figure class='code'><figcaption><span>HelloWorldScene.h </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">private</span><span class="o">:</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>为什么需要2行代码？因为一个是批渲染对象，用来涵盖全部用到的资源，以及对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
-
-<p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：</p>
-
-<figure class='code'><figcaption><span>HelloWorldScene.cpp </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">_batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Sprites.pvr.ccz&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_batchNode</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;Sprites.plist&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">_ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;SpaceFlier_sm_1.png&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
-</span><span class='line'><span class="n">_ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
-</span><span class='line'><span class="n">_batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>简单的分析</h4>
-
-<p>按流程分析下吧，内存稍微提一下。
-首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
-addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
-接着，确定帧和帧缓冲的关系，通过用addSpriteFramesWithFile函数读取plist文件来实现。
-然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
-只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
-
-<h4>编译看结果</h4>
-
-<p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一艘太空飞船，目的达成。下篇学习如何移动和发射子弹。</p>
-
-<p><img src="http://evoupsight.com/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
-
-<h4>参考阅读</h4>
-
-<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
 ]]></content>
   </entry>
   
