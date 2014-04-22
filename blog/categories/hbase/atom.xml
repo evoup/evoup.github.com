@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hbase | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hbase/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-04-20T00:51:40+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[hbase连zookeeper瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip/"/>
+    <updated>2013-12-31T11:48:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/31/hbase-access-zookeeper-fail-too-many-connections-form-ip</id>
+    <content type="html"><![CDATA[<h3>问题</h3>
+
+<p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。</p>
+
+<p><code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247]</code>
+<code>- Too many connections from /10.10.8.136 - max is 10</code></p>
+
+<p>这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。</p>
+
+<!-- more -->
+
+
+<h3>解决</h3>
+
+<p>其实需要在zoo.cfg中加入maxClientCnxns=300，加完以后需要重启。问题解决。</p>
+
+<h3>原因</h3>
+
+<p>我们线上有24台节点，但是这个参数竟然是使用默认的10，导致更多的客户端连上了zookeeper导致namenode的自带管理页无法连接到zookeeper，进而无法显示该页面。</p>
+
+<p>如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件
+```
+dataDir = 数据存放路径</p>
+
+<p>dataLogDir = 日志存放路径</p>
+
+<p>clientPort = 客户端连接端口</p>
+
+<p>clientPortAddress</p>
+
+<p>tickTime= 整型 不能为0</p>
+
+<p>maxClientCnxns= 整型 最大客户端连接数</p>
+
+<p>minSessionTimeout= 整型</p>
+
+<p>maxSessionTimeout= 整型</p>
+
+<p>initLimit = 整型</p>
+
+<p>syncLimit = 整型</p>
+
+<p>electionAlg = 整型</p>
+
+<p>peerType = observer | participant</p>
+
+<p>server. sid= host:port | host:port:port  | host:port:port:type (type值 observer | participant)</p>
+
+<p>group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid只能属于一个gid)</p>
+
+<p>weight.sid=整型
+```
+可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。</p>
+
+<p>同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。</p>
+
+<h3>总结</h3>
+
+<p>这个案例告诉我不要盲目认为按照默认参数配置就没问题了，那是给小批量测试用的，需要根据实际情况采取相应配置。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[HBASE0.90.6完全分布式搭建(VMware版)]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case/"/>
+    <updated>2013-11-04T16:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/04/hbase-full-distributed-case</id>
+    <content type="html"><![CDATA[<p>接上一篇<a href="http://evoupsight.com/blog/2013/11/04/hadoop-full-distributed-case/">《HADOOP完全分布式搭建(VMware版)》</a></p>
+
+<p>参考 <a href="http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html">http://www.cnblogs.com/flyoung2008/archive/2011/12/02/2272761.html</a></p>
+
+<!-- more -->
+
+
+<p><code>bash
+cd /u01/app
+tar xzf hbase-0.90.6.tgz
+ln -s hbase-0.90.6 hbase
+cd hbase/conf
+</code></p>
+
+<p>编辑hbase-env.sh
+指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper
+<code>bash
+export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
+export JAVA_HOME=/usr/java/jdk1.6.0_29
+export HBASE_MANAGES_ZK=true
+</code></p>
+
+<p>注意HADOOP_HOME和HBASE_HOME已经在~/.profile中指定，不需要再设置了。</p>
+
+<hr />
+
+<p>(补充：2014-2-19 发现这么写还不能加载，放到~/.bashrc中才对，见下)
+<code>bash
+export HADOOP_HOME=/u01/app/hadoop
+</code></p>
+
+<hr />
+
+<p>编辑hbase-site.xml
+```xml
+&lt;?xml version=&ldquo;1.0&rdquo;?>
+&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
+
+<!--
+/**
+ * Copyright 2010 The Apache Software Foundation
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+
+
+<p><configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn2.net:9024/hbase&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.master&lt;/name&gt;
+    &lt;value&gt;mdn2.net:60000&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+    &lt;value&gt;mdn2.net,mdn2datanode1.net,mdn2datanode2.net&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>注意点：
+ 1.其中首先需要注意hdfs://mdn2.net:9024/hbase这里，必须与你的Hadoop集群的core-site.xml文件配置保持完全一致才行，如果你Hadoop的hdfs使用了其它端口，请在这里也修改。再者就是Hbase该项并不识别机器IP，只能使用机器hostname才可行，即若使用IP是会抛出java错误。
+ 2.hbase.zookeeper.quorum 的个数必须是奇数，否则也可以启动hbase，只不过用thrift接口时无法使用，会类似这样的错<code>INFO org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation:</code> <br> <code>ZooKeeper available but no active master location found</code></p>
+
+<p>修改regionservers文件（同hadoop的slaves文件）
+<code>bash
+mdn2datanode1.net
+mdn2datanode2.net
+</code></p>
+
+<p>然后分发到各点，就可以启动了。</p>
+
+<p><code>bash
+bin/start hbase
+bin/hbase shell
+</code></p>
+
+<p>报错
+ERROR: org.apache.hadoop.hbase.ZooKeeperConnectionException: HBase is able to connect to ZooKeeper but the connection closes immediately. This could be a sign that the server has too many connections (30 is the default). Consider inspecting your ZK server logs for that error and then make sure you are reusing HBaseConfiguration as often as you can. See HTable&rsquo;s javadoc for more information.
+看来不要使用hbase托管的zookeeper转而再装一个试试。</p>
+
+<p><code>bash
+export HBASE_MANAGES_ZK=true
+</code></p>
+
+<p>改为</p>
+
+<p><code>bash
+export HBASE_MANAGES_ZK=false
+</code></p>
+
+<p><code>bash
+</code></p>
+
+<p>编辑~/.profile,加入关于zk环境变量的设置</p>
+
+<p><code>bash
+export ZOOKEEPER_HOME="/u01/app/zookeeper/"
+PATH=$ZOOKEEPER_HOME/bin:$PATH
+export PATH
+</code>
+<code>bash
+cd /u01/app
+wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
+tar xzf zookeeper-3.4.4.tar.gz
+ln -s zookeeper-3.4.4 zookeeper
+cd /u01/app/zookeeper/conf
+cp zoo_sample.cfg zoo.cfg
+cd ../bin
+./zkServer.sh start
+</code></p>
+
+<p>最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。</p>
+
+<p><img src="/images/evoup/hbase_vmware.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下hbase安装]]></title>
+    <link href="http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase/"/>
+    <updated>2011-07-30T21:51:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/07/30/freebsd-install-hbase</id>
+    <content type="html"><![CDATA[<p>安装JDK补遗,port中该文件已经无法获取。关键是下载到diablo-caffe-freebsd7-i386-1.6.0_07-b02.tar.bz</p>
+
+<p><a href="http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2">http://www.freebsdfoundation.org/cgi-bin/download?download=diablo-caffe-freebsd7-amd64-1.6.0_07-b02.tar.bz2</a></p>
+
+<!-- more -->
+
+
+<p>下完就放到/usr/port/distfile</p>
+
+<p>进到/usr/ports/java/diablo-jdk16之后也要把timezone那个选取消。</p>
+
+<p>再装jdk16/usr/port/java/jdk16
+<code>bash
+sudo axel http://www.java.net/download/jdk6/6u3/promoted/b05/jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar
+sudo mv jdk-6u3-fcs-src-b05-jrl-24_sep_2007.jar php-5.3.8.tar.bz2 /usr/ports/distfiles/
+</code></p>
+
+<p>装apache-ant，自动的，如果不行cd /usr/port/devel/apache-ant/ sudo make install clean</p>
+
+<p>而且要有足够的SWAP空间！
+<code>bash
+setenv JAVA_HOME /usr/local/jdk1.6.0/
+</code>
+PATH我没有设置</p>
+
+<p>然后是hbase的安装，拿到权威手册翻一翻就能知道</p>
+
+<p>单个节点的启动方法</p>
+
+<p><code>bash
+sudo ./bin/start-hbase.sh
+sudo ./bin/hbase-daemon.sh start thrift
+</code>
+hshell的进入</p>
+
+<p><code>bash
+sudo ./bin/hbase shell
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

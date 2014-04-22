@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>导入nginx日志并采用hive进行统计 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-03-10T16:07:00+08:00" pubdate data-updated="true">Mar 10<span>th</span>, 2014</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        导入nginx日志并采用hive进行统计
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+
+<p>下面描述一下过程</p>
+
+<!-- more -->
+
+
+<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>create external table nginxlog <span class="o">(</span>ipaddress string, ...更多字段省略<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as textfile    location <span class="s1">&#39;/data/log&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>tar xjf server01-20140131.txt.bz2
+</span><span class='line'><span class="nv">$ </span>tar xjf server02-20140131.txt.bz2
+</span><span class='line'><span class="nv">$ </span>lzop server01-20140131.txt
+</span><span class='line'><span class="nv">$ </span>lzop server02-20140131.txt
+</span><span class='line'><span class="nv">$ </span>server01-20140131.txt.lzo server02-20140131.txt.lzo
+</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server01-20140131.txt.lzo
+</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server02-20140131.txt.lzo
+</span><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop fs -ls /data/log/
+</span><span class='line'>Found 2 items
+</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/log/server01-20140131.txt.lzo
+</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/log/server02-20140201.txt.lzo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后马上就可以查询了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
+</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
+</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0004
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0004
+</span><span class='line'>2014-03-10 14:17:41,179 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:20,815 Stage-1 <span class="nv">map</span> <span class="o">=</span> 50%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:32,927 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 14:18:38,971 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
+</span><span class='line'>2014-03-10 14:18:41,991 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004
+</span><span class='line'>OK
+</span><span class='line'>2492916
+</span><span class='line'>Time taken: 75.321 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive&gt; create external table nginxlog2 <span class="o">(</span>ipaddress string, ...,更多字段<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log rcfile format&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as RCFile    location <span class="s1">&#39;/data/log2&#39;</span>;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; SET hive.exec.compress.output<span class="o">=</span><span class="nb">true</span>;
+</span><span class='line'>hive&gt; SET io.rcfile.compression.type<span class="o">=</span>BLOCK;
+</span><span class='line'>hive&gt; insert overwrite table nginxlog2 <span class="k">select</span> * from nginxlog;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 2
+</span><span class='line'>Launching Job 1 out of 2
+</span><span class='line'>Number of reduce tasks is <span class="nb">set </span>to 0 since there<span class="err">&#39;</span>s no reduce operator
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0007
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0007
+</span><span class='line'>2014-03-10 15:20:20,959 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:21:21,267 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:22:21,627 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:22,320 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:36,542 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:23:42,665 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> -1308159129, job is filtered out <span class="o">(</span>removed at runtime<span class="o">)</span>.
+</span><span class='line'>Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000
+</span><span class='line'>Loading data to table default.nginxlog2
+</span><span class='line'>Deleted hdfs://mdn2.net:9024/data/log2
+</span><span class='line'>Table default.nginxlog2 stats: <span class="o">[</span>num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0<span class="o">]</span>
+</span><span class='line'>2492916 Rows loaded to nginxlog2
+</span><span class='line'>OK
+</span><span class='line'>Time taken: 209.088 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后再次select，对比一下时间</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog2;
+</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
+</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
+</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
+</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0008
+</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0008
+</span><span class='line'>2014-03-10 15:26:21,984 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:31,031 Stage-1 <span class="nv">map</span> <span class="o">=</span> 33%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:43,107 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
+</span><span class='line'>2014-03-10 15:26:49,140 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
+</span><span class='line'>2014-03-10 15:26:52,153 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 22%
+</span><span class='line'>2014-03-10 15:27:04,225 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
+</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008
+</span><span class='line'>OK
+</span><span class='line'>2492916
+</span><span class='line'>Time taken: 55.656 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
+
+<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-03-10T16:07:00+08:00" pubdate data-updated="true">Mar 10<span>th</span>, 2014</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/03/07/centos-hadoop0-dot-20-lzo-support/" title="Previous Post: centos下hadoop0.20的LZO压缩支持">&laquo; centos下hadoop0.20的LZO压缩支持</a></li>
+            
+            
+            <li class="next"><a href="/blog/2014/03/14/2d-player-charactor-pratice/" title="Next Post: 设计2D游戏玩家角色">设计2D游戏玩家角色 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/">win7下cocos2d-js3.0 Alpha生成android项目</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/use-cocostudio-create-bone-animation2/">使用CocoStudio创建骨骼动画（二）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/android-install-ndk-cdt/">Win7 Android开发环境搭建之二(NDK+CDT)</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/16/use-cocostudio-create-bone-animation1/">使用CocoStudio创建骨骼动画（一）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/14/2d-player-charactor-pratice/">设计2D游戏玩家角色</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 130.0%'>Freebsd(8)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 130.0%'>Hadoop(8)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 111.25%'>Hbase(3)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 115.0%'>Version_control(4)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 107.5%'>Zookeeper(2)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

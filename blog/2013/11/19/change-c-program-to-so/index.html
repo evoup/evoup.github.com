@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>如何正确地把带参数的C语言main程序改成so - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/11/19/change-c-program-to-so">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-19T18:17:00+08:00" pubdate data-updated="true">Nov 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        如何正确地把带参数的C语言main程序改成so
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>首先有些标题党吧，不过个人体会修改程序的过程中遇到未知的坑还是比较阴险的，所以整理一下写个博客。</p>
+
+<p>之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了一会儿之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。</p>
+
+<p>话说回来，先看怎么把带参main程序改成动态链接库。</p>
+
+<!-- more -->
+
+
+<p>先看准备被改成动态库的原代码</p>
+
+<figure class='code'><figcaption><span>test.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-Wall</span> <span class="err">test.c</span> <span class="err">-o</span> <span class="err">test</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>./test -a1 -b1 -c -d
+</span><span class='line'>option a:<span class="s1">&#39;1&#39;</span>
+</span><span class='line'>option b:<span class="s1">&#39;1&#39;</span>
+</span><span class='line'>option c:<span class="s1">&#39;(null)&#39;</span>
+</span><span class='line'>option d:<span class="s1">&#39;(null)&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
+其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。</p>
+
+<p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。</p>
+
+<figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'>    <span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>测试一下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-Wall</span> <span class="err">plug.c</span> <span class="err">-o</span> <span class="err">plug</span>
+</span><span class='line'><span class="err">./plug</span>
+</span><span class='line'><span class="nf">option a</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option b</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option c</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="nf">option d</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="err">in</span> <span class="err">dll</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ok，没有问题，直接转换成动态库</p>
+
+<figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">d_plug</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">d_plug</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'>    <span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译动态连接库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">-shared</span> <span class="err">-o</span> <span class="err">plug.so</span> <span class="err">plug.c</span> <span class="err">-fpic</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就得到了plug.so</p>
+
+<p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。</p>
+
+<figure class='code'><figcaption><span>main.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;dlfcn.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_plug</span><span class="p">)</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="o">*</span><span class="n">dp</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">dp</span><span class="o">=</span><span class="n">dlopen</span><span class="p">(</span><span class="s">&quot;./plug.so&quot;</span><span class="p">,</span><span class="n">RTLD_LAZY</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">d_plug</span><span class="o">=</span><span class="n">dlsym</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span><span class="s">&quot;d_plug&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">d_plug</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">dlclose</span><span class="p">(</span><span class="n">dp</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译执行看结果</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">gcc</span> <span class="err">main.c</span> <span class="err">-lc</span> <span class="err">-fpic</span> <span class="err">-o</span> <span class="err">main</span>
+</span><span class='line'><span class="err">./main</span>
+</span><span class='line'><span class="nf">option a</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option b</span><span class="o">:</span><span class="m">&#39;1&#39;</span>
+</span><span class='line'><span class="nf">option c</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="nf">option d</span><span class="o">:</span><span class="m">&#39;(null)&#39;</span>
+</span><span class='line'><span class="err">in</span> <span class="err">dll</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>其他注意事项：</h3>
+
+<p>其实除了optarg，还存在全局变量optind、opterror和optopt。三者的作用</p>
+
+<p>optarg：非常明了，就是指程序的参数，是个字符串指针</p>
+
+<p>optind：是下一次调用getopt的时，从optind存储的位置处重新开始检查选项</p>
+
+<p>opterr：当opterr=0时，getopt不向stderr输出错误信息</p>
+
+<p>optopt: 当命令行选项字符不包括在optstring中或者选项缺少必要的参数时，该选项存储在optopt 中，getopt返回&#8217;？’</p>
+
+<h3>问题解决:</h3>
+
+<p>写erlang的NIF扩展时optind需要重置为0，否则就导致了每次结果不变，因为就我所知erlang目前版本的NIF是没有unload功能的。</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-11-19T18:17:00+08:00" pubdate data-updated="true">Nov 19<span>th</span>, 2013</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-language/'>c-language</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2013/11/12/gvim-unable-to-open-swap-file/" title="Previous Post: gvim无法打开交换文件">&laquo; gvim无法打开交换文件</a></li>
+            
+            
+            <li class="next"><a href="/blog/2013/11/26/netstat-resolv-dns/" title="Next Post: 部分机器netstat运行结果缓慢的原因">部分机器netstat运行结果缓慢的原因 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/">win7下cocos2d-js3.0 Alpha生成android项目</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/use-cocostudio-create-bone-animation2/">使用CocoStudio创建骨骼动画（二）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/android-install-ndk-cdt/">Win7 Android开发环境搭建之二(NDK+CDT)</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/16/use-cocostudio-create-bone-animation1/">使用CocoStudio创建骨骼动画（一）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/14/2d-player-charactor-pratice/">设计2D游戏玩家角色</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 130.0%'>Freebsd(8)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 130.0%'>Hadoop(8)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 111.25%'>Hbase(3)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 115.0%'>Version_control(4)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 107.5%'>Zookeeper(2)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

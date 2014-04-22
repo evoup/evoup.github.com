@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>freebsd安装ganglia3.4 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2012/10/22/freebsd-install-ganglia3-dot-4">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-10-22T11:24:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        freebsd安装ganglia3.4
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><h2>Ganglia是什么?</h2>
+
+<p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
+
+<!-- more -->
+
+
+<h2>安装小记</h2>
+
+<p>首先是下载ganglia</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://downloads.sourceforge.net/project/ganglia/
+</span><span class='line'>wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>先安装rrdtool</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --prefix<span class="o">=</span>/usr/lib32/rrdtool --disable-perl
+</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(Ps:安装过程有缺少包的解决，可以尝试先从port安装好rrdtool之后deinstall rrdtool，这样依赖的包就都有了，因为port直接安装rrdtool后ganglia不认，所以手动编译)</p>
+
+<p>再来是ganglia</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
+</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报告</p>
+
+<p>Checking for apr</p>
+
+<p>checking for apr-1-config&hellip; no</p>
+
+<p>configure: error: apr-1-config binary not found in path</p>
+
+<p>没有安装apache2</p>
+
+<p>先安装mysql</p>
+
+<p>whereis mysql51-server</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz
+</span><span class='line'>sudo make <span class="nv">WITH_CHARSET</span><span class="o">=</span>utf8 <span class="nv">WITH_XCHARSET</span><span class="o">=</span>all install clean
+</span><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装httpd</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz
+</span><span class='line'>./configure --prefix<span class="o">=</span>/usr/local/apache2 --enable-modules<span class="o">=</span>so --enable-rewrite
+</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装php</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror
+</span><span class='line'>tar –zxvf php-5.3.6.tar.gz
+</span><span class='line'><span class="nb">cd </span>php-5.3.6
+</span><span class='line'>./configure --prefix<span class="o">=</span>/usr/local/php --with-apxs2<span class="o">=</span>/usr/local/apache2/bin/apxs --with-config-file-path<span class="o">=</span>/usr/local/lib --with-mysql<span class="o">=</span>/usr
+</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将php5的库复制到apache的modules里</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp –p .libs/libphp5.so /usr/local/apache2/modules
+</span><span class='line'>sudo chown cdh:cdh /usr/local/apache2/modules/libphp5.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>复制php5配置文件</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp php.ini-development /usr/local/php/lib/php/php.ini
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>修改http.conf 兼容php5</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo vim /usr/local/apache2/conf/httpd.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>加上</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>AddType application/x-httpd-php .php
+</span><span class='line'><span class="c">#LoadModule php5_module modules/libphp5.so</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把上面的#号去掉</p>
+
+<p>DirectoryIndex index.html</p>
+
+<p>在后面加 index.php</p>
+
+<p>DocumentRoot &ldquo;/usr/local/apache2/htdocs&rdquo;</p>
+
+<p>把/usr/local/apache2/htdocs改为你存放网页文件的路径</p>
+
+<p>AddDefaultCharset iso8859-1</p>
+
+<p>把后面的iso8859-1改为gb2312 或者是干脆off</p>
+
+<p>更详细的请参考<a href="http://article.21e.cn">http://article.21e.cn</a></p>
+
+<p>到这里看下访问一下浏览器，php应该工作ok</p>
+
+<p>继续编译ganglia</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>configure: error: apr-1-config binary not found in path</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>whereis apr1
+</span><span class='line'><span class="nb">cd</span> /usr/ports/devel/apr1
+</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>回来继续编译，报告缺少libconfuse not found</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/devel/libconfuse/
+</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报告缺少expat.h</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/textproc/expat2
+</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>问题依旧修改配置</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool --with-libexpat<span class="o">=</span>/usr/local/
+</span><span class='line'>sudo make
+</span><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装完成！</p>
+
+<p>测试gmetad的运行</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /usr/local/sbin/gmetad -d 5
+</span><span class='line'>
+</span><span class='line'>Going to run as user nobody
+</span><span class='line'>
+</span><span class='line'>Please make sure that /var/db/ganglia/rrds exists: No such file or directory
+</span><span class='line'>
+</span><span class='line'>sudo mkdir -p /var/db/ganglia/rrds
+</span><span class='line'>
+</span><span class='line'>sudo /usr/local/sbin/gmetad -d 5
+</span><span class='line'>
+</span><span class='line'>Going to run as user nobody
+</span><span class='line'>
+</span><span class='line'>Please make sure that /var/db/ganglia/rrds is owned by nobody
+</span><span class='line'>
+</span><span class='line'>sudo chown -R nobody:nobody /var/db/ganglia/
+</span><span class='line'>
+</span><span class='line'>Going to run as user nobody
+</span><span class='line'>
+</span><span class='line'>Sources are ...
+</span><span class='line'>
+</span><span class='line'>Source: <span class="o">[</span>my cluster, step 15<span class="o">]</span> has 1 sources
+</span><span class='line'>
+</span><span class='line'>        127.0.0.1
+</span><span class='line'>
+</span><span class='line'>xml listening on port 8651
+</span><span class='line'>
+</span><span class='line'>interactive xml listening on port 8652
+</span><span class='line'>
+</span><span class='line'>cleanup thread has been started
+</span><span class='line'>
+</span><span class='line'>Data thread 34460440576 is monitoring <span class="o">[</span>my cluster<span class="o">]</span> data <span class="nb">source</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">        </span>127.0.0.1
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class='line'>
+</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class='line'>
+</span><span class='line'>sudo /usr/local/sbin/gmond -d 5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看上去运行正常了</p>
+
+<p>基本可以。</p>
+
+<p>开始装界面。不要装3.5.3有些图开不了，3.5.2经过测试没有问题。</p>
+
+<p><a href="http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download">http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download</a></p>
+
+<p>注意web要求rrd数据库的路径只能是/var/lib/ganglia/rrds</p>
+
+<p>由于之前是装在了/var/db/ganglia/rrds</p>
+
+<p>则</p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /var/lib
+</span><span class='line'>sudo ln -s /var/db/ganglia ganglia
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后访问浏览器</p>
+
+<p><a href="http://192.168.174.133/ganglia/">http://192.168.174.133/ganglia/</a></p>
+
+<p>此时</p>
+
+<p>There was an error collecting ganglia data (127.0.0.1:8652): fsockopen error: Connection refused</p>
+
+<p>因为没有打开gmond和gmetad，打开发现界面ok了，但是没有数据！</p>
+
+<p>怀疑是php没有安装rrdtool的扩展,继续安装php的rrdtool扩展</p>
+
+<p><a href="http://pecl.php.net/package/rrd">http://pecl.php.net/package/rrd</a></p>
+
+<figure class='code'><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-php-config<span class="o">=</span>/usr/local/php/bin/php-config --with-rrd-binary<span class="o">=</span>/usr/lib32/rrdtool/bin/rrdtool
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>配置报错找不到rrdtool的头文件，直接定位configure文件进行修改</p>
+
+<p>for i in /usr /usr/local /usr/local/rrdtool /opt; do</p>
+
+<p>改成我装的路径</p>
+
+<p>for i in /usr /usr/local /usr/local/rrdtool /opt /usr/lib32/rrdtool; do</p>
+
+<p>改了之后</p>
+
+<p>configure: error: rrd lib version seems older than 1.3.0, update to 1.3.0+</p>
+
+<p>通过后还是报错</p>
+
+<p>error: too many arguments to function &lsquo;rrd_lastupdate&rsquo;</p>
+
+<p>参考这里<a href="https://bugs.php.net/bug.php?id=59558">https://bugs.php.net/bug.php?id=59558</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">-</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate_r</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>装完看到phpinfo里有了。</p>
+
+<p>之后还要修改conf_default.php文件</p>
+
+<p>graphite_rrd_dir变量，指向ganglia存放rrd的目录，我的是/var/db/ganglia/rrds</p>
+
+<p>还有一个$conf[&lsquo;rrdtool&rsquo;]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
+
+<p>应该就差不多了！这样如果还不行，检查自身人品，然后看下/var/log/message</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-10-22T11:24:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2012</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/monitor/'>monitor</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2012/01/09/server-develop-knowledge/" title="Previous Post: 服务器开发知识汇总2010年整理的">&laquo; 服务器开发知识汇总2010年整理的</a></li>
+            
+            
+            <li class="next"><a href="/blog/2012/10/26/gvim-turn-off-beep-and-alert/" title="Next Post: windows：Gvim关闭声音警报和屏闪">windows：Gvim关闭声音警报和屏闪 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/">win7下cocos2d-js3.0 Alpha生成android项目</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/use-cocostudio-create-bone-animation2/">使用CocoStudio创建骨骼动画（二）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/18/android-install-ndk-cdt/">Win7 Android开发环境搭建之二(NDK+CDT)</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/16/use-cocostudio-create-bone-animation1/">使用CocoStudio创建骨骼动画（一）</a>
+    
+    <a class="list-group-item " href="/blog/2014/03/14/2d-player-charactor-pratice/">设计2D游戏玩家角色</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 130.0%'>Freebsd(8)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 103.75%'>Golang(1)</a>  <a href='/blog/categories/hadoop' style='font-size: 130.0%'>Hadoop(8)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 111.25%'>Hbase(3)</a>  <a href='/blog/categories/java' style='font-size: 107.5%'>Java(2)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 130.0%'>Monitor(8)</a>  <a href='/blog/categories/mysql' style='font-size: 107.5%'>Mysql(2)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 118.75%'>Rrdtool(5)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 115.0%'>Version_control(4)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 107.5%'>Zookeeper(2)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<h1>My Douban</h1>
+<div>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>
+</div>
+</section>
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

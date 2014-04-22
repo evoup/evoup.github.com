@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-04-20T00:52:47+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/"/>
+    <updated>2014-02-12T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension</id>
+    <content type="html"><![CDATA[<p>帮同事解决一个开源音视频转换处理软件ffmpeg在freebsd8.1下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展浪费时间。</p>
+
+<!-- more -->
+
+
+<h3>环境freebsd8.1 amd64</h3>
+
+<p>我拿个了干净的系统做试验，安装的时候选择了develop模式和customize，customize里只选择了ports,然后php是装在了/usr/local/php53目录下。</p>
+
+<h3>安装过程描述</h3>
+
+<h4>ffmpeg的安装</h4>
+
+<p>主要采用pkg_add ffmpeg.tbz的方式来安装。
+然后看报错的依赖缺少啥一个一个装上去，途中需要的包可以通过下面的命令来获取：
+<code>sh
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/ffmpeg.tbz
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/x264.tbz
+</code></p>
+
+<p>采用pkg_add快速安装包
+安装的时候反正就是不断用下面的语句试探
+<code>sh
+sudo pkg_add ffmpeg.tbz
+</code>
+用pkg_add一个一个装，直到ffmpeg安装完成。</p>
+
+<p>如果你也是这么装，那么全部东西下完，大概有这么多依赖OMG
+```sh</p>
+
+<blockquote><p>ls
+damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
+dri2proto.tbz    jpeg.tbz          libXdamage.tbz  libiconv.tbz          libxcb.tbz      schroedinger.tbz
+expat.tbz        kbproto.tbz       libXdmcp.tbz    libogg.tbz            libxml.tbz      x264.tbz
+faad2.tbz        libGL.tbz         libXext.tbz     libpthread-stubs.tbz  libxml2.tbz     xextproto.tbz
+ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz         xf86vidmodeproto.tbz
+fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
+```</p></blockquote>
+
+<p>嫌麻烦的可以先下好软件然后批量装
+<code>sh
+find . -name "*.tbz" -exec pkg_add {} \;
+</code>
+当然也免不了部分手动来部分包，窃喜~</p>
+
+<hr />
+
+<h4>ffmpeg-php的安装</h4>
+
+<p>装php，./configure的时候出现出错，查看config.log
+<code>/usr/bin/ld: cannot find -liconv</code>
+需要再用pkg_add安装libxml，重新安装libiconv，用port安装，谈到要安装libtool213,再用pkg_add去装，卸掉libiconv，重新用port安装，下载php5.3编译通过，再去下载ffmpeg-php，用phpize的方式编译成动态库，会报告少autoconf，此时在到port里安装autoconf213，会让安装perl，等待安装完成就是。</p>
+
+<p>下载正确的扩展,不要用sf那个2005年的扩展，不能用。
+<code>sh
+fetch http://downloads.sourceforge.net/project/ffmpeg-php/ffmpeg-php/0.6.0/ffmpeg-php-0.6.0.tbz2
+tar xjf ffmpeg-php-0.6.0.tbz2
+cd ffmpeg-php
+phpize
+</code></p>
+
+<p>在phpize的时候可能出现
+<code>
+[evoup@freebsd81amd64 ffmpeg]&gt;/usr/local/php53/bin/phpize
+Configuring for:
+PHP Api Version:         20090626
+Zend Module Api No:      20090626
+Zend Extension Api No:   220090626
+Cannot find autoconf. Please check your autoconf installation and the
+$PHP_AUTOCONF environment variable. Then, rerun this script.
+</code>
+此时需要在环境变量中指定好autoconf和autoheader的路径，我是加载.cshrc文件中
+<code>sh
+setenv PHP_AUTOCONF "/usr/local/bin/autoconf"
+setenv PHP_AUTOHEADER "/usr/local/bin/autoheader"
+</code>
+完事之后不要忘记重载~/.cshrc
+<code>sh
+source ~/.cshrc
+</code></p>
+
+<p>phpize完了之后可以开始configure了
+<code>sh
+./configure --with-php-cofig=/usr/local/php53/bin/php-config
+/usr/local/include/ffmpeg/avcodec.h:30:30: error: libavutil/avutil.h: No such file or directory
+</code></p>
+
+<p>其实这个是ffmpeg安装好应该有的库
+<code>sh
+$ locate avutil.h
+/usr/home/evoup/software/libavutil/avutil.h
+/usr/local/include/ffmpeg/avutil.h
+/usr/local/include/libavutil/avutil.h
+</code></p>
+
+<p>怎么装上去？嘿嘿，直接把相关的路径做软连接
+<code>sh
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec/
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec
+sudo ln -s /usr/local/include/libavdevice/ /usr/include/libavdevice
+sudo ln -s /usr/local/include/libavfilter/ /usr/include/libavfilter
+sudo ln -s /usr/local/include/libavformat/ /usr/include/libavformat
+sudo ln -s /usr/local/include/libavutil/ /usr/include/libavutil
+</code>
+然后再次
+<code>sh
+make
+sudo make install
+Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
+</code>
+安装ok,接下来加载到php,要做的是看下php的ini位置，放进去就是
+<code>sh
+$ /usr/local/php53/bin/php -i | grep Conf
+Configure Command =&gt;  './configure'  '--prefix=/usr/local/php53'
+Configuration File (php.ini) Path =&gt; /usr/local/php53/lib
+Loaded Configuration File =&gt; /usr/local/php53/lib/php.ini
+Configuration
+</code></p>
+
+<p>说明在/usr/local/php53/lib下，于是把编译好的so移到该目录下
+<code>sh
+$ sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.so /usr/local/php53/lib
+</code>
+最后在php.ini中指定
+<code>sh
+extension=ffmpeg.so
+</code></p>
+
+<hr />
+
+<p>观察劳动成果
+<code>sh
+$ /usr/local/php53/bin/php -i | grep ffmpeg
+ffmpeg
+ffmpeg-php version =&gt; 0.6.0-svn
+ffmpeg-php built on =&gt; Feb 12 2014 17:10:47
+ffmpeg-php gd support  =&gt; disabled
+ffmpeg libavcodec version =&gt; Lavc52.20.1
+ffmpeg libavformat version =&gt; Lavf52.31.0
+ffmpeg swscaler =&gt; disabled
+ffmpeg.allow_persistent =&gt; 0 =&gt; 0
+ffmpeg.show_warnings =&gt; 0 =&gt; 0
+</code></p>
+
+<p>没问题收工。</p>
+
+<p>参考互联网文章《编译FFMpeg和FFMpeg-php》linux版的</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下安装vmware-tool]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool/"/>
+    <updated>2013-11-05T13:22:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/05/freebsd-install-vmware-tool</id>
+    <content type="html"><![CDATA[<p>公司自建的vmware虚拟机，每当中餐回来后，由于系统处理待机状态莫名其妙地会比当前时间慢一段时间，导致server端保存数据的时间戳滞后。怎么解决呢？</p>
+
+<!-- more -->
+
+
+<h3>消极的方法</h3>
+
+<p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
+
+<p>在crontab内加入
+<code>bash
+*/15  *   *   *   *   *   root   ntpdate 210.72.145.44
+</code>
+以及在/etc/rc.conf中
+<code>bash
+ntpdate_enable="YES"
+</code></p>
+
+<h3>积极的方法</h3>
+
+<p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
+首先需要点击vmware的菜单VM &ndash;> Install VMware Tools</br>
+vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
+```bash
+cd /usr/port/dist
+sudo fetch <a href="ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz">ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz</a>
+sudo pkg_add compat6x-amd64.tbz</p>
+
+<hr />
+
+<ul>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>Do not forget to add COMPAT_FREEBSD6 into                                   *</li>
+<li>your kernel configuration (enabled by default).                             *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+<li>To configure and recompile your kernel see:                                 *</li>
+<li><a href="http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html">http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html</a> *</li>
+<li><pre><code>                                                                      *
+</code></pre></li>
+</ul>
+
+
+<hr />
+
+<p><code>
+安装依赖库后，切换到root后，执行如下指令：
+</code>bash
+mount /cdrom
+cd /tmp
+tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
+cd vmware-tools-distrib
+./vmware-install.pl
+<code>
+这样vmware-tool就搞定了。
+最后为了保险起先，关闭系统后，编辑.vmx文件
+加上下面的时间同步的代码
+</code>bash
+tools.syncTime = &ldquo;TRUE&rdquo;
+time.synchronize.continue = &ldquo;TRUE&rdquo;
+time.synchronize.restore = &ldquo;TRUE&rdquo;
+time.synchronize.resume.disk = &ldquo;TRUE&rdquo;
+time.synchronize.shrink = &ldquo;TRUE&rdquo;
+time.synchronize.tools.startup = &ldquo;TRUE&rdquo;
+time.synchronize.tools.enable = &ldquo;TRUE&rdquo;
+time.synchronize.resume.host = &ldquo;TRUE&rdquo;
+```</p>
+
+<p>参考链接</p>
+
+<p><a href="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189">http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&amp;cmd=displayKC&amp;externalId=1189</a>
+<a href="http://www.neko6.tk/archives/1067">http://www.neko6.tk/archives/1067</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[局域网计算机和vmware虚拟机互ping]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan/"/>
+    <updated>2013-10-22T13:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/22/vmware-ping-in-lan</id>
+    <content type="html"><![CDATA[<h2>情景描述</h2>
+
+<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。</p>
+
+<!-- more -->
+
+
+<h2>我的环境</h2>
+
+<p>`&ldquo;
+  ,____________________
+  |                   |  ,&rdquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;|   ,&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;Y
+  |   gateway         |  |   gateway        |   |   gateway        |
+  |                   |__|                  |   |                  |</p>
+
+<pre><code>  172.16.27.38    |  |  172.16.27.1     |   |  172.16.30.254   |
+</code></pre>
+
+<p>  |                   |  |                  |   |                  |
+  `&hellip;&hellip;&hellip;&hellip;&hellip;&hellip;./  L<strong><strong><strong><strong><strong><strong><strong><strong><strong>|   |</strong></strong></strong></strong></strong></strong></strong></strong></strong>J</p>
+
+<pre><code>       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+       |                                              |
+</code></pre>
+
+<p>   ,<strong><strong><strong>_|</strong></strong></strong>                                        |
+   |             |        ,&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;<code>.        ,'''''''''''''</code>.
+   |             |        |               |        |              |
+   | WIN7        |        |   freebsd8    |        |   freebsd9   |
+   |             |        |               |        |              |
+   | VMWARE Host |        | VMWARE client |        |              |
+   |             |&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;               |        |              |
+   |             |        |     server    |        |    client    |
+   | 172.16.27.37|        |192.168.216.145|        |172.16.30.184 |
+   |             |        |               |        |              |
+   |             |        |               |        |              |
+   |             |        |               |        |              |
+   &rsquo;<code>'''''''''''''       </code>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;&lsquo;        &rsquo;`&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;&lsquo;&rsquo;
+```
+A）WIN7所在vmware宿主机的网卡，地址为172.16.27.37/24(24代表子网掩码为255.255.255.0),默认网关172.16.27.38</p>
+
+<p>B）Freebsd8 服务器所在的vmware虚拟机上原有一块NAT网卡em0，地址为192.168.216.145,一开始采用DHCP配置</p>
+
+<p>C）Freebsd9 客户端上只有一块网卡epair38b,地址为172.16.30.184,默认网关为172.16.30.254</p>
+
+<p>记录：</p>
+
+<h2>实现A和B互通</h2>
+
+<p>A到B，VMWARE直接就实现了。
+B到A，需要添加一块bridge方式的网卡em0。使用sysinstall添加后，配置为172.16.27.59/24,默认网关172.16.27.38,注意在/etc/resolv.conf中加上这块网卡的dns，这里是172.16.27.38</p>
+
+<h2>实现A和C互通</h2>
+
+<p>A到C，网络规划的时候直接就通了，不在同一网关，在win7的网卡属性TCP/IPv4属性的高级TCP/IP设置中，选IP设置选项卡，然后在默认网关中添加C所在的网关172.16.30.254
+C到A，网络规划的时候指定了，/etc/resolv.conf中nameserver 172.16.27.1，另一个网关也直接能通到A，只需要打开WIN7的ping防火墙即可，可以google之。</p>
+
+<h2>实现B和C互通</h2>
+
+<p>B到C，经过以上操作已经可以了。
+C到B，同上。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用ntpdate同步时间报错: step-systime: Operation not permitted]]></title>
+    <link href="http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error/"/>
+    <updated>2013-07-19T15:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/07/19/ntpdate-step-system-error</id>
+    <content type="html"><![CDATA[<p>今天有台虚拟机进行时间的同步报错
+```sh
+ntpdate ntp.sjtu.edu.cn</p>
+
+<p>19 Nov 15:38:54 ntpdate[93376]: step-systime: Operation not permitted
+```</p>
+
+<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[在操作系统之间迁移二进制程序之一]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os/"/>
+    <updated>2013-04-18T17:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os</id>
+    <content type="html"><![CDATA[<h3>写在前面</h3>
+
+<p>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br>
+单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把程序直接移植到另一台机器HostB上去？答案是肯定的。</p>
+
+<!-- more -->
+
+
+<h3>程序定位和复制</h3>
+
+<h4>主程序的复制</h4>
+
+<p>这个程序就是pcc，首先找一下pcc的路径。
+<code>sh
+$ whereis pcc
+pcc: /usr/bin/pcc /usr/ports/lang/pcc
+</code></p>
+
+<p>可见pcc所在/usr/bin/目录下，先把这个复制过去
+<code>sh
+$ sudo scp user@hostA:/usr/bin/pcc /usr/bin/
+</code></p>
+
+<h4>程序依赖库的复制</h4>
+
+<p>如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：
+```sh
+$ ldd /usr/bin/pcc
+/usr/bin/pcc:</p>
+
+<pre><code>    libphp-runtime_u.so =&gt; /usr/lib/libphp-runtime_u.so (0x28083000)
+    libprofiler_u.so =&gt; /usr/lib/libprofiler_u.so (0x280ee000)
+    libwebconnect_u.so =&gt; /usr/lib/libwebconnect_u.so (0x280f2000)
+    libphpeval_u.so =&gt; /usr/lib/libphpeval_u.so (0x28108000)
+    libbigloo_u-2.6f.so =&gt; /usr/lib/libbigloo_u-2.6f.so (0x28250000)
+    libbigloogc-2.6f.so =&gt; /usr/lib/libbigloogc-2.6f.so (0x2833a000)
+    libm.so.4 =&gt; /lib/libm.so.4 (0x2835c000)
+    libc.so.6 =&gt; /lib/libc.so.6 (0x28372000)
+</code></pre>
+
+<p>```
+好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
+
+<p><code>sh
+$ cd /home/software
+$ fetch https://pkgs.fedoraproject.org/repo/pkgs/bigloo/bigloo2.6f.tar.gz/bc99b1919adee864dd371aeebc36862c/bigloo2.6f.tar.gz
+$ tar xzf bigloo2.6f.tar.gz
+$ cd bigloo2.6f
+$ ./configure --jvm=no
+*** ERROR:configure:the C compiler (/usr/local/bin/gcc44) does not seem to work. Aborting
+$ whereis gcc
+gcc: /usr/bin/gcc /usr/share/man/man1/gcc.1.gz /usr/src/contrib/gcc
+$ sudo ln -s /usr/bin/gcc /usr/local/bin/gcc44
+$ ./configure --jvm=no
+$ gmake
+$ sudo gmake install
+</code></p>
+
+<p>安装完成返回来继续复制，要注意已经存在的不能去盖了
+```sh
+$ ldd /usr/bin/pcc
+/usr/bin/pcc:</p>
+
+<pre><code>    libphp-runtime_u.so =&gt; not found (0x0)
+    libprofiler_u.so =&gt; not found (0x0)
+    libwebconnect_u.so =&gt; not found (0x0)
+    libphpeval_u.so =&gt; not found (0x0)
+    libbigloo_u-2.6f.so =&gt; /usr/local/lib/libbigloo_u-2.6f.so (0x28083000)
+    libbigloogc-2.6f.so =&gt; /usr/local/lib/libbigloogc-2.6f.so (0x2816d000)
+    libm.so.4 =&gt; /lib/libm.so.4 (0x2818f000)
+    libc.so.6 =&gt; /lib/libc.so.6 (0x281a5000)
+</code></pre>
+
+<p>```</p>
+
+<p>好的，只要not found的我们从HostA复制过来
+<code>sh
+$ sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
+$ sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/
+$ sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/
+$ sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/
+</code>
+然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
+试试看，其实已经可以了：
+<img src="/images/evoup/pcc_result.png" alt="Alt text" /></p>
+
+<p>但是要真正能使用这个软件，还需要复制/opt过来
+<code>sh
+scp -dr user@hostA:/opt /
+sudo chown root -R /opt
+</code>
+然后写一个php测试脚本
+<code>php
+&lt;?php
+phpinfo();
+</code>
+编译
+```sh
+$ pcc &mdash;static index.php -o index</p>
+
+<blockquote><p>./index
+Runtime error in file index.php on line 2: lookup-function &ndash; undefined function: phpinfo
+```</p></blockquote>
+
+<p>看来还有些库没有包含,进入/opt/roadsend/pcc/libs/果然发现很多库，要放在什么地方呢？一般是/usr/lib/
+再看一下/opt/roadsend/pcc/bin/roadsend-pcc-uninstall.sh</p>
+
+<p>{% codeblock %}
+#</p>
+
+<h1>This is an automatically generated uninstaller script for the</h1>
+
+<h1>Roadsend PHP Compiler package</h1>
+
+<p>#</p>
+
+<h2>require root</h2>
+
+<p>me=<code>id -u</code>
+if [ &ldquo;$me&rdquo; -ne 0 ]
+then</p>
+
+<pre><code>echo "You must be root to run uninstaller"
+exit 1
+</code></pre>
+
+<p>fi</p>
+
+<p>echo &ldquo;Uninstalling Roadsend Compiler Runtime&hellip;&rdquo;</p>
+
+<p>rm -f /./opt/roadsend/pcc/libs/libcgi_u.so
+rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.so
+rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-std_u.so
+rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.so
+rm -f /./opt/roadsend/pcc/libs/libphpeval_u.so
+rm -f /./opt/roadsend/pcc/libs/libprofiler_u.so
+rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.so
+rm -f /./opt/roadsend/pcc/libs/libcgi_u.a
+rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.a
+rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-std_u.a
+rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.a
+rm -f /./opt/roadsend/pcc/libs/libphpeval_u.a
+rm -f /./opt/roadsend/pcc/libs/libprofiler_u.a
+rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.a
+rm -f /./opt/roadsend/pcc/libs/php-curl.sch
+rm -f /./opt/roadsend/pcc/libs/php-gtk.sch
+rm -f /./opt/roadsend/pcc/libs/php-mysql.sch
+rm -f /./opt/roadsend/pcc/libs/php-pcre.sch
+rm -f /./opt/roadsend/pcc/libs/php-runtime.sch
+rm -f /./opt/roadsend/pcc/libs/php-std.sch
+rm -f /./opt/roadsend/pcc/libs/php-xml.sch
+rm -f /./opt/roadsend/pcc/libs/cgi.heap
+rm -f /./opt/roadsend/pcc/libs/fastcgi.heap
+rm -f /./opt/roadsend/pcc/libs/mhttpd.heap
+rm -f /./opt/roadsend/pcc/libs/php-curl.heap
+rm -f /./opt/roadsend/pcc/libs/php-gtk.heap
+rm -f /./opt/roadsend/pcc/libs/php-mysql.heap
+rm -f /./opt/roadsend/pcc/libs/php-pcre.heap
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.h
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo_config.h
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.heap
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.so
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.so
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.a
+rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.a
+rm -f /./opt/roadsend/pcc/libs/php-runtime.heap
+rm -f /./opt/roadsend/pcc/libs/php-std.heap
+rm -f /./opt/roadsend/pcc/libs/php-xml.heap
+rm -f /./opt/roadsend/pcc/libs/phpeval.heap
+rm -f /./opt/roadsend/pcc/libs/profiler.heap
+rm -f /./opt/roadsend/pcc/libs/webconnect.heap
+rm -f /./opt/roadsend/pcc/libs/php-gtk.init
+rm -f /./opt/roadsend/pcc/libs/php-xml.init
+rm -f /./opt/roadsend/pcc/libs/phpeval.init
+rm -f /./opt/roadsend/pcc/libs/libmyapp_s.so
+rm -f /./opt/roadsend/pcc/libs/libwebserver.so
+rm -f /./opt/roadsend/pcc/libs/libwebserver.a
+rm -f /./opt/roadsend/pcc/libs/web_server.h
+rm -f /./opt/roadsend/pcc/libs/libbigloo_u-2.6f.so
+rm -f /./opt/roadsend/pcc/libs/libbigloogc-2.6f.so
+rm -f /./opt/roadsend/pcc/modules/fastcgi/pcc.fcgi
+rm -f /./opt/roadsend/pcc/modules/apache1.3.x/mod_pcc.so
+rm -f /./opt/roadsend/pcc/bin/bigloo
+rm -f /usr/lib/libbigloo_u-2.6f.so
+rm -f /usr/lib/libbigloogc-2.6f.so
+rm -f /usr/lib/libcgi_u.so
+rm -f /usr/lib/libfastcgi_u.so
+rm -f /usr/lib/libmhttpd_u.so
+rm -f /usr/lib/libmyapp_s.so
+rm -f /usr/lib/libphp-curl_u.so
+rm -f /usr/lib/libphp-gtk_u.so
+rm -f /usr/lib/libphp-mysql_u.so
+rm -f /usr/lib/libphp-pcre_u.so
+rm -f /usr/lib/libphp-runtime_u.so
+rm -f /usr/lib/libphp-std_u.so
+rm -f /usr/lib/libphp-xml_u.so
+rm -f /usr/lib/libphpeval_u.so
+rm -f /usr/lib/libprofiler_u.so
+rm -f /usr/lib/libwebconnect_u.so
+rm -f /usr/lib/libwebserver.so
+rm -f /usr/lib/libcgi_u.a
+rm -f /usr/lib/libfastcgi_u.a
+rm -f /usr/lib/libmhttpd_u.a
+rm -f /usr/lib/libphp-curl_u.a
+rm -f /usr/lib/libphp-gtk_u.a
+rm -f /usr/lib/libphp-mysql_u.a
+rm -f /usr/lib/libphp-pcre_u.a
+rm -f /usr/lib/libphp-runtime_u.a
+rm -f /usr/lib/libphp-std_u.a
+rm -f /usr/lib/libphp-xml_u.a
+rm -f /usr/lib/libphpeval_u.a
+rm -f /usr/lib/libprofiler_u.a
+rm -f /usr/lib/libwebconnect_u.a
+rm -f /usr/lib/libwebserver.a</p>
+
+<pre><code>if [ -f "/sbin/ldconfig" ]; then
+    echo "running ldconfig ..."
+    /sbin/ldconfig
+fi
+</code></pre>
+
+<p>rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh
+{% endcodeblock %}</p>
+
+<p>看来还有一些项目要复制或者软连接到/usr/lib/去
+<code>sh
+sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libcgi_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libfastcgi_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libmyapp_s.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-std_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphpeval_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libprofiler_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libwebserver.so /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libcgi_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-std_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libphpeval_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libprofiler_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.a /usr/lib/
+sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/
+</code></p>
+
+<p>除此之外，还需要复制配置文件</p>
+
+<p><code>sh
+sudo scp user@hostA:/etc/pcc.conf /etc/
+sudo scp user@hostA:/etc/pcc_conf.conf /etc/
+</code>
+再次运行
+```sh
+$ pcc &mdash;static index.php -o index</p>
+
+<p>*** ERROR:bigloo:error-handler:
+Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn&rsquo;t load because: Shared object &ldquo;libpcre.so.0&rdquo; not found, required by &ldquo;libphp-pcre_u.so&rdquo;, dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so
+You may wish to remove this extension from /etc/pcc.conf if it exists. &mdash; error-handler
+<code>
+又出现一个
+</code>sh
+sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
+sudo scp user@hostA:/usr/local/lib/libgcc_s.so.1 /usr/local/lib/
+<code>
+再编译
+</code>
+$ pcc &mdash;static index.php -o index
+Error: problem running command &lsquo;gcc&rsquo;, exit status 1
+Rerunning with debug level 2 may provide more information.
+$ pcc &mdash;static index.php -o index -d 2
+&hellip;</p>
+
+<blockquote><blockquote><blockquote><p>  /usr/bin/ld: cannot find -lcurl
+ERR:
+Error: problem running command &lsquo;gcc&rsquo;, exit status 1
+  cleaning up&hellip;
+<code>
+这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接
+</code>sh
+sudo cp /usr/local/lib/libcurl.a /lib/
+```
+这样就肯定能找到了,再次编译运行终于出现php的信息了。
+<img src="/images/evoup/pcc_result2.png" alt="Alt text" /></p></blockquote></blockquote></blockquote>
+
+<p>告一段落，下一篇写怎么把这些东西做成rpm直接安装</p>
+]]></content>
+  </entry>
+  
+</feed>
