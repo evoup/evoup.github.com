@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>freebsd6.2i386安装subversion - Evoup`s Blog</title>
+  <title>freebsd6.2i386安装subversion1.8.8 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -107,7 +107,7 @@
     
     
     <h1 class="entry-title">
-        freebsd6.2i386安装subversion
+        freebsd6.2i386安装subversion1.8.8
         
     </h1>
     
@@ -125,7 +125,7 @@
 <p>对g++做个软连接</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -142,17 +142,19 @@
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
-</span><span class='line'>tar xzf apr-1.5.0.tar.gz
-</span><span class='line'><span class="nb">cd </span>apr-1.5.0
-</span><span class='line'>./configure
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span><span class='line'>fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
-</span><span class='line'>tar xjf apr-util-1.5.3.tar.gz
-</span><span class='line'><span class="nb">cd </span>apr-util-1.5.3
-</span><span class='line'>make
-</span><span class='line'>sudo make install
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software/
+</span><span class='line'><span class="nv">$ </span>axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf apr-1.5.0.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>apr-1.5.0
+</span><span class='line'><span class="nv">$ </span>./configure
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span><span class='line'><span class="nv">$ </span>fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xjf apr-util-1.5.3.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>apr-util-1.5.3
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -167,19 +169,104 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
-</span><span class='line'>tar xzf subversion-1.8.8.tar.gz
-</span><span class='line'><span class="nb">cd </span>subversion-1.8.8
-</span><span class='line'>fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
-</span><span class='line'>unzip sqlite-amalgamation-3071501.zip
-</span><span class='line'>mv sqlite-amalgamation-3071501 sqlite-amalgamation
-</span><span class='line'>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/
-</span><span class='line'>make
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software
+</span><span class='line'><span class="nv">$ </span>fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf subversion-1.8.8.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>subversion-1.8.8
+</span><span class='line'><span class="nv">$ </span>fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
+</span><span class='line'><span class="nv">$ </span>unzip sqlite-amalgamation-3071501.zip
+</span><span class='line'><span class="nv">$ </span>mv sqlite-amalgamation-3071501 sqlite-amalgamation
+</span><span class='line'><span class="nv">$ </span>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样是可以用基本的svn签出提交了，但是后来又在签出代码时发现了svn e170000 unrecognized url scheme for http（https）的问题。
+原来少安装一个模块serf（1.8版本之前用neon），安装次序分别为python2.7->scons2.3.1->serf1.3.4</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software
+</span><span class='line'><span class="nv">$ </span>fetch https://www.python.org/ftp/python/2.7/Python-2.7.tgz
+</span><span class='line'><span class="nv">$ </span>tar xzf Python-2.7
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>Python-2.7
+</span><span class='line'><span class="nv">$ </span>./configure
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span><span class='line'><span class="nv">$ </span>fetch http://cznic.dl.sourceforge.net/project/scons/scons/2.3.1/scons-2.3.1.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf scons-2.3.1.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>scons-2.3.1
+</span><span class='line'><span class="nv">$ </span>sudo python setup.py install --standard-lib
+</span><span class='line'><span class="nv">$ </span>fetch http://serf.googlecode.com/svn/src_releases/serf-1.3.4.tar.bz2
+</span><span class='line'><span class="nv">$ </span>tar xjf serf-1.3.4.tar.bz2
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>serf-1.3.4
+</span><span class='line'><span class="nv">$ </span>scons <span class="nv">APR</span><span class="o">=</span>/usr/local/apr/ <span class="nv">APU</span><span class="o">=</span>/usr/local/apr/
+</span><span class='line'><span class="nv">$ </span>sudo scons install
+</span><span class='line'>scons: Reading SConscript files ...
+</span><span class='line'>scons: <span class="k">done </span>reading SConscript files.
+</span><span class='line'>scons: Building targets ...
+</span><span class='line'>Install file: <span class="s2">&quot;libserf-1.a&quot;</span> as <span class="s2">&quot;/usr/local/lib/libserf-1.a&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;libserf-1.so.1.3.0&quot;</span> as <span class="s2">&quot;/usr/local/lib/libserf-1.so.1.3.0&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf_bucket_types.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf_bucket_types.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf_bucket_util.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf_bucket_util.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf-1.pc&quot;</span> as <span class="s2">&quot;/usr/local/lib/pkgconfig/serf-1.pc&quot;</span>
+</span><span class='line'>scons: <span class="k">done </span>building targets.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重新安装subversion，把openssl也带上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ../subversion-1.8.8
+</span><span class='line'><span class="nv">$ </span>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/ --with-openssl --with-serf<span class="o">=</span>/usr/local/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果遇到找不到libintl.h</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo ln -s /usr/local/include/libintl.h /usr/include/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后编译</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make
 </span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>收工！</p>
+<p>收工</p>
 </div>
 
 
