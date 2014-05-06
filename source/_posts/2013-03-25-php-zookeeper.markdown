@@ -25,6 +25,9 @@ tar xzf zookeeper-0.2.2.tgz
 cd /home/software
 wget http://apache.fayea.com/apache-mirror/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 tar xzf zookeeper-3.4.6.tar.gz
+cd zookeeper-3.4.6/src/c
+./configure --prefix=/home/software/zookeeper-3.4.6/prefix
+sudo make install
 ```
 
 ###php端编译
