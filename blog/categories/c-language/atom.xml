@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-04-25T18:42:12+08:00</updated>
+  <updated>2014-05-06T14:22:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -51,40 +51,74 @@
 
 
 <p>先看准备被改成动态库的原代码
-{% codeblock test.c lang:c %}</p>
-
-<h1>include &lt;stdio.h></h1>
-
-<h1>include &lt;stdlib.h></h1>
-
-<h1>include &lt;unistd.h></h1>
-
-<p>int main(int argc, char **argv) {</p>
-
-<pre><code>int ch;
-const char *opts="a:b::cd";
-while ((ch = getopt(argc, argv, opts)) != -1) {
-    switch (ch) {
-    case 'a':
-        printf("option a:'%s'\n",optarg);
-        break;
-    case 'b':
-        printf("option b:'%s'\n",optarg);
-        break;
-    case 'c':
-        printf("option c:'%s'\n",optarg);
-        break;
-    case 'd':
-        printf("option d:'%s'\n",optarg);
-        break;
-    default:
-        printf("other option:%c\n",ch);
-    }
-}
-</code></pre>
-
-<p>}
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="nl">default:</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p><code>makefile
 gcc -Wall test.c -o test
@@ -101,51 +135,96 @@ option d:'(null)'
 其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。</p>
 
 <p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。
-{% codeblock plug.c lang:c %}</p>
-
-<h1>include &lt;stdio.h></h1>
-
-<h1>include &lt;stdlib.h></h1>
-
-<h1>include &lt;unistd.h></h1>
-
-<p>int dlmain(int, char <strong>);
-int main(int argc, char </strong>argv) {</p>
-
-<pre><code>char *cmdStr[5]={"","-a1","-b1","-c","-d\0"};
-dlmain(5,cmdStr);
-return 1;
-</code></pre>
-
-<p>}
-int dlmain(int argc, char **argv) {</p>
-
-<pre><code>int ch;
-const char *opts="a:b::cd";
-while ((ch = getopt(argc, argv, opts)) != -1) {
-    switch (ch) {
-    case 'a':
-        printf("option a:'%s'\n",optarg);
-        break;
-    case 'b':
-        printf("option b:'%s'\n",optarg);
-        break;
-    case 'c':
-        printf("option c:'%s'\n",optarg);
-        break;
-    case 'd':
-        printf("option d:'%s'\n",optarg);
-        break;
-    default:
-        printf("other option:%c\n",ch);
-    }
-}
-printf("in dll\n");
-return 1;
-</code></pre>
-
-<p>}
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">&lt;/</span><span class="n">strong</span><span class="o">&gt;</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'><span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="nl">default:</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>测试一下
 <code>makefile
@@ -158,52 +237,98 @@ option d:'(null)'
 in dll
 </code>
 ok，没有问题，直接转换成动态库
-{% codeblock plug.c lang:c %}</p>
-
-<h1>include &lt;stdio.h></h1>
-
-<h1>include &lt;stdlib.h></h1>
-
-<h1>include &lt;unistd.h></h1>
-
-<p>int d_plug ();
-int dlmain(int, char **);
-int d_plug () {</p>
-
-<pre><code>char *cmdStr[5]={"","-a1","-b1","-c","-d\0"};
-dlmain(5,cmdStr);
-return 1;
-</code></pre>
-
-<p>}
-int dlmain(int argc, char **argv) {</p>
-
-<pre><code>int ch;
-const char *opts="a:b::cd";
-while ((ch = getopt(argc, argv, opts)) != -1) {
-    switch (ch) {
-    case 'a':
-        printf("option a:'%s'\n",optarg);
-        break;
-    case 'b':
-        printf("option b:'%s'\n",optarg);
-        break;
-    case 'c':
-        printf("option c:'%s'\n",optarg);
-        break;
-    case 'd':
-        printf("option d:'%s'\n",optarg);
-        break;
-    default:
-        printf("other option:%c\n",ch);
-    }
-}
-printf("in dll\n");
-return 1;
-</code></pre>
-
-<p>}
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdlib</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">unistd</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">d_plug</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">d_plug</span> <span class="p">()</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'><span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>    <span class="nl">default:</span>
+</span><span class='line'>        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>编译动态连接库
 <code>makefile
@@ -212,25 +337,44 @@ gcc -shared -o plug.so plug.c -fpic
 这样就得到了plug.so</p>
 
 <p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
-{% codeblock main.c lang:c %}</p>
-
-<h1>include &lt;stdio.h></h1>
-
-<h1>include &lt;dlfcn.h></h1>
-
-<p>int (*d_plug) ();
-int main(int argc,char **argv) {</p>
-
-<pre><code>void *dp;
-dp=dlopen("./plug.so",RTLD_LAZY);
-d_plug=dlsym(dp,"d_plug");
-d_plug();
-dlclose(dp);
-return 1;
-</code></pre>
-
-<p>}
-{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>main.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">stdio</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">dlfcn</span><span class="p">.</span><span class="n">h</span><span class="o">&gt;&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_plug</span><span class="p">)</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">void</span> <span class="o">*</span><span class="n">dp</span><span class="p">;</span>
+</span><span class='line'><span class="n">dp</span><span class="o">=</span><span class="n">dlopen</span><span class="p">(</span><span class="s">&quot;./plug.so&quot;</span><span class="p">,</span><span class="n">RTLD_LAZY</span><span class="p">);</span>
+</span><span class='line'><span class="n">d_plug</span><span class="o">=</span><span class="n">dlsym</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span><span class="s">&quot;d_plug&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">d_plug</span><span class="p">();</span>
+</span><span class='line'><span class="n">dlclose</span><span class="p">(</span><span class="n">dp</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 编译执行看结果
 <code>makefile
 gcc main.c -lc -fpic -o main
@@ -274,7 +418,7 @@ in dll
 ```c
 /<em>
  * free.c &ndash; Display FreeBSD memory information
- * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x76;&#x69;&#x6e;&#111;&#x64;&#64;&#x73;&#101;&#103;&#x66;&#x61;&#x75;&#108;&#x74;&#x2e;&#105;&#x6e;">&#118;&#x69;&#x6e;&#111;&#100;&#x40;&#x73;&#101;&#103;&#x66;&#x61;&#x75;&#108;&#116;&#46;&#105;&#x6e;</a>
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#58;&#x76;&#x69;&#x6e;&#111;&#100;&#x40;&#115;&#101;&#x67;&#x66;&#x61;&#117;&#x6c;&#116;&#46;&#x69;&#x6e;">&#x76;&#x69;&#110;&#111;&#100;&#x40;&#115;&#x65;&#x67;&#x66;&#97;&#117;&#108;&#x74;&#46;&#x69;&#x6e;</a>
  * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
  </em>/</p>
 
