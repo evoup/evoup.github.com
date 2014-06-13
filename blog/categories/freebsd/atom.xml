@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-05-06T14:22:37+08:00</updated>
+  <updated>2014-06-13T18:06:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,46 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
+    <updated>2014-06-13T17:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
+    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+
+<!-- more -->
+
+
+<h3>freebsd下</h3>
+
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存
+<code>sh
+sudo cp ukai.ttf /usr/local/share/fonts/
+sudo fc-cache -f -v
+</code></p>
+
+<h3>centos下</h3>
+
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令
+<code>sh
+sudo mkdir /use/share/fonts/msfonts
+sudo cp ukai.ttf /usr/share/fonts/msfonts/
+cd /usr/share/fonts/msfonts/
+sudo mkfontscale
+sudo mkfontdir
+sudo fc-cache -fv
+</code>
+更EZ的方式有
+<code>
+sudo yum  –y  install  fonts-chinese
+</code></p>
+
+<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
@@ -335,448 +375,6 @@ ntpdate ntp.sjtu.edu.cn</p>
 ```</p>
 
 <p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[在操作系统之间迁移二进制程序之一]]></title>
-    <link href="http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os/"/>
-    <updated>2013-04-18T17:52:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/04/18/migrate-binary-application-from-os-to-os</id>
-    <content type="html"><![CDATA[<h3>写在前面</h3>
-
-<p>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br>
-单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把程序直接移植到另一台机器HostB上去？答案是肯定的。</p>
-
-<!-- more -->
-
-
-<h3>程序定位和复制</h3>
-
-<h4>主程序的复制</h4>
-
-<p>这个程序就是pcc，首先找一下pcc的路径。
-<code>sh
-$ whereis pcc
-pcc: /usr/bin/pcc /usr/ports/lang/pcc
-</code></p>
-
-<p>可见pcc所在/usr/bin/目录下，先把这个复制过去
-<code>sh
-$ sudo scp user@hostA:/usr/bin/pcc /usr/bin/
-</code></p>
-
-<h4>程序依赖库的复制</h4>
-
-<p>如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：
-```sh
-$ ldd /usr/bin/pcc
-/usr/bin/pcc:</p>
-
-<pre><code>    libphp-runtime_u.so =&gt; /usr/lib/libphp-runtime_u.so (0x28083000)
-    libprofiler_u.so =&gt; /usr/lib/libprofiler_u.so (0x280ee000)
-    libwebconnect_u.so =&gt; /usr/lib/libwebconnect_u.so (0x280f2000)
-    libphpeval_u.so =&gt; /usr/lib/libphpeval_u.so (0x28108000)
-    libbigloo_u-2.6f.so =&gt; /usr/lib/libbigloo_u-2.6f.so (0x28250000)
-    libbigloogc-2.6f.so =&gt; /usr/lib/libbigloogc-2.6f.so (0x2833a000)
-    libm.so.4 =&gt; /lib/libm.so.4 (0x2835c000)
-    libc.so.6 =&gt; /lib/libc.so.6 (0x28372000)
-</code></pre>
-
-<p>```
-好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
-
-<p><code>sh
-$ cd /home/software
-$ fetch https://pkgs.fedoraproject.org/repo/pkgs/bigloo/bigloo2.6f.tar.gz/bc99b1919adee864dd371aeebc36862c/bigloo2.6f.tar.gz
-$ tar xzf bigloo2.6f.tar.gz
-$ cd bigloo2.6f
-$ ./configure --jvm=no
-*** ERROR:configure:the C compiler (/usr/local/bin/gcc44) does not seem to work. Aborting
-$ whereis gcc
-gcc: /usr/bin/gcc /usr/share/man/man1/gcc.1.gz /usr/src/contrib/gcc
-$ sudo ln -s /usr/bin/gcc /usr/local/bin/gcc44
-$ ./configure --jvm=no
-$ gmake
-$ sudo gmake install
-</code></p>
-
-<p>安装完成返回来继续复制，要注意已经存在的不能去盖了
-```sh
-$ ldd /usr/bin/pcc
-/usr/bin/pcc:</p>
-
-<pre><code>    libphp-runtime_u.so =&gt; not found (0x0)
-    libprofiler_u.so =&gt; not found (0x0)
-    libwebconnect_u.so =&gt; not found (0x0)
-    libphpeval_u.so =&gt; not found (0x0)
-    libbigloo_u-2.6f.so =&gt; /usr/local/lib/libbigloo_u-2.6f.so (0x28083000)
-    libbigloogc-2.6f.so =&gt; /usr/local/lib/libbigloogc-2.6f.so (0x2816d000)
-    libm.so.4 =&gt; /lib/libm.so.4 (0x2818f000)
-    libc.so.6 =&gt; /lib/libc.so.6 (0x281a5000)
-</code></pre>
-
-<p>```</p>
-
-<p>好的，只要not found的我们从HostA复制过来
-<code>sh
-$ sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
-$ sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/
-$ sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/
-$ sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/
-</code>
-然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
-试试看，其实已经可以了：
-<img src="/images/evoup/pcc_result.png" alt="Alt text" /></p>
-
-<p>但是要真正能使用这个软件，还需要复制/opt过来
-<code>sh
-scp -dr user@hostA:/opt /
-sudo chown root -R /opt
-</code>
-然后写一个php测试脚本
-<code>php
-&lt;?php
-phpinfo();
-</code>
-编译
-```sh
-$ pcc &mdash;static index.php -o index</p>
-
-<blockquote><p>./index
-Runtime error in file index.php on line 2: lookup-function &ndash; undefined function: phpinfo
-```</p></blockquote>
-
-<p>看来还有些库没有包含,进入/opt/roadsend/pcc/libs/果然发现很多库，要放在什么地方呢？一般是/usr/lib/
-再看一下/opt/roadsend/pcc/bin/roadsend-pcc-uninstall.sh</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
-<span class='line-number'>115</span>
-<span class='line-number'>116</span>
-<span class='line-number'>117</span>
-<span class='line-number'>118</span>
-<span class='line-number'>119</span>
-<span class='line-number'>120</span>
-<span class='line-number'>121</span>
-<span class='line-number'>122</span>
-<span class='line-number'>123</span>
-<span class='line-number'>124</span>
-<span class='line-number'>125</span>
-<span class='line-number'>126</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>#&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h1>This is an automatically generated uninstaller script for the&lt;/h1>
-</span><span class='line'>
-</span><span class='line'>&lt;h1>Roadsend PHP Compiler package&lt;/h1>
-</span><span class='line'>
-</span><span class='line'>&lt;p>#&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;h2>require root&lt;/h2>
-</span><span class='line'>
-</span><span class='line'>&lt;p>me=&lt;code>id -u&lt;/code>
-</span><span class='line'>if [ &ldquo;$me&rdquo; -ne 0 ]
-</span><span class='line'>then&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>echo "You must be root to run uninstaller"
-</span><span class='line'>exit 1
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>fi&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>echo &ldquo;Uninstalling Roadsend Compiler Runtime&hellip;&rdquo;&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>rm -f /./opt/roadsend/pcc/libs/libcgi_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-std_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphpeval_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libprofiler_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libcgi_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-std_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libphpeval_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libprofiler_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-curl.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-mysql.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-pcre.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-runtime.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-std.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.sch
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/cgi.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/fastcgi.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/mhttpd.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-curl.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-mysql.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-pcre.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.h
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo_config.h
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-runtime.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-std.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/phpeval.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/profiler.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/webconnect.heap
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-gtk.init
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/php-xml.init
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/phpeval.init
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libmyapp_s.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebserver.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libwebserver.a
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/web_server.h
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libbigloo_u-2.6f.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/libs/libbigloogc-2.6f.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/modules/fastcgi/pcc.fcgi
-</span><span class='line'>rm -f /./opt/roadsend/pcc/modules/apache1.3.x/mod_pcc.so
-</span><span class='line'>rm -f /./opt/roadsend/pcc/bin/bigloo
-</span><span class='line'>rm -f /usr/lib/libbigloo_u-2.6f.so
-</span><span class='line'>rm -f /usr/lib/libbigloogc-2.6f.so
-</span><span class='line'>rm -f /usr/lib/libcgi_u.so
-</span><span class='line'>rm -f /usr/lib/libfastcgi_u.so
-</span><span class='line'>rm -f /usr/lib/libmhttpd_u.so
-</span><span class='line'>rm -f /usr/lib/libmyapp_s.so
-</span><span class='line'>rm -f /usr/lib/libphp-curl_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-gtk_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-mysql_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-pcre_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-runtime_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-std_u.so
-</span><span class='line'>rm -f /usr/lib/libphp-xml_u.so
-</span><span class='line'>rm -f /usr/lib/libphpeval_u.so
-</span><span class='line'>rm -f /usr/lib/libprofiler_u.so
-</span><span class='line'>rm -f /usr/lib/libwebconnect_u.so
-</span><span class='line'>rm -f /usr/lib/libwebserver.so
-</span><span class='line'>rm -f /usr/lib/libcgi_u.a
-</span><span class='line'>rm -f /usr/lib/libfastcgi_u.a
-</span><span class='line'>rm -f /usr/lib/libmhttpd_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-curl_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-gtk_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-mysql_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-pcre_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-runtime_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-std_u.a
-</span><span class='line'>rm -f /usr/lib/libphp-xml_u.a
-</span><span class='line'>rm -f /usr/lib/libphpeval_u.a
-</span><span class='line'>rm -f /usr/lib/libprofiler_u.a
-</span><span class='line'>rm -f /usr/lib/libwebconnect_u.a
-</span><span class='line'>rm -f /usr/lib/libwebserver.a&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;pre>&lt;code>if [ -f "/sbin/ldconfig" ]; then
-</span><span class='line'>    echo "running ldconfig ..."
-</span><span class='line'>    /sbin/ldconfig
-</span><span class='line'>fi
-</span><span class='line'>&lt;/code>&lt;/pre>
-</span><span class='line'>
-</span><span class='line'>&lt;p>rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>看来还有一些项目要复制或者软连接到/usr/lib/去
-<code>sh
-sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libcgi_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libfastcgi_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libmyapp_s.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-std_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphpeval_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libprofiler_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libwebserver.so /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libcgi_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-std_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libphpeval_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libprofiler_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.a /usr/lib/
-sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/
-</code></p>
-
-<p>除此之外，还需要复制配置文件</p>
-
-<p><code>sh
-sudo scp user@hostA:/etc/pcc.conf /etc/
-sudo scp user@hostA:/etc/pcc_conf.conf /etc/
-</code>
-再次运行
-```sh
-$ pcc &mdash;static index.php -o index</p>
-
-<p>*** ERROR:bigloo:error-handler:
-Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn&rsquo;t load because: Shared object &ldquo;libpcre.so.0&rdquo; not found, required by &ldquo;libphp-pcre_u.so&rdquo;, dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so
-You may wish to remove this extension from /etc/pcc.conf if it exists. &mdash; error-handler
-<code>
-又出现一个
-</code>sh
-sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
-sudo scp user@hostA:/usr/local/lib/libgcc_s.so.1 /usr/local/lib/
-<code>
-再编译
-</code>
-$ pcc &mdash;static index.php -o index
-Error: problem running command &lsquo;gcc&rsquo;, exit status 1
-Rerunning with debug level 2 may provide more information.
-$ pcc &mdash;static index.php -o index -d 2
-&hellip;</p>
-
-<blockquote><blockquote><blockquote><p>  /usr/bin/ld: cannot find -lcurl
-ERR:
-Error: problem running command &lsquo;gcc&rsquo;, exit status 1
-  cleaning up&hellip;
-<code>
-这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接
-</code>sh
-sudo cp /usr/local/lib/libcurl.a /lib/
-```
-这样就肯定能找到了,再次编译运行终于出现php的信息了。
-<img src="/images/evoup/pcc_result2.png" alt="Alt text" /></p></blockquote></blockquote></blockquote>
-
-<p>告一段落，下一篇写怎么把这些东西做成rpm直接安装</p>
 ]]></content>
   </entry>
   

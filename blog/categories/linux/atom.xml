@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: linux | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-06-13T18:06:13+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
+    <updated>2014-06-13T17:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
+    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+
+<!-- more -->
+
+
+<h3>freebsd下</h3>
+
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存
+<code>sh
+sudo cp ukai.ttf /usr/local/share/fonts/
+sudo fc-cache -f -v
+</code></p>
+
+<h3>centos下</h3>
+
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令
+<code>sh
+sudo mkdir /use/share/fonts/msfonts
+sudo cp ukai.ttf /usr/share/fonts/msfonts/
+cd /usr/share/fonts/msfonts/
+sudo mkfontscale
+sudo mkfontdir
+sudo fc-cache -fv
+</code>
+更EZ的方式有
+<code>
+sudo yum  –y  install  fonts-chinese
+</code></p>
+
+<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-05-06T14:22:37+08:00</updated>
+  <updated>2014-06-13T18:06:13+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,59 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
+    <updated>2014-06-13T17:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
+    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+
+<!-- more -->
+
+
+<h3>freebsd下</h3>
+
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp ukai.ttf /usr/local/share/fonts/
+</span><span class='line'>sudo <span class="nb">fc</span>-cache -f -v
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>centos下</h3>
+
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo mkdir /use/share/fonts/msfonts
+</span><span class='line'>sudo cp ukai.ttf /usr/share/fonts/msfonts/
+</span><span class='line'><span class="nb">cd</span> /usr/share/fonts/msfonts/
+</span><span class='line'>sudo mkfontscale
+</span><span class='line'>sudo mkfontdir
+</span><span class='line'>sudo <span class="nb">fc</span>-cache -fv
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>更EZ的方式有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo yum  –y  install  fonts-chinese
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[golang使用syslog日志系统和安装使用第三方包log4go]]></title>
@@ -4147,93 +4200,6 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 <p><img src="http://evoupsight.com/images/evoup/eclipse_adt_config.png" alt="Alt text" /></p>
 
 <p>这样 Android 开发环境就搭建好了。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[git clone失败警告unprotected private key file]]></title>
-    <link href="http://evoupsight.com/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file/"/>
-    <updated>2014-01-16T23:41:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/01/16/git-clone-fail-cause-unprotected-private-key-file</id>
-    <content type="html"><![CDATA[<h3>起因</h3>
-
-<p>今天在clone项目的时候发生了很奇怪的错误，而且居然是有的项目可以clone，有的不行，都是git协议。错误如下：</p>
-
-<!-- more -->
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>git clone git@github.com:someone/case.git
-</span><span class='line'>Cloning into <span class="s1">&#39;case&#39;</span>...
-</span><span class='line'>Warning: Permanently added the RSA host key <span class="k">for </span>IP address <span class="s1">&#39;192.30.252.129&#39;</span> to t
-</span><span class='line'>he list of known hosts.
-</span><span class='line'>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-</span><span class='line'>@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
-</span><span class='line'>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-</span><span class='line'>Permissions 0644 <span class="k">for</span> <span class="s1">&#39;/c/Users/Administrator/.ssh/id_rsa&#39;</span> are too open.
-</span><span class='line'>It is recommended that your private key files are NOT accessible by others.
-</span><span class='line'>This private key will be ignored.
-</span><span class='line'>bad permissions: ignore key: /c/Users/Administrator/.ssh/id_rsa
-</span><span class='line'>Permission denied <span class="o">(</span>publickey<span class="o">)</span>.
-</span><span class='line'>fatal: Could not <span class="nb">read </span>from remote repository.
-</span><span class='line'>
-</span><span class='line'>Please make sure you have the correct access rights
-</span><span class='line'>and the repository exists.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>排查</h3>
-
-<p>显示是私钥权限不正确导致的，然后定位到git-bash所使用的sh.exe程序，用管理员模式运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chmod 0600 /c/Users/Administrator/.ssh/id_rsa
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>尝试几次都没法收回group和other的r权限（r+w+rw=2<sup>2</sup>+2<sup>1</sup>+2<sup>0</sup>，我这里是4，2<sup>2</sup>所以是r）
-最后发现是因为装git windows的时候选择了第一种方式和cygwin正好冲突了，如果装了cygwin的基础上再安装git windows要在git windows的安装选项里选第二种方式；还有一种可能是和tortoise git冲突了，尚未确认。
-最后删除cygwin重装git-bash可以正常clone了。</p>
-
-<h3>延伸</h3>
-
-<p>git windows还有第三种安装方式，第三种比较危险，会覆盖windows指令，一般不采取，如果以后不打算用cygwin的话，直接第一种方式安装就可以了。</p>
-
-<p>附：正常的权限掩码，来自一台freebsd</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>-rw-r--r--   authorized_keys
-</span><span class='line'>-rw-------   config
-</span><span class='line'>-rw-------   id_dsa
-</span><span class='line'>-rw-------   id_dsa.pub
-</span><span class='line'>-rw-------   id_rsa
-</span><span class='line'>-rw-r--r--   id_rsa.pub
-</span><span class='line'>-rw-------   known_hosts
-</span></code></pre></td></tr></table></div></figure>
-
-
-
 ]]></content>
   </entry>
   
