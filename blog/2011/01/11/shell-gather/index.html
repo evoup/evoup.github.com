@@ -223,6 +223,13 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>把僵尸进程杀光</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ps -A -o stat,ppid,pid,cmd | grep -e <span class="s1">&#39;^[Zz]&#39;</span> | awk <span class="s1">&#39;{print $2}&#39;</span> | xargs <span class="nb">kill</span> -9
+</span></code></pre></td></tr></table></div></figure>
+
+
 <p>vim不加载vimrc</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
