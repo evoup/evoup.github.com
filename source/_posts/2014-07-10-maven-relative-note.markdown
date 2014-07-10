@@ -9,6 +9,8 @@ categories: [java]
 ###介绍
 maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。
 
+<!-- more -->
+
 ###安装(其实无需安装)
 
 由于可能地址被强，在国内maven下载依赖比较慢，最好在编辑/etc/hosts，并在其中加上依赖服务器的IP地址，如下：
