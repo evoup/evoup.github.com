@@ -75,6 +75,11 @@ nohup sh command >> /dev/null
 #注意如果command是一个脚本，所在脚本可以写成&后台执行的方式以获得主调代码异步的机制
 ```
 
+把僵尸进程杀光
+```sh
+ps -A -o stat,ppid,pid,cmd | grep -e '^[Zz]' | awk '{print $2}' | xargs kill -9
+```
+
 vim不加载vimrc
 ```sh
 vim -u NONE
