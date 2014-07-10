@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-10T17:05:10+08:00</updated>
+  <updated>2014-07-10T17:29:38+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,134 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[rrdsrv usage]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/rrdsrv-usage/"/>
+    <updated>2014-07-10T17:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/rrdsrv-usage</id>
+    <content type="html"><![CDATA[<p>原来以为rrdtool只是个本地数据库，这次写java程序看了几个rrdtool的java实现的源码,在其中一款中发现原来rrdtool居然还支持inetd超级服务器的用法，也就是rrdsrv。以下以freebsd下rrdsrv的配置为例，介绍使用方法：</p>
+
+<!--more-->
+
+
+<p>假设rrdtool的安装路径在/usr/local/bin/rrdtool，然后存放rrd数据库的路径为/services/rrds/</p>
+
+<p>首先编辑/etc/inetd.conf，加入</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后再编辑/etc/services，加入</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rrdsrv 13900/tcp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在/etc/rc.conf中</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>inetd_enable="YES"</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/rc.d/inetd start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样13900端口就支持使用socket方式的rrdtool命令操作了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yin@yin-arch rrds<span class="o">]</span>&gt;telnet 127.0.0.1 13900
+</span><span class='line'>Trying 127.0.0.1...
+</span><span class='line'>Connected to localhost.
+</span><span class='line'>Escape character is <span class="s1">&#39;^]&#39;</span>.
+</span><span class='line'>
+</span><span class='line'>info load.rrd
+</span><span class='line'><span class="nv">filename</span> <span class="o">=</span> <span class="s2">&quot;load.rrd&quot;</span>
+</span><span class='line'><span class="nv">rrd_version</span> <span class="o">=</span> <span class="s2">&quot;0003&quot;</span>
+</span><span class='line'><span class="nv">step</span> <span class="o">=</span> 15
+</span><span class='line'><span class="nv">last_update</span> <span class="o">=</span> 1404984273
+</span><span class='line'><span class="nv">header_size</span> <span class="o">=</span> 1000
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.index <span class="o">=</span> 0
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.type <span class="o">=</span> <span class="s2">&quot;GAUGE&quot;</span>
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.minimal_heartbeat <span class="o">=</span> 120
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.min <span class="o">=</span> NaN
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.max <span class="o">=</span> NaN
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.last_ds <span class="o">=</span> <span class="s2">&quot;5.73242000000000029303e-01&quot;</span>
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.value <span class="o">=</span> 2.0151107237e+00
+</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.unknown_sec <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.rows <span class="o">=</span> 5856
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cur_row <span class="o">=</span> 5072
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.pdp_per_row <span class="o">=</span> 1
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> NaN
+</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.rows <span class="o">=</span> 20160
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cur_row <span class="o">=</span> 9119
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.pdp_per_row <span class="o">=</span> 4
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 1.1429347927e+00
+</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.rows <span class="o">=</span> 52704
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cur_row <span class="o">=</span> 46249
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.pdp_per_row <span class="o">=</span> 40
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 9.7464362627e+00
+</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class='line'>OK u:0.00 s:0.01 r:41.67
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>值得一提的是，除了支持rrdtool的info、create、update等内置命令，更可以调用系统指令cd、mkdir、ls等指令，非常强大。可以看出作者的编程思路非常奇特，居然还可以这样用。于是我借助这个特性，实现了网络rrdtool指令的操作，like memcache：）</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mysql复制同步修复工具]]></title>
@@ -3650,29 +3778,6 @@ hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
 <p>没问题收工。</p>
 
 <p>参考互联网文章《编译FFMpeg和FFMpeg-php》linux版的</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[VS2010 LINK:fatal error LNK1123]]></title>
-    <link href="http://evoupsight.com/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/"/>
-    <updated>2014-02-10T15:22:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/02/10/vs2010-link-fatal-error-lnk1123</id>
-    <content type="html"><![CDATA[<p>因为要看cocostudio的实例代码，在原有vs2010的基础上又安装了vs2012，出现了项目不能编译的问题OMG
-<code>LINK : fatal error LNK1123: 转换到 COFF 期间失败: 文件无效或损坏</code>
-以下为解决方法：</p>
-
-<!-- more -->
-
-
-<blockquote><p>VS2010在经历一些更新后，建立Win32 Console Project时会出“error LNK1123” 错误，解决方案为将 项目|项目属性|配置属性|清单工具|输入和输出|嵌入清单 “是”改为“否”即可，但是没新建一个项目都要这样设置一次。
-在建立VS2010 Win32 Project项目时，按照上面解决方案依然发生了“error LNK1123”错误，经过上网查资料，解决方案为：
-第一步：与上相同。
-第二步：将 项目|项目属性|配置属性|连接器|清单文件|嵌入清单 “是”改为“否”。
-第三步：一般计算机经过上两步设置就能解决问题了，但是如果还有问题，那就按一下方法解决：
-计算机是否为64bit操作系统，如是，继续2。
-查找是否有两个cvtres.exe。一个是C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cvtres.exe， 另一个是C:\Windows\Microsoft.NET\Framework\v4.0.30319\cvtres.exe。右键属性|详细信息 查看两者版本号，删除/重命名较旧的版本，或者重新设置Path变量。
-删除或者重命名比较旧的版本的cvtres.exe即可。</p></blockquote>
 ]]></content>
   </entry>
   
