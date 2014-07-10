@@ -4,10 +4,10 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: octopress - Evoup`s Blog</title>
+  <title>maven使用小计 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
-  <meta name="description" content="Category: octopress">
+  
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.comblog/categories/octopress">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/07/10/maven-relative-note">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -46,10 +46,10 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li >
+                <li class="active">
                     <a href="/">Blog</a>
                 </li>
-                <li class="active">
+                <li >
                     <a href="/blog/archives">Archives</a>
                 </li>
                 <li >
@@ -83,31 +83,16 @@
         <div id="content">
           <div class="row">
   <div class="page-content col-md-9">
-    <article role="article">
+    <article class="hentry" role="article">
       
-        <header class="page-header">
-          
-          
-            <h1 class="entry-title">
-              Category: Octopress
-              
-            </h1>
-          
-        </header>
-      
-      <div class="entry-content">
-        <div id="blog-archives" class="category">
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
 
 
 
-  
-  <h2>2014</h2>
 
-<article class="page-header">
-  
-<h1><a href="/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/">octopress2报错undefined method `[] for nill:NilClass</a></h1>
-<p class="meta text-muted">
-  
 
 
 
@@ -116,149 +101,183 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-10T14:41:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2014</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        Maven使用小计
+        
+    </h1>
+    
+  </header>
 
 
+<div class="entry-content clearfix"><h3>介绍</h3>
 
+<p>maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。</p>
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-09T22:32:00+08:00" pubdate data-updated="true">Feb 9<span>th</span>, 2014</time>
-  
+<h3>安装(其实无需安装)</h3>
 
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
-  
-</span>
+<p>由于可能地址被强，在国内maven下载依赖比较慢，最好在编辑/etc/hosts，并在其中加上依赖服务器的IP地址，如下：</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>199.27.77.129 repo.maven.apache.org</span></code></pre></td></tr></table></div></figure>
 
-</p>
 
-</article>
+<p>下载和解压安装包</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir /home/software/
+</span><span class='line'>fetch http://down1.chinaunix.net/distfiles/apache-maven-3.0.4-bin.tar.gz
+</span><span class='line'>tar xzf apache-maven-3.0.4-bin.tar.gz</span></code></pre></td></tr></table></div></figure>
 
 
-  
-  <h2>2013</h2>
+<p>然后在~/.cshrc中指定
+setenv M2_HOME &ldquo;/usr/home/software/apache-maven-3.0.4&rdquo;
+setenv MAVEN_OPTS &ldquo;-Xms128m -Xmx512m&rdquo;
+set path=( $path $M2_HOME/bin )
+接着
+source ~/.cshrc
+就可以使用mvn命令了</p>
 
-<article class="page-header">
-  
-<h1><a href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/">克隆你的octopress博客到win7</a></h1>
-<p class="meta text-muted">
-  
+<h3>基本测试构建</h3>
 
+<p>生成测试</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean test</span></code></pre></td></tr></table></div></figure>
 
 
+<p>以上命令能直接生成class文件，并且支持自动测试（需要引入Junt并编写测试代码）</p>
 
+<p>生成测试和打包</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean package</span></code></pre></td></tr></table></div></figure>
 
 
+<p>以上命令能直接生成最终的jar包文件，同时实现mvn clean test的所有功能</p>
 
+<h3>mvn常用命令</h3>
 
+<p>编译</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn compile</span></code></pre></td></tr></table></div></figure>
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-01T18:25:00+08:00" pubdate data-updated="true">Dec 1<span>st</span>, 2013</time>
-  
 
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
-  
-</span>
+<p>清理（删除所有test，package，compile等生成的文件）</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean</span></code></pre></td></tr></table></div></figure>
 
-</p>
 
-</article>
+<p>mvn获取所有依赖并且打包</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn dependency:copy-dependencies -DoutputDirectory=lib package</span></code></pre></td></tr></table></div></figure>
 
 
-<article class="page-header">
-  
-<h1><a href="/blog/2013/10/09/octopress-add-share-discuss/">octopress添加社会化分享和添加多说评论</a></h1>
-<p class="meta text-muted">
-  
+<p>maven不经过测试直接打包</p>
 
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mvn -DskipTests clean package</span></code></pre></td></tr></table></div></figure>
 
 
+<h3>mvn找依赖的方法</h3>
 
+<p>以下两个网站任意一个直接在搜索框中给出java根类即可，第一个网站还可以在线查看jar包里的方法，可以当在线手册查阅：</p>
 
+<p><a href="https://repository.sonatype.org/">https://repository.sonatype.org/</a></p>
 
+<p><a href="http://mvnrepository.com/">http://mvnrepository.com/</a></p>
 
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-10-09T16:14:00+08:00" pubdate data-updated="true">Oct 9<span>th</span>, 2013</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
-
-
-<article class="page-header">
-  
-<h1><a href="/blog/2013/09/29/change-blog-to-github/">博客搬家到github</a></h1>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-09-29T16:27:00+08:00" pubdate data-updated="true">Sep 29<span>th</span>, 2013</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/octopress/'>octopress</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
+<p>参考：
+《Maven实战》</p>
 </div>
 
-      </div>
-      
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-10T14:41:00+08:00" pubdate data-updated="true">Jul 10<span>th</span>, 2014</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/java/'>java</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/" title="Previous Post: freebsd和linux上安装中文字体">&laquo; freebsd和linux上安装中文字体</a></li>
+            
+            
+          </ul>
+        
+      </footer>
     </article>
-    
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
   </div>
 
   
-    <aside class="sidebar col-md-3">
-      
-        <section class="panel panel-default">
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">最新发表</h3>
   </div>
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/07/10/maven-relative-note/">Maven使用小计</a>
+    <a class="list-group-item active" href="/blog/2014/07/10/maven-relative-note/">Maven使用小计</a>
     
     <a class="list-group-item " href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/">Freebsd和linux上安装中文字体</a>
     
@@ -307,9 +326,17 @@
 
 
 
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
 
-      
-    </aside>
+    
+  </aside>
   
 </div>
 
