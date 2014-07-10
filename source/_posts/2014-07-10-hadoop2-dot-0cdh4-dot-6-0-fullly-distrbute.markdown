@@ -12,7 +12,7 @@ hadoop2.0 cdh4安装（完全分布式）
 vmware版本8.0.4 build-744019
 
 首先规划3台虚拟机
-
+```
  ,'''''''''''''''''''''':'''''''''''''''''':''''''''''''''''''''''''''''''''''''''''''''|
  |        usage         |        IP        |                  Hostname                  |
  |                      |                  |                                            |
@@ -26,6 +26,7 @@ vmware版本8.0.4 build-744019
  | datanode2,nfs server | 192.168.216.185  |    mdn3datanode3.net,mdn3nfsserver.net     |
  |                      |                  |                                            |
   '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+```
 
 ###准备工作
 
@@ -403,7 +404,8 @@ grant all privileges on *.* to hive@192.168.216.183 identified by 'hive';
 ```
 bin/hive -hiveconf hive.root.logger=DEBUG,console
 ```
-` 14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect. Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore `
+` 14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect. `
+` Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore `
 
 在配置文件里删除hive.metastore.local属性。
 
