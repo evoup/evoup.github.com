@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-10T16:37:00+08:00</updated>
+  <updated>2014-07-10T16:59:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,119 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mysql复制同步修复工具]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/mysql-double-master-repair/"/>
+    <updated>2014-07-10T16:44:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/mysql-double-master-repair</id>
+    <content type="html"><![CDATA[<p>mysql双主同步的问题其实还是比较多的，如果没有解决好不同步的问题，那就像《网站运维：保持数据实时的秘技》中提到的，简直就是期待数据不同步。所以对于实际使用过程中还是要做好监控工作，对于数据不同步的状况，需要及时报警和处理，才用这种架构时要格外注意。下文是主从同步的修复，主主的修复，只要把另外一个主看成从，互相修一下就可以了，见下文：</p>
+
+<!--more-->
+
+
+<h3>恢复主主的工具</h3>
+
+<p>```bash</p>
+
+<blockquote><p>wget <a href="http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz">http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz</a>
+tar xzf percona-toolkit-2.2.6.tar.gz
+cd percona-toolkit-2.2.6
+perl Makefile.PL
+Warning: prerequisite DBD::mysql 3 not found.
+Warning: prerequisite DBI 1.46 not found.
+Writing Makefile for percona-toolkit</p>
+
+<p>sudo cpan YAML
+sudo cpan DBD::mysql
+```
+出现询问是否yes，一路选择yes</p></blockquote>
+
+<p>遇到测试的时候出现
+<code>FAILED--Further testing stopped: ERROR: Access denied for user 'root'@'localhost' (using password: NO)</code></p>
+
+<p>进入mysql修改一下默认密码为空
+<code>
+GRANT ALL PRIVILEGES ON *.* TO root@'localhost' IDENTIFIED BY '';
+flush privileges;
+</code></p>
+
+<p>回来继续
+<code>bash
+sudo cpan DBD::mysql
+</code></p>
+
+<h3>检查完整性</h3>
+
+<p><code>bash
+[yinjia@hm15hadoop01 percona-toolkit-2.2.6]&gt;sudo pt-table-checksum  --recursion-method=processlist
+Cannot connect to h=10.10.8.45
+Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.
+</code></p>
+
+<p>在主上运行
+<code>
+mysql&gt; show slave hosts;
++-----------+------+------+-----------+
+| Server_id | Host | Port | Master_id |
++-----------+------+------+-----------+
+|         2 |      | 3306 |         1 |
++-----------+------+------+-----------+
+1 row in set (0.00 sec)
+</code></p>
+
+<p>发现是host没有所以导致脚本会报错</p>
+
+<p>到slave上，my.cnf中添加report_host=10.10.8.45 #设置成本机IP，然后重启slave
+回到主上
+```
+mysql> show slave hosts;
++&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+| Server_id | Host       | Port | Master_id |
++&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+|         2 | 10.10.8.45 | 3306 |         1 |
++&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+1 row in set (0.00 sec)</p>
+
+<blockquote><p>sudo pt-table-checksum &mdash;recursion-method=processlist
+Password:
+Cannot connect to h=10.10.8.45
+Diffs cannot be detected because no slaves were found.  Please read the &mdash;recursion-method documentation for information.
+```</p></blockquote>
+
+<p>问题依旧,修改shell
+```
+[yinjia@hm15hadoop01 percona-toolkit-2.2.6]>pt-table-checksum &mdash;recursion-method=hosts &mdash;no-check-binlog-format &mdash;nocheck-replication-filters &mdash;replicate=monitor1_db.checksums &mdash;databases=monitor1_db &mdash;tables=httplog_status h=10.10.8.45,u=madcore,p=madcore,P=3306</p>
+
+<pre><code>        TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</code></pre>
+
+<p>06-30T13:33:50      0      1     5415       4       0   0.377 monitor1_db.httplog_status
+```</p>
+
+<p>看到DIFFS1，即为有1行差异
+```
+[yinjia@hm15hadoop02 ~/software]>pt-table-checksum &mdash;recursion-method=hosts &mdash;no-check-binlog-format &mdash;nocheck-replication-filters &mdash;replicate=monitor1_db.checksums &mdash;databases=monitor1_db &mdash;tables=httplog_status h=10.10.8.44,u=madcore,p=madcore,P=3306</p>
+
+<pre><code>        TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</code></pre>
+
+<p>06-30T13:34:58      0      1     5395       4       0   0.371 monitor1_db.httplog_status
+```
+可以看到现在DIFF是1，证明有差异。所以要同步，怎么同步，使用pt-table-sync进行修复</p>
+
+<h3>修复同步</h3>
+
+<p><code>
+pt-table-sync --replicate=monitor1_db.checksums h=10.10.8.44,u=madcore,p=madcore h=10.10.8.45,u=madcore,p=madcore --print --execute
+</code>
+分别是主的IP，从的IP。针对两边分别修复，最后再看一下pt-table-checksum 发现DIFF为0证明数据同步成功。</p>
+
+<h3>注意事项</h3>
+
+<p>同步修复后，记录可能发生乱序，比较好的做法是加timestamp字段，把写入的时间戳记载下来，然后select的时候采用ORDER BY进行排序，这样就不会乱序了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mysql主主配置]]></title>

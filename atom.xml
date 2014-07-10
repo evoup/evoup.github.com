@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-10T16:37:00+08:00</updated>
+  <updated>2014-07-10T16:59:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,163 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mysql复制同步修复工具]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/mysql-double-master-repair/"/>
+    <updated>2014-07-10T16:44:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/mysql-double-master-repair</id>
+    <content type="html"><![CDATA[<p>mysql双主同步的问题其实还是比较多的，如果没有解决好不同步的问题，那就像《网站运维：保持数据实时的秘技》中提到的，简直就是期待数据不同步。所以对于实际使用过程中还是要做好监控工作，对于数据不同步的状况，需要及时报警和处理，才用这种架构时要格外注意。下文是主从同步的修复，主主的修复，只要把另外一个主看成从，互相修一下就可以了，见下文：</p>
+
+<!--more-->
+
+
+<h3>恢复主主的工具</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt; wget http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz
+</span><span class='line'>&gt; tar xzf percona-toolkit-2.2.6.tar.gz
+</span><span class='line'>&gt; <span class="nb">cd </span>percona-toolkit-2.2.6
+</span><span class='line'>&gt; perl Makefile.PL
+</span><span class='line'>Warning: prerequisite DBD::mysql 3 not found.
+</span><span class='line'>Warning: prerequisite DBI 1.46 not found.
+</span><span class='line'>Writing Makefile <span class="k">for </span>percona-toolkit
+</span><span class='line'>
+</span><span class='line'>&gt; sudo cpan YAML
+</span><span class='line'>&gt; sudo cpan DBD::mysql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出现询问是否yes，一路选择yes</p>
+
+<p>遇到测试的时候出现
+<code>FAILED--Further testing stopped: ERROR: Access denied for user 'root'@'localhost' (using password: NO)</code></p>
+
+<p>进入mysql修改一下默认密码为空</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>GRANT ALL PRIVILEGES ON *.* TO root@<span class="s1">&#39;localhost&#39;</span> IDENTIFIED BY <span class="s1">&#39;&#39;</span>;
+</span><span class='line'>flush privileges;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>回来继续</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cpan DBD::mysql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>检查完整性</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;sudo pt-table-checksum  --recursion-method<span class="o">=</span>processlist
+</span><span class='line'>Cannot connect to <span class="nv">h</span><span class="o">=</span>10.10.8.45
+</span><span class='line'>Diffs cannot be detected because no slaves were found.  Please <span class="nb">read </span>the --recursion-method documentation <span class="k">for </span>information.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在主上运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mysql&gt; show slave hosts;
+</span><span class='line'>+-----------+------+------+-----------+
+</span><span class='line'>| Server_id | Host | Port | Master_id |
+</span><span class='line'>+-----------+------+------+-----------+
+</span><span class='line'>|         2 |      | 3306 |         1 |
+</span><span class='line'>+-----------+------+------+-----------+
+</span><span class='line'>1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>发现是host没有所以导致脚本会报错</p>
+
+<p>到slave上，my.cnf中添加report_host=10.10.8.45 #设置成本机IP，然后重启slave
+回到主上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mysql&gt; show slave hosts;
+</span><span class='line'>+-----------+------------+------+-----------+
+</span><span class='line'>| Server_id | Host       | Port | Master_id |
+</span><span class='line'>+-----------+------------+------+-----------+
+</span><span class='line'>|         2 | 10.10.8.45 | 3306 |         1 |
+</span><span class='line'>+-----------+------------+------+-----------+
+</span><span class='line'>1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>&gt;sudo pt-table-checksum --recursion-method<span class="o">=</span>processlist
+</span><span class='line'>Password:
+</span><span class='line'>Cannot connect to <span class="nv">h</span><span class="o">=</span>10.10.8.45
+</span><span class='line'>Diffs cannot be detected because no slaves were found.  Please <span class="nb">read </span>the --recursion-method documentation <span class="k">for </span>information.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>问题依旧,修改shell</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
+</span><span class='line'>            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</span><span class='line'>06-30T13:33:50      0      1     5415       4       0   0.377 monitor1_db.httplog_status
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看到DIFFS1，即为有1行差异</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop02 ~/software<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
+</span><span class='line'>            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</span><span class='line'>06-30T13:34:58      0      1     5395       4       0   0.371 monitor1_db.httplog_status
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到现在DIFF是1，证明有差异。所以要同步，怎么同步，使用pt-table-sync进行修复</p>
+
+<h3>修复同步</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>pt-table-sync --replicate<span class="o">=</span>monitor1_db.checksums <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore --print --execute
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>分别是主的IP，从的IP。针对两边分别修复，最后再看一下pt-table-checksum 发现DIFF为0证明数据同步成功。</p>
+
+<h3>注意事项</h3>
+
+<p>同步修复后，记录可能发生乱序，比较好的做法是加timestamp字段，把写入的时间戳记载下来，然后select的时候采用ORDER BY进行排序，这样就不会乱序了。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[mysql主主配置]]></title>
@@ -3516,71 +3673,6 @@ hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
 计算机是否为64bit操作系统，如是，继续2。
 查找是否有两个cvtres.exe。一个是C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cvtres.exe， 另一个是C:\Windows\Microsoft.NET\Framework\v4.0.30319\cvtres.exe。右键属性|详细信息 查看两者版本号，删除/重命名较旧的版本，或者重新设置Path变量。
 删除或者重命名比较旧的版本的cvtres.exe即可。</p></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[octopress2报错undefined method `[] for nill:NilClass]]></title>
-    <link href="http://evoupsight.com/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/"/>
-    <updated>2014-02-09T22:32:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass</id>
-    <content type="html"><![CDATA[<p>今天在用octopress生成博客静态页的时候，出现如下警告
-<code>Liquid Exception: undefined method '[]' for nil:NilClass</code>
-看下错误上下文先，上次记得这个问题是括号不能连写导致的，这次又是为啥呢？</p>
-
-<!-- more -->
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ rake generate
-</span><span class='line'>## Generating Site with Jekyll
-</span><span class='line'>unchanged sass/screen.scss
-</span><span class='line'>Configuration from E:/octopress2/evoup.github.com/_config.yml
-</span><span class='line'>Building site: source -&gt; public
-</span><span class='line'>## Generating Categories..
-</span><span class='line'> =&gt; Creating Categories Tag Cloud
-</span><span class='line'> =&gt; Creating Categories Sidebar
-</span><span class='line'>Liquid Exception: undefined method `[]' for nil:NilClass in 2014-02-08-cocos2d-x
-</span><span class='line'>-cocos2d-iphone-cocos2d-html5-sprite-and-animation-summary.markdown
-</span><span class='line'>E:/octopress2/evoup.github.com/plugins/pygments_code.rb:14:in `highlight'
-</span><span class='line'>E:/octopress2/evoup.github.com/plugins/code_block.rb:82:in `render'
-</span><span class='line'>c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:94:in `bloc
-</span><span class='line'>k in render_all'
-</span><span class='line'>c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:92:in `coll
-</span><span class='line'>ect'
-</span><span class='line'>c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:92:in `rend
-</span><span class='line'>er_all'
-</span><span class='line'>c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:82:in `rend</span></code></pre></td></tr></table></div></figure>
-
-
-<p>是看来是语法高亮的语法问题，认为代码有错，2个括号居然不能分开写：</p>
-
-<blockquote><p>sprite->setPosition( ccp(100, 240) ); //设置坐标为x=100,y=240
-<br/>
-必须写成sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240</p></blockquote>
-
-<p>以下问题发现在这个ruby版本
-ruby 1.9.3p484 (2013-11-22) [i386-mingw32]</p>
-
-<p>但奇怪的是公司里的环境没有问题，先记一笔备忘。</p>
 ]]></content>
   </entry>
   
