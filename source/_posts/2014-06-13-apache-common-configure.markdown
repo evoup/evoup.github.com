@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "apache common configure"
+title: "apache common configure依赖注意"
 date: 2014-06-13 15:35
 comments: true
 categories: [java]
