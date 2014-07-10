@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-10T15:27:22+08:00</updated>
+  <updated>2014-07-10T15:44:09+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -14,10 +14,145 @@
 
   
   <entry>
+    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
+    <updated>2014-06-13T17:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
+    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+
+<!-- more -->
+
+
+<h3>freebsd下</h3>
+
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp ukai.ttf /usr/local/share/fonts/
+</span><span class='line'>sudo <span class="nb">fc</span>-cache -f -v
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>centos下</h3>
+
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo mkdir /use/share/fonts/msfonts
+</span><span class='line'>sudo cp ukai.ttf /usr/share/fonts/msfonts/
+</span><span class='line'><span class="nb">cd</span> /usr/share/fonts/msfonts/
+</span><span class='line'>sudo mkfontscale
+</span><span class='line'>sudo mkfontdir
+</span><span class='line'>sudo <span class="nb">fc</span>-cache -fv
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>更EZ的方式有</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo yum  –y  install  fonts-chinese
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[apache common configure]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/apache-common-configure/"/>
+    <updated>2014-06-13T15:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/apache-common-configure</id>
+    <content type="html"><![CDATA[<p>基于maven使用apache的common-configuration的过程中，遇到一个依赖小问题，记录下</p>
+
+<!-- more -->
+
+
+<p>关于这个包commons-configuration-1.6.jar,注意一定要有三个包才能使用，见下pom片段</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;dependencies&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;dependency&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;groupId&gt;commons-configuration&lt;/groupId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;artifactId&gt;commons-configuration&lt;/artifactId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;version&gt;1.8&lt;/version&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;/dependency&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;dependency&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;version&gt;1.8.0&lt;/version&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;/dependency&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;dependency&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;groupId&gt;commons-jxpath&lt;/groupId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;artifactId&gt;commons-jxpath&lt;/artifactId&gt;
+</span><span class='line'>
+</span><span class='line'>        &lt;version&gt;1.3&lt;/version&gt;
+</span><span class='line'>
+</span><span class='line'>    &lt;/dependency&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;/dependencies&gt;</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[maven使用小计]]></title>
-    <link href="http://evoupsight.com/blog/2014/07/10/maven-relative-note/"/>
-    <updated>2014-07-10T14:41:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/07/10/maven-relative-note</id>
+    <link href="http://evoupsight.com/blog/2014/06/12/maven-relative-note/"/>
+    <updated>2014-06-12T14:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/12/maven-relative-note</id>
     <content type="html"><![CDATA[<h3>介绍</h3>
 
 <p>maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。</p>
@@ -115,59 +250,6 @@
 
 <p>参考：
 《Maven实战》</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
-    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
-    <updated>2014-06-13T17:45:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
-    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
-
-<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
-
-<!-- more -->
-
-
-<h3>freebsd下</h3>
-
-<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp ukai.ttf /usr/local/share/fonts/
-</span><span class='line'>sudo <span class="nb">fc</span>-cache -f -v
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>centos下</h3>
-
-<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo mkdir /use/share/fonts/msfonts
-</span><span class='line'>sudo cp ukai.ttf /usr/share/fonts/msfonts/
-</span><span class='line'><span class="nb">cd</span> /usr/share/fonts/msfonts/
-</span><span class='line'>sudo mkfontscale
-</span><span class='line'>sudo mkfontdir
-</span><span class='line'>sudo <span class="nb">fc</span>-cache -fv
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>更EZ的方式有</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo yum  –y  install  fonts-chinese
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
 ]]></content>
   </entry>
   
@@ -3788,61 +3870,6 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 
 
 <p>进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Win7上Android模拟器上安装apk软件]]></title>
-    <link href="http://evoupsight.com/blog/2014/01/20/win7-install-apk-on-android-emulator/"/>
-    <updated>2014-01-20T14:56:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/01/20/win7-install-apk-on-android-emulator</id>
-    <content type="html"><![CDATA[<h3>前提</h3>
-
-<p>在android模拟器上安装apk文件（android安装包）很简单,要求2个前提：</p>
-
-<pre><code>    1）已经安装好了ADK（android sdk）
-
-    2）配置好virtual device
-</code></pre>
-
-<!-- more -->
-
-
-<h3>准备工作</h3>
-
-<p>假设您已经安装好了ADK，运行Eclipse选择Window菜单：</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_first.png" alt="Alt text" /></p>
-
-<p>选择下方的Android Virtual Device Manager->new,我们创建一个android2.2的通用虚拟设备，屏幕选最小的我这里方便截图（一般会选择3.7WVGA,后期根据自己的需要可以做任意选择），然后取名这个模拟器为testAVD。</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_create_new_one.png" alt="Alt text" /></p>
-
-<p>点击OK完成，然后选择testAVD并Start启动模拟器，然后选择launch。第一次启动很慢，至于到底需要多少时间取决于机器的性能。</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_starting.png" alt="Alt text" /></p>
-
-<p>这样就算进去了</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_entered.png" alt="Alt text" /></p>
-
-<h3>安装apk</h3>
-
-<p>进入ADK的platform_tools目录下，运行<code>adb install apk文件</code>就可以完成安装。</p>
-
-<p>以安装微信安卓版本为例，假设我下载到了C:\weixin510android360.apk</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_entered.png" alt="Alt text" /></p>
-
-<p>我这里比较慢，可能是因为选择的模拟器内存参数没有调大导致的。</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk.png" alt="Alt text" /></p>
-
-<p>等待安装完成吧</p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_done.png" alt="Alt text" /></p>
-
-<p><img src="http://evoupsight.com/images/evoup/android_emulator_install_apk_done2.png" alt="Alt text" /></p>
 ]]></content>
   </entry>
   
