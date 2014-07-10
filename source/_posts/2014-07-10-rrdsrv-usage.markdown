@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "rrdsrv usage"
+title: "rrdtool的socket通讯接口rrdsrv"
 date: 2014-07-10 17:28
 comments: true
 categories: [monitor,rrdtool]
