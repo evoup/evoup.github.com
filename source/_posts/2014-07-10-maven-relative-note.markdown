@@ -25,12 +25,16 @@ fetch http://down1.chinaunix.net/distfiles/apache-maven-3.0.4-bin.tar.gz
 tar xzf apache-maven-3.0.4-bin.tar.gz
 ```
 
-然后在~/.cshrc中指定
+然后在~/.cshrc中指定(我这里是使用tcsh作为shell环境)
+```
 setenv M2_HOME "/usr/home/software/apache-maven-3.0.4"
 setenv MAVEN_OPTS "-Xms128m -Xmx512m"
 set path=( $path $M2_HOME/bin )
+```
 接着
+```
 source ~/.cshrc
+```
 就可以使用mvn命令了
 
 ###基本测试构建
