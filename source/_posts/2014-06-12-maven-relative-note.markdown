@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "maven使用小计"
-date: 2014-07-10 14:41
+date: 2014-06-12 14:41
 comments: true
 categories: [java]
 ---
