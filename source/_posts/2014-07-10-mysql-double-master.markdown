@@ -75,8 +75,8 @@ auto_increment_offset=2
 ```
 
 几点说明：
-1) binlog-do-db和replicate-do-db是指出要同步的数据库，一般指定了数据库再其下创建的表就都能进行主主同步。
-2) auto_increment_offset一定要指定为1个奇数，1个偶数，为什么，估计是同步的机制，反正这官方的主主解决方案我感觉很奇葩,必须这么设置。
+1) binlog-do-db和replicate-do-db是指出要同步的数据库，一般指定了数据库再其下创建的表就都能进行主主同步。<br>
+2) auto_increment_offset一定要指定为1个奇数，1个偶数，为什么，估计是同步的机制，反正这官方的主主解决方案我感觉很奇葩,必须这么设置。<br>
 3）同步的数据库要有上面指出的帐号（repuser）操作的权限。
 
 ###Step3:关联Master和Master
@@ -98,15 +98,17 @@ mysql>show master status;
 ```
 mysql> change master to master_host='192.168.216.211',master_password='madcore',master_user='madcore',master_log_file='mysql-bin.000019',master_log_pos=107;
 ```
+
 同样的，再查看ServerA的master状况
-···
+```
 mysql> show master status;
 +------------------+----------+--------------+------------------+
 | File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
 +------------------+----------+--------------+------------------+
 | mysql-bin.000018 |      23  | monitor1_db  | mysql            |
 +------------------+----------+--------------+------------------+
-···
+```
+
 再ServerB绑定好到ServerA的同步关系
 ```
 mysql> change master to master_host='192.168.216.210',master_password='madcore',master_user='madcore',master_log_file='mysql-bin.000018',master_log_pos=23;
