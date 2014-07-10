@@ -119,88 +119,12 @@
 
 <p>maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。</p>
 
-<h3>安装(其实无需安装)</h3>
-
-<p>由于可能地址被强，在国内maven下载依赖比较慢，最好在编辑/etc/hosts，并在其中加上依赖服务器的IP地址，如下：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>199.27.77.129 repo.maven.apache.org</span></code></pre></td></tr></table></div></figure>
-
-
-<p>下载和解压安装包</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir /home/software/
-</span><span class='line'>fetch http://down1.chinaunix.net/distfiles/apache-maven-3.0.4-bin.tar.gz
-</span><span class='line'>tar xzf apache-maven-3.0.4-bin.tar.gz</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后在~/.cshrc中指定
-setenv M2_HOME &ldquo;/usr/home/software/apache-maven-3.0.4&rdquo;
-setenv MAVEN_OPTS &ldquo;-Xms128m -Xmx512m&rdquo;
-set path=( $path $M2_HOME/bin )
-接着
-source ~/.cshrc
-就可以使用mvn命令了</p>
-
-<h3>基本测试构建</h3>
-
-<p>生成测试</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean test</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以上命令能直接生成class文件，并且支持自动测试（需要引入Junt并编写测试代码）</p>
-
-<p>生成测试和打包</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean package</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以上命令能直接生成最终的jar包文件，同时实现mvn clean test的所有功能</p>
-
-<h3>mvn常用命令</h3>
-
-<p>编译</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn compile</span></code></pre></td></tr></table></div></figure>
-
-
-<p>清理（删除所有test，package，compile等生成的文件）</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn clean</span></code></pre></td></tr></table></div></figure>
-
-
-<p>mvn获取所有依赖并且打包</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn dependency:copy-dependencies -DoutputDirectory=lib package</span></code></pre></td></tr></table></div></figure>
-
-
-<p>maven不经过测试直接打包</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>mvn -DskipTests clean package</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>mvn找依赖的方法</h3>
-
-<p>以下两个网站任意一个直接在搜索框中给出java根类即可，第一个网站还可以在线查看jar包里的方法，可以当在线手册查阅：</p>
-
-<p><a href="https://repository.sonatype.org/">https://repository.sonatype.org/</a></p>
-
-<p><a href="http://mvnrepository.com/">http://mvnrepository.com/</a></p>
-
-<p>参考：
-《Maven实战》</p>
 </div>
   
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2014/07/10/maven-relative-note/">Read on &rarr;</a>
+    </footer>
   
 
 
