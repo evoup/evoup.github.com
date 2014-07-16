@@ -73,6 +73,13 @@ extension=snmp.so
 $nc -uvz 127.0.0.1 161
 Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
 ```
+2014-07-16补充：
+以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句
+```sh
+$nc -u 127.0.0.1 161
+```
+输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来
+
 已经支持，那么来写程序吧
 ```php
 <?php
