@@ -304,6 +304,15 @@ hbase启动完成.
 ` ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent' `
 
 是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
+最后的hosts我这里是这样
+```
+[hadoop@localhost conf]$ more /etc/hosts
+#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+```
 
 2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
 ` WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available `
@@ -332,9 +341,6 @@ export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
 
 在conf/hive-site.xml中
 ```
- version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-
 <configuration>
 <property>
   <name>hive.metastore.local</name>
@@ -368,6 +374,8 @@ export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
 </configuration>
 
 ```
+
+这里要安装mysql作为元数据服务器，参考这篇 http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/
 
 然后/bin/hive后，成功进入shell
 ```
