@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hbase | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hbase/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-23T15:49:56+08:00</updated>
+  <updated>2014-07-23T17:58:46+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -330,7 +330,18 @@ hbase启动完成.</p>
 <p>1) 报错
 <code>ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent'</code></p>
 
-<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现</p>
+<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
+最后的hosts我这里是这样
+```
+[hadoop@localhost conf]$ more /etc/hosts</p>
+
+<h1>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</h1>
+
+<p>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+```</p>
 
 <p>2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
 <code>WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available</code></p>
@@ -361,10 +372,7 @@ export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
 
 <p>在conf/hive-site.xml中
 ```
- version=&ldquo;1.0&rdquo;?>
-&lt;?xml-stylesheet type=&ldquo;text/xsl&rdquo; href=&ldquo;configuration.xsl&rdquo;?></p>
-
-<p><configuration>
+<configuration>
 <property>
   <name>hive.metastore.local</name>
   <value>true</value>

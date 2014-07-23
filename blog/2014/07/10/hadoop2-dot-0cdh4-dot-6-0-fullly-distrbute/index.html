@@ -619,7 +619,23 @@
 <p>1) 报错
 <code>ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent'</code></p>
 
-<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现</p>
+<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
+最后的hosts我这里是这样</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@localhost conf<span class="o">]</span><span class="nv">$ </span>more /etc/hosts
+</span><span class='line'><span class="c">#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span>
+</span><span class='line'>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+</span><span class='line'>192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+</span><span class='line'>192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+</span><span class='line'>192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
 <code>WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available</code></p>
@@ -692,13 +708,7 @@
 <span class='line-number'>29</span>
 <span class='line-number'>30</span>
 <span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nv">version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span>?&gt;
-</span><span class='line'>&lt;?xml-stylesheet <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text/xsl&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;configuration.xsl&quot;</span>?&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;configuration&gt;
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;configuration&gt;
 </span><span class='line'>&lt;property&gt;
 </span><span class='line'>  &lt;name&gt;hive.metastore.local&lt;/name&gt;
 </span><span class='line'>  &lt;value&gt;true&lt;/value&gt;
