@@ -39,14 +39,14 @@ $ sudo chmod +x jdk-6u45-linux-x64-rpm.bin
 $ sudo ./jdk-6u45-linux-x64-rpm.bin
 ```
 
-hadoop所有操作都是用hadoop帐号，下面添加
+hadoop所有操作都是用hadoop帐号，下面添加（如果已经创建了帐号无须添加）
 ```bash
 $ groupadd hadoop
 $ useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
 
-$ mkdir -p /u01/app
-$ chgrp -R hadoop /u01/app
-$ chown -R hadoop /u01/app
+$ mkdir -p /home/hadoop
+$ chgrp -R hadoop /home/hadoop
+$ chown -R hadoop /home/hadoop
 ```
 
 环境变量(在centos里不管编辑~/.profile还是~/.bash_profile都不能加载环境变量，正确的应该是在~/.bashrc中，而如果是root用户，应该可以直接在/etc/profile中编辑)
