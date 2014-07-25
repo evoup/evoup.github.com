@@ -98,6 +98,7 @@ $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 创建存储临时文件temp、data和name节点数据的目录
 ```sh
 $ sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/ 
+$ sudo chown -R hadoop:hadoop /usr/local/hadoop
 ```
 
 好了，准备工作终了
