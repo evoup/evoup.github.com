@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>shell收集 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2011/01/11/shell-gather">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        Shell收集
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>批量拷贝文件到服务器bash版</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/local/bin/bash</span>
+</span><span class='line'><span class="k">for </span>hosts in <span class="sb">`</span>cat host.list<span class="sb">`</span> ;
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;将处理&quot;</span><span class="nv">$hosts</span> ;
+</span><span class='line'>    scp /services/monitor_deal/madmonitor.current root@<span class="nv">$hosts</span>:/services/monitor_deal/ ;
+</span><span class='line'>    scp /services/monitor_deal/libphp5.so root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libmysqlclient.so.16 root@<span class="nv">$hosts</span>:/usr/local/lib/ ;
+</span><span class='line'>    scp /services/monitor_deal/libz.so.6 root@<span class="nv">$hosts</span>:/usr/lib/ ;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>远程备份MySQL数据库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#备份整个库</span>
+</span><span class='line'>mysqldump -uusername -p*** -h 192.168.1.123 dbname &gt; db_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#备份单个表</span>
+</span><span class='line'>mysqldump -uusername -p*** -h 192.168.1.123 dbname tablename &gt; table_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#导入整个库</span>
+</span><span class='line'>mysql -uusername -p*** dbname &lt; db_backup.sql
+</span><span class='line'>
+</span><span class='line'><span class="c">#导入单个表(2014-4-6补充：windows下可以这样c:\&gt; mysql -uusername -p*** dbname &lt; tablename &lt; f:/table_backup.sql)</span>
+</span><span class='line'>mysql -uusername -p*** dbname &lt; table_backup.sql
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>备注：其实也可以用source，不过要进入mysql的shell中操作。</p>
+
+<p>取得fb6的网卡mac</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig lo0 | grep <span class="s1">&#39;[0-9a-f]\{8\}&#39;</span> | awk <span class="s1">&#39;{print $4}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看目录里的每个子目录的大小</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#for freebsd</span>
+</span><span class='line'>du -h -d 1
+</span><span class='line'><span class="c">#for linux</span>
+</span><span class='line'>du -h –max-depth<span class="o">=</span>1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取文本的第三行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sed -n <span class="s1">&#39;3p&#39;</span> file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>截取字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;abcd&quot;</span> | cut -b 1-3
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用nc访问百度</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">printf</span> <span class="s2">&quot;GET / HTTP/1.0\r\n\r\n&quot;</span> | nc www.baidu.com 80
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>移除UTF-8的BOM</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'> sed -e <span class="s1">&#39;1s/^\xef\xbb\xbf//&#39;</span> &lt; bomfile &gt; newfile
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>无输出在后台静默执行命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>nohup sh <span class="nb">command</span> &gt;&gt; /dev/null
+</span><span class='line'><span class="c">#注意如果command是一个脚本，所在脚本可以写成&amp;后台执行的方式以获得主调代码异步的机制</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把僵尸进程杀光</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ps -A -o stat,ppid,pid,cmd | grep -e <span class="s1">&#39;^[Zz]&#39;</span> | awk <span class="s1">&#39;{print $2}&#39;</span> | xargs <span class="nb">kill</span> -9
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>vim不加载vimrc</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim -u NONE
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>sudo的时候使用本用户的vimrc配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>调用vim来把文件转换为utf-8格式，注意要和find连用，需加载vimrc不然乱码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim -c <span class="s2">&quot;set fileencoding=utf-8 | wq!&quot;</span> main.cpp
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>find查找c/c++的源文件和头文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -type f <span class="se">\(</span> -name <span class="s2">&quot;*.cpp&quot;</span> -o -name <span class="s2">&quot;*.h&quot;</span> -o -name <span class="s2">&quot;*.c&quot;</span> <span class="se">\)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>获取当前时间戳</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>date <span class="s2">&quot;+%s&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不用scp，而使用rsync把本地文件传到远程服务器的一个目录</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rsync -avze <span class="s1">&#39;ssh -p 2203&#39;</span> logfile user@172.16.30.112:/logfiles/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把时间戳转换成系统时间</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#linux版本的</span>
+</span><span class='line'>date -d <span class="s1">&#39;1970-01-01 UTC 946684800 seconds&#39;</span> +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
+</span><span class='line'><span class="c">#freebsd版本的</span>
+</span><span class='line'>date -r 1384499085 +<span class="s2">&quot;%Y-%m-%d %T %z&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>按压缩包内的文件名,从bz2格式精确解压出指定文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>//解压bz2CompressedFile文件，提取其中的文件fileName重定向到destFile
+</span><span class='line'>bzcat bz2CompressedFile | tar xOf - fileName &gt; destFile
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在第三行之后插入指定数据</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;{v1=&quot;###\n\呵呵呵&quot;;if (NR==4)print v1;print}&#39;</span> <span class="nx">file</span> <span class="o">&gt;</span> <span class="nx">file_translated</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>参考这里<a href="http://club.topsage.com/thread-357787-1-1.html">http://club.topsage.com/thread-357787-1-1.html</a></p>
+
+<p>下面这个等同于find . | xargs grep error 但是可以同时打印error和fail为关键字匹配的行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='awk'><span class='line'><span class="nx">awk</span> <span class="s1">&#39;/(error|fail)/ { print; }&#39;</span> <span class="nx">syslog</span><span class="p">.</span><span class="kr">log</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>统计源码总行数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{print $1}&#39;</span>
+</span><span class='line'>find . -type f ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果要给sum来个初值，那么</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . ! -path <span class="s2">&quot;*.svn*&quot;</span> -exec wc -l <span class="o">{}</span> <span class="se">\;</span> | awk <span class="s1">&#39;{sum=0}{sum=sum+$1}END{print sum }&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>寻找全部process开头的rrd文件，删除前确认</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;process*.rrd&quot;</span> -ok rm <span class="o">{}</span> <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>打印某网卡信息</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>ifconfig | awk <span class="s1">&#39;{if(NR==5) print $2}&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>整个文件夹内替换字符串</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.php&quot;</span> -exec sed -i <span class="s1">&#39;&#39;</span> -e <span class="s1">&#39;s/checkDigital/validDigital/g&#39;</span> <span class="o">{}</span> +
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到的c头文件放到temp目录下</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . -name <span class="s2">&quot;*.h&quot;</span> -exec mv <span class="o">{}</span> temp/ <span class="se">\;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>AWK的入门</p>
+
+<p><a href="http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html">http://www.chemie.fu-berlin.de/chemnet/use/info/gawk/gawk_3.html</a></p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx">http://blog.csdn.net/eroswang/archive/2009/04/11/4064325.aspx</a></p>
+
+<p>AWK高级用法</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx">http://blog.csdn.net/eroswang/archive/2010/01/26/5258216.aspx</a></p>
+
+<p>AWK一句话手册</p>
+
+<p><a href="http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx">http://blog.csdn.net/yangyinbo/archive/2010/05/12/5583936.aspx</a></p>
+
+<p>可以用得到的shell的脚本</p>
+
+<p><a href="http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx">http://blog.csdn.net/eroswang/archive/2010/04/16/5494482.aspx</a></p>
+
+<p>cshell参考</p>
+
+<p><a href="http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm">http://tech.it168.com/KnowledgeBase/Articles/4/b/9/4b910acff687a1096011b7ce80d3b59e.htm</a></p>
+
+<p>数组的定义</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">set </span><span class="nv">array</span><span class="o">=(</span>a b c d<span class="o">)</span>
+</span><span class='line'>居然下标是从1开始
+</span><span class='line'><span class="nb">echo</span> <span class="k">${</span><span class="nv">A</span><span class="p">[1]</span><span class="k">}</span>
+</span><span class='line'>a
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash下实现的伪多进程(实际是用了&amp;后台执行)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>　　#!/bin/bash
+</span><span class='line'>
+</span><span class='line'>　　for <span class="o">((</span><span class="nv">i</span><span class="o">=</span>0;i&lt;5;i++<span class="o">))</span>;<span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    　　sleep 3;echo 1&gt;&gt;aa <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&quot;done!&quot;</span>
+</span><span class='line'>
+</span><span class='line'>　　<span class="o">}</span> &amp;
+</span><span class='line'>
+</span><span class='line'>　　done
+</span><span class='line'>
+</span><span class='line'>　　wait
+</span><span class='line'>
+</span><span class='line'>　　cat aa|wc -l
+</span><span class='line'>
+</span><span class='line'>　　rm aa
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash的fifo实现的多线程</p>
+
+<p><a href="http://www.examda.com/linux/fudao/20101011/132107473.html">http://www.examda.com/linux/fudao/20101011/132107473.html</a></p>
+
+<p>多线程的实现是采用了有名管道mkfifo</p>
+
+<p><a href="http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx">http://blog.csdn.net/yangyun1981/archive/2007/12/19/1954061.aspx</a></p>
+
+<p>shell判断文件是否存在</p>
+
+<p><a href="http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html">http://hi.baidu.com/hy0kl/blog/item/03737a34aad2795e241f1431.html</a></p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2011-01-11T12:11:00+08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2011</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/shell/'>shell</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2010/12/15/header-file-variable-assign/" title="Previous Post: 头文件中变量赋值方法">&laquo; 头文件中变量赋值方法</a></li>
+            
+            
+            <li class="next"><a href="/blog/2011/01/16/c-common-define/" title="Next Post: C语言宏定义技巧(常用宏定义)(转)">C语言宏定义技巧(常用宏定义)(转) &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/07/10/rrdsrv-usage/">Rrdtool的socket通讯接口rrdsrv</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master-repair/">Mysql复制同步修复工具</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master/">Mysql主主配置</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute/">hadoop2.0cdh4.6.0完全分布式安装</a>
+    
+    <a class="list-group-item " href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/">Freebsd和linux上安装中文字体</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 133.75%'>Hadoop(9)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 103.75%'>Linux(1)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 111.25%'>Zookeeper(3)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<!--<h1>我的豆瓣主页</h1>-->
+<div>
+<!--<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>-->
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?selection=random&picsize=small&show=collection&n=3&cat=movie%7Cbook%7Cmusic&columns=3"></script>
+</div>
+</section>
+
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

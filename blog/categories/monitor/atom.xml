@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-25T13:43:23+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rrdtool的socket通讯接口rrdsrv]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/rrdsrv-usage/"/>
+    <updated>2014-07-10T17:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/rrdsrv-usage</id>
+    <content type="html"><![CDATA[<p>原来以为rrdtool只是个本地数据库，这次写java程序看了几个rrdtool的java实现的源码,在其中一款中发现原来rrdtool居然还支持inetd超级服务器的用法，也就是rrdsrv。以下以freebsd下rrdsrv的配置为例，介绍使用方法：</p>
+
+<!--more-->
+
+
+<p>假设rrdtool的安装路径在/usr/local/bin/rrdtool，然后存放rrd数据库的路径为/services/rrds/</p>
+
+<p>首先编辑/etc/inetd.conf，加入
+<code>
+rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/
+</code></p>
+
+<p>然后再编辑/etc/services，加入
+<code>
+rrdsrv 13900/tcp
+</code>
+在/etc/rc.conf中
+<code>
+inetd_enable="YES"
+</code></p>
+
+<p>然后
+<code>bash
+sudo /etc/rc.d/inetd start
+</code>
+这样13900端口就支持使用socket方式的rrdtool命令操作了
+```
+[yin@yin-arch rrds]>telnet 127.0.0.1 13900
+Trying 127.0.0.1&hellip;
+Connected to localhost.
+Escape character is &lsquo;^]&rsquo;.</p>
+
+<p>info load.rrd
+filename = &ldquo;load.rrd&rdquo;
+rrd_version = &ldquo;0003&rdquo;
+step = 15
+last_update = 1404984273
+header_size = 1000
+ds[load].index = 0
+ds[load].type = &ldquo;GAUGE&rdquo;
+ds[load].minimal_heartbeat = 120
+ds[load].min = NaN
+ds[load].max = NaN
+ds[load].last_ds = &ldquo;5.73242000000000029303e-01&rdquo;
+ds[load].value = 2.0151107237e+00
+ds[load].unknown_sec = 0
+rra[0].cf = &ldquo;AVERAGE&rdquo;
+rra[0].rows = 5856
+rra[0].cur_row = 5072
+rra[0].pdp_per_row = 1
+rra[0].xff = 5.0000000000e-01
+rra[0].cdp_prep[0].value = NaN
+rra[0].cdp_prep[0].unknown_datapoints = 0
+rra[1].cf = &ldquo;AVERAGE&rdquo;
+rra[1].rows = 20160
+rra[1].cur_row = 9119
+rra[1].pdp_per_row = 4
+rra[1].xff = 5.0000000000e-01
+rra[1].cdp_prep[0].value = 1.1429347927e+00
+rra[1].cdp_prep[0].unknown_datapoints = 0
+rra[2].cf = &ldquo;AVERAGE&rdquo;
+rra[2].rows = 52704
+rra[2].cur_row = 46249
+rra[2].pdp_per_row = 40
+rra[2].xff = 5.0000000000e-01
+rra[2].cdp_prep[0].value = 9.7464362627e+00
+rra[2].cdp_prep[0].unknown_datapoints = 0
+OK u:0.00 s:0.01 r:41.67
+```</p>
+
+<p>值得一提的是，除了支持rrdtool的info、create、update等内置命令，更可以调用系统指令cd、mkdir、ls等指令，非常强大。可以看出作者的编程思路非常奇特，居然还可以这样用。于是我借助这个特性，实现了网络rrdtool指令的操作，like memcache：）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用expect脚本检测telnet瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/"/>
+    <updated>2014-01-08T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately</id>
+    <content type="html"><![CDATA[<p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
+
+<p>直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```sh</p>
+
+<h1>!/usr/local/bin/expect</h1>
+
+<p>spawn telnet 127.0.0.1 9090
+set timeout  1
+expect {</p>
+
+<pre><code>    "*Escape character is*" {
+            exp_continue
+    }
+    "*Connection closed by foreign host*" {
+            send "note: 1) detect a unsafe connection"
+    }
+</code></pre>
+
+<p>}
+expect {</p>
+
+<pre><code>    "*Connection closed by foreign host*" {
+            send "note: 2) detect a unsafe connection"
+    }
+    send "\\003"
+    exit
+</code></pre>
+
+<p>}
+expect &ldquo;<em>Connection closed by foreign host</em>&rdquo;
+send &ldquo;note: 3) disconnect by client cause timeout or not immediately exit expect&rdquo;
+exit
+expect eof</p>
+
+<p>exit
+expect eof</p>
+
+<p>```</p>
+
+<p>调用者程序可以根据expect输出的note: 3) disconnect by client cause timeout or not immediately exit expect得知telnet上去瞬间失去连接。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用php的snmp模块进行监控数据的获取]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor/"/>
+    <updated>2013-12-10T10:19:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor</id>
+    <content type="html"><![CDATA[<p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
+
+<!-- more -->
+
+
+<p><code>sh
+$ wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+$ tar xjf php-5.5.6.tar.bz2
+$ cd php-5.5.6
+$ ls ext/snmp/
+config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+$
+</code>
+可见snmp已经自带了，不需要到pecl下载然后放到ext目录。
+<code>sh
+$ sudo yum install libxml2 libxml2-devel
+</code>
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+
+<h3>静态编译</h3>
+
+<p>查一下snmp的安装选项
+<code>sh
+$ ./configure --help | grep snmp
+  --with-snmp=DIR         Include SNMP support
+</code>
+是&mdash;with，了解后继续操作，这里直接使用默认snmp路径
+<code>sh
+$ ./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+$ make
+$ sudo make install
+</code>
+这样静态编译就完成了。</p>
+
+<h3>动态编译</h3>
+
+<p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so
+<code>sh
+$ cd ext/snmp
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+$ cd ../../ext/sockets
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+</code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+<code>sh
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+</code>
+编辑php的配置文件
+<code>sh
+$ vi /usr/local/php55/etc/php.ini
+</code>
+加入2行
+<code>sh
+extension=sockets.so
+extension=snmp.so
+</code></p>
+
+<h3>撰写php版的snmp客户端测试程序</h3>
+
+<p>开始写点测试程序，确认snmp已经在本机支持
+<code>sh
+$nc -uvz 127.0.0.1 161
+Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
+</code>
+2014-07-16补充：
+以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句
+<code>sh
+$nc -u 127.0.0.1 161
+</code>
+输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来</p>
+
+<p>已经支持，那么来写程序吧
+<code>php
+&lt;?php
+/**
+ * test.php
+ */
+$host="127.0.0.1";
+$community="public";
+$oid=".1.3.6.1.4.1.2021.10.1.3.1";
+$oid1=".1.3.6.1.4.1.2021.10.1.3.2";
+$oid2=".1.3.6.1.4.1.2021.10.1.3.3";
+$oid3=".1.3.6.1.4.1.2021.4.3.0";
+// 1 minute Load
+echo (snmpget($host,$community,$oid)."\n");
+// 5 minute Load
+echo (snmpget($host,$community,$oid1)."\n");
+// 15 minute Load
+echo (snmpget($host,$community,$oid2)."\n");
+// Total Swap Size
+echo (snmpget($host,$community,$oid3)."\n");
+</code>
+查看结果
+```sh
+$ /usr/local/php55/bin/php test.php
+STRING: 0.05
+STRING: 0.03
+STRING: 0.03
+INTEGER: 2064376 kB</p>
+
+<p>```</p>
+
+<h3>分析总结</h3>
+
+<p>可以看出php的snmp接口还是非常简明优雅的，由此推断你只要学会rrdtool、php和snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我自己写公司监控平台2.0的时候，上级要求使用C api直接获取数据，不走snmp，其实通过对分析ganglia源代码的粗读，也能马上发现其也是采用了原生api调用获取主要监控数据的方式，所以号称比snmpd快和非常节省系统开销。但为了完成任务和系统的拓展性，果然另外支持snmp吧。</p>
+
+<h3>扩展阅读</h3>
+
+<p>请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[centos6.4下搭建zabbix2.0.6]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix/"/>
+    <updated>2013-12-03T13:37:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix</id>
+    <content type="html"><![CDATA[<p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
+
+<!-- more -->
+
+
+<p>关闭iptables和selinux
+<code>sh
+sudo service iptables stop
+sudo chkconfig iptables off
+</code>
+临时关闭selinux
+```sh
+setenfoce 0  ##设置为permissive模式</p>
+
+<pre><code>         ##setenforce 1设置SELunix为enforcing模式
+</code></pre>
+
+<p>```
+永久关闭
+修改/etc/selinux/config 文件
+将SELINUX=enforcing改为SELINUX=disabled
+重启机器看到
+getenforce返回Disabled说明已经关闭</p>
+
+<p>再次进入centos6.4，先安装LAMP环境。</p>
+
+<p><code>sh
+yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php-mbstring php-gd php-odbc php-xml php-pear
+</code></p>
+
+<p>然后下载zabbix
+<code>sh
+wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
+</code></p>
+
+<p>继续安装需要的组件
+<code>sh
+yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
+</code></p>
+
+<p>创建zabbix用户帐号
+<code>sh
+sudo useradd zabbix
+sudo usermod -s /sbin/nologin zabbix
+</code></p>
+
+<p>启动mysql
+<code>sh
+sudo service mysqld start
+</code></p>
+
+<p>登录mysql
+<code>sh
+mysql -uroot -p123456
+mysql&gt; create database zabbix;
+mysql&gt; grant all on zabbix.* to zabbix@localhost identified by '123456';
+mysql&gt; use zabbix;
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/schema.sql
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/images.sql
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/data.sql
+mysql&gt; exit
+</code></p>
+
+<p>安装zabbix
+```sh
+./configure &mdash;enable-server &mdash;enable-agent &mdash;with-mysql &mdash;with-net-snmp &mdash;with-libcurl
+Configuration:</p>
+
+<p>  Detected OS:           linux-gnu
+  Install path:          /usr/local
+  Compilation arch:      linux</p>
+
+<p>  Compiler:              gcc
+  Compiler flags:        -g -O2  -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector &mdash;param=ssp-buffer-size=4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX       -I/usr/include/rpm -I/usr/local/include -I/usr/lib64/perl5/CORE -I. -I/usr/include</p>
+
+<p>  Enable server:         yes
+  Server details:</p>
+
+<pre><code>With database:         MySQL
+WEB Monitoring via:    cURL
+Native Jabber:         no
+SNMP:                  net-snmp
+IPMI:                  no
+SSH:                   no
+ODBC:                  no
+Linker flags:          -rdynamic      -L/usr/lib64/mysql       -L/usr/lib64  -L/usr/lib64
+Libraries:             -lm -lrt  -lresolv    -lmysqlclient       -lcurl  -lnetsnmp -lcrypto  -lnetsnmp -lcrypto
+</code></pre>
+
+<p>  Enable proxy:          no</p>
+
+<p>  Enable agent:          yes
+  Agent details:</p>
+
+<pre><code>Linker flags:          -rdynamic
+Libraries:             -lm -lrt  -lresolv    -lcurl
+</code></pre>
+
+<p>  Enable Java gateway:   no</p>
+
+<p>  LDAP support:          no
+  IPv6 support:          no</p>
+
+<hr />
+
+<ul>
+<li><pre><code>     Now run 'make install'                       *
+</code></pre></li>
+<li><pre><code>                                                  *
+</code></pre></li>
+<li><pre><code>     Thank you for using Zabbix!                  *
+</code></pre></li>
+<li><pre><code>       &lt;http://www.zabbix.com&gt;                    *
+</code></pre></li>
+</ul>
+
+
+<hr />
+
+<p>```
+好了，我们正式安装</p>
+
+<p><code>sh
+sudo make install
+</code></p>
+
+<p>接下来编辑配置文件
+可以不用sudo，直接切换到root做
+```sh
+cd /usr/local/etc
+cat zabbix_server.conf
+LogFile=/var/log/zabbix_server.log
+DBHost=localhost
+DBName=zabbix
+DBUser=zabbix
+DBPassword=123456</p>
+
+<p>cat zabbix_agent.conf
+LogFile=/tmp/zabbix_agentd.log
+Server=127.0.0.1
+UnsafeUserParameters=1
+```</p>
+
+<p>创建日志文件
+```sh
+touch /var/log/zabbix_server.log
+touch /var/log/zabbix_agent.log</p>
+
+<p>cd &ndash;
+cp misc/init.d/tru64/zabbix_server /etc/init.d/
+cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
+```</p>
+
+<p>2个文件的文件头改成如下
+```sh</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>chkconfig: 35 95 95</h1>
+
+<h1>description:zabbix Agent server</h1>
+
+<p>```</p>
+
+<p>添加服务
+<code>sh
+chkconfig --add zabbix_server
+chkconfig --add zabbix_agentd
+</code></p>
+
+<p>开机自动启动
+<code>sh
+chkconfig zabbix_server on
+chkconfig zabbix_agent on
+</code></p>
+
+<p>文件执行权限
+<code>sh
+chmod +x zabbix_server
+chmod +x zabbix_agentd
+</code></p>
+
+<p>启动
+<code>sh
+sudo /etc/init.d/zabbix_server start
+sudo /etc/init.d/zabbix_agentd start
+</code></p>
+
+<p>安装zabbix web
+<code>sh
+cp -r frontends/php/ /var/www/html/zabbix
+</code></p>
+
+<p>访问<a href="http://ip/zabbix">http://ip/zabbix</a></p>
+
+<p><code>sh
+vim /etc/php.ini
+</code>
+指定
+<code>php
+timezone=Asia/Shanghai
+</code></p>
+
+<p>根据提示修改php配置</p>
+
+<p><code>sh
+yum install -y php-bcmath
+</code></p>
+
+<p>然后再次重启httpd</p>
+
+<p>最后登录前端界面密码为 admin/zabbix</p>
+
+<p>告一段落，接下来学习操作zabbix。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Freebsd版linux下free指令实现]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c/"/>
+    <updated>2013-10-30T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c</id>
+    <content type="html"><![CDATA[<p>监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。</p>
+
+<!-- more -->
+
+
+<p>直接贴代码了，除了mem_total之外基本都正确。total的部分，先用sysctl -a | grep realmem解决
+```c
+/<em>
+ * free.c &ndash; Display FreeBSD memory information
+ * Wed Nov 26 19:34:54 IST 2008 vinod <a href="&#109;&#x61;&#105;&#108;&#x74;&#x6f;&#x3a;&#118;&#x69;&#x6e;&#x6f;&#x64;&#64;&#115;&#x65;&#103;&#102;&#97;&#117;&#x6c;&#x74;&#x2e;&#105;&#110;">&#118;&#105;&#110;&#x6f;&#x64;&#x40;&#x73;&#101;&#x67;&#x66;&#97;&#x75;&#108;&#x74;&#46;&#105;&#110;</a>
+ * License: <a href="http://opensource.org/licenses/BSD-2-Clause">http://opensource.org/licenses/BSD-2-Clause</a>
+ </em>/</p>
+
+<h1>include &lt;sys/types.h></h1>
+
+<h1>include &lt;sys/sysctl.h></h1>
+
+<h1>include &lt;stdio.h></h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>include &lt;unistd.h></h1>
+
+<p>const char *version = &ldquo;$Id: free,v 0.1.3 2008/11/26 19:34:54 IST vinod $&rdquo;;</p>
+
+<p>int
+get_sysctl(char *name)
+{</p>
+
+<pre><code>    int mib[4], value, i;
+    size_t len, miblen = 1;
+
+    for(i = 0; name[i] != '\0'; i++) 
+            if(name[i] == '.')
+                    miblen++;
+    len = miblen;
+    sysctlnametomib(name, mib, &amp;len);
+    len = sizeof(value);
+    sysctl(mib, miblen, &amp;value, &amp;len, NULL, 0);
+
+    return value;
+</code></pre>
+
+<p>}</p>
+
+<p>void
+usage(void)
+{</p>
+
+<pre><code>    fprintf(stderr, "usage: free [-b|-k|-m|-g] [-t] [-v]\n" \
+    "  -b,-k,-m,-g show output in bytes, KB, MB, or GB\n" \
+    "  -t display logical summary for RAM\n" \
+    "  -v display version information and exit\n");
+</code></pre>
+
+<p>}</p>
+
+<p>int
+main(int argc, char *argv[])
+{</p>
+
+<pre><code>    int c, vflag = 0, tflag = 0;
+    int factor = 1;
+    long int physmem, realmem;
+    long int vmactive, vminactive, vmfree, vmcache, vmpage, vmwire;
+    long int memfree, memused;
+    long int pagesize;
+
+    opterr = 0;
+
+    while ((c = getopt(argc, argv, "bghkmtv")) != -1) {
+            switch (c) {
+                    case 'b':
+                            factor = 1;
+                            break;
+                    case 'g':
+                            factor = 1024*1024*1024;
+
+                    case 'h':
+                            usage();
+                            exit(EXIT_SUCCESS);
+                    case 'k':
+                            factor = 1024;
+                            break;
+                    case 'm':
+                            factor = 1024*1024;
+                            break;
+                    case 't':
+                            tflag = 1;
+                            break;
+                    case 'v':
+                            vflag = 1;
+                            break;
+                    case '?':
+                    default:
+                            fprintf(stderr, "%s: invalid option -- %c\n", argv[0], optopt);
+                            usage();
+                            exit(EXIT_FAILURE);
+            }
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    if(vflag) {
+            fprintf(stderr, "%s\nbuilt %s %s\n", version,
+                            __DATE__, __TIME__);
+            exit(EXIT_SUCCESS);
+    }
+
+    physmem    = labs(get_sysctl("hw.physmem"));
+    realmem    = labs(get_sysctl("hw.realmem"));
+    pagesize   = labs(get_sysctl("hw.pagesize"));
+
+    vmpage     = labs(get_sysctl("vm.stats.vm.v_page_count") * pagesize);
+    vmwire     = labs(get_sysctl("vm.stats.vm.v_wire_count") * pagesize);
+    vmactive   = labs(get_sysctl("vm.stats.vm.v_active_count") * pagesize);
+    vminactive = labs(get_sysctl("vm.stats.vm.v_inactive_count") * pagesize);
+    vmcache    = labs(get_sysctl("vm.stats.vm.v_cache_count") * pagesize);
+    vmfree     = labs(get_sysctl("vm.stats.vm.v_free_count") * pagesize);
+
+    printf("         %15s %15s %15s %15s %15s %15s\n", "total", "active", "free", "inactive", "wire", "cached");
+    printf("Memory:  %15ld %15ld %15ld %15ld %15ld %15ld\n",
+                    realmem/factor,
+                    vmactive/factor,
+                    vmfree/factor,
+                    vminactive/factor,
+                    vmwire/factor,
+                    vmcache/factor);
+
+    /*
+     * logical summary
+     */
+    if(tflag) {
+            memfree = vminactive + vmfree + vmcache;
+            memused        = realmem - memfree;
+
+            printf("Summary: %15ld %15ld %15ld\n",
+                            realmem/factor,
+                            memused/factor,
+                            memfree/factor);
+    }
+
+    return (EXIT_SUCCESS);
+</code></pre>
+
+<p>}
+```</p>
+
+<h3>项目位置</h3>
+
+<p><a href="https://github.com/evoup/free">https://github.com/evoup/free</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/shell/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-25T13:43:23+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用expect脚本检测telnet瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/"/>
+    <updated>2014-01-08T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately</id>
+    <content type="html"><![CDATA[<p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
+
+<p>直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```sh</p>
+
+<h1>!/usr/local/bin/expect</h1>
+
+<p>spawn telnet 127.0.0.1 9090
+set timeout  1
+expect {</p>
+
+<pre><code>    "*Escape character is*" {
+            exp_continue
+    }
+    "*Connection closed by foreign host*" {
+            send "note: 1) detect a unsafe connection"
+    }
+</code></pre>
+
+<p>}
+expect {</p>
+
+<pre><code>    "*Connection closed by foreign host*" {
+            send "note: 2) detect a unsafe connection"
+    }
+    send "\\003"
+    exit
+</code></pre>
+
+<p>}
+expect &ldquo;<em>Connection closed by foreign host</em>&rdquo;
+send &ldquo;note: 3) disconnect by client cause timeout or not immediately exit expect&rdquo;
+exit
+expect eof</p>
+
+<p>exit
+expect eof</p>
+
+<p>```</p>
+
+<p>调用者程序可以根据expect输出的note: 3) disconnect by client cause timeout or not immediately exit expect得知telnet上去瞬间失去连接。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[部分机器netstat运行结果缓慢的原因]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns/"/>
+    <updated>2013-11-26T14:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/26/netstat-resolv-dns</id>
+    <content type="html"><![CDATA[<p>今天看了下客户端运行状况，发现流量图断断续续的。直觉反应到可能是自己按照netstat源码修改的erlang的NIF扩展存在BUG，会奔溃。但查了下似乎没有这个问题。</p>
+
+<p><img src="/images/evoup/netstat1.png" alt="Alt text" /></p>
+
+<!-- more -->
+
+
+<p>该机器执行netstat本身就很慢，top看了下CPU占用也无异常，该机器基本OK，就是netstat执行起来很慢。
+后来发现使用-n参数就快了。
+```</p>
+
+<pre><code> -n    Show network addresses and ports as numbers.  Normally netstat
+       attempts to resolve addresses and ports, and display them symboli‐
+       cally.
+</code></pre>
+
+<p>```
+这个参数是说netstat以数字的方式展现网络地址和端口。而不加该参数时netstat会尝试去解析地址和端口，然后采用象征方式呈现。至于究竟啥叫象征方式，其实就是如果你的hostname是localhost,它就会显示localhost，而不是127.0.0.1的方式。
+最后判断应该是本机的出站通讯没有加上dns协议的53端口导致的，经过参数修改，netstat调用正常了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[非常便捷的ssh信任制作脚本ssh-copy-id]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/17/ssh-copy-id/"/>
+    <updated>2013-10-17T17:29:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/17/ssh-copy-id</id>
+    <content type="html"><![CDATA[<p>ssh-copy-id在版本比较高的freebsd的port中提供了，安装即可。手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+
+<!-- more -->
+
+
+<p>实验：hostA: 172.16.30.184:22  hostB:211.136.104.189:9999
+```bash</p>
+
+<blockquote><p>ssh-keygen -t rsa</p></blockquote>
+
+<p>Generating public/private rsa key pair.</p>
+
+<p>Enter file in which to save the key (/home/user/.ssh/id_rsa):</p>
+
+<p>/home/user/.ssh/id_rsa already exists.</p>
+
+<p>Overwrite (y/n)? y</p>
+
+<p>Enter passphrase (empty for no passphrase):</p>
+
+<p>Enter same passphrase again:</p>
+
+<p>Your identification has been saved in /home/user/.ssh/id_rsa.</p>
+
+<p>Your public key has been saved in /home/user/.ssh/id_rsa.pub.</p>
+
+<p>The key fingerprint is:</p>
+
+<p>74:59:16:2c:01:0c:2a:21:b4:49:8d:0e:51:2f:d9:a4 <a href="&#x6d;&#x61;&#105;&#108;&#x74;&#111;&#x3a;&#117;&#x73;&#x65;&#x72;&#64;&#x75;&#x73;&#101;&#114;&#x2d;&#x61;&#x72;&#x63;&#104;&#x2e;&#109;&#97;&#100;&#104;&#x6f;&#117;&#x73;&#x65;&#46;&#x63;&#110;">&#x75;&#115;&#101;&#x72;&#64;&#x75;&#x73;&#x65;&#x72;&#x2d;&#97;&#114;&#x63;&#x68;&#46;&#x6d;&#97;&#100;&#104;&#111;&#x75;&#x73;&#101;&#x2e;&#x63;&#110;</a></p>
+
+<p>The key&rsquo;s randomart image is:</p>
+
+<p>+&mdash;[ RSA 2048]&mdash;&mdash;+</p>
+
+<p>|+== . .o&hellip;o+.   |</p>
+
+<p>|oooO .  . .+.    |</p>
+
+<p>|ooE +   . o.     |</p>
+
+<p>| . o   . .       |</p>
+
+<p>|        S        |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>|                 |</p>
+
+<p>+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+
+<code>
+然后运行如下脚本，按照提示输入密码即可
+</code>bash
+ssh-copy-id &lsquo;-p 9999 -i /usr/home/user/.ssh/id_rsa.pub <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#117;&#x73;&#101;&#114;&#x40;&#x32;&#x31;&#x31;&#x2e;&#x31;&#x33;&#54;&#46;&#x31;&#x30;&#x34;&#x2e;&#49;&#56;&#x39;">&#x75;&#x73;&#x65;&#x72;&#64;&#x32;&#x31;&#x31;&#x2e;&#x31;&#x33;&#54;&#46;&#x31;&#x30;&#x34;&#46;&#x31;&#56;&#57;</a>&rsquo;
+<code>
+更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥
+</code>bash
+ssh-copy-id <a href="&#109;&#x61;&#x69;&#x6c;&#x74;&#x6f;&#x3a;&#117;&#x73;&#x65;&#114;&#64;&#x32;&#x31;&#49;&#46;&#49;&#x33;&#x36;&#46;&#x31;&#48;&#52;&#x2e;&#49;&#56;&#x39;">&#x75;&#x73;&#101;&#x72;&#64;&#50;&#49;&#x31;&#x2e;&#x31;&#51;&#54;&#x2e;&#49;&#48;&#52;&#x2e;&#x31;&#56;&#x39;</a>
+```
+这样子就可以了。</p>
+
+<p>如果要建立非22端口的信任。
+例：建立到211.136.221.207的信任，ssh的端口为8887，用户名为user
+<code>bash
+ssh-copy-id "-p8887 user@211.136.221.207"
+</code>
+这样就可以了。</p>
+
+<h3>port中没有怎么办？</h3>
+
+<p>直接创建一个文件叫做/usr/local/bin/ssh-copy-id，注意文件权限要为555，以及所有者为root
+```sh</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>Shell script to install your public key on a remote machine</h1>
+
+<h1>Takes the remote machine name as an argument.</h1>
+
+<h1>Obviously, the remote machine must accept password authentication,</h1>
+
+<h1>or one of the other keys in your ssh-agent, for this to work.</h1>
+
+<p>ID_FILE=&ldquo;${HOME}/.ssh/id_rsa.pub&rdquo;</p>
+
+<p>if [ &ldquo;-i&rdquo; = &ldquo;$1&rdquo; ]; then
+  shift
+  # check if we have 2 parameters left, if so the first is the new ID file
+  if [ -n &ldquo;$2&rdquo; ]; then</p>
+
+<pre><code>if expr "$1" : ".*\.pub" &gt; /dev/null ; then
+  ID_FILE="$1"
+else
+  ID_FILE="$1.pub"
+fi
+shift         # and this should leave $1 as the target name
+</code></pre>
+
+<p>  fi
+else
+  if [ x$SSH_AUTH_SOCK != x ] &amp;&amp; ssh-add -L >/dev/null 2>&1; then</p>
+
+<pre><code>GET_ID="$GET_ID ssh-add -L"
+</code></pre>
+
+<p>  fi
+fi</p>
+
+<p>if [ -z &ldquo;<code>eval $GET_ID</code>&rdquo; ] &amp;&amp; [ -r &ldquo;${ID_FILE}&rdquo; ] ; then
+  GET_ID=&ldquo;cat ${ID_FILE}&rdquo;
+fi</p>
+
+<p>if [ -z &ldquo;<code>eval $GET_ID</code>&rdquo; ]; then
+  echo &ldquo;$0: ERROR: No identities found&rdquo; >&amp;2
+  exit 1
+fi</p>
+
+<p>if [ &ldquo;$#&rdquo; -lt 1 ] || [ &ldquo;$1&rdquo; = &ldquo;-h&rdquo; ] || [ &ldquo;$1&rdquo; = &ldquo;&mdash;help&rdquo; ]; then
+  echo &ldquo;Usage: $0 [-i [identity_file]] [user@]machine&rdquo; >&amp;2
+  exit 1
+fi</p>
+
+<h1>strip any trailing colon</h1>
+
+<p>host=<code>echo $1 | sed 's/:$//'</code></p>
+
+<p>{ eval &ldquo;$GET_ID&rdquo; ; } | ssh $host &ldquo;umask 077; test -d ~/.ssh || mkdir ~/.ssh ; cat >> ~/.ssh/authorized_keys&rdquo; || exit 1</p>
+
+<p>cat &lt;&lt;EOF
+Now try logging into the machine, with &ldquo;ssh &lsquo;$host&rsquo;&rdquo;, and check in:</p>
+
+<p>  ~/.ssh/authorized_keys</p>
+
+<p>to make sure we haven&rsquo;t added extra keys that you weren&rsquo;t expecting.</p>
+
+<p>EOF</p>
+
+<p>```</p>
+
+<p>参考：</p>
+
+<p><a href="http://mikegerwitz.com/ssh-copy-id-and-sshd-port/">http://mikegerwitz.com/ssh-copy-id-and-sshd-port/</a></p>
+
+<p><a href="http://blogread.cn/it/article/6103">http://blogread.cn/it/article/6103</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[创建ssh信任失败的原因分析和改进]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/21/ssh-authorized-keys/"/>
+    <updated>2013-04-21T18:15:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/21/ssh-authorized-keys</id>
+    <content type="html"><![CDATA[<p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[shell下使用enca指令查看文件编码]]></title>
+    <link href="http://evoupsight.com/blog/2012/12/19/use-enca-check-file-encoding/"/>
+    <updated>2012-12-19T15:42:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/12/19/use-enca-check-file-encoding</id>
+    <content type="html"><![CDATA[<p>enca是shell下直接查看文件编码的工具,而转换编码的工具有iconv，这里仅仅介绍enca的安装和使用。</p>
+
+<!-- more -->
+
+
+<h4>freebsd</h4>
+
+<p><code>sh
+cd /usr/ports/converters/enca
+make
+sudo make install
+</code>
+中途缺少一个record包的，根据包的basename去google搜索下载后放到/usr/port/distfiles然后返回安装即可。</p>
+
+<h4>linux</h4>
+
+<p><code>sh
+yum install -y enca
+</code>
+然后按如下方式查看编码格式</p>
+
+<p>使用范例
+<code>sh
+$ enca test.txt
+Universal transformation format 8 bits; UTF-8
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

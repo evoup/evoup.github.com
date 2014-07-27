@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hive | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hive/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-25T13:43:23+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop2.0cdh4.6.0完全分布式安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute/"/>
+    <updated>2014-07-10T15:57:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute</id>
+    <content type="html"><![CDATA[<p>hadoop2.0 cdh4安装（完全分布式）</p>
+
+<!-- more -->
+
+
+<p>vmware版本8.0.4 build-744019</p>
+
+<p>首先规划3台虚拟机
+<code>
+ ,'''''''''''''''''''''':'''''''''''''''''':''''''''''''''''''''''''''''''''''''''''''''|
+ |        usage         |        IP        |                  Hostname                  |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | namenode1,datanode1  | 192.168.216.183  |    mdn3namenode1.net,mdn3datanode1.net     |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | namenode2,datanode2  | 192.168.216.184  |    mdn3namenode2.net,mdn3datanode2.net     |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | datanode2,nfs server | 192.168.216.185  |    mdn3datanode3.net,mdn3nfsserver.net     |
+ |                      |                  |                                            |
+  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</code></p>
+
+<h3>准备工作</h3>
+
+<p>先安装JDK1.6 linux:先把已经安装的openjdk卸载,安装sun jdk1.6,去oracle下载 （j2se就够了）
+<code>bash
+$ rpm -qa | grep jdk
+java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+$ sudo rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+$ sudo chmod +x jdk-6u45-linux-x64-rpm.bin
+$ sudo ./jdk-6u45-linux-x64-rpm.bin
+</code></p>
+
+<p>hadoop所有操作都是用hadoop帐号，下面添加（如果已经创建了帐号无须添加）
+```bash
+$ groupadd hadoop
+$ useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop</p>
+
+<p>$ mkdir -p /home/hadoop
+$ chgrp -R hadoop /home/hadoop
+$ chown -R hadoop /home/hadoop
+```</p>
+
+<p>环境变量(在centos里不管编辑~/.profile还是~/.bash_profile都不能加载环境变量，正确的应该是在~/.bashrc中，而如果是root用户，应该可以直接在/etc/profile中编辑)
+<code>bash
+$ vi ~/.bashrc
+export HADOOP_HOME="/usr/local/hadoop"
+export JAVA_HOME="/usr/java/jdk1.6.0_45"
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+</code></p>
+
+<p>切换到hadoop帐号，进行免密码的ssh登录设置
+<code>bash
+$ su hadoop
+$ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+$ cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+$ chmod 600 ~/.ssh/authorized_keys
+</code></p>
+
+<p>给出我的hadoop/hbase版本
+```
+Name        : hadoop-hdfs-namenode
+Arch        : x86_64
+Version     : 2.0.0+1554
+Release     : 1.cdh4.6.0.p0.16.el6</p>
+
+<p>Name        : hbase-master
+Arch        : x86_64
+Version     : 0.94.15+86
+Release     : 1.cdh4.6.0.p0.14.el6
+```</p>
+
+<p>然后是cdh的软件下载url
+<a href="http://archive.cloudera.com/cdh4">http://archive.cloudera.com/cdh4</a>
+这个路径下有很多的软件。</p>
+
+<p>下载cdh4.6的几个包安装
+<code>bash
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz
+$ sudo mkdir /usr/local/hadoop/
+$ tar xzf hadoop-2.0.0-cdh4.6.0.tar.gz
+$ sudo mv hadoop-2.0.0-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/hadoop-2.0.0-cdh4.6.0 /usr/local/hadoop
+$ sudo chown -R hadoop:hadoop /usr/local/hadoop
+</code>
+创建存储临时文件temp、data和name节点数据的目录
+<code>sh
+$ sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/
+$ sudo chown -R hadoop:hadoop /usr/local/hadoop
+</code></p>
+
+<p>好了，准备工作终了</p>
+
+<p>开始配置
+配置/usr/local/hadoop/etc/hadoop/core-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;fs.defaultFS&lt;/name&gt;
+            &lt;value&gt;hdfs://mdn3namenode1.net:9000&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;io.file.buffer.size&lt;/name&gt;
+            &lt;value&gt;131072&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+            &lt;value&gt;file:/usr/local/hadoop/temp&lt;/value&gt;
+            &lt;description&gt;Abase for other temporary directories.&lt;/description&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.proxyuser.hduser.hosts&lt;/name&gt;
+            &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.proxyuser.hduser.groups&lt;/name&gt;
+            &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:9001&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+    &lt;value&gt;file:/usr/local/hadoop/dfs/name&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+            &lt;value&gt;file:/usr/local/hadoop/dfs/data&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.replication&lt;/name&gt;
+            &lt;value&gt;3&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.webhdfs.enabled&lt;/name&gt;
+            &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/madpred-site.xml
+<code>sh
+cp mapred-site.xml.template mapred-site.xml
+</code>
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+            &lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:10020&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:19888&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration></p>
+
+<p>```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/yarn-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+            &lt;value&gt;mapreduce.shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;/name&gt;
+            &lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8032&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8030&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8031&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8033&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8088&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>编辑slave的名字
+直接讲slave的域名或者slave的ip按照一行一个的规则写进去
+<code>
+mdn3datanode2.net
+mdn3datanode3.net
+</code></p>
+
+<p>复制到各台机器上
+<code>sh
+$ cd /usr/local/
+$ sudo scp -dr hadoop@192.168.216.183:/usr/local/hadoop .
+$ sudo chown -R hadoop:hadoop hadoop/
+</code></p>
+
+<p>格式化hdfs
+在namenode上执行
+<code>sh
+/usr/local/hadoop/bin/hadoop namenode -format
+</code></p>
+
+<h3>hbase的安装配置</h3>
+
+<p>hbase依赖zookeeper，需要先去下载
+<code>sh
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz
+$ tar xzf zookeeper-3.4.5-cdh4.6.0.tar.gz
+$ sudo mv zookeeper-3.4.5-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/zookeeper-3.4.5-cdh4.6.0 /usr/local/zookeeper
+$ sudo chown -R hadoop:hadoop /usr/local/zookeeper
+$ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg
+</code>
+zookeeper准备完毕，可以继续安装hbase</p>
+
+<p><code>sh
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.15-cdh4.6.0.tar.gz
+$ sudo mkdir /usr/local/hbase/
+$ tar xzf hbase-0.94.15-cdh4.6.0.tar.gz
+$ sudo mv hbase-0.94.15-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/hbase-0.94.15-cdh4.6.0 /usr/local/hbase
+$ sudo chown -R hadoop:hadoop /usr/local/hbase
+</code></p>
+
+<p>若干配置步骤
+配置hbase-site.xml
+```xml
+<configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn3namenode1.net:9000/hbase&lt;/value&gt;
+
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.master&lt;/name&gt;
+    &lt;value&gt;mdn3datanode1.net:60000&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+    &lt;value&gt;mdn3datanode1.net&lt;/value&gt;    &lt;!-- 这里配置若干个zookeeper的服务器地址，需要是奇数个 --&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+<code>
+配置hbase-env.sh
+</code>xml
+export HBASE_MANAGES_ZK=false
+```
+不要hbase托管zookeeper</p>
+
+<p>配置regionservers
+<code>
+mdn3datanode2.net
+mdn3datanode3.net
+</code></p>
+
+<p>启动hbase
+<code>sh
+/usr/local/hbase/bin/start-hbase.sh
+/usr/local/hbase/bin/hbase-daemons.sh start thrift
+</code>
+hbase启动完成.</p>
+
+<h3>配置hbase可能碰到几个问题的说明：</h3>
+
+<p>1) 报错
+<code>ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent'</code></p>
+
+<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
+最后的hosts我这里是这样
+```
+[hadoop@localhost conf]$ more /etc/hosts</p>
+
+<h1>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</h1>
+
+<p>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+```</p>
+
+<p>2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
+<code>WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available</code></p>
+
+<p>3) <code>java.net.ConnectException: Connection refused</code>
+这是要求hadoop中的slaves配置和hbase的regionservers要一致。</p>
+
+<h3>hive的安装</h3>
+
+<p><code>sh
+cd /home/software
+wget http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.6.0.tar.gz
+tar xzf hive-0.10.0-cdh4.6.0.tar.gz
+sudo mv hive-0.10.0-cdh4.6.0 /usr/local/
+sudo mv /usr/local/hive-0.10.0-cdh4.6.0 /usr/local/hive
+chown -R hadoop:hadoop /usr/local/hive
+</code></p>
+
+<h3>hive的配置</h3>
+
+<p>在~/.bashrc中加入
+<code>bash
+export HIVE_HOME=/usr/local/hive
+export HIVE_CONF_DIR=$HIVE_HOME/conf
+export HIVE_LIB=$HIVE_HOME/lib
+export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
+</code></p>
+
+<p>在conf/hive-site.xml中
+```
+<configuration>
+<property>
+  <name>hive.metastore.local</name>
+  <value>true</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionURL</name>
+  <value>jdbc:mysql://localhost:3306/hive</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionDriverName</name>
+  <value>com.mysql.jdbc.Driver</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+  <value>hive</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+  <value>hive</value>
+</property>
+<property>
+  <name>datanucleus.fixedDatastore</name>
+  <value>false</value>
+</property></p>
+
+<p></configuration></p>
+
+<p>```</p>
+
+<p>这里要安装mysql作为元数据服务器，参考这篇 <a href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/</a></p>
+
+<p>然后/bin/hive后，成功进入shell
+```</p>
+
+<blockquote><p>create table test (key string);
+<code>``
+如果遇到下面的报错
+</code> FAILED: Error in metadata: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.metastore.HiveMetaStoreClient `</p></blockquote>
+
+<p><code>FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask</code>
+建表错误
+开始以为hive没有访问mysql的权限,以root用户登录mysql然后赋予hive用户权限：
+<code>
+grant all privileges on *.* to hive@localhost identified by 'hive';
+grant all privileges on *.* to hive@192.168.216.183 identified by 'hive';
+</code>
+发现问题依旧</p>
+
+<p>其实是要在hive-site.xml中把
+<code>
+&lt;property&gt;
+  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
+  &lt;value&gt;jdbc:mysql://localhost:3306/hive&lt;/value&gt;
+&lt;/property&gt;
+</code>
+改成
+<code>
+&lt;property&gt;
+  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
+  &lt;value&gt;jdbc:mysql://192.168.216.183:3306/hive&lt;/value&gt;
+&lt;/property&gt;
+</code></p>
+
+<p>问题依旧，打开hive的调试模式
+<code>
+bin/hive -hiveconf hive.root.logger=DEBUG,console
+</code>
+<code>14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect.</code>
+<code>Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore</code></p>
+
+<p>在配置文件里删除hive.metastore.local属性。</p>
+
+<p>最后查得原因是没有安装mysql驱动，只要把mysql-connector-java-5.1.22-bin.jar放到lib下就可以了</p>
+
+<p>然后
+```
+hive> create table test (key string);
+OK
+Time taken: 42.259 seconds</p>
+
+<p>hive> show tables;
+OK
+test
+Time taken: 0.279 seconds
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

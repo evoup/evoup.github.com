@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>centos5.8下基于hadoop0.20.203的hive0.7安装 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-17T15:38:00+08:00" pubdate data-updated="true">Feb 17<span>th</span>, 2014</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        centos5.8下基于hadoop0.20.203的hive0.7安装
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><h3>什么是hive</h3>
+
+<blockquote><p>hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。</p></blockquote>
+
+<h3>hive使用场景</h3>
+
+<blockquote><p>HIVE 不适合用于联机(online)事务处理,也不提供实时查询功能。它最适合应用在基于大量不可变数据的批处理作业。</p></blockquote>
+
+<!-- more -->
+
+
+<h3>hive的安装</h3>
+
+<p>先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
+注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app
+</span><span class='line'>wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
+</span><span class='line'>tar xzf hive-0.7.1-bin.tar.gz
+</span><span class='line'>ln -s hive-0.7.1-bin.tar.gz hive
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>环境变量设置</h4>
+
+<p>在~/.profile中加入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/u01/app/hive
+</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span>/u01/app/hive/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在系统中指出hive的配置文件所在</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/bin:PATH
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>记得用source让profile生效</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.profile
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后是进行hive配置文件的配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive/conf
+</span><span class='line'>cp hive-env.sh.template hive-env.sh
+</span><span class='line'>vim hive-env.sh
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>安装依赖软件</h4>
+
+<p>发现有2种安装方式，一种是derby,另一种是mysql，这里先介绍mysql方式</p>
+
+<blockquote><p>关于什么是derby: 这是一个apache DB的子项目，是一个完全用java实现的开源关系型数据库。这里就不使用了，我们采用mysql。</p></blockquote>
+
+<h4>安装mysql</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>//卸载老版本的mysql软件包
+</span><span class='line'>yum remove mysql mysql-*
+</span><span class='line'>//安装mysql5.5的源
+</span><span class='line'>rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
+</span><span class='line'>//安装MySQL客户端的支持包
+</span><span class='line'>yum install libmysqlclient15 --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//安装MySQL 5.5的客户端和服务端
+</span><span class='line'>yum install mysql55 mysql55-server --enablerepo<span class="o">=</span>webtatic
+</span><span class='line'>//启动MySQL系统服务，更新数据库
+</span><span class='line'>/etc/init.d/mysqld restart
+</span><span class='line'>mysql_upgrade
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>修改mysql用户密码</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># mysql -u root mysql   //默认的没有密码直接进去的</span>
+</span><span class='line'>mysql&gt;use mysql;
+</span><span class='line'>mysql&gt;desc user;
+</span><span class='line'>mysql&gt; GRANT ALL PRIVILEGES ON *.* TO root@<span class="s2">&quot;%&quot;</span> IDENTIFIED BY <span class="s2">&quot;root&quot;</span>;　　//为root添加远程连接的能力。
+</span><span class='line'>mysql&gt;update user <span class="nb">set </span><span class="nv">Password</span> <span class="o">=</span> password<span class="o">(</span><span class="s1">&#39;xxxxxx&#39;</span><span class="o">)</span> where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;select Host,User,Password  from user where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
+</span><span class='line'>mysql&gt;flush privileges;
+</span><span class='line'>mysql&gt;exit
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>设置mysql为开机自动启动</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /sbin/chkconfig --add mysqld
+</span><span class='line'>sudo /sbin/chkconfig mysqld on
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>开始配置</h4>
+
+<p>在conf目录下创建hive-site.xml</p>
+
+<p>创建hive数据库给hive做元数据表</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>create database hive;
+</span><span class='line'>grant all privileges on *.* to hive@localhost identified by <span class="s1">&#39;hive&#39;</span>;
+</span><span class='line'>flush privileges;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>运行hive</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive
+</span><span class='line'>/bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: jline/ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span><span class='line'>        ... 3 more
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。</p>
+
+<p>再次启动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf
+</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
+</span><span class='line'>Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf
+</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
+</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要修改$HADOOP/conf/的hadoop-env.sh中的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="nv">$HBASE_HOME</span>/hbase-0.90.3.jar:<span class="nv">$HBASE_HOME</span>:<span class="nv">$HBASE_HOME</span>/lib/zookeeper-3.2.2.jar:<span class="nv">$HBASE_HOME</span>/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>改成</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="nv">$HADOOP_CLASSPATH</span>:<span class="nv">$HBASE_HOME</span>/hbase-0.90.3.jar:<span class="nv">$HBASE_HOME</span>:<span class="nv">$HBASE_HOME</span>/lib/zookeeper-3.2.2.jar:<span class="nv">$HBASE_HOME</span>/conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后可以启动hive了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
+</span><span class='line'>Hive <span class="nb">history </span><span class="nv">file</span><span class="o">=</span>/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
+</span><span class='line'>hive&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。</p>
+
+<p>•建立测试表test</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>&gt; show tables;
+</span><span class='line'>FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
+</span><span class='line'>NestedThrowables:
+</span><span class='line'>java.lang.reflect.InvocationTargetException
+</span><span class='line'>FAILED: Execution Error, <span class="k">return </span>code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
+
+<p>&#8220;sh</p>
+
+<blockquote><p>show tables;
+OK
+Time taken: 0.082 seconds</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>一个表也没有，创建表吧
+</span><span class='line'>···sh
+</span><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>FAILED: Error in metadata: MetaException<span class="o">(</span>message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
+</span><span class='line'>ON
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>那就关了</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin -safemode leave
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次查看</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
+</span><span class='line'>OFF
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>已经关了，再次建表测试</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
+</span><span class='line'>hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class='line'>OK
+</span><span class='line'>Time taken: 0.521 seconds
+</span><span class='line'>hive&gt; show tables;
+</span><span class='line'>OK
+</span><span class='line'><span class="nb">test</span>
+</span><span class='line'>Time taken: 0.14 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>参考文章</h3>
+
+<p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
+
+<p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
+
+<p><a href="http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html">http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html</a></p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-02-17T15:38:00+08:00" pubdate data-updated="true">Feb 17<span>th</span>, 2014</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/" title="Previous Post: 64位freebsd8.1下安装ffmpeg和php扩展">&laquo; 64位freebsd8.1下安装ffmpeg和php扩展</a></li>
+            
+            
+            <li class="next"><a href="/blog/2014/02/20/hive-import-data/" title="Next Post: hive初试--导入数据和查询">hive初试--导入数据和查询 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/07/10/rrdsrv-usage/">Rrdtool的socket通讯接口rrdsrv</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master-repair/">Mysql复制同步修复工具</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master/">Mysql主主配置</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute/">hadoop2.0cdh4.6.0完全分布式安装</a>
+    
+    <a class="list-group-item " href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/">Freebsd和linux上安装中文字体</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 133.75%'>Hadoop(9)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 103.75%'>Linux(1)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/zookeeper' style='font-size: 111.25%'>Zookeeper(3)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<!--<h1>我的豆瓣主页</h1>-->
+<div>
+<!--<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>-->
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?selection=random&picsize=small&show=collection&n=3&cat=movie%7Cbook%7Cmusic&columns=3"></script>
+</div>
+</section>
+
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2014 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

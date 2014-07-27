@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: php | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-25T13:43:23+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[64位freebsd8.1下安装ffmpeg和php扩展]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension/"/>
+    <updated>2014-02-12T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/freebsd8-dot-1amd64-install-ffmpeg-and-php-extension</id>
+    <content type="html"><![CDATA[<p>帮同事解决一个开源音视频转换处理软件ffmpeg在freebsd8.1下安装的问题，我也是装了2个下午，绕了个圈子下载了个没用的扩展浪费时间。</p>
+
+<!-- more -->
+
+
+<h3>环境freebsd8.1 amd64</h3>
+
+<p>我拿个了干净的系统做试验，安装的时候选择了develop模式和customize，customize里只选择了ports,然后php是装在了/usr/local/php53目录下。</p>
+
+<h3>安装过程描述</h3>
+
+<h4>ffmpeg的安装</h4>
+
+<p>主要采用pkg_add ffmpeg.tbz的方式来安装。
+然后看报错的依赖缺少啥一个一个装上去，途中需要的包可以通过下面的命令来获取：
+<code>sh
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/ffmpeg.tbz
+fetch ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/amd64/packages-8.1-release/Latest/x264.tbz
+</code></p>
+
+<p>采用pkg_add快速安装包
+安装的时候反正就是不断用下面的语句试探
+<code>sh
+sudo pkg_add ffmpeg.tbz
+</code>
+用pkg_add一个一个装，直到ffmpeg安装完成。</p>
+
+<p>如果你也是这么装，那么全部东西下完，大概有这么多依赖OMG
+```sh</p>
+
+<blockquote><p>ls
+damageproto.tbz  gpac-libgpac.tbz  libXau.tbz      libdrm.tbz            libvorbis.tbz   png.tbz               xvid.tbz
+dri2proto.tbz    jpeg.tbz          libXdamage.tbz  libiconv.tbz          libxcb.tbz      schroedinger.tbz
+expat.tbz        kbproto.tbz       libXdmcp.tbz    libogg.tbz            libxml.tbz      x264.tbz
+faad2.tbz        libGL.tbz         libXext.tbz     libpthread-stubs.tbz  libxml2.tbz     xextproto.tbz
+ffmpeg.tbz       libGLU.tbz        libXfixes.tbz   libtheora.tbz         orc.tbz         xf86vidmodeproto.tbz
+fixesproto.tbz   libX11.tbz        libXxf86vm.tbz  libtool.tbz           pkg-config.tbz  xproto.tbz
+```</p></blockquote>
+
+<p>嫌麻烦的可以先下好软件然后批量装
+<code>sh
+find . -name "*.tbz" -exec pkg_add {} \;
+</code>
+当然也免不了部分手动来部分包，窃喜~</p>
+
+<hr />
+
+<h4>ffmpeg-php的安装</h4>
+
+<p>装php，./configure的时候出现出错，查看config.log
+<code>/usr/bin/ld: cannot find -liconv</code>
+需要再用pkg_add安装libxml，重新安装libiconv，用port安装，谈到要安装libtool213,再用pkg_add去装，卸掉libiconv，重新用port安装，下载php5.3编译通过，再去下载ffmpeg-php，用phpize的方式编译成动态库，会报告少autoconf，此时在到port里安装autoconf213，会让安装perl，等待安装完成就是。</p>
+
+<p>下载正确的扩展,不要用sf那个2005年的扩展，不能用。
+<code>sh
+fetch http://downloads.sourceforge.net/project/ffmpeg-php/ffmpeg-php/0.6.0/ffmpeg-php-0.6.0.tbz2
+tar xjf ffmpeg-php-0.6.0.tbz2
+cd ffmpeg-php
+phpize
+</code></p>
+
+<p>在phpize的时候可能出现
+<code>
+[evoup@freebsd81amd64 ffmpeg]&gt;/usr/local/php53/bin/phpize
+Configuring for:
+PHP Api Version:         20090626
+Zend Module Api No:      20090626
+Zend Extension Api No:   220090626
+Cannot find autoconf. Please check your autoconf installation and the
+$PHP_AUTOCONF environment variable. Then, rerun this script.
+</code>
+此时需要在环境变量中指定好autoconf和autoheader的路径，我是加载.cshrc文件中
+<code>sh
+setenv PHP_AUTOCONF "/usr/local/bin/autoconf"
+setenv PHP_AUTOHEADER "/usr/local/bin/autoheader"
+</code>
+完事之后不要忘记重载~/.cshrc
+<code>sh
+source ~/.cshrc
+</code></p>
+
+<p>phpize完了之后可以开始configure了
+<code>sh
+./configure --with-php-cofig=/usr/local/php53/bin/php-config
+/usr/local/include/ffmpeg/avcodec.h:30:30: error: libavutil/avutil.h: No such file or directory
+</code></p>
+
+<p>其实这个是ffmpeg安装好应该有的库
+<code>sh
+$ locate avutil.h
+/usr/home/evoup/software/libavutil/avutil.h
+/usr/local/include/ffmpeg/avutil.h
+/usr/local/include/libavutil/avutil.h
+</code></p>
+
+<p>怎么装上去？嘿嘿，直接把相关的路径做软连接
+<code>sh
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec/
+sudo ln -s /usr/local/include/libavcodec/ /usr/include/libavcodec
+sudo ln -s /usr/local/include/libavdevice/ /usr/include/libavdevice
+sudo ln -s /usr/local/include/libavfilter/ /usr/include/libavfilter
+sudo ln -s /usr/local/include/libavformat/ /usr/include/libavformat
+sudo ln -s /usr/local/include/libavutil/ /usr/include/libavutil
+</code>
+然后再次
+<code>sh
+make
+sudo make install
+Installing shared extensions:     /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/
+</code>
+安装ok,接下来加载到php,要做的是看下php的ini位置，放进去就是
+<code>sh
+$ /usr/local/php53/bin/php -i | grep Conf
+Configure Command =&gt;  './configure'  '--prefix=/usr/local/php53'
+Configuration File (php.ini) Path =&gt; /usr/local/php53/lib
+Loaded Configuration File =&gt; /usr/local/php53/lib/php.ini
+Configuration
+</code></p>
+
+<p>说明在/usr/local/php53/lib下，于是把编译好的so移到该目录下
+<code>sh
+$ sudo mv /usr/local/php53/lib/php/extensions/no-debug-non-zts-20090626/ffmpeg.so /usr/local/php53/lib
+</code>
+最后在php.ini中指定
+<code>sh
+extension=ffmpeg.so
+</code></p>
+
+<hr />
+
+<p>观察劳动成果
+<code>sh
+$ /usr/local/php53/bin/php -i | grep ffmpeg
+ffmpeg
+ffmpeg-php version =&gt; 0.6.0-svn
+ffmpeg-php built on =&gt; Feb 12 2014 17:10:47
+ffmpeg-php gd support  =&gt; disabled
+ffmpeg libavcodec version =&gt; Lavc52.20.1
+ffmpeg libavformat version =&gt; Lavf52.31.0
+ffmpeg swscaler =&gt; disabled
+ffmpeg.allow_persistent =&gt; 0 =&gt; 0
+ffmpeg.show_warnings =&gt; 0 =&gt; 0
+</code></p>
+
+<p>没问题收工。</p>
+
+<p>参考互联网文章《编译FFMpeg和FFMpeg-php》linux版的</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用php的snmp模块进行监控数据的获取]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor/"/>
+    <updated>2013-12-10T10:19:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor</id>
+    <content type="html"><![CDATA[<p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
+
+<!-- more -->
+
+
+<p><code>sh
+$ wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+$ tar xjf php-5.5.6.tar.bz2
+$ cd php-5.5.6
+$ ls ext/snmp/
+config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+$
+</code>
+可见snmp已经自带了，不需要到pecl下载然后放到ext目录。
+<code>sh
+$ sudo yum install libxml2 libxml2-devel
+</code>
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+
+<h3>静态编译</h3>
+
+<p>查一下snmp的安装选项
+<code>sh
+$ ./configure --help | grep snmp
+  --with-snmp=DIR         Include SNMP support
+</code>
+是&mdash;with，了解后继续操作，这里直接使用默认snmp路径
+<code>sh
+$ ./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+$ make
+$ sudo make install
+</code>
+这样静态编译就完成了。</p>
+
+<h3>动态编译</h3>
+
+<p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so
+<code>sh
+$ cd ext/snmp
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+$ cd ../../ext/sockets
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+</code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+<code>sh
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+</code>
+编辑php的配置文件
+<code>sh
+$ vi /usr/local/php55/etc/php.ini
+</code>
+加入2行
+<code>sh
+extension=sockets.so
+extension=snmp.so
+</code></p>
+
+<h3>撰写php版的snmp客户端测试程序</h3>
+
+<p>开始写点测试程序，确认snmp已经在本机支持
+<code>sh
+$nc -uvz 127.0.0.1 161
+Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
+</code>
+2014-07-16补充：
+以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句
+<code>sh
+$nc -u 127.0.0.1 161
+</code>
+输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来</p>
+
+<p>已经支持，那么来写程序吧
+<code>php
+&lt;?php
+/**
+ * test.php
+ */
+$host="127.0.0.1";
+$community="public";
+$oid=".1.3.6.1.4.1.2021.10.1.3.1";
+$oid1=".1.3.6.1.4.1.2021.10.1.3.2";
+$oid2=".1.3.6.1.4.1.2021.10.1.3.3";
+$oid3=".1.3.6.1.4.1.2021.4.3.0";
+// 1 minute Load
+echo (snmpget($host,$community,$oid)."\n");
+// 5 minute Load
+echo (snmpget($host,$community,$oid1)."\n");
+// 15 minute Load
+echo (snmpget($host,$community,$oid2)."\n");
+// Total Swap Size
+echo (snmpget($host,$community,$oid3)."\n");
+</code>
+查看结果
+```sh
+$ /usr/local/php55/bin/php test.php
+STRING: 0.05
+STRING: 0.03
+STRING: 0.03
+INTEGER: 2064376 kB</p>
+
+<p>```</p>
+
+<h3>分析总结</h3>
+
+<p>可以看出php的snmp接口还是非常简明优雅的，由此推断你只要学会rrdtool、php和snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我自己写公司监控平台2.0的时候，上级要求使用C api直接获取数据，不走snmp，其实通过对分析ganglia源代码的粗读，也能马上发现其也是采用了原生api调用获取主要监控数据的方式，所以号称比snmpd快和非常节省系统开销。但为了完成任务和系统的拓展性，果然另外支持snmp吧。</p>
+
+<h3>扩展阅读</h3>
+
+<p>请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[完美解决phpmyadmin4.1.0访问缓慢]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow/"/>
+    <updated>2013-11-29T10:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/29/phpmyadmin4-dot-1-0-access-slow</id>
+    <content type="html"><![CDATA[<p>安装最新版phpmyadmin4.1.0出现了访问非常缓慢的问题，记录一下</p>
+
+<!-- more -->
+
+
+<h3>第一步</h3>
+
+<p>文件名./libraries/Util.class.php文件
+查找
+<code>php
+return strftime($date, $timestamp);
+</code>
+替换为
+<code>php
+if(extension_loaded('gettext'))
+  return strftime($date, $timestamp);
+</code></p>
+
+<h3>第二步</h3>
+
+<p>文件名./version_check.php文件
+注释掉以下代码
+```php
+$version = PMA_Util::getLatestVersion();</p>
+
+<p>echo json_encode(</p>
+
+<pre><code>array(
+    'version' =&gt; $version-&gt;version,
+    'date' =&gt; $version-&gt;date,
+    )
+);
+</code></pre>
+
+<p>```</p>
+
+<h3>第三步</h3>
+
+<p>直接浏览器访问/setup路径，进行设置</p>
+
+<h3>第四步</h3>
+
+<p>应该可以登录了，如果不行清除cookie应该也可以访问了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下PHP的Tokyo Tyrant安装配置测试]]></title>
+    <link href="http://evoupsight.com/blog/2013/09/26/freebsd-tokyo-tyrant-php-test/"/>
+    <updated>2013-09-26T16:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/09/26/freebsd-tokyo-tyrant-php-test</id>
+    <content type="html"><![CDATA[<h3>简介和横向对比</h3>
+
+<p>Tokyo Tyrant（ttserver）是一款分布式nosql数据库，内部主要是用Tokyo Cabinet数据库实现。与memcache相比，其具有持久化存储的特性；与redis相比，这个数据库在记录数上亿时性能会急剧下降，没有redis业界口碑好，当然也可能是因为这是比较早起的nosql产品了，以及没有进行正确的配置导致的。除此之外ttserver还支持memcache兼容协议，仅仅需要注意INCR的操作中，memcache是不返回值，ttserver是返回自增ID的。</p>
+
+<!-- more -->
+
+
+<h3>php扩展的安装</h3>
+
+<p>编译的方式还是分静态方式和动态方式，特点是静态编译之后运行效率较高，但是需要重新编译php源码，动态编译只需要编译出动态链接库，然后在php.ini上加载so=XXXX.so即可。需要知晓php的版本在5.2以上（实际测试发现php的版本也不能太高，php5.2.10测试通过）,此外编译前必须先安装tt，否则会收到` configure: error: Please reinstall the Tokyo Tyrant distribution
+的报错。</p>
+
+<h4>安装编译依赖</h4>
+
+<p><code>sh
+$ cd /usr/ports/databases/tokyotyrant
+$ sudo make install clean
+</code></p>
+
+<h4>静态方式</h4>
+
+<p><code>sh
+$ cd /home/software
+$ fetch http://museum.php.net/php5/php-5.2.10.tar.bz2
+$ tar xjf php-5.2.10.tar.bz2
+$ cd php-5.2.10/ext
+$ fetch http://pecl.php.net/get/tokyo_tyrant-0.7.0.tgz
+$ tar xzf tokyo_tyrant-0.7.0.tgz
+$ mv tokyo_tyrant-0.7.0 tokyo_tyrant
+$ cd ..
+$ ./buildconf --force
+$ ./configure --prefix=/usr/local/php_tt --with-tokyo-tyrant
+$ make
+$ sudo make install
+</code>
+查看模块是否成功安装
+<code>sh
+$ /usr/local/php_tt/bin/php -m | grep tokyo
+tokyo_tyrant
+</code></p>
+
+<h4>动态方式(假设php已经安装在/usr/local/php_tt)</h4>
+
+<p><code>sh
+$ cd /home/software
+$ fetch http://pecl.php.net/get/tokyo_tyrant-0.7.0.tgz
+$ tar xzf tokyo_tyrant-0.7.0.tgz
+$ cd tokyo_tyrant-0.7.0
+$ /usr/local/php_tt/bin/phpize
+$ ./configure --with-php-config=/usr/local/php_tt/bin/php-config
+$ make
+$ sudo make install
+</code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+<code>sh
+$ cp /usr/local/php_tt/lib/php/extensions/no-debug-non-zts-20090626/tokyo_tyrant.so /usr/local/php_tt/etc/
+</code></p>
+
+<p>编辑php的配置文件
+<code>sh
+vi /usr/local/php_tt/etc/php.ini
+</code>
+加入1行
+<code>sh
+extension=tokyo_tyrant.so
+</code></p>
+
+<h4>测试1</h4>
+
+<p>编辑php文件
+```php
+&lt;?php
+/<em>*
+ * test.php
+ </em>/
+$tt = new TokyoTyrant(&ldquo;localhost&rdquo;);
+$tt->put(&ldquo;language&rdquo;, &ldquo;C/C++&rdquo;);
+echo &lsquo;language:&rsquo; . $tt->get(&ldquo;language&rdquo;) . &ldquo;\n&rdquo;;</p>
+
+<p>echo &lsquo;The count of records is:&rsquo; . $tt &ndash;> num() . &ldquo;\n&rdquo;;</p>
+
+<p>print_r($tt &ndash;> stat());</p>
+
+<p>$it = $tt &ndash;> getIterator();
+foreach ($it as $key => $val) {</p>
+
+<pre><code>echo "key: $key, val: $val\n";
+</code></pre>
+
+<p>}
+?>
+<code>
+运行
+</code>sh
+/usr/local/php_tt/bin/php test.php
+language:C/C++
+The count of records is:1
+Array                                                                                                                                                [0/1804]
+(</p>
+
+<pre><code>[version] =&gt; 1.1.41
+[libver] =&gt; 324
+[protver] =&gt; 0.91
+[os] =&gt; FreeBSD
+[time] =&gt; 1388045682.650761
+[pid] =&gt; 69442
+[sid] =&gt; 0
+[type] =&gt; on-memory
+[path] =&gt; *
+[rnum] =&gt; 1
+[size] =&gt; 525437
+[bigend] =&gt; 0
+[fd] =&gt; 5
+[loadavg] =&gt; 0.958008
+[memrss] =&gt; 92448
+[ru_user] =&gt; 0.109603
+[ru_sys] =&gt; 0.137003
+[ru_real] =&gt; 352.795682
+[cnt_put] =&gt; 2
+[cnt_putkeep] =&gt; 0
+[cnt_putcat] =&gt; 0
+[cnt_putshl] =&gt; 0
+[cnt_putnr] =&gt; 0
+[cnt_out] =&gt; 0
+[cnt_get] =&gt; 3
+[cnt_mget] =&gt; 0
+[cnt_vsiz] =&gt; 0
+[cnt_iterinit] =&gt; 2
+[cnt_iternext] =&gt; 2
+[cnt_fwmkeys] =&gt; 0
+[cnt_addint] =&gt; 0
+[cnt_adddouble] =&gt; 0
+[cnt_ext] =&gt; 0
+[cnt_sync] =&gt; 0
+[cnt_optimize] =&gt; 0
+[cnt_vanish] =&gt; 0
+[cnt_copy] =&gt; 0
+[cnt_restore] =&gt; 0
+[cnt_setmst] =&gt; 0
+[cnt_rnum] =&gt; 2
+[cnt_size] =&gt; 0
+[cnt_stat] =&gt; 2
+[cnt_misc] =&gt; 0
+[cnt_repl] =&gt; 0
+[cnt_put_miss] =&gt; 0
+[cnt_out_miss] =&gt; 0
+[cnt_get_miss] =&gt; 0
+</code></pre>
+
+<p>)
+key: language, val: C/C++
+```
+可以看到这个扩展的遍历功能相当好用:)</p>
+
+<h4>参考</h4>
+
+<p>linux下的请自行参考《Debian下PHP的Tokyo Tyrant安装配置及测试》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[【How to】使用basho的erlang-protobuffs和PHP通讯]]></title>
+    <link href="http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php/"/>
+    <updated>2013-05-27T13:49:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/05/27/erlang-protobuffs-with-php</id>
+    <content type="html"><![CDATA[<p>这几天通过查阅相关资料，终于实现了php和erlang的相互通讯。详细的protocolbuf的入门，可以参见本问最后的参考链接。有文章说google官网实现的protobuf的erlang接口不是很好用，推荐使用basho的erlang-protobuffs修改版本。于是摸索了一番，终于勉强可以使用了，现先介绍如何使用该工具生成消息的erlang源文件。米聊用的分布式数据库riak就是basho公司开发的，其中采用了修改版erlang-protobuffs。</p>
+
+<!-- more -->
+
+
+<p>可以在这里下载，git://github.com/basho/erlang_protobuffs.git</p>
+
+<p>先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。</p>
+
+<p><code>bash
+cd erlang_protobuffs
+make all
+</code></p>
+
+<p>这样就可以使用了，接下来给出一个测试的protobuf文件</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.proto </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='protobuf'><span class='line'><span class="kd">message</span> <span class="nc">test</span> <span class="p">{</span>
+</span><span class='line'>   <span class="k">required</span> <span class="kt">string</span> <span class="na">test1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>进入ebin目录准备生成
+<code>bash
+cd ebin  
+</code></p>
+
+<p>```erlang
+erl
+1> protobuffs_compile:generate_source(&ldquo;test.proto&rdquo;).</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing header file to &ldquo;test_pb.hrl&rdquo;</p>
+
+<p>=INFO REPORT==== 27-May-2013::15:31:13 ===</p>
+
+<p>Writing src file to &ldquo;test_pb.erl&rdquo;</p>
+
+<p>ok
+```
+这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。</p>
+
+<p>然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>server.erl start:51 mark:51,54-55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">server</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">include</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test_pb</span><span class="p">.</span><span class="n">hrl</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">start_nano_server</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Listen</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">listen</span><span class="p">(</span><span class="mi">2345</span><span class="p">,</span> <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>                <span class="p">{</span><span class="n">reuseaddr</span><span class="p">,</span> <span class="n">true</span><span class="p">},</span>
+</span><span class='line'>
+</span><span class='line'>                <span class="p">{</span><span class="n">active</span><span class="p">,</span> <span class="n">true</span><span class="p">}]),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">accept</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Listen</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">)</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="k">receive</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">tcp</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">,</span> <span class="nv">Bin</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server received binary = </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Bin</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">Msg</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">decode_test</span><span class="p">(</span><span class="nv">Bin</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server (unpacked)  </span><span class="si">~p~n</span><span class="s">&quot;</span><span class="p">,[</span><span class="nv">Msg</span><span class="p">]),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">loop</span><span class="p">(</span><span class="nv">Socket</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">tcp_closed</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Server socket closed</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="k">end</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>client的代码</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>client.erl </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">client</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">compile</span><span class="p">(</span><span class="n">export_all</span><span class="p">).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">import</span><span class="p">(</span><span class="n">lists</span><span class="p">,</span> <span class="p">[</span><span class="n">reverse</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;-</span><span class="n">include</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test_pb</span><span class="p">.</span><span class="n">hrl</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;).</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">nano_client_eval</span><span class="p">()</span> <span class="err">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Socket</span><span class="p">}</span> <span class="o">=&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">connect</span><span class="p">(</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">localhost</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="mi">2345</span><span class="p">,</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>   <span class="p">[</span><span class="n">binary</span><span class="p">,</span> <span class="p">{</span><span class="n">packet</span><span class="p">,</span> <span class="mi">4</span><span class="p">}]),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nv">Test</span><span class="o">=</span><span class="nl">#test</span><span class="p">{</span><span class="n">test1</span><span class="o">=</span><span class="err">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">test1</span><span class="err">&amp;</span><span class="n">rdquo</span><span class="p">;},</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nv">Str</span><span class="o">=</span><span class="nn">test_pb</span><span class="p">:</span><span class="nf">encode_test</span><span class="p">(</span><span class="nv">Test</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="n">ok</span> <span class="o">=</span> <span class="nn">gen_tcp</span><span class="p">:</span><span class="nb">send</span><span class="p">(</span><span class="nv">Socket</span><span class="p">,</span> <span class="nv">Str</span><span class="p">),</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>   <span class="nn">gen_tcp</span><span class="p">:</span><span class="nf">close</span><span class="p">(</span><span class="nv">Socket</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>需要说明的是packet,4这个参数，代表每个数据包的前4个字节为消息头，该头标识了消息体的长度。这样互通是没有问题的，erlang自动为数据包的加上前4个字节的消息头。</p>
+
+<p>接下来难点是php作为客户端，要手工打包消息然后发送。
+首先是下载php版本的<a href="https://code.google.com/p/pb4php/">https://code.google.com/p/pb4php/</a>
+然后，解压得到protocolbuf，接着创建你的项目，把protocolbuf放到该项目文件夹的根目录下。一样要生成源代码。注意，pb4php不是很智能，如果直接.proto文件中=1没有空格，而不是写成xx = 1是会报错的！</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'>  <span class="o">&lt;</span><span class="nx">br</span><span class="o">/&gt;</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">protocolbuf</span><span class="o">/</span><span class="nx">parser</span><span class="o">/</span><span class="nx">pb_parser</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PBParser</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$parser</span><span class="o">-&gt;</span><span class="na">parse</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">test</span><span class="o">.</span><span class="nx">proto</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">echo</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">done\n</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>运行test.php后生成pb_proto_test.php</p>
+
+<p>php版本的client的代码</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>client.php </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">protocolbuf</span><span class="o">/</span><span class="nx">message</span><span class="o">/</span><span class="nx">pb_message</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">require_once</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="o">./</span><span class="nx">pb_proto_test</span><span class="o">.</span><span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">test</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$test</span><span class="o">-&gt;</span><span class="na">set_test1</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">test</span> <span class="nx">php</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$string</span> <span class="o">=</span> <span class="nv">$test</span><span class="o">-&gt;</span><span class="na">SerializeToString</span><span class="p">();</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$sock</span><span class="o">=@</span><span class="nb">socket_create</span><span class="p">(</span><span class="nx">AF_INET</span><span class="p">,</span> <span class="nx">SOCK_STREAM</span><span class="p">,</span> <span class="nx">getprotobyname</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">tcp</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;));</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">if</span> <span class="p">(</span><span class="nv">$sock</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nb">socket_connect</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="mi">2345</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$msg</span> <span class="o">=</span> <span class="nx">pack_data</span><span class="p">(</span><span class="nv">$string</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nb">file_put_contents</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">strong</span><span class="o">&gt;</span><span class="nx">FILE</span><span class="o">&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span><span class="p">)</span><span class="o">.&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">resmessage</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span><span class="nv">$msg</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$sent</span> <span class="o">=</span> <span class="o">@</span><span class="nb">socket_write</span><span class="p">(</span><span class="nv">$sock</span><span class="p">,</span> <span class="nv">$msg</span><span class="p">,</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$msg</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">function</span> <span class="nf">pack_data</span> <span class="p">(</span><span class="nv">$data</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$head</span> <span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">H</span><span class="o">*&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="nx">to_hex_str</span> <span class="p">(</span><span class="nb">strlen</span><span class="p">(</span><span class="nv">$data</span><span class="p">)));</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$body</span><span class="o">=</span><span class="nb">pack</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">A</span><span class="o">*&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="nv">$data</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="k">return</span> <span class="nv">$head</span><span class="o">.</span><span class="nv">$body</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="k">function</span> <span class="nf">to_hex_str</span> <span class="p">(</span><span class="nv">$num</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">dechex</span><span class="p">(</span><span class="nv">$num</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="nv">$str</span> <span class="o">=</span> <span class="nb">str_pad</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="mi">0</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="nx">STR_PAD_LEFT</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="k">return</span> <span class="nv">$str</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,&ldquo;0&rdquo;,STR_PAD_LEFT)然后打包消息头。</p>
+
+<p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
+]]></content>
+  </entry>
+  
+</feed>
