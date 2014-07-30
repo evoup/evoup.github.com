@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-28T00:04:21+08:00</updated>
+  <updated>2014-07-30T17:08:54+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,90 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop put Warn DataStreamer Exception]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/"/>
+    <updated>2014-07-30T17:05:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop-put-warn-datastreamer-exception</id>
+    <content type="html"><![CDATA[<p>今天在一个hadoop节点上传测试文件的时候</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>bin/hadoop fs -put /home/hadoop/project/s3log.txt /yin_test/s3log
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出现如下报错:</p>
+
+<!-- more -->
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>14/07/25 13:23:05 WARN util.NativeCodeLoader: Unable to load native-hadoop library <span class="k">for </span>your platform... using <span class="nb">builtin</span>-java classes where app
+</span><span class='line'>licable
+</span><span class='line'>14/07/25 13:23:06 WARN hdfs.DFSClient: DataStreamer Exception
+</span><span class='line'>org.apache.hadoop.ipc.RemoteException<span class="o">(</span>java.io.IOException<span class="o">)</span>: File /yin_test/s3log/s3log.txt._COPYING_ could only be replicated to 0 nodes instead of minReplication <span class="o">(=</span>1<span class="o">)</span>.  There are 0 datanode<span class="o">(</span>s<span class="o">)</span> running and no node<span class="o">(</span>s<span class="o">)</span> are excluded in this operation.
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget<span class="o">(</span>BlockManager.java:1361<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock<span class="o">(</span>FSNamesystem.java:2362<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock<span class="o">(</span>NameNodeRpcServer.java:501<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock<span class="o">(</span>ClientNamenodeProtocolServerSideTranslato
+</span><span class='line'>rPB.java:299<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos<span class="nv">$ClientNamenodeProtocol$2</span>.callBlockingMethod<span class="o">(</span>ClientNamenodeProt
+</span><span class='line'>ocolProtos.java:44954<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.ProtobufRpcEngine<span class="nv">$Server$ProtoBufRpcInvoker</span>.call<span class="o">(</span>ProtobufRpcEngine.java:453<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.RPC<span class="nv">$Server</span>.call<span class="o">(</span>RPC.java:1002<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.Server<span class="nv">$Handler$1</span>.run<span class="o">(</span>Server.java:1752<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.Server<span class="nv">$Handler$1</span>.run<span class="o">(</span>Server.java:1748<span class="o">)</span>
+</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at javax.security.auth.Subject.doAs<span class="o">(</span>Subject.java:415<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.security.UserGroupInformation.doAs<span class="o">(</span>UserGroupInformation.java:1438<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.Server<span class="nv">$Handler</span>.run<span class="o">(</span>Server.java:1746<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>        at org.apache.hadoop.ipc.Client.call<span class="o">(</span>Client.java:1238<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.ipc.ProtobufRpcEngine<span class="nv">$Invoker</span>.invoke<span class="o">(</span>ProtobufRpcEngine.java:202<span class="o">)</span>
+</span><span class='line'>        at com.sun.proxy.<span class="nv">$Proxy9</span>.addBlock<span class="o">(</span>Unknown Source<span class="o">)</span>
+</span><span class='line'>        at sun.reflect.NativeMethodAccessorImpl.invoke0<span class="o">(</span>Native Method<span class="o">)</span>
+</span><span class='line'>        at sun.reflect.NativeMethodAccessorImpl.invoke<span class="o">(</span>NativeMethodAccessorImpl.java:57<span class="o">)</span>
+</span><span class='line'>        at sun.reflect.DelegatingMethodAccessorImpl.invoke<span class="o">(</span>DelegatingMethodAccessorImpl.java:43<span class="o">)</span>
+</span><span class='line'>        at java.lang.reflect.Method.invoke<span class="o">(</span>Method.java:606<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod<span class="o">(</span>RetryInvocationHandler.java:164<span class="o">)</span>
+</span><span class='line'>        at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke<span class="o">(</span>RetryInvocationHandler.java:83<span class="o">)</span>
+</span><span class='line'>        at com.sun.proxy.<span class="nv">$Proxy9</span>.addBlock<span class="o">(</span>Unknown Source<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>已经把防火墙关了，经过一番查询研究，原来是dfs.namenode.name.dir和dfs.datanode.data.dir再重新格式化后要被清空的原因。删除这2个目录下的文件，然后重新格式化，再次put恢复正常。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[centos7配置静态IP]]></title>
@@ -3309,341 +3393,6 @@ Exception in thread &ldquo;main&rdquo; java.lang.RuntimeException: native-lzo li
 
 
 <p>hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是&lt;1秒的。好啦，收工。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos5.8下基于hadoop0.20.203的hive0.7安装]]></title>
-    <link href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/"/>
-    <updated>2014-02-17T15:38:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7</id>
-    <content type="html"><![CDATA[<h3>什么是hive</h3>
-
-<blockquote><p>hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。</p></blockquote>
-
-<h3>hive使用场景</h3>
-
-<blockquote><p>HIVE 不适合用于联机(online)事务处理,也不提供实时查询功能。它最适合应用在基于大量不可变数据的批处理作业。</p></blockquote>
-
-<!-- more -->
-
-
-<h3>hive的安装</h3>
-
-<p>先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
-注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app
-</span><span class='line'>wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
-</span><span class='line'>tar xzf hive-0.7.1-bin.tar.gz
-</span><span class='line'>ln -s hive-0.7.1-bin.tar.gz hive
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>环境变量设置</h4>
-
-<p>在~/.profile中加入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/u01/app/hive
-</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span>/u01/app/hive/conf
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在系统中指出hive的配置文件所在</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/bin:PATH
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>记得用source让profile生效</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">source</span> ~/.profile
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后是进行hive配置文件的配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive/conf
-</span><span class='line'>cp hive-env.sh.template hive-env.sh
-</span><span class='line'>vim hive-env.sh
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>安装依赖软件</h4>
-
-<p>发现有2种安装方式，一种是derby,另一种是mysql，这里先介绍mysql方式</p>
-
-<blockquote><p>关于什么是derby: 这是一个apache DB的子项目，是一个完全用java实现的开源关系型数据库。这里就不使用了，我们采用mysql。</p></blockquote>
-
-<h4>安装mysql</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>//卸载老版本的mysql软件包
-</span><span class='line'>yum remove mysql mysql-*
-</span><span class='line'>//安装mysql5.5的源
-</span><span class='line'>rpm -Uvh http://repo.webtatic.com/yum/centos/5/latest.rpm
-</span><span class='line'>//安装MySQL客户端的支持包
-</span><span class='line'>yum install libmysqlclient15 --enablerepo<span class="o">=</span>webtatic
-</span><span class='line'>//安装MySQL 5.5的客户端和服务端
-</span><span class='line'>yum install mysql55 mysql55-server --enablerepo<span class="o">=</span>webtatic
-</span><span class='line'>//启动MySQL系统服务，更新数据库
-</span><span class='line'>/etc/init.d/mysqld restart
-</span><span class='line'>mysql_upgrade
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>修改mysql用户密码</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># mysql -u root mysql   //默认的没有密码直接进去的</span>
-</span><span class='line'>mysql&gt;use mysql;
-</span><span class='line'>mysql&gt;desc user;
-</span><span class='line'>mysql&gt; GRANT ALL PRIVILEGES ON *.* TO root@<span class="s2">&quot;%&quot;</span> IDENTIFIED BY <span class="s2">&quot;root&quot;</span>;　　//为root添加远程连接的能力。
-</span><span class='line'>mysql&gt;update user <span class="nb">set </span><span class="nv">Password</span> <span class="o">=</span> password<span class="o">(</span><span class="s1">&#39;xxxxxx&#39;</span><span class="o">)</span> where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
-</span><span class='line'>mysql&gt;select Host,User,Password  from user where <span class="nv">User</span><span class="o">=</span><span class="s1">&#39;root&#39;</span>;
-</span><span class='line'>mysql&gt;flush privileges;
-</span><span class='line'>mysql&gt;exit
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>设置mysql为开机自动启动</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /sbin/chkconfig --add mysqld
-</span><span class='line'>sudo /sbin/chkconfig mysqld on
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>开始配置</h4>
-
-<p>在conf目录下创建hive-site.xml</p>
-
-<p>创建hive数据库给hive做元数据表</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>create database hive;
-</span><span class='line'>grant all privileges on *.* to hive@localhost identified by <span class="s1">&#39;hive&#39;</span>;
-</span><span class='line'>flush privileges;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>运行hive</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /u01/app/hive
-</span><span class='line'>/bin/hive
-</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: jline/ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
-</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
-</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
-</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
-</span><span class='line'>Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor<span class="nv">$ArgumentDelimiter</span>
-</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
-</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
-</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
-</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
-</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
-</span><span class='line'>        ... 3 more
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。</p>
-
-<p>再次启动</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
-</span><span class='line'>Exception in thread <span class="s2">&quot;main&quot;</span> java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf
-</span><span class='line'>        at java.lang.Class.forName0<span class="o">(</span>Native Method<span class="o">)</span>
-</span><span class='line'>        at java.lang.Class.forName<span class="o">(</span>Class.java:247<span class="o">)</span>
-</span><span class='line'>        at org.apache.hadoop.util.RunJar.main<span class="o">(</span>RunJar.java:149<span class="o">)</span>
-</span><span class='line'>Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveConf
-</span><span class='line'>        at java.net.URLClassLoader<span class="nv">$1</span>.run<span class="o">(</span>URLClassLoader.java:202<span class="o">)</span>
-</span><span class='line'>        at java.security.AccessController.doPrivileged<span class="o">(</span>Native Method<span class="o">)</span>
-</span><span class='line'>        at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:190<span class="o">)</span>
-</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:306<span class="o">)</span>
-</span><span class='line'>        at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:247<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>需要修改$HADOOP/conf/的hadoop-env.sh中的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="nv">$HBASE_HOME</span>/hbase-0.90.3.jar:<span class="nv">$HBASE_HOME</span>:<span class="nv">$HBASE_HOME</span>/lib/zookeeper-3.2.2.jar:<span class="nv">$HBASE_HOME</span>/conf
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>改成</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">export </span><span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="nv">$HADOOP_CLASSPATH</span>:<span class="nv">$HBASE_HOME</span>/hbase-0.90.3.jar:<span class="nv">$HBASE_HOME</span>:<span class="nv">$HBASE_HOME</span>/lib/zookeeper-3.2.2.jar:<span class="nv">$HBASE_HOME</span>/conf
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后可以启动hive了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
-</span><span class='line'>WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
-</span><span class='line'>Hive <span class="nb">history </span><span class="nv">file</span><span class="o">=</span>/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
-</span><span class='line'>hive&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。</p>
-
-<p>•建立测试表test</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
-</span><span class='line'>&gt; show tables;
-</span><span class='line'>FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
-</span><span class='line'>NestedThrowables:
-</span><span class='line'>java.lang.reflect.InvocationTargetException
-</span><span class='line'>FAILED: Execution Error, <span class="k">return </span>code 1 from org.apache.hadoop.hive.ql.exec.DDLTask
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
-
-<p>&#8220;sh</p>
-
-<blockquote><p>show tables;
-OK
-Time taken: 0.082 seconds</p></blockquote>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>一个表也没有，创建表吧
-</span><span class='line'>···sh
-</span><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
-</span><span class='line'>FAILED: Error in metadata: MetaException<span class="o">(</span>message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>namenode为什么是安全模式？
-hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
-</span><span class='line'>ON
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>那就关了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin -safemode leave
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再次查看</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop dfsadmin –safemode get
-</span><span class='line'>OFF
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>已经关了，再次建表测试</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive
-</span><span class='line'>hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
-</span><span class='line'>OK
-</span><span class='line'>Time taken: 0.521 seconds
-</span><span class='line'>hive&gt; show tables;
-</span><span class='line'>OK
-</span><span class='line'><span class="nb">test</span>
-</span><span class='line'>Time taken: 0.14 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>参考文章</h3>
-
-<p><a href="http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/">http://blog.163.com/huang_zhong_yuan/blog/static/174975283201181371146365/</a></p>
-
-<p><a href="http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4">http://hi.baidu.com/allense7en/item/db8e5b4fb177aae81e19bcb4</a></p>
-
-<p><a href="http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html">http://www.cnblogs.com/zhanghuijunjava/archive/2013/04/22/hadoop_HDFS.html</a></p>
 ]]></content>
   </entry>
   

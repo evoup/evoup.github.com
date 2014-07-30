@@ -105,6 +105,51 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-05T11:23:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2010</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/05/socket-server-experience/">Socket服务器开发心得[长连接线程版]</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>其实也算不上是什么心得，就是一些积累。cs结构的网游和聊天室基本上是在用长连接。</p>
+
+<p>长连接一般会有个心跳包，具体就是确认客户端状态是存活的，这个还没有设计。</p>
+
+<p>QQ其实也用TCP，也有心跳包，也涉及长连接。</p>
+
+<p>P2P一般都是长连接，但是网游一般不设计成UDP数据包，一般都是长连接。</p>
+
+<p>对于多线程阻塞服务器，recv就可以了，然后开个for(;;)或者while(1)死循环，长连接式的recv和send，这样交互，中间使用\n或者其他什么判断接受的一条协议命令；对于http这样的服务器，直接fopen套接字，fstat判断可写状态，则写入后fflush。这个flash也用了个flush函数，具体怎么回事，没做深入研究。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-07-23T14:48:00+08:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2010</time>
         
       </p>
@@ -631,101 +676,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2008-07-20T23:23:00+08:00" pubdate data-updated="true">Jul 20<span>th</span>, 2008</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2008/07/20/delete-cvs-dir/">批量删除CVS目录的cmd</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>windows下的bat的方法</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='bat'><span class='line'><span class="p">@</span><span class="k">echo</span> <span class="k">On</span>
-</span><span class='line'><span class="p">@</span>Rem 删除CVS版本控制目录
-</span><span class='line'><span class="p">@</span>PROMPT [Com]#
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> @<span class="k">echo</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Find CVS Dir....OK
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">for</span> <span class="n">/r</span> . <span class="nv">%%a</span> in (.) <span class="k">do</span> @<span class="k">if</span> <span class="k">exist</span> <span class="s2">&quot;%%a\CVS&quot;</span> rd <span class="n">/s</span> <span class="n">/q</span> <span class="s2">&quot;%%a\CVS&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">echo</span> Clear CVS Dir Mission Completed
-</span><span class='line'>
-</span><span class='line'><span class="p">@</span><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>bash的话可以这么搞，参见<a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server"><a href="http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server">http://stackoverflow.com/questions/1330136/script-to-recursively-delete-cvs-directory-on-server</a></a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$1&quot;</span> <span class="o">]</span>; <span class="k">then</span>
-</span><span class='line'><span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;Usage: $0 path&quot;</span>
-</span><span class='line'>    <span class="nb">exit </span>1
-</span><span class='line'><span class="k">fi</span>
-</span><span class='line'>
-</span><span class='line'>find <span class="s2">&quot;$1&quot;</span> -name <span class="s1">&#39;CVS&#39;</span> -type d -print0 | xargs -0 rm -Rf
-</span><span class='line'><span class="c"># or find … -exec like you have, if you can&#39;t use -print0/xargs -0</span>
-</span><span class='line'><span class="c"># print0/xargs will be slightly faster.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -749,6 +699,8 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop Put Warn DataStreamer Exception</a>
+    
     <a class="list-group-item " href="/blog/2014/07/27/centos7-configure-static-ip/">centos7配置静态IP</a>
     
     <a class="list-group-item " href="/blog/2014/07/10/rrdsrv-usage/">Rrdtool的socket通讯接口rrdsrv</a>
@@ -757,15 +709,13 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
     
     <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master/">Mysql主主配置</a>
     
-    <a class="list-group-item " href="/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute/">hadoop2.0cdh4.6.0完全分布式安装</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 133.75%'>Hadoop(9)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 111.25%'>Zookeeper(3)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 137.5%'>Hadoop(10)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 111.25%'>Zookeeper(3)</a> </span>
 </section>
 
 <section>
