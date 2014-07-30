@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-30T18:25:16+08:00</updated>
+  <updated>2014-07-30T18:35:44+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[centos上hadoop2.x hdfs支持lzo]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop-with-lzo/"/>
+    <updated>2014-07-30T18:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop-with-lzo</id>
+    <content type="html"><![CDATA[<p>总体来说要让hadoop2.x的hdfs支持lzo压缩格式，是和hadoop1.x下配置方式一样的。下文记录一下配置过程。</p>
+
+<!-- more -->
+
+
+<p>首先安装lzo</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo yum install lzo-devel.x86_64 lzop.x86_64
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载twitter的hadoop-lzo项目</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/twitter/hadoop-lzo.git
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>64位环境的需要设置两个环境变量：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>vim ~/.bashrc
+</span><span class='line'><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m64
+</span><span class='line'><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m64
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>开始编译</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn clean package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出现警告</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> Javadoc Warnings
+</span><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:115: 警告 - @return 标记没有参数。
+</span><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:51: 警告 - @param argument <span class="s2">&quot;lzoUri&quot;</span> 不是参数名称。
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Building jar: /home/hadoop/software/hadoop-lzo/target/hadoop-lzo-0.4.20-SNAPSHOT-javadoc.jar
+</span><span class='line'>···
+</span><span class='line'>不用管，编译ok。
+</span><span class='line'>
+</span><span class='line'>需要把本地库和jar包放到hadoop对应目录中
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>bash
+cp target/native/Linux-amd64-64/lib/* $HADOOP_HOME/lib/native/
+cp target/hadoop-lzo-0.4.20-SNAPSHOT.jar  $HADOOP_HOME/share/hadoop/mapreduce/lib/</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>3 修改hadoop的配置文件core-site.xml
+</span><span class='line'>修改/增加以下2个参数：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>io.compression.codecs
+org.apache.hadoop.io.compress.GzipCodec,
+org.apache.hadoop.io.compress.DefaultCodec,
+org.apache.hadoop.io.compress.BZip2Codec,
+com.hadoop.compression.lzo.LzoCodec,
+com.hadoop.compression.lzo.LzopCodec</p>
+
+<p>io.compression.codec.lzo.class
+com.hadoop.compression.lzo.LzoCodec
+&#8220;`
+然后重启hadoop看效果。</p>
+
+<p>参考
+<a href="http://www.linuxidc.com/Linux/2014-05/101090.htm">http://www.linuxidc.com/Linux/2014-05/101090.htm</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hadoop2.x本地库安装]]></title>
@@ -3539,212 +3630,6 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 <p>总结不足：下脚轮廓线其实可以去掉，像素外框线可以在圆润点，我只处理了头发那个图层，可以用第16步骤来修正。</p>
 
 <p><a href="http://pan.baidu.com/s/1hqKFQ1e" target=_BLANK>PS源文件</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[导入nginx日志并采用hive进行统计]]></title>
-    <link href="http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate/"/>
-    <updated>2014-03-10T16:07:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/03/10/import-nginx-log-and-use-hive-to-caculate</id>
-    <content type="html"><![CDATA[<p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
-
-<p>下面描述一下过程</p>
-
-<!-- more -->
-
-
-<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>create external table nginxlog <span class="o">(</span>ipaddress string, ...更多字段省略<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as textfile    location <span class="s1">&#39;/data/log&#39;</span>;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>tar xjf server01-20140131.txt.bz2
-</span><span class='line'><span class="nv">$ </span>tar xjf server02-20140131.txt.bz2
-</span><span class='line'><span class="nv">$ </span>lzop server01-20140131.txt
-</span><span class='line'><span class="nv">$ </span>lzop server02-20140131.txt
-</span><span class='line'><span class="nv">$ </span>server01-20140131.txt.lzo server02-20140131.txt.lzo
-</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server01-20140131.txt.lzo
-</span><span class='line'><span class="nv">$ </span>/u01/app/hadoop fs -put server01-20140131.txt.lzo /data/log/server02-20140131.txt.lzo
-</span><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop fs -ls /data/log/
-</span><span class='line'>Found 2 items
-</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/log/server01-20140131.txt.lzo
-</span><span class='line'>-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/log/server02-20140201.txt.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后马上就可以查询了</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog;
-</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
-</span><span class='line'>Launching Job 1 out of 1
-</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
-</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
-</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>In order to limit the maximum number of reducers:
-</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
-</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0004
-</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0004
-</span><span class='line'>2014-03-10 14:17:41,179 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 14:18:20,815 Stage-1 <span class="nv">map</span> <span class="o">=</span> 50%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 14:18:32,927 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 14:18:38,971 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
-</span><span class='line'>2014-03-10 14:18:41,991 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
-</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0004
-</span><span class='line'>OK
-</span><span class='line'>2492916
-</span><span class='line'>Time taken: 75.321 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hive&gt; create external table nginxlog2 <span class="o">(</span>ipaddress string, ...,更多字段<span class="o">)</span> COMMENT <span class="s1">&#39;nginx log rcfile format&#39;</span> ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;,&#39;</span> stored as RCFile    location <span class="s1">&#39;/data/log2&#39;</span>;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; SET hive.exec.compress.output<span class="o">=</span><span class="nb">true</span>;
-</span><span class='line'>hive&gt; SET io.rcfile.compression.type<span class="o">=</span>BLOCK;
-</span><span class='line'>hive&gt; insert overwrite table nginxlog2 <span class="k">select</span> * from nginxlog;
-</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 2
-</span><span class='line'>Launching Job 1 out of 2
-</span><span class='line'>Number of reduce tasks is <span class="nb">set </span>to 0 since there<span class="err">&#39;</span>s no reduce operator
-</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0007
-</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0007
-</span><span class='line'>2014-03-10 15:20:20,959 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:21:21,267 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:22:21,627 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:23:22,320 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:23:36,542 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:23:42,665 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
-</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0007
-</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> -1308159129, job is filtered out <span class="o">(</span>removed at runtime<span class="o">)</span>.
-</span><span class='line'>Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000
-</span><span class='line'>Loading data to table default.nginxlog2
-</span><span class='line'>Deleted hdfs://mdn2.net:9024/data/log2
-</span><span class='line'>Table default.nginxlog2 stats: <span class="o">[</span>num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0<span class="o">]</span>
-</span><span class='line'>2492916 Rows loaded to nginxlog2
-</span><span class='line'>OK
-</span><span class='line'>Time taken: 209.088 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后再次select，对比一下时间</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from nginxlog2;
-</span><span class='line'>Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
-</span><span class='line'>Launching Job 1 out of 1
-</span><span class='line'>Number of reduce tasks determined at compile <span class="nb">time</span>: 1
-</span><span class='line'>In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
-</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>In order to limit the maximum number of reducers:
-</span><span class='line'>  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>In order to <span class="nb">set </span>a constant number of reducers:
-</span><span class='line'>  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
-</span><span class='line'>Starting <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201403101051_0008
-</span><span class='line'>Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201403101051_0008
-</span><span class='line'>2014-03-10 15:26:21,984 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:26:31,031 Stage-1 <span class="nv">map</span> <span class="o">=</span> 33%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:26:43,107 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class='line'>2014-03-10 15:26:49,140 Stage-1 <span class="nv">map</span> <span class="o">=</span> 67%,  <span class="nv">reduce</span> <span class="o">=</span> 17%
-</span><span class='line'>2014-03-10 15:26:52,153 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 22%
-</span><span class='line'>2014-03-10 15:27:04,225 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
-</span><span class='line'>Ended <span class="nv">Job</span> <span class="o">=</span> job_201403101051_0008
-</span><span class='line'>OK
-</span><span class='line'>2492916
-</span><span class='line'>Time taken: 55.656 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
-
-<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
 ]]></content>
   </entry>
   
