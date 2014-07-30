@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "hive There are 0 datanode(s) running and no node"
+title: "hive查询报错There are 0 datanode(s) running and no node"
 date: 2014-04-30 17:38
 comments: true
 categories: [hadoop,hive]
