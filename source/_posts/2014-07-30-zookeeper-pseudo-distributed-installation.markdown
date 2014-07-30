@@ -9,7 +9,11 @@ categories: zookeeper
 ###场景
 我的开发机是在vmware的centos6.5上搭建了一个hadoop节点来做开发，现在想在项目中加入zookeeper做HA的功能（一个leader，多个follower），一开始想到的是再搞一台机器实现完全分布，为了一个zookeeper其实不用再搞一台机器节省资源，后来考虑了下其实还有个伪分布的概念，所谓伪分布就是在一台机器上启动多个实例。下文详细描述如何在一台机器上启动多个zookeeper实例实现伪分布zk集群。
 
+<!-- more -->
+
 ###伪分布集群安装配置
+准备一台机器，假定IP为192.168.216.198。
+
 ##下载安装软件
 ```bash
 $ cd /home/hadoop/software
