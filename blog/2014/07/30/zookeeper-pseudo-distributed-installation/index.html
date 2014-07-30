@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>centos6.4下搭建zabbix2.0.6 - Evoup`s Blog</title>
+  <title>zookeeper伪分布配置安装 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/07/30/zookeeper-pseudo-distributed-installation">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,107 +101,54 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-03T13:37:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-30T17:22:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        centos6.4下搭建zabbix2.0.6
+        Zookeeper伪分布配置安装
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
+<div class="entry-content clearfix"><h3>场景</h3>
 
-<!-- more -->
+<p>我的开发机是在vmware的centos6.5上搭建了一个hadoop节点来做开发，现在想在项目中加入zookeeper做HA的功能（一个leader，多个follower），一开始想到的是再搞一台机器实现完全分布，为了一个zookeeper其实不用再搞一台机器节省资源，后来考虑了下其实还有个伪分布的概念，所谓伪分布就是在一台机器上启动多个实例。下文详细描述如何在一台机器上启动多个zookeeper实例实现伪分布zk集群。</p>
 
+<h3>伪分布集群安装配置</h3>
 
-<p>关闭iptables和selinux</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service iptables stop
-</span><span class='line'>sudo chkconfig iptables off
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>临时关闭selinux</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenfoce 0  <span class="c">##设置为permissive模式</span>
-</span><span class='line'>             <span class="c">##setenforce 1设置SELunix为enforcing模式</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>永久关闭
-修改/etc/selinux/config 文件
-将SELINUX=enforcing改为SELINUX=disabled
-重启机器看到
-getenforce返回Disabled说明已经关闭</p>
-
-<p>再次进入centos6.4，先安装LAMP环境。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php-mbstring php-gd php-odbc php-xml php-pear
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后下载zabbix</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>继续安装需要的组件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>创建zabbix用户帐号</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo useradd zabbix
-</span><span class='line'>sudo usermod -s /sbin/nologin zabbix
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动mysql</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service mysqld start
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>登录mysql</p>
+<h2>下载安装软件</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uroot -p123456
-</span><span class='line'>mysql&gt; create database zabbix;
-</span><span class='line'>mysql&gt; grant all on zabbix.* to zabbix@localhost identified by <span class="s1">&#39;123456&#39;</span>;
-</span><span class='line'>mysql&gt; use zabbix;
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/schema.sql
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/images.sql
-</span><span class='line'>mysql&gt; <span class="nb">source</span> /home/evoup/Downloads/zabbix-2.0.6/database/mysql/data.sql
-</span><span class='line'>mysql&gt; <span class="nb">exit</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /home/hadoop/software
+</span><span class='line'><span class="nv">$ </span>wget http://mirror.bit.edu.cn/apache/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf zookeeper-3.4.5.tar.gz
+</span><span class='line'><span class="nv">$ </span>sudo mv zookeeper-3.4.5 /usr/local/
+</span><span class='line'><span class="nv">$ </span>sudo mv /usr/local/zookeeper-3.4.5/ /usr/local/zookeeper
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>安装zabbix</p>
+<h2>配置三个实例的myid</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>mkdir -p /home/hadoop/zoo/zk1 /home/hadoop/zoo/zk2 /home/hadoop/zoo/zk3
+</span><span class='line'><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;1&quot;</span> &gt; /home/hadoop/zoo/zk1/myid
+</span><span class='line'><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;2&quot;</span> &gt; /home/hadoop/zoo/zk2/myid
+</span><span class='line'><span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;3&quot;</span> &gt; /home/hadoop/zoo/zk3/myid
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>分配制作三个配置文件</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -236,65 +183,50 @@ getenforce返回Disabled说明已经关闭</p>
 <span class='line-number'>31</span>
 <span class='line-number'>32</span>
 <span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl
-</span><span class='line'>Configuration:
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'><span class="nv">$ </span>sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'><span class="nv">$ </span>sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo3.cfg
 </span><span class='line'>
-</span><span class='line'>  Detected OS:           linux-gnu
-</span><span class='line'>  Install path:          /usr/local
-</span><span class='line'>  Compilation arch:      linux
+</span><span class='line'><span class="nv">$ </span>sudo vim /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'><span class="nv">tickTime</span><span class="o">=</span>2000
+</span><span class='line'><span class="nv">initLimit</span><span class="o">=</span>10
+</span><span class='line'><span class="nv">syncLimit</span><span class="o">=</span>5
+</span><span class='line'><span class="nv">dataDir</span><span class="o">=</span>/home/hadoop/zoo/zk1/
+</span><span class='line'><span class="nv">clientPort</span><span class="o">=</span>2181
+</span><span class='line'>server.1<span class="o">=</span>192.168.216.198:2889:3888
+</span><span class='line'>server.2<span class="o">=</span>192.168.216.198:2889:3889
+</span><span class='line'>server.3<span class="o">=</span>192.168.216.198:2890:3890
 </span><span class='line'>
-</span><span class='line'>  Compiler:              gcc
-</span><span class='line'>  Compiler flags:        -g -O2  -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE<span class="o">=</span>2 -fexceptions -fstack-protector --param<span class="o">=</span>ssp-buffer-size<span class="o">=</span>4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS<span class="o">=</span>64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX       -I/usr/include/rpm -I/usr/local/include -I/usr/lib64/perl5/CORE -I. -I/usr/include
+</span><span class='line'><span class="nv">$sudo</span> vim usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'><span class="nv">tickTime</span><span class="o">=</span>2000
+</span><span class='line'><span class="nv">initLimit</span><span class="o">=</span>10
+</span><span class='line'><span class="nv">syncLimit</span><span class="o">=</span>5
+</span><span class='line'><span class="nv">dataDir</span><span class="o">=</span>/home/hadoop/zoo/zk2/
+</span><span class='line'><span class="nv">clientPort</span><span class="o">=</span>2182
+</span><span class='line'>server.1<span class="o">=</span>192.168.216.198:2889:3888
+</span><span class='line'>server.2<span class="o">=</span>192.168.216.198:2889:3889
+</span><span class='line'>server.3<span class="o">=</span>192.168.216.198:2890:3890
 </span><span class='line'>
-</span><span class='line'>  Enable server:         yes
-</span><span class='line'>  Server details:
-</span><span class='line'>    With database:         MySQL
-</span><span class='line'>    WEB Monitoring via:    cURL
-</span><span class='line'>    Native Jabber:         no
-</span><span class='line'>    SNMP:                  net-snmp
-</span><span class='line'>    IPMI:                  no
-</span><span class='line'>    SSH:                   no
-</span><span class='line'>    ODBC:                  no
-</span><span class='line'>    Linker flags:          -rdynamic      -L/usr/lib64/mysql       -L/usr/lib64  -L/usr/lib64
-</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lmysqlclient       -lcurl  -lnetsnmp -lcrypto  -lnetsnmp -lcrypto
-</span><span class='line'>
-</span><span class='line'>  Enable proxy:          no
-</span><span class='line'>
-</span><span class='line'>  Enable agent:          yes
-</span><span class='line'>  Agent details:
-</span><span class='line'>    Linker flags:          -rdynamic
-</span><span class='line'>    Libraries:             -lm -lrt  -lresolv    -lcurl
-</span><span class='line'>
-</span><span class='line'>  Enable Java gateway:   no
-</span><span class='line'>
-</span><span class='line'>  LDAP support:          no
-</span><span class='line'>  IPv6 support:          no
-</span><span class='line'>
-</span><span class='line'>***********************************************************
-</span><span class='line'>*            Now run <span class="s1">&#39;make install&#39;</span>                       *
-</span><span class='line'>*                                                         *
-</span><span class='line'>*            Thank you <span class="k">for </span>using Zabbix!                  *
-</span><span class='line'>*              &lt;http://www.zabbix.com&gt;                    *
-</span><span class='line'>***********************************************************
+</span><span class='line'><span class="nv">$sudo</span> vim /usr/local/zookeeper/conf/zoo3.cfg
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:tickTime<span class="o">=</span>2000
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:initLimit<span class="o">=</span>10
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:syncLimit<span class="o">=</span>5
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:dataDir<span class="o">=</span>/home/hadoop/zoo/zk3/
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:clientPort<span class="o">=</span>2183
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:server.1<span class="o">=</span>192.168.216.198:2889:3888
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:server.2<span class="o">=</span>192.168.216.198:2889:3889
+</span><span class='line'>/usr/local/zookeeper/conf/zoo3.cfg:server.3<span class="o">=</span>192.168.216.198:2890:3890
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>好了，我们正式安装</p>
+<h2>给当前用户账户访问权限（可选）</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo make install
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/zookeeper
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>接下来编辑配置文件
-可以不用sudo，直接切换到root做</p>
+<h3>启动集群</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -308,22 +240,32 @@ getenforce返回Disabled说明已经关闭</p>
 <span class='line-number'>10</span>
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /usr/local/etc
-</span><span class='line'>cat zabbix_server.conf
-</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/var/log/zabbix_server.log
-</span><span class='line'><span class="nv">DBHost</span><span class="o">=</span>localhost
-</span><span class='line'><span class="nv">DBName</span><span class="o">=</span>zabbix
-</span><span class='line'><span class="nv">DBUser</span><span class="o">=</span>zabbix
-</span><span class='line'><span class="nv">DBPassword</span><span class="o">=</span>123456
-</span><span class='line'>
-</span><span class='line'>cat zabbix_agent.conf
-</span><span class='line'><span class="nv">LogFile</span><span class="o">=</span>/tmp/zabbix_agentd.log
-</span><span class='line'><span class="nv">Server</span><span class="o">=</span>127.0.0.1
-</span><span class='line'><span class="nv">UnsafeUserParameters</span><span class="o">=</span>1
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'>Starting zookeeper ... STARTED
+</span><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'>Starting zookeeper ... STARTED
+</span><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo3.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo3.cfg
+</span><span class='line'>Starting zookeeper ... STARTED
+</span><span class='line'><span class="o">[</span>hadoop@mdn4namenode1 zk1<span class="o">]</span><span class="nv">$ </span>jps
+</span><span class='line'>3115 Jps
+</span><span class='line'>3084 QuorumPeerMain
+</span><span class='line'>3043 QuorumPeerMain
+</span><span class='line'>3015 QuorumPeerMain
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>创建日志文件</p>
+<p>查看zookeeper工作文件目录结构</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -331,95 +273,125 @@ getenforce返回Disabled说明已经关闭</p>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>touch /var/log/zabbix_server.log
-</span><span class='line'>touch /var/log/zabbix_agent.log
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>ls -R /home/hadoop/zoo/
+</span><span class='line'>/home/hadoop/zoo/:
+</span><span class='line'>zk1  zk2  zk3
 </span><span class='line'>
-</span><span class='line'><span class="nb">cd</span> -
-</span><span class='line'>cp misc/init.d/tru64/zabbix_server /etc/init.d/
-</span><span class='line'>cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
+</span><span class='line'>/home/hadoop/zoo/zk1:
+</span><span class='line'>myid  version-2  zookeeper.out  zookeeper_server.pid
+</span><span class='line'>
+</span><span class='line'>/home/hadoop/zoo/zk1/version-2:
+</span><span class='line'>acceptedEpoch  currentEpoch  snapshot.0
+</span><span class='line'>
+</span><span class='line'>/home/hadoop/zoo/zk2:
+</span><span class='line'>myid  version-2  zookeeper_server.pid
+</span><span class='line'>
+</span><span class='line'>/home/hadoop/zoo/zk2/version-2:
+</span><span class='line'>acceptedEpoch  currentEpoch  snapshot.0
+</span><span class='line'>
+</span><span class='line'>/home/hadoop/zoo/zk3:
+</span><span class='line'>myid  version-2  zookeeper_server.pid
+</span><span class='line'>
+</span><span class='line'>/home/hadoop/zoo/zk3/version-2:
+</span><span class='line'>acceptedEpoch  currentEpoch  snapshot.100000000
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>2个文件的文件头改成如下</p>
+<p>查看zookeeper运行情况</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
-</span><span class='line'><span class="c">#chkconfig: 35 95 95</span>
-</span><span class='line'><span class="c">#description:zabbix Agent server</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo3.cfg
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>添加服务</p>
+<p>报错，需要修正zkServer.sh
+把</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig --add zabbix_server
-</span><span class='line'>chkconfig --add zabbix_agentd
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#STAT=`$JAVA &quot;-Dzookeeper.log.dir=${ZOO_LOG_DIR}&quot; &quot;-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}&quot; \</span>
+</span><span class='line'>         <span class="c">#-cp &quot;$CLASSPATH&quot; $JVMFLAGS org.apache.zookeeper.client.FourLetterWordMain localhost \</span>
+</span><span class='line'>         <span class="c">#$(grep &quot;^[[:space:]]*clientPort&quot; &quot;$ZOOCFG&quot; | sed -e &#39;s/.*=//&#39;) srvr 2&gt; /dev/null    \</span>
+</span><span class='line'>      <span class="c">#| grep Mode`</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>开机自动启动</p>
+<p>给注释了，然后在其下加一行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">STAT</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>stat | nc 127.0.0.1 <span class="k">$(</span>grep clientPort <span class="s2">&quot;$ZOOCFG&quot;</span> | sed -e <span class="s1">&#39;s/.*=//&#39;</span><span class="k">)</span> 2&gt; /dev/null| grep Mode<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样就妥妥的了:)</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chkconfig zabbix_server on
-</span><span class='line'>chkconfig zabbix_agent on
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo1.cfg
+</span><span class='line'>Mode: follower
+</span><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo2.cfg
+</span><span class='line'>Mode: leader
+</span><span class='line'><span class="nv">$ </span>/usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo3.cfg
+</span><span class='line'>JMX enabled by default
+</span><span class='line'>Using config: /usr/local/zookeeper/conf/zoo3.cfg
+</span><span class='line'>Mode: follower
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>文件执行权限</p>
+<h3>加到启动项目去</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>chmod +x zabbix_server
-</span><span class='line'>chmod +x zabbix_agentd
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo vim /etc/rc.d/rc.local
+</span><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'>su - hadoop -c <span class="s2">&quot;/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo1.cfg&quot;</span>
+</span><span class='line'>su - hadoop -c <span class="s2">&quot;/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo2.cfg&quot;</span>
+</span><span class='line'>su - hadoop -c <span class="s2">&quot;/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo3.cfg&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>启动</p>
+<p>收工。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo /etc/init.d/zabbix_server start
-</span><span class='line'>sudo /etc/init.d/zabbix_agentd start
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装zabbix web</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp -r frontends/php/ /var/www/html/zabbix
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>访问<a href="http://ip/zabbix">http://ip/zabbix</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim /etc/php.ini
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>指定</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">timezone</span><span class="o">=</span><span class="nx">Asia</span><span class="o">/</span><span class="nx">Shanghai</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>根据提示修改php配置</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>yum install -y php-bcmath
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后再次重启httpd</p>
-
-<p>最后登录前端界面密码为 admin/zabbix</p>
-
-<p>告一段落，接下来学习操作zabbix。</p>
+<p>参考资料
+<a href="http://blog.fens.me/hadoop-zookeeper-intro/">《ZooKeeper伪分布式集群安装及使用 | 粉丝日志》</a></p>
 </div>
 
 
@@ -443,13 +415,13 @@ getenforce返回Disabled说明已经关闭</p>
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-12-03T13:37:00+08:00" pubdate data-updated="true">Dec 3<span>rd</span>, 2013</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-30T17:22:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/monitor/'>monitor</a>
+    <a class='category' href='/blog/categories/zookeeper/'>zookeeper</a>
   
 </span>
 
@@ -461,10 +433,8 @@ getenforce返回Disabled说明已经关闭</p>
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2013/12/01/deploy-another-octopress-environment-in-win7/" title="Previous Post: 克隆你的octopress博客到win7">&laquo; 克隆你的octopress博客到win7</a></li>
+            <li class="previous"><a href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/" title="Previous Post: hadoop put文件报DataStreamer Exception异常">&laquo; hadoop put文件报DataStreamer Exception异常</a></li>
             
-            
-            <li class="next"><a href="/blog/2013/12/04/centos6-dot-4-install-cacti0-dot-8/" title="Next Post: centos6.4 install cacti0.8">centos6.4 install cacti0.8 &raquo;</a></li>
             
           </ul>
         
@@ -501,7 +471,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/07/30/zookeeper-pseudo-distributed-installation/">Zookeeper伪分布配置安装</a>
+    <a class="list-group-item active" href="/blog/2014/07/30/zookeeper-pseudo-distributed-installation/">Zookeeper伪分布配置安装</a>
     
     <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop put文件报DataStreamer Exception异常</a>
     

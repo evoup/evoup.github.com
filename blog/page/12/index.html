@@ -105,6 +105,99 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-18T16:50:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2010</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/18/gcc-static-compile/">Gcc静态编译</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>制作静态动态库参考这篇文章《Creating a shared and static library with the gnu compiler [gcc]》
+<a href="http://www.adp-gmbh.ch/cpp/gcc/create_lib.html">http://www.adp-gmbh.ch/cpp/gcc/create_lib.html</a>
+编译静态库
+先找一下源文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>find . -name <span class="s2">&quot;*.c&quot;</span>
+</span><span class='line'>./sfhashfcn.c
+</span><span class='line'>./test.c
+</span><span class='line'>./sfmemcap.c
+</span><span class='line'>./sfxhash.c
+</span><span class='line'>./sfprimetable.c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成中间文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -c sfhashfcn.c -o sfhashfcn.o
+</span><span class='line'>gcc -c sfmemcap.c -o sfmemcap.o
+</span><span class='line'>gcc -c sfxhash.c -o sfxhash.o
+</span><span class='line'>gcc -c sfprimetable.c -o sfprimetable.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成静态库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ar rcs libthash.a sfmemcap.o sfxhash.o sfprimetable.o sfhashfcn.o
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后链接（注意libxx.a，最后链接参数是-lxx）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>gcc -static test.c -L. -lthash -o statically_linked_test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果c++的项目要使用c的静态库则需要在引用的头文件的外面加上如下的代码</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="err">#</span><span class="n">include</span> <span class="s">&quot;header.h&quot;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-05T11:23:00+08:00" pubdate data-updated="true">Nov 5<span>th</span>, 2010</time>
         
       </p>
@@ -587,95 +680,6 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2009</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2009/06/02/cplusplus-string-to-int/">STL中string到int的类型转换</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>STL的string转int的正确方法不是.data()
-应该是</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">aoti</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者用个别人的string2int函数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">string2int</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'>   <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
-</span><span class='line'>   <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后int XX[];
-完全可以用vector来实现</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>v[]一样可以的用的。</p>
-
-<p>下面有个类似的</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">int</span> <span class="n">integer</span><span class="p">(</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'>    <span class="n">sscanf</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;%d&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">);</span>
-</span><span class='line'>    <span class="k">return</span> <span class="n">a</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -699,7 +703,9 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop Put Warn DataStreamer Exception</a>
+    <a class="list-group-item " href="/blog/2014/07/30/zookeeper-pseudo-distributed-installation/">Zookeeper伪分布配置安装</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop put文件报DataStreamer Exception异常</a>
     
     <a class="list-group-item " href="/blog/2014/07/27/centos7-configure-static-ip/">centos7配置静态IP</a>
     
@@ -707,15 +713,13 @@ $FG_TABLE_COL[$i][11]里有函数，就用函数去格式化$record_display
     
     <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master-repair/">Mysql复制同步修复工具</a>
     
-    <a class="list-group-item " href="/blog/2014/07/10/mysql-double-master/">Mysql主主配置</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 137.5%'>Hadoop(10)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 111.25%'>Zookeeper(3)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 137.5%'>Hadoop(10)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 103.75%'>Hive(1)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>
