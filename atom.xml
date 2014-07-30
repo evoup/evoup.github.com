@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-30T17:49:13+08:00</updated>
+  <updated>2014-07-30T18:25:16+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,494 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop2.x本地库安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader/"/>
+    <updated>2014-07-30T18:00:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader</id>
+    <content type="html"><![CDATA[<p>运行hadoop cli时会出现 <code>14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...</code>
+<code>using builtin-java classes where applicable</code>
+虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法解决，过程还是比较漫长，要解决的要有耐心看下文了。</p>
+
+<!-- more -->
+
+
+<h3>首先查看本地库</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ls <span class="nv">$HADOOP_HOME</span>/lib/native/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>发现动态库不存在,按照上文述及，也会这个错误。
+查看系统的libc版本</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>ll /lib64/libc.so.6
+</span><span class='line'>lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -&gt; libc-2.18.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>系统的版本为2.18</p>
+
+<p>参考cdh手册
+<a href="http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide">http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide</a></p>
+
+<p>找一个hadoop-mapreduce1-project的项目用ant跑一下
+ant -Dcompile.native=true</p>
+
+<p>期间会报错jvm-check需要1.6，我的是1.7，直接修改ant的build.xml文件，把里面的1.6改成1.7就可以了。</p>
+
+<p>慢慢等编译完成，报错以下依赖没有解决</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span> :: resolution report :: resolve 11214ms :: artifacts dl 10ms
+</span><span class='line'>        ---------------------------------------------------------------------
+</span><span class='line'>        |                  |            modules            <span class="o">||</span>   artifacts   |
+</span><span class='line'>        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+</span><span class='line'>        ---------------------------------------------------------------------
+</span><span class='line'>        |      common      |   10  |   2   |   0   |   0   <span class="o">||</span>   8   |   0   |
+</span><span class='line'>        ---------------------------------------------------------------------
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span> :: problems summary ::
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span> :::: WARNINGS
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           ::::::::::::::::::::::::::::::::::::::::::::::
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           ::          UNRESOLVED DEPENDENCIES         ::
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           ::::::::::::::::::::::::::::::::::::::::::::::
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           :: org.codehaus.jackson#jackson-mapper-asl;1.0.1: several problems occurred <span class="k">while </span>resolving dependency: org.codehaus.jackson#jackson-mapper-asl;1.0.1 <span class="o">{</span><span class="nv">common</span><span class="o">=[</span>default<span class="o">]}</span>:
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>   reactor-repo: unable to get resource <span class="k">for </span>org/codehaus/jackson#jackson-mapper-asl;1.0.1: <span class="nv">res</span><span class="o">=</span><span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: <span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>   reactor-repo: unable to get resource <span class="k">for </span>org/codehaus/jackson#jackson-mapper-asl;1.0.1: <span class="nv">res</span><span class="o">=</span><span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: <span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           :: org.codehaus.jackson#jackson-core-asl;1.0.1: several problems occurred <span class="k">while </span>resolving dependency: org.codehaus.jackson#jackson-core-asl;1.0.1 <span class="o">{</span><span class="nv">common</span><span class="o">=[</span>default<span class="o">]}</span>:
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>   reactor-repo: unable to get resource <span class="k">for </span>org/codehaus/jackson#jackson-core-asl;1.0.1: <span class="nv">res</span><span class="o">=</span><span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: <span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>   reactor-repo: unable to get resource <span class="k">for </span>org/codehaus/jackson#jackson-core-asl;1.0.1: <span class="nv">res</span><span class="o">=</span><span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: <span class="k">${</span><span class="nv">reactor</span><span class="p">.repo</span><span class="k">}</span>/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>           ::::::::::::::::::::::::::::::::::::::::::::::
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>ivy:resolve<span class="o">]</span> :: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS
+</span><span class='line'>
+</span><span class='line'>BUILD FAILED
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred <span class="k">while </span>executing this line:
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred <span class="k">while </span>executing this line:
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:440: impossible to resolve dependencies:
+</span><span class='line'>        resolve failed - see output <span class="k">for </span>details
+</span><span class='line'>
+</span><span class='line'>Total <span class="nb">time</span>: 1 minute 33 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>少几个jar包，能不能通过直接复制到.ivy2目录的方式解决呢？暂时没这个能力</p>
+
+<p>尝试进到内部工程文件</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> ./src/contrib/capacity-scheduler/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>直接ant,报错一样的</p>
+
+<p>原来是要定义reactor.repo这个参数
+参考《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》
+<a href="http://www.verydemo.com/demo_c161_i273713.html">http://www.verydemo.com/demo_c161_i273713.html</a>
+解决办法：</p>
+
+<p>   需要定义reactor.repo的url：</p>
+
+<p>  在/usr/hadoop/src/hadoop-mapreduce1-project/ivy/ivysettings.xml文件中添加：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> &lt;property <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;reactor.repo&quot;</span>
+</span><span class='line'>           <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;http://repo1.maven.org/maven2/&quot;</span>
+</span><span class='line'>  <span class="nv">override</span><span class="o">=</span><span class="s2">&quot;false&quot;</span>/&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>添加之后就能找到jackson</p>
+
+<p>但是继续编译会出现</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>compile:
+</span><span class='line'>     <span class="o">[</span><span class="nb">echo</span><span class="o">]</span> contrib: gridmix
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: warning: <span class="s1">&#39;includeantruntime&#39;</span> was not <span class="nb">set</span>, defaulting to build.sysclasspath<span class="o">=</span>last; <span class="nb">set </span>to <span class="nb">false </span><span class="k">for </span>repeatable builds
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> Compiling 31 <span class="nb">source </span>files to /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build/contrib/gridmix/classes
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:396: 错误: 类型参数? extends T不在类型变量E的范围内
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>   private &lt;T&gt; String getEnumValues<span class="o">(</span>Enum&lt;? extends T&gt;<span class="o">[]</span> e<span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>                                         ^
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>   其中, T,E是类型变量:
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>     T扩展已在方法 &lt;T&gt;getEnumValues<span class="o">(</span>Enum&lt;? extends T&gt;<span class="o">[])</span>中声明的Object
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:399: 错误: 类型参数? extends T不在类型变量E的范围内
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>     <span class="k">for</span> <span class="o">(</span>Enum&lt;? extends T&gt; v : e<span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>               ^
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>   其中, T,E是类型变量:
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>     T扩展已在方法 &lt;T&gt;getEnumValues<span class="o">(</span>Enum&lt;? extends T&gt;<span class="o">[])</span>中声明的Object
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span>     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> 注: 某些输入文件使用或覆盖了已过时的 API。
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> 注: 某些输入文件使用了未经检查或不安全的操作。
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+</span><span class='line'>    <span class="o">[</span>javac<span class="o">]</span> 2 个错误
+</span><span class='line'>
+</span><span class='line'>BUILD FAILED
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred <span class="k">while </span>executing this line:
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred <span class="k">while </span>executing this line:
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: Compile failed; see the compiler error output <span class="k">for </span>details.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>可以参考《hadoop1.0.3编译eclipse plug-in》</h2>
+
+<p><a href="http://www.th7.cn/Program/java/201208/88028.shtml">http://www.th7.cn/Program/java/201208/88028.shtml</a></p>
+
+<hr />
+
+<p>所以修改代码把Enum&lt;? extends T>改成Enum&lt;?>
+重新用ant编译
+编译成功
+再用</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ant -Dcompile.native<span class="o">=</span><span class="nb">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看看能否编译出libhadoop.so</p>
+
+<p>编译成功</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>find . -type f -name <span class="s2">&quot;libhadoop.so&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>但是没有编译出libhadoop.so？</p>
+
+<p>官方文档误导了（说是ant，在根目录又没有ant的配置文件，根目录下build文件夹的native目录是空的），其实要用maven编译！
+其实需要完全编译hadoop才行《hadoop2.2.0 centos 编译安装详解》
+<a href="http://f.dataguru.cn/thread-245387-1-1.html">http://f.dataguru.cn/thread-245387-1-1.html</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src
+</span><span class='line'>mvn package -Pdist,native -DskipTests -Dtar
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报错<code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.0</code>
+<code>:enforce (default) on project hadoop-main: Some Enforcer rules have failed.</code>
+<code>Look above for specific messages explaining why the rule failed. -&gt; [Help 1]</code></p>
+
+<p><a href="http://zhwj184.iteye.com/blog/1528627">http://zhwj184.iteye.com/blog/1528627</a>
+如果为了提高执行速度，不想运行这个插件，则可以通过-Denforcer.skip=true或者简单的-Dskip=true就可以跳过这个这个插件的运行。如果mvn package过程中出现有关这个插件的异常，则可以简单通过这个参数跳过这个验证。</p>
+
+<p>那么直接在编译中加参数-Denforcer.skip=true</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip<span class="o">=</span><span class="nb">true</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再编译，这么很慢，要下载的文件很多
+再次报错 <code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:</code>
+<code>run (compile-proto) on project hadoop-common: An Ant</code>
+<code>BuildException has occured: exec returned: 1 -&gt; [Help 1]</code></p>
+
+<p>参考《hadoop源码编译问题》
+<a href="http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy">http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy</a></p>
+
+<p>看来是protoc版本过低导致的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>被墙的自己想办法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar xzf protobuf-2.4.1.tar.gz
+</span><span class='line'><span class="nb">cd </span>protobuf-2.4.1
+</span><span class='line'><span class="o">[</span>hadoop@mdn4namenode1 protobuf-2.4.1<span class="o">]</span><span class="nv">$ </span>./configure
+</span><span class='line'>checking build system type... x86_64-unknown-linux-gnu
+</span><span class='line'>checking host system type... x86_64-unknown-linux-gnu
+</span><span class='line'>checking target system type... x86_64-unknown-linux-gnu
+</span><span class='line'>checking <span class="k">for </span>a BSD-compatible install... /usr/bin/install -c
+</span><span class='line'>checking whether build environment is sane... yes
+</span><span class='line'>checking <span class="k">for </span>a thread-safe mkdir -p... /usr/bin/mkdir -p
+</span><span class='line'>checking <span class="k">for </span>gawk... gawk
+</span><span class='line'>checking whether make sets <span class="k">$(</span>MAKE<span class="k">)</span>... yes
+</span><span class='line'>checking <span class="k">for </span>gcc... no
+</span><span class='line'>checking <span class="k">for </span>cc... no
+</span><span class='line'>checking <span class="k">for </span>cl.exe... no
+</span><span class='line'>configure: error: in <span class="sb">`</span>/home/hadoop/software/protobuf-2.4.1<span class="s1">&#39;:</span>
+</span><span class='line'><span class="s1">configure: error: no acceptable C compiler found in $PATH</span>
+</span><span class='line'><span class="s1">See `config.log&#39;</span> <span class="k">for </span>more details.
+</span><span class='line'>
+</span><span class='line'>sudo yum install gcc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>继续安装
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+
+<p>又出现很多问题</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo yum install gcc-c++
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure
+</span><span class='line'>make
+</span><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>回来继续编译hadoop</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>ERROR<span class="o">]</span> Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:run <span class="o">(</span>make<span class="o">)</span> on project hadoop-common: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program <span class="s2">&quot;cmake&quot;</span> <span class="o">(</span>in directory <span class="s2">&quot;/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-common-project/hadoop-common/target/native&quot;</span><span class="o">)</span>: <span class="nv">error</span><span class="o">=</span>2, 没有那个文件或目录 -&gt; <span class="o">[</span>Help 1<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>没装cmake</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo yum install cmake
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>还有一些也装上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo yum install pkgconfig  openssl openssl-devel
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这些可以参考《64位操作系统下重新编译hadoop-2.2.0》（这文章提到应该用mvn package -DskipTests -Pdist,native -Dtar来编译hadoop2）
+<a href="http://blog.itpub.net/20777547/viewspace-1147174">http://blog.itpub.net/20777547/viewspace-1147174</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>INFO<span class="o">]</span>                                                                                                                             <span class="o">[</span>40/1862<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Main ................................ SUCCESS <span class="o">[</span>5.349s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Project POM ......................... SUCCESS <span class="o">[</span>3.432s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Annotations ......................... SUCCESS <span class="o">[</span>6.518s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Assemblies .......................... SUCCESS <span class="o">[</span>0.875s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Project Dist POM .................... SUCCESS <span class="o">[</span>3.334s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Auth ................................ SUCCESS <span class="o">[</span>6.069s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Auth Examples ....................... SUCCESS <span class="o">[</span>4.573s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Jets3t Cloudera Dependencies ...................... SUCCESS <span class="o">[</span>6.534s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Common .............................. SUCCESS <span class="o">[</span>2:01.338s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Common Project ...................... SUCCESS <span class="o">[</span>0.452s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop HDFS ................................ SUCCESS <span class="o">[</span>2:06.706s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop HttpFS .............................. SUCCESS <span class="o">[</span>24.891s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop HDFS Project ........................ SUCCESS <span class="o">[</span>0.744s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn ....................................... SUCCESS <span class="o">[</span>28.902s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-api ................................... SUCCESS <span class="o">[</span>1:08.858s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-common ................................ SUCCESS <span class="o">[</span>56.000s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server ................................ SUCCESS <span class="o">[</span>0.517s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server-common ......................... SUCCESS <span class="o">[</span>16.093s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server-nodemanager .................... SUCCESS <span class="o">[</span>31.421s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server-web-proxy ...................... SUCCESS <span class="o">[</span>7.293s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server-resourcemanager ................ SUCCESS <span class="o">[</span>22.440s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-server-tests .......................... SUCCESS <span class="o">[</span>1.168s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-client ................................ SUCCESS <span class="o">[</span>8.536s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-applications .......................... SUCCESS <span class="o">[</span>0.276s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-applications-distributedshell ......... SUCCESS <span class="o">[</span>4.767s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client ........................... SUCCESS <span class="o">[</span>0.433s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-core ...................... SUCCESS <span class="o">[</span>54.060s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-applications-unmanaged-am-launcher .... SUCCESS <span class="o">[</span>5.197s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-site .................................. SUCCESS <span class="o">[</span>0.517s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-yarn-project ............................... SUCCESS <span class="o">[</span>36.840s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-common .................... SUCCESS <span class="o">[</span>33.592s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-shuffle ................... SUCCESS <span class="o">[</span>5.179s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-app ....................... SUCCESS <span class="o">[</span>18.536s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-hs ........................ SUCCESS <span class="o">[</span>9.267s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-jobclient ................. SUCCESS <span class="o">[</span>10.860s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce-client-hs-plugins ................ SUCCESS <span class="o">[</span>4.425s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop MapReduce Examples .................. SUCCESS <span class="o">[</span>14.302s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> hadoop-mapreduce .................................. SUCCESS <span class="o">[</span>4.028s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop MapReduce Streaming ................. SUCCESS <span class="o">[</span>9.253s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Distributed Copy .................... SUCCESS <span class="o">[</span>1:14.406s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Archives ............................ SUCCESS <span class="o">[</span>4.108s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Rumen ............................... SUCCESS <span class="o">[</span>11.244s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Gridmix ............................. SUCCESS <span class="o">[</span>10.038s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Data Join ........................... SUCCESS <span class="o">[</span>5.673s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Extras .............................. SUCCESS <span class="o">[</span>6.033s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Pipes ............................... SUCCESS <span class="o">[</span>14.666s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Tools Dist .......................... SUCCESS <span class="o">[</span>3.519s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Tools ............................... SUCCESS <span class="o">[</span>0.066s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Distribution ........................ SUCCESS <span class="o">[</span>30.039s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Client .............................. SUCCESS <span class="o">[</span>20.618s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Apache Hadoop Mini-Cluster ........................ SUCCESS <span class="o">[</span>2.427s<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> BUILD SUCCESS
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Total <span class="nb">time</span>: 15:51.852s
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Finished at: Fri Jul 25 17:40:23 CST 2014
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Final Memory: 127M/305M
+</span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>全部编译成功，然后找下libhadoop.so</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>find . -name <span class="s2">&quot;libhadoop.so&quot;</span>
+</span><span class='line'>./src/hadoop-common-project/hadoop-common/target/hadoop-common-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+</span><span class='line'>./src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/libhadoop.so
+</span><span class='line'>./src/hadoop-dist/target/hadoop-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编译出来了，然后放到文章一开始说的$HADOOP_HOME/lib/native/目录下面，以后运行就不再报错了。</p>
+
+<p>参考文章
+<a href="http://www.linuxidc.com/Linux/2012-04/59200.htm">《Hadoop本地库与系统版本不一致引起的错误解决方法》</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[zookeeper伪分布配置安装]]></title>
@@ -3257,331 +3745,6 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 <p>我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
 
 <p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[centos下hadoop0.20的LZO压缩支持]]></title>
-    <link href="http://evoupsight.com/blog/2014/03/07/centos-hadoop0-dot-20-lzo-support/"/>
-    <updated>2014-03-07T11:00:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/03/07/centos-hadoop0-dot-20-lzo-support</id>
-    <content type="html"><![CDATA[<h3>首先安装lzo库</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
-</span><span class='line'>tar xzf lzo-2.04.tar.gz
-</span><span class='line'><span class="nb">cd </span>lzo-2.04
-</span><span class='line'>./configure --enable-shared
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装完成后拷贝/usr/local/lib目录下的lzo库文件到/usr/lib(32位平台)或者/usr/lib64(64位平台)</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp /usr/local/lib/liblzo2* /usr/lib
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ps：应该是这些文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>liblzo2.a
-</span><span class='line'>liblzo2.la
-</span><span class='line'>liblzo2.so
-</span><span class='line'>liblzo2.so.2
-</span><span class='line'>liblzo2.so.2.0.0
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在/etc/ld.so.conf.d/目录下新建lzo.conf文件，写入lzo库文件的路径/usr/local/lib，然后运行/sbin/ldconfig -v，使配置生效。</p>
-
-<h3>然后安装hadoop-LZO</h3>
-
-<p>我这里是hadoop0.20版本，就下kevinweil的版本
-git clone <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a></p>
-
-<p>然后安装ant
-/etc/profile中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">ANT_HOME</span><span class="o">=</span>/home/hadoop/apache-ant-1.9.3
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ANT_HOME</span>/bin:<span class="nv">$PATH</span>
-</span><span class='line'><span class="nb">export </span>PATH
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后source /etc/profile</p>
-
-<p>然后指定好CFLAGS和CXXFLAGS开始编译</p>
-
-<h4>32位os</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m32
-</span><span class='line'><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m32
-</span><span class='line'>ant compile-native tar
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>64位os</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m64
-</span><span class='line'><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m64
-</span><span class='line'>ant compile-native tar
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>等待编译完成</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar:
-</span><span class='line'>      <span class="o">[</span>tar<span class="o">]</span> Building tar: /home/hadoop/project/hadoop-lzo/build/hadoop-lzo-0.4.15.tar.gz
-</span><span class='line'>
-</span><span class='line'>BUILD SUCCESSFUL
-</span><span class='line'>Total <span class="nb">time</span>: 23 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后把本地库和jar包拷贝到hadoop的目录下，并分发到各节点</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>build
-</span><span class='line'>cp hadoop-lzo-0.4.15.jar /u01/app/hadoop/lib
-</span><span class='line'>cp -r native/Linux-i386-32/* /u01/app/hadoop/lib/native/Linux-i386-32/
-</span><span class='line'><span class="c">#如果是64位应该是Linux-amd64-64</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>安装shell工具lzop</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://www.lzop.org/download/lzop-1.03.tar.gz
-</span><span class='line'>./configure
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#压缩</span>
-</span><span class='line'>lzop test.log
-</span><span class='line'><span class="c">#查看解压内容</span>
-</span><span class='line'>lzop -cd test.log.lzo | less
-</span><span class='line'><span class="c">#解压</span>
-</span><span class='line'>lzop -x test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>配置hadoop的core-site.xml和mapred-site.xml</h3>
-
-<p>core-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>        &lt;name&gt;io.compression.codecs&lt;/name&gt; &lt;value&gt;org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.BZip2Codec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec&lt;/value&gt;
-</span><span class='line'>        &lt;!-- 配置 Hadoop 压缩包 --&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>        &lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
-</span><span class='line'>        &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>mapred-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>      &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
-</span><span class='line'>      &lt;value&gt;true&lt;/value&gt;
-</span><span class='line'>      &lt;!-- map 和 reduce 输出中间文件默认开启压缩 --&gt;
-</span><span class='line'>  &lt;/property&gt;
-</span><span class='line'>  &lt;property&gt;
-</span><span class='line'>         &lt;name&gt;mapred.map.output.compression.codec&lt;/name&gt;
-</span><span class='line'>         &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
-</span><span class='line'>  &lt;/property&gt;
-</span><span class='line'>  &lt;property&gt;
-</span><span class='line'>         &lt;name&gt;mapred.child.env&lt;/name&gt;
-</span><span class='line'>         &lt;value&gt;LD_LIBRARY_PATH<span class="o">=</span>/u01/app/hadoop/lib/native/Linux-i386-32&lt;/value&gt;
-</span><span class='line'> &lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>启动hadoop并测试lzo</h3>
-
-<p>用lzop压缩一个文件，然后上传到hdfs</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-all.sh
-</span><span class='line'>lzop test.txt
-</span><span class='line'>/u01/app/hadoop/bin/hadoop -put test.txt.lzo /testlzo/test.txt.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后通过创建lzo索引来测试lzo是否已经支持</p>
-
-<p>在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop jar lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /testlzo/test.txt.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>而直接使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>也可以使用分布式版本</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.DistributedLzoIndexer /testlzo/test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>报错</p>
-
-<blockquote><p>14/03/06 18:37:14 ERROR lzo.GPLNativeCodeLoader: Could not load native gpl library
-java.lang.UnsatisfiedLinkError: no gplcompression in java.library.path</p>
-
-<pre><code>   at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1738)
-   at java.lang.Runtime.loadLibrary0(Runtime.java:823)
-   at java.lang.System.loadLibrary(System.java:1028)
-   at com.hadoop.compression.lzo.GPLNativeCodeLoader.&lt;clinit&gt;(GPLNativeCodeLoader.java:32)
-   at com.hadoop.compression.lzo.LzoCodec.&lt;clinit&gt;(LzoCodec.java:71)
-   at com.hadoop.compression.lzo.LzoIndexer.&lt;init&gt;(LzoIndexer.java:36)
-   at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:134)
-</code></pre>
-
-<p>14/03/06 18:37:14 ERROR lzo.LzoCodec: Cannot load native-lzo without native-hadoop
-14/03/06 18:37:14 INFO lzo.LzoIndexer: [INDEX] LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB&hellip;
-Exception in thread &ldquo;main&rdquo; java.lang.RuntimeException: native-lzo library not available</p>
-
-<pre><code>   at com.hadoop.compression.lzo.LzopCodec.createDecompressor(LzopCodec.java:104)
-   at com.hadoop.compression.lzo.LzoIndex.createIndex(LzoIndex.java:229)
-   at com.hadoop.compression.lzo.LzoIndexer.indexSingleFile(LzoIndexer.java:117)
-   at com.hadoop.compression.lzo.LzoIndexer.indexInternal(LzoIndexer.java:98)
-   at com.hadoop.compression.lzo.LzoIndexer.index(LzoIndexer.java:52)
-   at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:137)
-</code></pre></blockquote>
-
-<p>看似是GPLNativeCodeLoader没有装，其实是路径不对</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 lib<span class="o">]</span><span class="nv">$ls</span> -la /u01/app/hadoop/lib/native/Linux-i386-32/lib
-</span><span class='line'>total 184
-</span><span class='line'>drwxrwxr-x 2 hadoop hadoop  4096 Mar  6 14:10 .
-</span><span class='line'>drwxrwxrwx 5 hadoop hadoop  4096 Mar  7 10:52 ..
-</span><span class='line'>-rw-r--r-- 1 hadoop hadoop 76502 Mar  6 14:10 libgplcompression.a
-</span><span class='line'>-rw-rw-r-- 1 hadoop hadoop  1128 Mar  6 14:10 libgplcompression.la
-</span><span class='line'>lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so -&gt; libgplcompression.so.0.0.0
-</span><span class='line'>lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so.0 -&gt; libgplcompression.so.0.0.0
-</span><span class='line'>-rwxrwxr-x 1 hadoop hadoop 59281 Mar  6 14:10 libgplcompression.so.0.0.0
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其实只要把这几个库复制到上级目录即可</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp /u01/app/hadoop/lib/native/Linux-i386-32/lib/* /u01/app/hadoop/lib/native/Linux-i386-32/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 hadoop<span class="o">]</span><span class="nv">$bin</span>/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/x.log.lzo
-</span><span class='line'>14/03/07 10:52:33 INFO lzo.GPLNativeCodeLoader: Loaded native gpl library
-</span><span class='line'>14/03/07 10:52:33 INFO lzo.LzoCodec: Successfully loaded &amp; initialized native-lzo library <span class="o">[</span>hadoop-lzo rev 6bb1b7f8b9044d8df9b4d2b6641db7658aab3cf8<span class="o">]</span>
-</span><span class='line'>14/03/07 10:52:34 INFO lzo.LzoIndexer: <span class="o">[</span>INDEX<span class="o">]</span> LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB...
-</span><span class='line'>14/03/07 10:52:34 INFO lzo.LzoIndexer: Completed LZO Indexing in 0.15 seconds <span class="o">(</span>0.00 MB/s<span class="o">)</span>.  Index size is 0.01 KB.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>终于成功。</p>
-
-<p>参考：</p>
-
-<p>《hadoop安装lzo》
-<a href="http://blog.csdn.net/wanglinzi/article/details/12318743">http://blog.csdn.net/wanglinzi/article/details/12318743</a></p>
-
-<p>《lzo安装说明(2)》
-<a href="http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html">http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html</a></p>
 ]]></content>
   </entry>
   

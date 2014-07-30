@@ -4,7 +4,7 @@
   <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-30T17:49:13+08:00</updated>
+  <updated>2014-07-30T18:25:16+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,323 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop2.x本地库安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader/"/>
+    <updated>2014-07-30T18:00:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader</id>
+    <content type="html"><![CDATA[<p>运行hadoop cli时会出现 <code>14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...</code>
+<code>using builtin-java classes where applicable</code>
+虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法解决，过程还是比较漫长，要解决的要有耐心看下文了。</p>
+
+<!-- more -->
+
+
+<h3>首先查看本地库</h3>
+
+<p><code>bash
+ls $HADOOP_HOME/lib/native/
+</code></p>
+
+<p>发现动态库不存在,按照上文述及，也会这个错误。
+查看系统的libc版本
+<code>bash
+$ ll /lib64/libc.so.6
+lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -&gt; libc-2.18.so
+</code></p>
+
+<p>系统的版本为2.18</p>
+
+<p>参考cdh手册
+<a href="http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide">http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide</a></p>
+
+<p>找一个hadoop-mapreduce1-project的项目用ant跑一下
+ant -Dcompile.native=true</p>
+
+<p>期间会报错jvm-check需要1.6，我的是1.7，直接修改ant的build.xml文件，把里面的1.6改成1.7就可以了。</p>
+
+<p>慢慢等编译完成，报错以下依赖没有解决
+```
+[ivy:resolve] :: resolution report :: resolve 11214ms :: artifacts dl 10ms</p>
+
+<pre><code>    ---------------------------------------------------------------------
+    |                  |            modules            ||   artifacts   |
+    |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+    ---------------------------------------------------------------------
+    |      common      |   10  |   2   |   0   |   0   ||   8   |   0   |
+    ---------------------------------------------------------------------
+</code></pre>
+
+<p>[ivy:resolve]
+[ivy:resolve] :: problems summary ::
+[ivy:resolve] :::: WARNINGS
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]           ::          UNRESOLVED DEPENDENCIES         ::
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]           :: org.codehaus.jackson#jackson-mapper-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-mapper-asl;1.0.1 {common=[default]}:
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-mapper-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-mapper-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar
+[ivy:resolve]           :: org.codehaus.jackson#jackson-core-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-core-asl;1.0.1 {common=[default]}:
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-core-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-core-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]
+[ivy:resolve] :: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS</p>
+
+<p>BUILD FAILED
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:440: impossible to resolve dependencies:</p>
+
+<pre><code>    resolve failed - see output for details
+</code></pre>
+
+<p>Total time: 1 minute 33 seconds
+```</p>
+
+<p>少几个jar包，能不能通过直接复制到.ivy2目录的方式解决呢？暂时没这个能力</p>
+
+<p>尝试进到内部工程文件
+<code>
+cd ./src/contrib/capacity-scheduler/
+</code>
+直接ant,报错一样的</p>
+
+<p>原来是要定义reactor.repo这个参数
+参考《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》
+<a href="http://www.verydemo.com/demo_c161_i273713.html">http://www.verydemo.com/demo_c161_i273713.html</a>
+解决办法：</p>
+
+<p>   需要定义reactor.repo的url：</p>
+
+<p>  在/usr/hadoop/src/hadoop-mapreduce1-project/ivy/ivysettings.xml文件中添加：
+```
+ &lt;property name=&ldquo;reactor.repo&rdquo;</p>
+
+<pre><code>       value="http://repo1.maven.org/maven2/"
+</code></pre>
+
+<p>  override=&ldquo;false&rdquo;/>
+```
+添加之后就能找到jackson</p>
+
+<p>但是继续编译会出现
+```
+compile:</p>
+
+<pre><code> [echo] contrib: gridmix
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+[javac] Compiling 31 source files to /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build/contrib/gridmix/classes
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:396: 错误: 类型参数? extends T不在类型变量E的范围内
+[javac]   private &lt;T&gt; String getEnumValues(Enum&lt;? extends T&gt;[] e) {
+[javac]                                         ^
+[javac]   其中, T,E是类型变量:
+[javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object
+[javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:399: 错误: 类型参数? extends T不在类型变量E的范围内
+[javac]     for (Enum&lt;? extends T&gt; v : e) {
+[javac]               ^
+[javac]   其中, T,E是类型变量:
+[javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object
+[javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+[javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+[javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[javac] 注: 某些输入文件使用了未经检查或不安全的操作。
+[javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[javac] 2 个错误
+</code></pre>
+
+<p>BUILD FAILED
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: Compile failed; see the compiler error output for details.
+```</p>
+
+<h2>可以参考《hadoop1.0.3编译eclipse plug-in》</h2>
+
+<p><a href="http://www.th7.cn/Program/java/201208/88028.shtml">http://www.th7.cn/Program/java/201208/88028.shtml</a></p>
+
+<hr />
+
+<p>所以修改代码把Enum&lt;? extends T>改成Enum&lt;?>
+重新用ant编译
+编译成功
+再用
+<code>
+ant -Dcompile.native=true
+</code>
+看看能否编译出libhadoop.so</p>
+
+<p>编译成功
+<code>
+$ find . -type f -name "libhadoop.so"
+</code>
+但是没有编译出libhadoop.so？</p>
+
+<p>官方文档误导了（说是ant，在根目录又没有ant的配置文件，根目录下build文件夹的native目录是空的），其实要用maven编译！
+其实需要完全编译hadoop才行《hadoop2.2.0 centos 编译安装详解》
+<a href="http://f.dataguru.cn/thread-245387-1-1.html">http://f.dataguru.cn/thread-245387-1-1.html</a></p>
+
+<p><code>bash
+cd /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src
+mvn package -Pdist,native -DskipTests -Dtar
+</code></p>
+
+<p>报错<code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.0</code>
+<code>:enforce (default) on project hadoop-main: Some Enforcer rules have failed.</code>
+<code>Look above for specific messages explaining why the rule failed. -&gt; [Help 1]</code></p>
+
+<p><a href="http://zhwj184.iteye.com/blog/1528627">http://zhwj184.iteye.com/blog/1528627</a>
+如果为了提高执行速度，不想运行这个插件，则可以通过-Denforcer.skip=true或者简单的-Dskip=true就可以跳过这个这个插件的运行。如果mvn package过程中出现有关这个插件的异常，则可以简单通过这个参数跳过这个验证。</p>
+
+<p>那么直接在编译中加参数-Denforcer.skip=true
+<code>
+mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip=true
+</code></p>
+
+<p>再编译，这么很慢，要下载的文件很多
+再次报错 <code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:</code>
+<code>run (compile-proto) on project hadoop-common: An Ant</code>
+<code>BuildException has occured: exec returned: 1 -&gt; [Help 1]</code></p>
+
+<p>参考《hadoop源码编译问题》
+<a href="http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy">http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy</a></p>
+
+<p>看来是protoc版本过低导致的
+<code>bash
+wget http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz
+</code></p>
+
+<p>被墙的自己想办法
+<code>``bash
+tar xzf protobuf-2.4.1.tar.gz
+cd protobuf-2.4.1
+[hadoop@mdn4namenode1 protobuf-2.4.1]$ ./configure
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking target system type... x86_64-unknown-linux-gnu
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking for gcc... no
+checking for cc... no
+checking for cl.exe... no
+configure: error: in</code>/home/hadoop/software/protobuf-2.4.1':
+configure: error: no acceptable C compiler found in $PATH
+See `config.log' for more details.</p>
+
+<p>sudo yum install gcc
+```</p>
+
+<p>继续安装
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+
+<p>又出现很多问题
+<code>
+sudo yum install gcc-c++
+</code></p>
+
+<p>再次
+<code>bash
+./configure
+make
+sudo make install
+</code></p>
+
+<p>回来继续编译hadoop
+<code>
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:run (make) on project hadoop-common: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program "cmake" (in directory "/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-common-project/hadoop-common/target/native"): error=2, 没有那个文件或目录 -&gt; [Help 1]
+</code></p>
+
+<p>没装cmake
+<code>
+sudo yum install cmake
+</code></p>
+
+<p>还有一些也装上
+<code>
+sudo yum install pkgconfig  openssl openssl-devel
+</code></p>
+
+<p>这些可以参考《64位操作系统下重新编译hadoop-2.2.0》（这文章提到应该用mvn package -DskipTests -Pdist,native -Dtar来编译hadoop2）
+<a href="http://blog.itpub.net/20777547/viewspace-1147174">http://blog.itpub.net/20777547/viewspace-1147174</a>
+<code>
+[INFO]                                                                                                                             [40/1862]
+[INFO] Apache Hadoop Main ................................ SUCCESS [5.349s]
+[INFO] Apache Hadoop Project POM ......................... SUCCESS [3.432s]
+[INFO] Apache Hadoop Annotations ......................... SUCCESS [6.518s]
+[INFO] Apache Hadoop Assemblies .......................... SUCCESS [0.875s]
+[INFO] Apache Hadoop Project Dist POM .................... SUCCESS [3.334s]
+[INFO] Apache Hadoop Auth ................................ SUCCESS [6.069s]
+[INFO] Apache Hadoop Auth Examples ....................... SUCCESS [4.573s]
+[INFO] Jets3t Cloudera Dependencies ...................... SUCCESS [6.534s]
+[INFO] Apache Hadoop Common .............................. SUCCESS [2:01.338s]
+[INFO] Apache Hadoop Common Project ...................... SUCCESS [0.452s]
+[INFO] Apache Hadoop HDFS ................................ SUCCESS [2:06.706s]
+[INFO] Apache Hadoop HttpFS .............................. SUCCESS [24.891s]
+[INFO] Apache Hadoop HDFS Project ........................ SUCCESS [0.744s]
+[INFO] hadoop-yarn ....................................... SUCCESS [28.902s]
+[INFO] hadoop-yarn-api ................................... SUCCESS [1:08.858s]
+[INFO] hadoop-yarn-common ................................ SUCCESS [56.000s]
+[INFO] hadoop-yarn-server ................................ SUCCESS [0.517s]
+[INFO] hadoop-yarn-server-common ......................... SUCCESS [16.093s]
+[INFO] hadoop-yarn-server-nodemanager .................... SUCCESS [31.421s]
+[INFO] hadoop-yarn-server-web-proxy ...................... SUCCESS [7.293s]
+[INFO] hadoop-yarn-server-resourcemanager ................ SUCCESS [22.440s]
+[INFO] hadoop-yarn-server-tests .......................... SUCCESS [1.168s]
+[INFO] hadoop-yarn-client ................................ SUCCESS [8.536s]
+[INFO] hadoop-yarn-applications .......................... SUCCESS [0.276s]
+[INFO] hadoop-yarn-applications-distributedshell ......... SUCCESS [4.767s]
+[INFO] hadoop-mapreduce-client ........................... SUCCESS [0.433s]
+[INFO] hadoop-mapreduce-client-core ...................... SUCCESS [54.060s]
+[INFO] hadoop-yarn-applications-unmanaged-am-launcher .... SUCCESS [5.197s]
+[INFO] hadoop-yarn-site .................................. SUCCESS [0.517s]
+[INFO] hadoop-yarn-project ............................... SUCCESS [36.840s]
+[INFO] hadoop-mapreduce-client-common .................... SUCCESS [33.592s]
+[INFO] hadoop-mapreduce-client-shuffle ................... SUCCESS [5.179s]
+[INFO] hadoop-mapreduce-client-app ....................... SUCCESS [18.536s]
+[INFO] hadoop-mapreduce-client-hs ........................ SUCCESS [9.267s]
+[INFO] hadoop-mapreduce-client-jobclient ................. SUCCESS [10.860s]
+[INFO] hadoop-mapreduce-client-hs-plugins ................ SUCCESS [4.425s]
+[INFO] Apache Hadoop MapReduce Examples .................. SUCCESS [14.302s]
+[INFO] hadoop-mapreduce .................................. SUCCESS [4.028s]
+[INFO] Apache Hadoop MapReduce Streaming ................. SUCCESS [9.253s]
+[INFO] Apache Hadoop Distributed Copy .................... SUCCESS [1:14.406s]
+[INFO] Apache Hadoop Archives ............................ SUCCESS [4.108s]
+[INFO] Apache Hadoop Rumen ............................... SUCCESS [11.244s]
+[INFO] Apache Hadoop Gridmix ............................. SUCCESS [10.038s]
+[INFO] Apache Hadoop Data Join ........................... SUCCESS [5.673s]
+[INFO] Apache Hadoop Extras .............................. SUCCESS [6.033s]
+[INFO] Apache Hadoop Pipes ............................... SUCCESS [14.666s]
+[INFO] Apache Hadoop Tools Dist .......................... SUCCESS [3.519s]
+[INFO] Apache Hadoop Tools ............................... SUCCESS [0.066s]
+[INFO] Apache Hadoop Distribution ........................ SUCCESS [30.039s]
+[INFO] Apache Hadoop Client .............................. SUCCESS [20.618s]
+[INFO] Apache Hadoop Mini-Cluster ........................ SUCCESS [2.427s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 15:51.852s
+[INFO] Finished at: Fri Jul 25 17:40:23 CST 2014
+[INFO] Final Memory: 127M/305M
+[INFO] ------------------------------------------------------------------------
+</code>
+全部编译成功，然后找下libhadoop.so
+<code>bash
+$ find . -name "libhadoop.so"
+./src/hadoop-common-project/hadoop-common/target/hadoop-common-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+./src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/libhadoop.so
+./src/hadoop-dist/target/hadoop-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+</code>
+编译出来了，然后放到文章一开始说的$HADOOP_HOME/lib/native/目录下面，以后运行就不再报错了。</p>
+
+<p>参考文章
+<a href="http://www.linuxidc.com/Linux/2012-04/59200.htm">《Hadoop本地库与系统版本不一致引起的错误解决方法》</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hadoop put文件报DataStreamer Exception异常]]></title>
@@ -690,65 +1007,6 @@ Time taken: 55.656 seconds
 我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
 
 <p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[hadoop报错：Incompatible namespaceIDs]]></title>
-    <link href="http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids/"/>
-    <updated>2014-02-24T17:08:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids</id>
-    <content type="html"><![CDATA[<p>今天在修改hadoop主机名重新格式化namenode之后，重新启动hadoop，发现datanode无法启动起来。</p>
-
-<p>报错：HADOOP报错<code>Incompatible namespaceIDs</code></p>
-
-<p>查看报告发现没有启动一个datanode</p>
-
-<!-- more -->
-
-
-<p>```sh
-$/u01/app/hadoop/bin/hadoop dfsadmin -report
-Configured Capacity: 0 (0 KB)
-Present Capacity: 0 (0 KB)
-DFS Remaining: 0 (0 KB)
-DFS Used: 0 (0 KB)
-DFS Used%: �%
-Under replicated blocks: 0
-Blocks with corrupt replicas: 0
-Missing blocks: 0</p>
-
-<hr />
-
-<p>Datanodes available: 0 (0 total, 0 dead)
-```</p>
-
-<p>原来是要求datanode的VERSION文件和namenode的要一致</p>
-
-<p>于是到namenode上看文件
-```sh
-[hadoop@mdn2 current]$more /u01/app/hadoopTmp/dfs/name/current/VERSION</p>
-
-<h1>Mon Feb 24 16:48:12 CST 2014</h1>
-
-<p>namespaceID=1235115105
-cTime=0
-storageType=NAME_NODE
-layoutVersion=-31
-```
-namespaceID为1235115105</p>
-
-<p>到datanode里查看发现不存在</p>
-
-<h3>解决方法两种任选其一：</h3>
-
-<p>1）在datanode的&lt;dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode</p>
-
-<p>2）在格式化namenode的时候要清空/tmp目录下所有有关hadoop的目录，不论是namenode还是datanode所在的机器</p>
-
-<h4>参考文章</h4>
-
-<p><a href="http://blog.csdn.net/wanghai__/article/details/5752199">http://blog.csdn.net/wanghai__/article/details/5752199</a></p>
 ]]></content>
   </entry>
   
