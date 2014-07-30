@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>关于头文件互相包含的解决方法 - Evoup`s Blog</title>
+  <title>hive There are 0 datanode(s) running and no node - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.com/blog/2009/09/23/header-file-refered-by-each-other">
+  <link rel="canonical" href="http://evoupsight.com/blog/2014/04/30/hive-there-are-0-datanode-s-running-and-no-node">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -101,74 +101,28 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-04-30T17:38:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2014</time>
         
       </p>
     
     
     <h1 class="entry-title">
-        关于头文件互相包含的解决方法
+        Hive There Are 0 Datanode(s) Running and No Node
         
     </h1>
     
   </header>
 
 
-<div class="entry-content clearfix"><h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
-
-<p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
+<div class="entry-content clearfix"><p>hive查询报错<code>c
+ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation</code></p>
 
 <!-- more -->
 
 
 
 
-<hr>
-
-
-<p>不要在.h里互相包含头文件.</p>
-
-<p>可以在另一个A的.h里声明一下class B,然后用B的指针就可以.包头文件放在A的cpp里包含就可以了.
-</hr>
-声明的时候只要在cls_enemy.h里面加上一句class class_player;就可以了。这样cls_enemy.h里就不要去包含cls_player.h了，而cls_player.h则照旧包含cls_enemy.h。但是在设计的时候发现还不行。</p>
-
-<p>总结，如果2个类是差不多的类，最好放在一个文件里。</p>
-
-<p>java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
-这样子大概会这么写</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">cls_player</span><span class="o">.</span><span class="na">java</span>
-</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">...</span>
-</span><span class='line'><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
-</span><span class='line'>   <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后看搜到了这篇文章
-<a href="http://topic.csdn.net/t/20051106/18/4375160.html">http://topic.csdn.net/t/20051106/18/4375160.html</a></p>
-
-<p><a href="http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4">http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4</a></p>
-
-<hr>
-
-
-<h2>正解</h2>
-
-<p>现在我总结一下问题的解决过程和方法：</p>
-
-<p>方法一：利用友元类</p>
-
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -176,84 +130,52 @@
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>hive&gt; select count(*) from httplog_2014_05_26_2017;
+</span><span class='line'>Total MapReduce jobs = 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile time: 1
+</span><span class='line'>In order to change the average load for a reducer (in bytes):
+</span><span class='line'>  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  set hive.exec.reducers.max=&lt;number&gt;
+</span><span class='line'>In order to set a constant number of reducers:
+</span><span class='line'>  set mapred.reduce.tasks=&lt;number&gt;
+</span><span class='line'>org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /tmp/hive-hadoop/hive_2014-07-15_10-27-16_252_580204120341469236-1/-mr-10003/7a56500c-c6e3-4f8c-a32b-053e9fe8eec2 c
+</span><span class='line'>ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation.
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget(BlockManager.java:1340)
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2296)
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:501)
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:299)
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java:44954)
+</span><span class='line'>        at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:453)
+</span><span class='line'>        at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1002)
+</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1752)
+</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1748)</span></code></pre></td></tr></table></div></figure>
 
 
-<p>在另一个类中可以这样声明:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;A.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
-
-<p>方法二：</p>
-
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在另一个类中可以这样声明:</p>
+<p>需要清理目录，其中hadoop为当前用户的名字</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /tmp/hadoop
+</span><span class='line'>rm -rf *
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在cb.cpp文件中包含头文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;ca.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
+<p>然后重启hadoop和hive，恢复正常，原因是hadoop的namespaceIDs有异常。</p>
 </div>
 
 
@@ -277,13 +199,13 @@
 
 
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-04-30T17:38:00+08:00" pubdate data-updated="true">Apr 30<span>th</span>, 2014</time>
           
 
 <span class="glyphicon glyphicon-tags"></span>&nbsp;
 <span class="categories">
   
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
+    <a class='category' href='/blog/categories/hadoop/'>hadoop</a>, <a class='category' href='/blog/categories/hive/'>hive</a>
   
 </span>
 
@@ -295,10 +217,10 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2009/06/11/php-call-user-func/" title="Previous Post: PHP之call_user_func动态调用函数">&laquo; PHP之call_user_func动态调用函数</a></li>
+            <li class="previous"><a href="/blog/2014/04/22/golang-with-syslog-and-log4go/" title="Previous Post: golang使用syslog日志系统和安装使用第三方包log4go">&laquo; golang使用syslog日志系统和安装使用第三方包log4go</a></li>
             
             
-            <li class="next"><a href="/blog/2009/10/06/win32-c-call-python/" title="Next Post: 关于win32程序调用python脚本的发布问题">关于win32程序调用python脚本的发布问题 &raquo;</a></li>
+            <li class="next"><a href="/blog/2014/05/10/git-branch-learning/" title="Next Post: git分支学习">git分支学习 &raquo;</a></li>
             
           </ul>
         

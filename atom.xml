@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-30T17:33:38+08:00</updated>
+  <updated>2014-07-30T17:45:22+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -2009,6 +2009,76 @@ Seconds_Behind_Master:0</p>
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[hive There are 0 datanode(s) running and no node]]></title>
+    <link href="http://evoupsight.com/blog/2014/04/30/hive-there-are-0-datanode-s-running-and-no-node/"/>
+    <updated>2014-04-30T17:38:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/04/30/hive-there-are-0-datanode-s-running-and-no-node</id>
+    <content type="html"><![CDATA[<p>hive查询报错<code>c
+ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation</code></p>
+
+<!-- more -->
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>hive&gt; select count(*) from httplog_2014_05_26_2017;
+</span><span class='line'>Total MapReduce jobs = 1
+</span><span class='line'>Launching Job 1 out of 1
+</span><span class='line'>Number of reduce tasks determined at compile time: 1
+</span><span class='line'>In order to change the average load for a reducer (in bytes):
+</span><span class='line'>  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+</span><span class='line'>In order to limit the maximum number of reducers:
+</span><span class='line'>  set hive.exec.reducers.max=&lt;number&gt;
+</span><span class='line'>In order to set a constant number of reducers:
+</span><span class='line'>  set mapred.reduce.tasks=&lt;number&gt;
+</span><span class='line'>org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /tmp/hive-hadoop/hive_2014-07-15_10-27-16_252_580204120341469236-1/-mr-10003/7a56500c-c6e3-4f8c-a32b-053e9fe8eec2 c
+</span><span class='line'>ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation.
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget(BlockManager.java:1340)
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2296)
+</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:501)
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:299)
+</span><span class='line'>        at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java:44954)
+</span><span class='line'>        at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:453)
+</span><span class='line'>        at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1002)
+</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1752)
+</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1748)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>需要清理目录，其中hadoop为当前用户的名字</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /tmp/hadoop
+</span><span class='line'>rm -rf *
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后重启hadoop和hive，恢复正常，原因是hadoop的namespaceIDs有异常。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[golang使用syslog日志系统和安装使用第三方包log4go]]></title>
     <link href="http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go/"/>
     <updated>2014-04-22T11:25:00+08:00</updated>
@@ -3512,84 +3582,6 @@ Exception in thread &ldquo;main&rdquo; java.lang.RuntimeException: native-lzo li
 
 <p>《lzo安装说明(2)》
 <a href="http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html">http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[hadoop报错：Incompatible namespaceIDs]]></title>
-    <link href="http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids/"/>
-    <updated>2014-02-24T17:08:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/02/24/hadoop-error-incompatible-namespaceids</id>
-    <content type="html"><![CDATA[<p>今天在修改hadoop主机名重新格式化namenode之后，重新启动hadoop，发现datanode无法启动起来。</p>
-
-<p>报错：HADOOP报错<code>Incompatible namespaceIDs</code></p>
-
-<p>查看报告发现没有启动一个datanode</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$/</span>u01/app/hadoop/bin/hadoop dfsadmin -report
-</span><span class='line'>Configured Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
-</span><span class='line'>Present Capacity: 0 <span class="o">(</span>0 KB<span class="o">)</span>
-</span><span class='line'>DFS Remaining: 0 <span class="o">(</span>0 KB<span class="o">)</span>
-</span><span class='line'>DFS Used: 0 <span class="o">(</span>0 KB<span class="o">)</span>
-</span><span class='line'>DFS Used%: �%
-</span><span class='line'>Under replicated blocks: 0
-</span><span class='line'>Blocks with corrupt replicas: 0
-</span><span class='line'>Missing blocks: 0
-</span><span class='line'>
-</span><span class='line'>-------------------------------------------------
-</span><span class='line'>Datanodes available: 0 <span class="o">(</span>0 total, 0 dead<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>原来是要求datanode的VERSION文件和namenode的要一致</p>
-
-<p>于是到namenode上看文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 current<span class="o">]</span><span class="nv">$more</span> /u01/app/hadoopTmp/dfs/name/current/VERSION
-</span><span class='line'><span class="c">#Mon Feb 24 16:48:12 CST 2014</span>
-</span><span class='line'><span class="nv">namespaceID</span><span class="o">=</span>1235115105
-</span><span class='line'><span class="nv">cTime</span><span class="o">=</span>0
-</span><span class='line'><span class="nv">storageType</span><span class="o">=</span>NAME_NODE
-</span><span class='line'><span class="nv">layoutVersion</span><span class="o">=</span>-31
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>namespaceID为1235115105</p>
-
-<p>到datanode里查看发现不存在</p>
-
-<h3>解决方法两种任选其一：</h3>
-
-<p>1）在datanode的&lt;dfs.data.dir>/current/VERSION中指定一个一模一样的namespaceID=1235115105，然后重启datanode</p>
-
-<p>2）在格式化namenode的时候要清空/tmp目录下所有有关hadoop的目录，不论是namenode还是datanode所在的机器</p>
-
-<h4>参考文章</h4>
-
-<p><a href="http://blog.csdn.net/wanghai__/article/details/5752199">http://blog.csdn.net/wanghai__/article/details/5752199</a></p>
 ]]></content>
   </entry>
   
