@@ -7,25 +7,19 @@ categories: [hadoop,hive,java]
 ---
 
 
-进入hive的src/contrib目录，开始编译
-
-
-需要这几个包，加到classpath中去
+进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去
 ```
 /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
 /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar
 ```
-
+<!-- more -->
 
 看下工程路径build.xml的29行
 ```
 <import file="../build-common.xml"/>
 ```
 
-编辑上级目录的build-common.xml文件
-根据这篇文章《如何在Ant中引入第三方Jar包》
-http://www.sadtojoy.com/aspx/Detail.aspx?id=4131
-找这个文件的关键字classpath和javac，有
+于是编辑上级目录的build-common.xml文件
 ```
 266   <path id="classpath">
 267     <pathelement location="${build.dir.hive}/service/classes"/>
@@ -39,10 +33,10 @@ http://www.sadtojoy.com/aspx/Detail.aspx?id=4131
 275     <pathelement location="${build.dir.hive}/hwi/classes"/>
 276     <pathelement location="${build.dir.hive}/jdbc/classes"/>
 277     <pathelement location="${build.dir.hive}/hbase-handler/classes"/>
-278 <!--\{\{\{把缺少的hadoop加入-->
+278 <!--{ { {把缺少的hadoop加入-->
 279     <pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/>
 280     <pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/>
-281 <!--\}\}\}-->
+281 <!--} } }-->
 282     <fileset dir="${basedir}" includes="lib/*.jar"/>
 283     <path refid="common-classpath"/>
 284   </path>
@@ -78,3 +72,6 @@ Total time: 19 seconds
 ```
 ok
 这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。
+
+
+参考互联网文章《如何在Ant中引入第三方Jar包》，链接已挂删除了：）
