@@ -4,7 +4,7 @@
   <title><![CDATA[Category: zookeeper | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/zookeeper/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-31T10:04:15+08:00</updated>
+  <updated>2014-07-31T10:09:09+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -29,7 +29,7 @@
 
 <p>准备一台机器，假定IP为192.168.216.198。</p>
 
-<h2>下载安装软件</h2>
+<h4>下载安装软件</h4>
 
 <p><code>bash
 $ cd /home/hadoop/software
@@ -39,7 +39,7 @@ $ sudo mv zookeeper-3.4.5 /usr/local/
 $ sudo mv /usr/local/zookeeper-3.4.5/ /usr/local/zookeeper
 </code></p>
 
-<h2>配置三个实例的myid</h2>
+<h4>配置三个实例的myid</h4>
 
 <p><code>bash
 $ mkdir -p /home/hadoop/zoo/zk1 /home/hadoop/zoo/zk2 /home/hadoop/zoo/zk3
@@ -48,7 +48,7 @@ $ echo "2" &gt; /home/hadoop/zoo/zk2/myid
 $ echo "3" &gt; /home/hadoop/zoo/zk3/myid
 </code></p>
 
-<h2>分配制作三个配置文件</h2>
+<h4>分配制作三个配置文件</h4>
 
 <p>```bash
 $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo1.cfg
@@ -86,13 +86,13 @@ server.3=192.168.216.198:2890:3890</p>
 /usr/local/zookeeper/conf/zoo3.cfg:server.3=192.168.216.198:2890:3890
 ```</p>
 
-<h2>给当前用户账户访问权限（可选）</h2>
+<h4>给当前用户账户访问权限（可选）</h4>
 
 <p><code>bash
 $ sudo chown -R hadoop:hadoop /usr/local/zookeeper
 </code></p>
 
-<h3>启动集群</h3>
+<h4>启动集群</h4>
 
 <p><code>bash
 $ /usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo1.cfg
@@ -114,8 +114,9 @@ Starting zookeeper ... STARTED
 3015 QuorumPeerMain
 </code></p>
 
-<p>查看zookeeper工作文件目录结构
-```bash
+<h4>查看zookeeper工作文件目录结构</h4>
+
+<p>```bash
 $ ls -R /home/hadoop/zoo/
 /home/hadoop/zoo/:
 zk1  zk2  zk3</p>
@@ -139,8 +140,9 @@ myid  version-2  zookeeper_server.pid</p>
 acceptedEpoch  currentEpoch  snapshot.100000000
 ```</p>
 
-<p>查看zookeeper运行情况
-<code>bash
+<h4>查看zookeeper运行情况</h4>
+
+<p><code>bash
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo2.cfg
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo3.cfg
@@ -181,7 +183,7 @@ Using config: /usr/local/zookeeper/conf/zoo3.cfg
 Mode: follower
 </code></p>
 
-<h3>加到启动项目去</h3>
+<h4>加入启动项</h4>
 
 <p>```bash
 sudo vim /etc/rc.d/rc.local</p>
@@ -195,8 +197,9 @@ su &ndash; hadoop -c &ldquo;/usr/local/zookeeper/bin/zkServer.sh start /usr/loca
 
 <p>收工。</p>
 
-<p>参考资料
-<a href="http://blog.fens.me/hadoop-zookeeper-intro/">《ZooKeeper伪分布式集群安装及使用 | 粉丝日志》</a></p>
+<h4>参考资料</h4>
+
+<p><a href="http://blog.fens.me/hadoop-zookeeper-intro/">《ZooKeeper伪分布式集群安装及使用 | 粉丝日志》</a></p>
 ]]></content>
   </entry>
   
