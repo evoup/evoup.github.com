@@ -21,7 +21,7 @@ git clone https://github.com/twitter/hadoop-lzo.git
 ```
 
 64位环境的需要设置两个环境变量：
-```
+```bash
 $ vim ~/.bashrc
 export CFLAGS=-m64
 export CXXFLAGS=-m64
@@ -33,12 +33,12 @@ mvn clean package -Dmaven.test.skip=true
 ```
 
 出现警告
-```
+```bash
 [WARNING] Javadoc Warnings
 [WARNING] /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:115: 警告 - @return 标记没有参数。
 [WARNING] /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:51: 警告 - @param argument "lzoUri" 不是参数名称。
 [INFO] Building jar: /home/hadoop/software/hadoop-lzo/target/hadoop-lzo-0.4.20-SNAPSHOT-javadoc.jar
-···
+```
 不用管，编译ok。
 
 需要把本地库和jar包放到hadoop对应目录中
@@ -49,7 +49,7 @@ cp target/hadoop-lzo-0.4.20-SNAPSHOT.jar  $HADOOP_HOME/share/hadoop/mapreduce/li
 
 3 修改hadoop的配置文件core-site.xml
 修改/增加以下2个参数：
-```
+```java
 io.compression.codecs
 org.apache.hadoop.io.compress.GzipCodec,
 org.apache.hadoop.io.compress.DefaultCodec,
