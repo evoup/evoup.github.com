@@ -14,7 +14,7 @@ categories: zookeeper
 ###伪分布集群安装配置
 准备一台机器，假定IP为192.168.216.198。
 
-##下载安装软件
+####下载安装软件
 ```bash
 $ cd /home/hadoop/software
 $ wget http://mirror.bit.edu.cn/apache/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz
@@ -23,7 +23,7 @@ $ sudo mv zookeeper-3.4.5 /usr/local/
 $ sudo mv /usr/local/zookeeper-3.4.5/ /usr/local/zookeeper
 ```
 
-##配置三个实例的myid
+####配置三个实例的myid
 ```bash
 $ mkdir -p /home/hadoop/zoo/zk1 /home/hadoop/zoo/zk2 /home/hadoop/zoo/zk3
 $ echo "1" > /home/hadoop/zoo/zk1/myid
@@ -31,7 +31,7 @@ $ echo "2" > /home/hadoop/zoo/zk2/myid
 $ echo "3" > /home/hadoop/zoo/zk3/myid
 ```
 
-##分配制作三个配置文件
+####分配制作三个配置文件
 ```bash
 $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo1.cfg
 $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo2.cfg
@@ -68,12 +68,12 @@ $sudo vim /usr/local/zookeeper/conf/zoo3.cfg
 /usr/local/zookeeper/conf/zoo3.cfg:server.3=192.168.216.198:2890:3890
 ```
 
-##给当前用户账户访问权限（可选）
+####给当前用户账户访问权限（可选）
 ```bash
 $ sudo chown -R hadoop:hadoop /usr/local/zookeeper
 ```
 
-###启动集群
+####启动集群
 ```bash
 $ /usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo1.cfg
 JMX enabled by default
@@ -94,7 +94,7 @@ Starting zookeeper ... STARTED
 3015 QuorumPeerMain
 ```
 
-查看zookeeper工作文件目录结构
+####查看zookeeper工作文件目录结构
 ```bash
 $ ls -R /home/hadoop/zoo/
 /home/hadoop/zoo/:
@@ -119,7 +119,7 @@ myid  version-2  zookeeper_server.pid
 acceptedEpoch  currentEpoch  snapshot.100000000
 ```
 
-查看zookeeper运行情况
+####查看zookeeper运行情况
 ```bash
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo2.cfg
@@ -155,7 +155,7 @@ Using config: /usr/local/zookeeper/conf/zoo3.cfg
 Mode: follower
 ```
 
-###加到启动项目去
+####加入启动项
 ```bash
 sudo vim /etc/rc.d/rc.local
 #!/bin/sh
@@ -166,7 +166,7 @@ su - hadoop -c "/usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/
 
 收工。
 
-参考资料
+####参考资料
 <a href="http://blog.fens.me/hadoop-zookeeper-intro/">《ZooKeeper伪分布式集群安装及使用 | 粉丝日志》</a>
 
 
