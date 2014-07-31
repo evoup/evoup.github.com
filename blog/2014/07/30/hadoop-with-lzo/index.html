@@ -157,43 +157,49 @@
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> Javadoc Warnings
 </span><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:115: 警告 - @return 标记没有参数。
 </span><span class='line'><span class="o">[</span>WARNING<span class="o">]</span> /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:51: 警告 - @param argument <span class="s2">&quot;lzoUri&quot;</span> 不是参数名称。
 </span><span class='line'><span class="o">[</span>INFO<span class="o">]</span> Building jar: /home/hadoop/software/hadoop-lzo/target/hadoop-lzo-0.4.20-SNAPSHOT-javadoc.jar
-</span><span class='line'>···
-</span><span class='line'>不用管，编译ok。
-</span><span class='line'>
-</span><span class='line'>需要把本地库和jar包放到hadoop对应目录中
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>bash
-cp target/native/Linux-amd64-64/lib/* $HADOOP_HOME/lib/native/
-cp target/hadoop-lzo-0.4.20-SNAPSHOT.jar  $HADOOP_HOME/share/hadoop/mapreduce/lib/</p>
+<p>不用管，编译ok。</p>
+
+<p>需要把本地库和jar包放到hadoop对应目录中</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>3 修改hadoop的配置文件core-site.xml
-</span><span class='line'>修改/增加以下2个参数：
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cp target/native/Linux-amd64-64/lib/* <span class="nv">$HADOOP_HOME</span>/lib/native/
+</span><span class='line'>cp target/hadoop-lzo-0.4.20-SNAPSHOT.jar  <span class="nv">$HADOOP_HOME</span>/share/hadoop/mapreduce/lib/
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>io.compression.codecs
-org.apache.hadoop.io.compress.GzipCodec,
-org.apache.hadoop.io.compress.DefaultCodec,
-org.apache.hadoop.io.compress.BZip2Codec,
-com.hadoop.compression.lzo.LzoCodec,
-com.hadoop.compression.lzo.LzopCodec</p>
+<p>3 修改hadoop的配置文件core-site.xml
+修改/增加以下2个参数：</p>
 
-<p>io.compression.codec.lzo.class
-com.hadoop.compression.lzo.LzoCodec
-&#8220;`
-然后重启hadoop看效果。</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="n">io</span><span class="o">.</span><span class="na">compression</span><span class="o">.</span><span class="na">codecs</span>
+</span><span class='line'><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">compress</span><span class="o">.</span><span class="na">GzipCodec</span><span class="o">,</span>
+</span><span class='line'><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">compress</span><span class="o">.</span><span class="na">DefaultCodec</span><span class="o">,</span>
+</span><span class='line'><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">compress</span><span class="o">.</span><span class="na">BZip2Codec</span><span class="o">,</span>
+</span><span class='line'><span class="n">com</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">compression</span><span class="o">.</span><span class="na">lzo</span><span class="o">.</span><span class="na">LzoCodec</span><span class="o">,</span>
+</span><span class='line'><span class="n">com</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">compression</span><span class="o">.</span><span class="na">lzo</span><span class="o">.</span><span class="na">LzopCodec</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">io</span><span class="o">.</span><span class="na">compression</span><span class="o">.</span><span class="na">codec</span><span class="o">.</span><span class="na">lzo</span><span class="o">.</span><span class="na">class</span>
+</span><span class='line'><span class="n">com</span><span class="o">.</span><span class="na">hadoop</span><span class="o">.</span><span class="na">compression</span><span class="o">.</span><span class="na">lzo</span><span class="o">.</span><span class="na">LzoCodec</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后重启hadoop看效果。</p>
 
 <p>参考
 <a href="http://www.linuxidc.com/Linux/2014-05/101090.htm">http://www.linuxidc.com/Linux/2014-05/101090.htm</a></p>
