@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-07-31T10:27:34+08:00</updated>
+  <updated>2014-07-31T10:46:58+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -18,14 +18,15 @@
     <link href="http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib/"/>
     <updated>2014-07-31T10:18:00+08:00</updated>
     <id>http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib</id>
-    <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译</p>
-
-<p>需要这几个包，加到classpath中去</p>
+    <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
 </span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar</span></code></pre></td></tr></table></div></figure>
+
+
+<!-- more -->
 
 
 <p>看下工程路径build.xml的29行</p>
@@ -34,10 +35,7 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>&lt;import file="../build-common.xml"/&gt;</span></code></pre></td></tr></table></div></figure>
 
 
-<p>编辑上级目录的build-common.xml文件
-根据这篇文章《如何在Ant中引入第三方Jar包》
-<a href="http://www.sadtojoy.com/aspx/Detail.aspx?id=4131">http://www.sadtojoy.com/aspx/Detail.aspx?id=4131</a>
-找这个文件的关键字classpath和javac，有</p>
+<p>于是编辑上级目录的build-common.xml文件</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -70,10 +68,10 @@
 </span><span class='line'>275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
 </span><span class='line'>276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
 </span><span class='line'>277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
-</span><span class='line'>278 &lt;!--\{\{\{把缺少的hadoop加入--&gt;
+</span><span class='line'>278 &lt;!--{ { {把缺少的hadoop加入--&gt;
 </span><span class='line'>279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
 </span><span class='line'>280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
-</span><span class='line'>281 &lt;!--\}\}\}--&gt;
+</span><span class='line'>281 &lt;!--} } }--&gt;
 </span><span class='line'>282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
 </span><span class='line'>283     &lt;path refid="common-classpath"/&gt;
 </span><span class='line'>284   &lt;/path&gt;</span></code></pre></td></tr></table></div></figure>
@@ -132,6 +130,8 @@
 
 <p>ok
 这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
+
+<p>参考互联网文章《如何在Ant中引入第三方Jar包》，链接已挂删除了：）</p>
 ]]></content>
   </entry>
   

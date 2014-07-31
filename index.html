@@ -115,9 +115,7 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>进入hive的src/contrib目录，开始编译</p>
-
-<p>需要这几个包，加到classpath中去</p>
+  <div class="entry-content clearfix"><p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -125,112 +123,12 @@
 </span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar</span></code></pre></td></tr></table></div></figure>
 
 
-<p>看下工程路径build.xml的29行</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;import file="../build-common.xml"/&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>编辑上级目录的build-common.xml文件
-根据这篇文章《如何在Ant中引入第三方Jar包》
-<a href="http://www.sadtojoy.com/aspx/Detail.aspx?id=4131">http://www.sadtojoy.com/aspx/Detail.aspx?id=4131</a>
-找这个文件的关键字classpath和javac，有</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>266   &lt;path id="classpath"&gt;
-</span><span class='line'>267     &lt;pathelement location="${build.dir.hive}/service/classes"/&gt;
-</span><span class='line'>268     &lt;pathelement location="${build.dir.hive}/common/classes"/&gt;
-</span><span class='line'>269     &lt;pathelement location="${build.dir.hive}/serde/classes"/&gt;
-</span><span class='line'>270     &lt;pathelement location="${build.dir.hive}/metastore/classes"/&gt;
-</span><span class='line'>271     &lt;pathelement location="${build.dir.hive}/ql/classes"/&gt;
-</span><span class='line'>272     &lt;pathelement location="${build.dir.hive}/beeline/classes"/&gt;
-</span><span class='line'>273     &lt;pathelement location="${build.dir.hive}/cli/classes"/&gt;
-</span><span class='line'>274     &lt;pathelement location="${build.dir.hive}/shims/classes"/&gt;
-</span><span class='line'>275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
-</span><span class='line'>276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
-</span><span class='line'>277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
-</span><span class='line'>278 &lt;!--\{\{\{把缺少的hadoop加入--&gt;
-</span><span class='line'>279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
-</span><span class='line'>280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
-</span><span class='line'>281 &lt;!--\}\}\}--&gt;
-</span><span class='line'>282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
-</span><span class='line'>283     &lt;path refid="common-classpath"/&gt;
-</span><span class='line'>284   &lt;/path&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>像上面这样把2个包加入。</p>
-
-<p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
-，最后编译的jar包存到了ivy的路径下</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>compile:
-</span><span class='line'>     [echo] Project: contrib
-</span><span class='line'>    [javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
-</span><span class='line'>    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 'LimitedPrivate' 的注释方法 'value()': 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
-</span><span class='line'>    [javac] 注: 某些输入文件使用或覆盖了已过时的 API。
-</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
-</span><span class='line'>    [javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
-</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
-</span><span class='line'>    [javac] 1 个警告
-</span><span class='line'>     [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.
-</span><span class='line'>
-</span><span class='line'>jar:
-</span><span class='line'>     [echo] Project: contrib
-</span><span class='line'>      [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
-</span><span class='line'>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
-</span><span class='line'>[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
-</span><span class='line'>[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
-</span><span class='line'>[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
-</span><span class='line'>[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml
-</span><span class='line'>
-</span><span class='line'>BUILD SUCCESSFUL
-</span><span class='line'>Total time: 19 seconds</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ok
-这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
 </div>
   
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2014/07/31/compile-cdh47-hive-contrib/">Read on &rarr;</a>
+    </footer>
   
 
 
