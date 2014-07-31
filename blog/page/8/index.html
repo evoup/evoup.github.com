@@ -105,6 +105,77 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-07-29T09:46:00+08:00" pubdate data-updated="true">Jul 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">关于log4erl的localtime_to_universaltime报错</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><h2>问题症状：</h2>
+
+<p>项目遇到编译后运行的一个问题，logerl报错之</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">**</span> <span class="p">{</span><span class="n">appender_died</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="p">{</span><span class="n">&#39;EXIT&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>           <span class="p">{</span><span class="n">badarg</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>               <span class="p">[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">localtime_to_universaltime</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">[{</span> <span class="p">{</span><span class="mi">2013</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">},{</span><span class="mi">15</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">35</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="p">[]},</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
         
       </p>
@@ -489,145 +560,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T16:33:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2/">freebsd下nginx+Php5.3.8+php-fpm源码安装之二</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>nginx端的配置
-首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?php
-</span><span class='line'>phpinfo();</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装nginx
-安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
-
-<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
-或者
-<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
-即可看到php输出的信息。</p>
-
-<p>默认nginx的fastcgi脚本似乎不直接支持php，需要创建一个文件php_fcgi_params.conf，然后在此文件中加入类似如下的代码：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#php_fcgi_params.conf                                                                                                                                              </span>
-</span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
-</span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
-</span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
-</span><span class='line'>fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
-</span><span class='line'>fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
-</span><span class='line'>fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
-</span><span class='line'>fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
-</span><span class='line'>fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
-</span><span class='line'>fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
-</span><span class='line'>fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
-</span><span class='line'>fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
-</span><span class='line'><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
-</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
-</span><span class='line'>
-</span><span class='line'>fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在nginx.conf中的server上下文中添加</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>    location ~ ^/pma/.*<span class="nv">$ </span><span class="o">{</span>
-</span><span class='line'>        <span class="c">#access_log /var/log/access_beta.log access1;</span>
-</span><span class='line'>        index index.php index.html index.htm;
-</span><span class='line'>        root /services/www/;
-</span><span class='line'>        fastcgi_index   index.php;
-</span><span class='line'>        include /usr/local/etc/nginx/php_fcgi_params.conf;
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>    <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>启动nignx</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/etc/rc.d/ngnix start
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>访问浏览器<a href="http://192.168.216.198/pma/">http://192.168.216.198/pma/</a></p>
-
-<p><img src="/images/evoup/php-fpm-pma.png" alt="Alt text" /></p>
-
-<p>done!</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -651,6 +583,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/07/31/compile-cdh47-hive-contrib/">编译cdh47下hive的contrib源码</a>
+    
     <a class="list-group-item " href="/blog/2014/07/30/hadoop-with-lzo/">centos上hadoop2.x Hdfs支持lzo</a>
     
     <a class="list-group-item " href="/blog/2014/07/30/hadoop2x-nativecodeloader/">hadoop2.x本地库安装</a>
@@ -659,15 +593,13 @@
     
     <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop put文件报DataStreamer Exception异常</a>
     
-    <a class="list-group-item " href="/blog/2014/07/27/centos7-configure-static-ip/">centos7配置静态IP</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 148.75%'>Hadoop(13)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 107.5%'>Hive(2)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 111.25%'>Hive(3)</a>  <a href='/blog/categories/java' style='font-size: 118.75%'>Java(5)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

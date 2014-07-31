@@ -105,6 +105,156 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-31T10:18:00+08:00" pubdate data-updated="true">Jul 31<span>st</span>, 2014</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2014/07/31/compile-cdh47-hive-contrib/">编译cdh47下hive的contrib源码</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>进入hive的src/contrib目录，开始编译</p>
+
+<p>需要这几个包，加到classpath中去</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
+</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看下工程路径build.xml的29行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;import file="../build-common.xml"/&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑上级目录的build-common.xml文件
+根据这篇文章《如何在Ant中引入第三方Jar包》
+<a href="http://www.sadtojoy.com/aspx/Detail.aspx?id=4131">http://www.sadtojoy.com/aspx/Detail.aspx?id=4131</a>
+找这个文件的关键字classpath和javac，有</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>266   &lt;path id="classpath"&gt;
+</span><span class='line'>267     &lt;pathelement location="${build.dir.hive}/service/classes"/&gt;
+</span><span class='line'>268     &lt;pathelement location="${build.dir.hive}/common/classes"/&gt;
+</span><span class='line'>269     &lt;pathelement location="${build.dir.hive}/serde/classes"/&gt;
+</span><span class='line'>270     &lt;pathelement location="${build.dir.hive}/metastore/classes"/&gt;
+</span><span class='line'>271     &lt;pathelement location="${build.dir.hive}/ql/classes"/&gt;
+</span><span class='line'>272     &lt;pathelement location="${build.dir.hive}/beeline/classes"/&gt;
+</span><span class='line'>273     &lt;pathelement location="${build.dir.hive}/cli/classes"/&gt;
+</span><span class='line'>274     &lt;pathelement location="${build.dir.hive}/shims/classes"/&gt;
+</span><span class='line'>275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
+</span><span class='line'>276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
+</span><span class='line'>277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
+</span><span class='line'>278 &lt;!--\{\{\{把缺少的hadoop加入--&gt;
+</span><span class='line'>279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
+</span><span class='line'>280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
+</span><span class='line'>281 &lt;!--\}\}\}--&gt;
+</span><span class='line'>282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
+</span><span class='line'>283     &lt;path refid="common-classpath"/&gt;
+</span><span class='line'>284   &lt;/path&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>像上面这样把2个包加入。</p>
+
+<p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
+，最后编译的jar包存到了ivy的路径下</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>compile:
+</span><span class='line'>     [echo] Project: contrib
+</span><span class='line'>    [javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
+</span><span class='line'>    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 'LimitedPrivate' 的注释方法 'value()': 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
+</span><span class='line'>    [javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+</span><span class='line'>    [javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
+</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+</span><span class='line'>    [javac] 1 个警告
+</span><span class='line'>     [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.
+</span><span class='line'>
+</span><span class='line'>jar:
+</span><span class='line'>     [echo] Project: contrib
+</span><span class='line'>      [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
+</span><span class='line'>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
+</span><span class='line'>[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
+</span><span class='line'>[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
+</span><span class='line'>[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
+</span><span class='line'>[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml
+</span><span class='line'>
+</span><span class='line'>BUILD SUCCESSFUL
+</span><span class='line'>Total time: 19 seconds</span></code></pre></td></tr></table></div></figure>
+
+
+<p>ok
+这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-07-30T18:32:00+08:00" pubdate data-updated="true">Jul 30<span>th</span>, 2014</time>
         
       </p>
@@ -475,50 +625,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-06-13T17:45:00+08:00" pubdate data-updated="true">Jun 13<span>th</span>, 2014</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/">Freebsd和linux上安装中文字体</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><h3>使用中文字体及其安装</h3>
-
-<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
-
-</div>
-  
-  
-    <footer>
-      <a class="btn btn-default" rel="full-article" href="/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/">Read on &rarr;</a>
-    </footer>
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -542,6 +648,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2014/07/31/compile-cdh47-hive-contrib/">编译cdh47下hive的contrib源码</a>
+    
     <a class="list-group-item " href="/blog/2014/07/30/hadoop-with-lzo/">centos上hadoop2.x Hdfs支持lzo</a>
     
     <a class="list-group-item " href="/blog/2014/07/30/hadoop2x-nativecodeloader/">hadoop2.x本地库安装</a>
@@ -550,15 +658,13 @@
     
     <a class="list-group-item " href="/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/">Hadoop put文件报DataStreamer Exception异常</a>
     
-    <a class="list-group-item " href="/blog/2014/07/27/centos7-configure-static-ip/">centos7配置静态IP</a>
-    
   </div>
 </section>
 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 148.75%'>Hadoop(13)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 107.5%'>Hive(2)</a>  <a href='/blog/categories/java' style='font-size: 115.0%'>Java(4)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 111.25%'>Hive(3)</a>  <a href='/blog/categories/java' style='font-size: 118.75%'>Java(5)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 133.75%'>Monitor(9)</a>  <a href='/blog/categories/mysql' style='font-size: 115.0%'>Mysql(4)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 118.75%'>Version_control(5)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>
