@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: java | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/java/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-31T10:46:58+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[编译cdh47下hive的contrib源码]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib/"/>
+    <updated>2014-07-31T10:18:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib</id>
+    <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去
+<code>
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar
+</code></p>
+
+<!-- more -->
+
+
+<p>看下工程路径build.xml的29行
+<code>
+&lt;import file="../build-common.xml"/&gt;
+</code></p>
+
+<p>于是编辑上级目录的build-common.xml文件
+<code>
+266   &lt;path id="classpath"&gt;
+267     &lt;pathelement location="${build.dir.hive}/service/classes"/&gt;
+268     &lt;pathelement location="${build.dir.hive}/common/classes"/&gt;
+269     &lt;pathelement location="${build.dir.hive}/serde/classes"/&gt;
+270     &lt;pathelement location="${build.dir.hive}/metastore/classes"/&gt;
+271     &lt;pathelement location="${build.dir.hive}/ql/classes"/&gt;
+272     &lt;pathelement location="${build.dir.hive}/beeline/classes"/&gt;
+273     &lt;pathelement location="${build.dir.hive}/cli/classes"/&gt;
+274     &lt;pathelement location="${build.dir.hive}/shims/classes"/&gt;
+275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
+276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
+277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
+278 &lt;!--{ { {把缺少的hadoop加入--&gt;
+279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
+280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
+281 &lt;!--} } }--&gt;
+282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
+283     &lt;path refid="common-classpath"/&gt;
+284   &lt;/path&gt;
+</code></p>
+
+<p>像上面这样把2个包加入。</p>
+
+<p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
+，最后编译的jar包存到了ivy的路径下
+```
+compile:</p>
+
+<pre><code> [echo] Project: contrib
+[javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 'LimitedPrivate' 的注释方法 'value()': 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
+[javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+[javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
+[javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[javac] 1 个警告
+ [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.
+</code></pre>
+
+<p>jar:</p>
+
+<pre><code> [echo] Project: contrib
+  [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
+</code></pre>
+
+<p>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
+[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
+[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
+[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
+[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml</p>
+
+<p>BUILD SUCCESSFUL
+Total time: 19 seconds
+```
+ok
+这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
+
+<p>参考互联网文章《如何在Ant中引入第三方Jar包》，链接已挂删除了：）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[apache common configure依赖注意]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/apache-common-configure/"/>
+    <updated>2014-06-13T15:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/apache-common-configure</id>
+    <content type="html"><![CDATA[<p>基于maven使用apache的common-configuration的过程中，遇到一个依赖小问题，记录下</p>
+
+<!-- more -->
+
+
+<p>关于这个包commons-configuration-1.6.jar,注意一定要有三个包才能使用，见下pom片段</p>
+
+<p>```
+<dependencies></p>
+
+<pre><code>&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-configuration&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-configuration&lt;/artifactId&gt;
+
+    &lt;version&gt;1.8&lt;/version&gt;
+
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;
+
+    &lt;version&gt;1.8.0&lt;/version&gt;
+
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-jxpath&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-jxpath&lt;/artifactId&gt;
+
+    &lt;version&gt;1.3&lt;/version&gt;
+
+&lt;/dependency&gt;
+</code></pre>
+
+<p></dependencies>
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[maven使用小计]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/12/maven-relative-note/"/>
+    <updated>2014-06-12T14:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/12/maven-relative-note</id>
+    <content type="html"><![CDATA[<h3>介绍</h3>
+
+<p>maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。</p>
+
+<!-- more -->
+
+
+<h3>安装(其实无需安装)</h3>
+
+<p>由于可能地址被强，在国内maven下载依赖比较慢，最好在编辑/etc/hosts，并在其中加上依赖服务器的IP地址，如下：
+<code>
+199.27.77.129 repo.maven.apache.org
+</code></p>
+
+<p>下载和解压安装包
+<code>
+mkdir /home/software/
+fetch http://down1.chinaunix.net/distfiles/apache-maven-3.0.4-bin.tar.gz
+tar xzf apache-maven-3.0.4-bin.tar.gz
+</code></p>
+
+<p>然后在~/.cshrc中指定(我这里是使用tcsh作为shell环境)
+<code>
+setenv M2_HOME "/usr/home/software/apache-maven-3.0.4"
+setenv MAVEN_OPTS "-Xms128m -Xmx512m"
+set path=( $path $M2_HOME/bin )
+</code>
+接着
+<code>
+source ~/.cshrc
+</code>
+就可以使用mvn命令了</p>
+
+<h3>基本测试构建</h3>
+
+<p>生成测试
+<code>
+mvn clean test
+</code>
+以上命令能直接生成class文件，并且支持自动测试（需要引入Junt并编写测试代码）</p>
+
+<p>生成测试和打包
+<code>
+mvn clean package
+</code>
+以上命令能直接生成最终的jar包文件，同时实现mvn clean test的所有功能</p>
+
+<h3>mvn常用命令</h3>
+
+<p>编译
+<code>
+mvn compile
+</code></p>
+
+<p>清理（删除所有test，package，compile等生成的文件）
+<code>
+mvn clean
+</code></p>
+
+<p>mvn获取所有依赖并且打包
+<code>
+mvn dependency:copy-dependencies -DoutputDirectory=lib package
+</code></p>
+
+<p>maven不经过测试直接打包
+<code>
+mvn -DskipTests clean package
+</code></p>
+
+<h3>mvn找依赖的方法</h3>
+
+<p>以下两个网站任意一个直接在搜索框中给出java根类即可，第一个网站还可以在线查看jar包里的方法，可以当在线手册查阅：</p>
+
+<p><a href="https://repository.sonatype.org/">https://repository.sonatype.org/</a></p>
+
+<p><a href="http://mvnrepository.com/">http://mvnrepository.com/</a></p>
+
+<p>参考：
+《Maven实战》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[apache Mina 使用小记]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world/"/>
+    <updated>2013-01-14T14:14:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world</id>
+    <content type="html"><![CDATA[<p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置
+<code>bash
+setenv JAVA_HOME "/usr/local/diablo-jdk1.6.0/"
+setenv JAVA_BIN "/usr/local/bin/"
+</code>
+下载mina</p>
+
+<p><code>bash
+cd /usr/home/evoup/monsrvd-2.1/test/
+fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz
+tar xzf apache-mina-2.0.7-bin.tar.gz
+cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
+cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
+</code>
+除此之外还需要slf4j这个是mina需要使用的日志库
+<code>bash
+fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
+tar xzf slf4j-1.7.2.tar.gz
+cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
+cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
+</code>
+设置好JAVA的CLASSPATH
+<code>bash
+setenv CLASSPATH "/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:."
+</code>
+找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
+
+<p>```java
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
+import org.apache.mina.core.service.IoAcceptor;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.filter.codec.ProtocolCodecFilter;
+import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;</p>
+
+<p>import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IoSession;
+import java.util.Date;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;</p>
+
+<p>public class MinaTimeServer
+{
+   private static final int PORT = 9123;</p>
+
+<p>   public static void main( String[] args ) throws IOException
+   {</p>
+
+<pre><code>   IoAcceptor acceptor = new NioSocketAcceptor();
+
+   acceptor.getFilterChain().addLast( "logger", new LoggingFilter() );
+   acceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
+
+   acceptor.setHandler( new TimeServerHandler() );
+   acceptor.getSessionConfig().setReadBufferSize( 2048 );
+   acceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
+   acceptor.bind( new InetSocketAddress(PORT) );
+</code></pre>
+
+<p>   }
+}</p>
+
+<p>class TimeServerHandler extends IoHandlerAdapter {</p>
+
+<pre><code>static Logger logger = LoggerFactory.getLogger(TimeServerHandler.class);
+</code></pre>
+
+<p>   //static Logger logger = Logger.getLogger(TimeServerHandler.class);
+   //异常处理
+   public void exceptionCaught(IoSession session, Throwable cause) throws Exception {</p>
+
+<pre><code>   cause.printStackTrace();
+</code></pre>
+
+<p>   }
+   //对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期
+   public void messageReceived(IoSession session, Object message) throws Exception {</p>
+
+<pre><code>   String str = message.toString();
+   if (str.trim().equalsIgnoreCase("quit")) {
+       session.close(true);
+       return;
+   }
+   logger.debug("Rec:" + str);
+   Date date = new Date();
+   session.write(date.toString());
+   logger.debug("Message written...");
+</code></pre>
+
+<p>   }
+   //当连接空闲时的处理
+   public void sessionIdle(IoSession session, IdleStatus status) throws Exception {</p>
+
+<pre><code>   logger.debug("IDLE " + session.getIdleCount(status));
+</code></pre>
+
+<p>   }
+}
+<code>
+</code>
+[evoup@myhost]>telnet 127.0.0.1 9123
+Trying 127.0.0.1&hellip;
+Connected to localhost.</p>
+
+<p>Escape character is &lsquo;^]&rsquo;.
+Mon Jan 14 17:34:04 CST 2013
+Mon Jan 14 17:34:04 CST 2013
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[java关于ConcurrentModificationException异常]]></title>
+    <link href="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception/"/>
+    <updated>2009-12-23T15:46:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception</id>
+    <content type="html"><![CDATA[<p>如果出现java.util.ConcurrentModificationException</p>
+
+<p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
+]]></content>
+  </entry>
+  
+</feed>

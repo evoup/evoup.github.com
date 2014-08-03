@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nosql | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/nosql/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-07-31T10:46:58+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下PHP的Tokyo Tyrant安装配置测试]]></title>
+    <link href="http://evoupsight.com/blog/2013/09/26/freebsd-tokyo-tyrant-php-test/"/>
+    <updated>2013-09-26T16:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/09/26/freebsd-tokyo-tyrant-php-test</id>
+    <content type="html"><![CDATA[<h3>简介和横向对比</h3>
+
+<p>Tokyo Tyrant（ttserver）是一款分布式nosql数据库，内部主要是用Tokyo Cabinet数据库实现。与memcache相比，其具有持久化存储的特性；与redis相比，这个数据库在记录数上亿时性能会急剧下降，没有redis业界口碑好，当然也可能是因为这是比较早起的nosql产品了，以及没有进行正确的配置导致的。除此之外ttserver还支持memcache兼容协议，仅仅需要注意INCR的操作中，memcache是不返回值，ttserver是返回自增ID的。</p>
+
+<!-- more -->
+
+
+<h3>php扩展的安装</h3>
+
+<p>编译的方式还是分静态方式和动态方式，特点是静态编译之后运行效率较高，但是需要重新编译php源码，动态编译只需要编译出动态链接库，然后在php.ini上加载so=XXXX.so即可。需要知晓php的版本在5.2以上（实际测试发现php的版本也不能太高，php5.2.10测试通过）,此外编译前必须先安装tt，否则会收到` configure: error: Please reinstall the Tokyo Tyrant distribution
+的报错。</p>
+
+<h4>安装编译依赖</h4>
+
+<p><code>sh
+$ cd /usr/ports/databases/tokyotyrant
+$ sudo make install clean
+</code></p>
+
+<h4>静态方式</h4>
+
+<p><code>sh
+$ cd /home/software
+$ fetch http://museum.php.net/php5/php-5.2.10.tar.bz2
+$ tar xjf php-5.2.10.tar.bz2
+$ cd php-5.2.10/ext
+$ fetch http://pecl.php.net/get/tokyo_tyrant-0.7.0.tgz
+$ tar xzf tokyo_tyrant-0.7.0.tgz
+$ mv tokyo_tyrant-0.7.0 tokyo_tyrant
+$ cd ..
+$ ./buildconf --force
+$ ./configure --prefix=/usr/local/php_tt --with-tokyo-tyrant
+$ make
+$ sudo make install
+</code>
+查看模块是否成功安装
+<code>sh
+$ /usr/local/php_tt/bin/php -m | grep tokyo
+tokyo_tyrant
+</code></p>
+
+<h4>动态方式(假设php已经安装在/usr/local/php_tt)</h4>
+
+<p><code>sh
+$ cd /home/software
+$ fetch http://pecl.php.net/get/tokyo_tyrant-0.7.0.tgz
+$ tar xzf tokyo_tyrant-0.7.0.tgz
+$ cd tokyo_tyrant-0.7.0
+$ /usr/local/php_tt/bin/phpize
+$ ./configure --with-php-config=/usr/local/php_tt/bin/php-config
+$ make
+$ sudo make install
+</code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+<code>sh
+$ cp /usr/local/php_tt/lib/php/extensions/no-debug-non-zts-20090626/tokyo_tyrant.so /usr/local/php_tt/etc/
+</code></p>
+
+<p>编辑php的配置文件
+<code>sh
+vi /usr/local/php_tt/etc/php.ini
+</code>
+加入1行
+<code>sh
+extension=tokyo_tyrant.so
+</code></p>
+
+<h4>测试1</h4>
+
+<p>编辑php文件
+```php
+&lt;?php
+/<em>*
+ * test.php
+ </em>/
+$tt = new TokyoTyrant(&ldquo;localhost&rdquo;);
+$tt->put(&ldquo;language&rdquo;, &ldquo;C/C++&rdquo;);
+echo &lsquo;language:&rsquo; . $tt->get(&ldquo;language&rdquo;) . &ldquo;\n&rdquo;;</p>
+
+<p>echo &lsquo;The count of records is:&rsquo; . $tt &ndash;> num() . &ldquo;\n&rdquo;;</p>
+
+<p>print_r($tt &ndash;> stat());</p>
+
+<p>$it = $tt &ndash;> getIterator();
+foreach ($it as $key => $val) {</p>
+
+<pre><code>echo "key: $key, val: $val\n";
+</code></pre>
+
+<p>}
+?>
+<code>
+运行
+</code>sh
+/usr/local/php_tt/bin/php test.php
+language:C/C++
+The count of records is:1
+Array                                                                                                                                                [0/1804]
+(</p>
+
+<pre><code>[version] =&gt; 1.1.41
+[libver] =&gt; 324
+[protver] =&gt; 0.91
+[os] =&gt; FreeBSD
+[time] =&gt; 1388045682.650761
+[pid] =&gt; 69442
+[sid] =&gt; 0
+[type] =&gt; on-memory
+[path] =&gt; *
+[rnum] =&gt; 1
+[size] =&gt; 525437
+[bigend] =&gt; 0
+[fd] =&gt; 5
+[loadavg] =&gt; 0.958008
+[memrss] =&gt; 92448
+[ru_user] =&gt; 0.109603
+[ru_sys] =&gt; 0.137003
+[ru_real] =&gt; 352.795682
+[cnt_put] =&gt; 2
+[cnt_putkeep] =&gt; 0
+[cnt_putcat] =&gt; 0
+[cnt_putshl] =&gt; 0
+[cnt_putnr] =&gt; 0
+[cnt_out] =&gt; 0
+[cnt_get] =&gt; 3
+[cnt_mget] =&gt; 0
+[cnt_vsiz] =&gt; 0
+[cnt_iterinit] =&gt; 2
+[cnt_iternext] =&gt; 2
+[cnt_fwmkeys] =&gt; 0
+[cnt_addint] =&gt; 0
+[cnt_adddouble] =&gt; 0
+[cnt_ext] =&gt; 0
+[cnt_sync] =&gt; 0
+[cnt_optimize] =&gt; 0
+[cnt_vanish] =&gt; 0
+[cnt_copy] =&gt; 0
+[cnt_restore] =&gt; 0
+[cnt_setmst] =&gt; 0
+[cnt_rnum] =&gt; 2
+[cnt_size] =&gt; 0
+[cnt_stat] =&gt; 2
+[cnt_misc] =&gt; 0
+[cnt_repl] =&gt; 0
+[cnt_put_miss] =&gt; 0
+[cnt_out_miss] =&gt; 0
+[cnt_get_miss] =&gt; 0
+</code></pre>
+
+<p>)
+key: language, val: C/C++
+```
+可以看到这个扩展的遍历功能相当好用:)</p>
+
+<h4>参考</h4>
+
+<p>linux下的请自行参考《Debian下PHP的Tokyo Tyrant安装配置及测试》</p>
+]]></content>
+  </entry>
+  
+</feed>
