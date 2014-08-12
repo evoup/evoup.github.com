@@ -12,7 +12,7 @@ categories: [mysql]
 
 ###恢复主主的工具
 ```bash
-> wget http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz
+> wget http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz 
 > tar xzf percona-toolkit-2.2.6.tar.gz
 > cd percona-toolkit-2.2.6
 > perl Makefile.PL
@@ -38,16 +38,19 @@ flush privileges;
 回来继续
 ```bash
 sudo cpan DBD::mysql
+make
+sudo make install
 ```
 
 ###检查完整性
 ```bash
 [yinjia@hm15hadoop01 percona-toolkit-2.2.6]>sudo pt-table-checksum  --recursion-method=processlist
-Cannot connect to h=10.10.8.45
-Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.
 ```
+` Cannot connect to h=10.10.8.45 `
+` Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information. `
 
-在主上运行
+
+报错，在主上运行
 ```
 mysql> show slave hosts;
 +-----------+------+------+-----------+
