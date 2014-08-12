@@ -131,7 +131,7 @@
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt; wget http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt; wget http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz
 </span><span class='line'>&gt; tar xzf percona-toolkit-2.2.6.tar.gz
 </span><span class='line'>&gt; <span class="nb">cd </span>percona-toolkit-2.2.6
 </span><span class='line'>&gt; perl Makefile.PL
@@ -161,22 +161,25 @@
 <p>回来继续</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cpan DBD::mysql
+</span><span class='line'>make
+</span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
 <h3>检查完整性</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;sudo pt-table-checksum  --recursion-method<span class="o">=</span>processlist
-</span><span class='line'>Cannot connect to <span class="nv">h</span><span class="o">=</span>10.10.8.45
-</span><span class='line'>Diffs cannot be detected because no slaves were found.  Please <span class="nb">read </span>the --recursion-method documentation <span class="k">for </span>information.
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>在主上运行</p>
+<p><code>Cannot connect to h=10.10.8.45</code>
+<code>Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.</code></p>
+
+<p>报错，在主上运行</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-08-03T22:22:10+08:00</updated>
+  <updated>2014-08-12T15:56:46+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -27,7 +27,7 @@
 
 <p>```bash</p>
 
-<blockquote><p>wget <a href="http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz">http://www.percona.com/redir/downloads/percona-toolkit/2.2.6/percona-toolkit-2.2.6.tar.gz</a>
+<blockquote><p>wget <a href="http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz">http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz</a>
 tar xzf percona-toolkit-2.2.6.tar.gz
 cd percona-toolkit-2.2.6
 perl Makefile.PL
@@ -52,17 +52,19 @@ flush privileges;
 <p>回来继续
 <code>bash
 sudo cpan DBD::mysql
+make
+sudo make install
 </code></p>
 
 <h3>检查完整性</h3>
 
 <p><code>bash
 [yinjia@hm15hadoop01 percona-toolkit-2.2.6]&gt;sudo pt-table-checksum  --recursion-method=processlist
-Cannot connect to h=10.10.8.45
-Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.
-</code></p>
+</code>
+<code>Cannot connect to h=10.10.8.45</code>
+<code>Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.</code></p>
 
-<p>在主上运行
+<p>报错，在主上运行
 <code>
 mysql&gt; show slave hosts;
 +-----------+------+------+-----------+
