@@ -98,7 +98,7 @@ mysql>show master status;
 ```
 在ServerA绑定好到ServerB的同步关系
 ```
-mysql> change master to master_host='192.168.216.211',master_password='madcore',master_user='madcore',master_log_file='mysql-bin.000019',master_log_pos=107;
+mysql> change master to master_host='192.168.216.211',master_password='reppass',master_user='repuser',master_log_file='mysql-bin.000019',master_log_pos=107;
 ```
 
 同样的，再查看ServerA的master状况
@@ -113,7 +113,7 @@ mysql> show master status;
 
 再ServerB绑定好到ServerA的同步关系
 ```
-mysql> change master to master_host='192.168.216.210',master_password='madcore',master_user='madcore',master_log_file='mysql-bin.000018',master_log_pos=23;
+mysql> change master to master_host='192.168.216.210',master_password='reppass',master_user='repuser',master_log_file='mysql-bin.000018',master_log_pos=23;
 ```
 
 在ServerA和ServerB打开slave和解锁表
