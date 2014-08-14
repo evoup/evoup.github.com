@@ -45,7 +45,7 @@ $ sudo cp /usr/local/share/mysql/my-medium.cnf /etc/my.cnf
 ```
 
 开启二进制日志
-接下来需要在ServerA的/etc/my.cnf中添加配置
+接下来需要在ServerA的/etc/my.cnf中的mysqld上下文中添加配置
 ```
 user=mysql
 binlog-do-db=monitor1_db
@@ -58,6 +58,7 @@ skip-name-resolve
 sync_binlog=1
 auto_increment_increment=2
 auto_increment_offset=1
+server-id=1
 ```
 而在ServerB的/etc/my.cnf中
 ```
@@ -72,6 +73,7 @@ skip-name-resolve
 sync_binlog=1
 auto_increment_increment=2
 auto_increment_offset=2
+server-id=2
 ```
 
 几点说明：
