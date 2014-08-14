@@ -4,7 +4,7 @@
   <title><![CDATA[Category: android | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/android/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-08-12T15:56:46+08:00</updated>
+  <updated>2014-08-14T11:15:36+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -200,76 +200,144 @@ gdb.setup  gdbserver  libhello-jni.so
 <img src="/images/evoup/android_cdt_ndk/12.png" alt="Alt text" /></p>
 
 <p>分析一下调用代码
-{% codeblock lang:java HelloJni.java %}
-/<em>
- * Copyright &copy; 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the &ldquo;License&rdquo;);
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an &ldquo;AS IS&rdquo; BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- </em>/
-package com.example.hellojni;</p>
-
-<p>import android.app.Activity;
-import android.widget.TextView;
-import android.os.Bundle;</p>
-
-<p>public class HelloJni extends Activity //HelloJni继承自活动对象事件调度类
-{</p>
-
-<pre><code>/** Called when the activity is first created. */
-@Override
-public void onCreate(Bundle savedInstanceState) //重写onCreate方法
-{
-    super.onCreate(savedInstanceState);
-
-    /* Create a TextView and set its content.
-     * the text is retrieved by calling a native
-     * function.
-     */
-    TextView  tv = new TextView(this); //创建一个文字view
-    tv.setText( stringFromJNI() ); //调用自定义方法stringFromJNI
-    setContentView(tv);
-}
-
-/* A native method that is implemented by the
- * 'hello-jni' native library, which is packaged
- * with this application.
- */
-public native String  stringFromJNI(); //有native代表是c++的代码，这里仅仅是声明
-
-/* This is another native method declaration that is *not*
- * implemented by 'hello-jni'. This is simply to show that
- * you can declare as many native methods in your Java code
- * as you want, their implementation is searched in the
- * currently loaded native libraries only the first time
- * you call them.
- *
- * Trying to call this function will result in a
- * java.lang.UnsatisfiedLinkError exception !
- */
-public native String  unimplementedStringFromJNI(); //同样是C++的代码
-
-/* this is used to load the 'hello-jni' library on application
- * startup. The library has already been unpacked into
- * /data/data/com.example.hellojni/lib/libhello-jni.so at
- * installation time by the package manager.
- */
-static {
-    System.loadLibrary("hello-jni"); //调用刚才ndk生成的hello-jni.so
-}
-</code></pre>
-
-<p>}
-{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>HelloJni.java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">/&lt;</span><span class="n">em</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Copyright</span> <span class="o">&amp;</span><span class="n">copy</span><span class="o">;</span> <span class="mi">2009</span> <span class="n">The</span> <span class="n">Android</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Project</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">Apache</span> <span class="n">License</span><span class="o">,</span> <span class="n">Version</span> <span class="mf">2.0</span> <span class="o">(</span><span class="n">the</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="o">;</span><span class="n">License</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="o">;);</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">you</span> <span class="n">may</span> <span class="n">not</span> <span class="n">use</span> <span class="k">this</span> <span class="n">file</span> <span class="n">except</span> <span class="n">in</span> <span class="n">compliance</span> <span class="n">with</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">You</span> <span class="n">may</span> <span class="n">obtain</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span> <span class="n">at</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span>      <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s">&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;</span><span class="o">&gt;</span><span class="nl">http:</span><span class="c1">//www.apache.org/licenses/LICENSE-2.0&lt;/a&gt;</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Unless</span> <span class="n">required</span> <span class="n">by</span> <span class="n">applicable</span> <span class="n">law</span> <span class="n">or</span> <span class="n">agreed</span> <span class="n">to</span> <span class="n">in</span> <span class="n">writing</span><span class="o">,</span> <span class="n">software</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">distributed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span> <span class="n">is</span> <span class="n">distributed</span> <span class="n">on</span> <span class="n">an</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="o">;</span><span class="n">AS</span> <span class="n">IS</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="o">;</span> <span class="n">BASIS</span><span class="o">,</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">WITHOUT</span> <span class="n">WARRANTIES</span> <span class="n">OR</span> <span class="n">CONDITIONS</span> <span class="n">OF</span> <span class="n">ANY</span> <span class="n">KIND</span><span class="o">,</span> <span class="n">either</span> <span class="n">express</span> <span class="n">or</span> <span class="n">implied</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">See</span> <span class="n">the</span> <span class="n">License</span> <span class="k">for</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">language</span> <span class="n">governing</span> <span class="n">permissions</span> <span class="n">and</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">limitations</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">hellojni</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">android.app.Activity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.widget.TextView</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.os.Bundle</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloJni</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="c1">//HelloJni继承自活动对象事件调度类</span>
+</span><span class='line'><span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="cm">/** Called when the activity is first created. */</span>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="c1">//重写onCreate方法</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/* Create a TextView and set its content.</span>
+</span><span class='line'><span class="cm">     * the text is retrieved by calling a native</span>
+</span><span class='line'><span class="cm">     * function.</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="n">TextView</span>  <span class="n">tv</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TextView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="c1">//创建一个文字view</span>
+</span><span class='line'>    <span class="n">tv</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span> <span class="n">stringFromJNI</span><span class="o">()</span> <span class="o">);</span> <span class="c1">//调用自定义方法stringFromJNI</span>
+</span><span class='line'>    <span class="n">setContentView</span><span class="o">(</span><span class="n">tv</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* A native method that is implemented by the</span>
+</span><span class='line'><span class="cm"> * &#39;hello-jni&#39; native library, which is packaged</span>
+</span><span class='line'><span class="cm"> * with this application.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">native</span> <span class="n">String</span>  <span class="nf">stringFromJNI</span><span class="o">();</span> <span class="c1">//有native代表是c++的代码，这里仅仅是声明</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* This is another native method declaration that is *not*</span>
+</span><span class='line'><span class="cm"> * implemented by &#39;hello-jni&#39;. This is simply to show that</span>
+</span><span class='line'><span class="cm"> * you can declare as many native methods in your Java code</span>
+</span><span class='line'><span class="cm"> * as you want, their implementation is searched in the</span>
+</span><span class='line'><span class="cm"> * currently loaded native libraries only the first time</span>
+</span><span class='line'><span class="cm"> * you call them.</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * Trying to call this function will result in a</span>
+</span><span class='line'><span class="cm"> * java.lang.UnsatisfiedLinkError exception !</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">native</span> <span class="n">String</span>  <span class="nf">unimplementedStringFromJNI</span><span class="o">();</span> <span class="c1">//同样是C++的代码</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* this is used to load the &#39;hello-jni&#39; library on application</span>
+</span><span class='line'><span class="cm"> * startup. The library has already been unpacked into</span>
+</span><span class='line'><span class="cm"> * /data/data/com.example.hellojni/lib/libhello-jni.so at</span>
+</span><span class='line'><span class="cm"> * installation time by the package manager.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">static</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&quot;hello-jni&quot;</span><span class="o">);</span> <span class="c1">//调用刚才ndk生成的hello-jni.so</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 C++的代码暂时就不看了，一步一步来，我们还没装cdt，不急着搞清楚，有兴趣的到文章最后去看链接</p>
 
 <h3>什么是CDT</h3>
@@ -418,95 +486,182 @@ bash C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build
 <!-- more -->
 
 
-<p>{% codeblock lang:java WebViewDemo.java %}
-package com.google.android.webviewdemo;</p>
-
-<p>import android.app.Activity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.webkit.JsResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;</p>
-
-<p>/<em>*
- * Demonstrates how to embed a WebView in your activity. Also demonstrates how
- * to have javascript in the WebView call into the activity, and how the activity
- * can invoke javascript.
- * <p>
- * In this example, clicking on the android in the WebView will result in a call into
- * the activities code in {@link DemoJavaScriptInterface#clickOnAndroid()}. This code
- * will turn around and invoke javascript using the {@link WebView#loadUrl(String)}
- * method.
- * <p>
- * Obviously all of this could have been accomplished without calling into the activity
- * and then back into javascript, but this code is intended to show how to set up the
- * code paths for this sort of communication.
- *
- </em>/
-public class WebViewDemo extends Activity {</p>
-
-<pre><code>private static final String LOG_TAG = "WebViewDemo";
-
-private WebView mWebView;
-
-private Handler mHandler = new Handler();
-
-@Override
-public void onCreate(Bundle icicle) {
-    super.onCreate(icicle);
-    setContentView(R.layout.main);
-    mWebView = (WebView) findViewById(R.id.webview);
-
-    WebSettings webSettings = mWebView.getSettings();
-    webSettings.setSavePassword(false);
-    webSettings.setSaveFormData(false);
-    webSettings.setJavaScriptEnabled(true);
-    webSettings.setSupportZoom(false);
-
-    mWebView.setWebChromeClient(new MyWebChromeClient());
-
-    mWebView.addJavascriptInterface(new DemoJavaScriptInterface(), "demo");
-
-    mWebView.loadUrl("file:///android_asset/demo.html");
-}
-
-final class DemoJavaScriptInterface {
-
-    DemoJavaScriptInterface() {
-    }
-
-    /**
-     * This is not called on the UI thread. Post a runnable to invoke
-     * loadUrl on the UI thread.
-     */
-    public void clickOnAndroid() {
-        mHandler.post(new Runnable() {
-            public void run() {
-                mWebView.loadUrl("javascript:wave()");
-            }
-        });
-
-    }
-}
-
-/**
- * Provides a hook for calling "alert" from javascript. Useful for
- * debugging your javascript.
- */
-final class MyWebChromeClient extends WebChromeClient {
-    @Override
-    public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-        Log.d(LOG_TAG, message);
-        result.confirm();
-        return true;
-    }
-}
-</code></pre>
-
-<p>}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>WebViewDemo.java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">google</span><span class="o">.</span><span class="na">android</span><span class="o">.</span><span class="na">webviewdemo</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kn">import</span> <span class="nn">android.app.Activity</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.os.Bundle</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.os.Handler</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.util.Log</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.webkit.JsResult</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.webkit.WebChromeClient</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.webkit.WebSettings</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">android.webkit.WebView</span><span class="o">;&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;/&lt;</span><span class="n">em</span><span class="o">&gt;*</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Demonstrates</span> <span class="n">how</span> <span class="n">to</span> <span class="n">embed</span> <span class="n">a</span> <span class="n">WebView</span> <span class="n">in</span> <span class="n">your</span> <span class="n">activity</span><span class="o">.</span> <span class="n">Also</span> <span class="n">demonstrates</span> <span class="n">how</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">to</span> <span class="n">have</span> <span class="n">javascript</span> <span class="n">in</span> <span class="n">the</span> <span class="n">WebView</span> <span class="n">call</span> <span class="n">into</span> <span class="n">the</span> <span class="n">activity</span><span class="o">,</span> <span class="n">and</span> <span class="n">how</span> <span class="n">the</span> <span class="n">activity</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">can</span> <span class="n">invoke</span> <span class="n">javascript</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">In</span> <span class="k">this</span> <span class="n">example</span><span class="o">,</span> <span class="n">clicking</span> <span class="n">on</span> <span class="n">the</span> <span class="n">android</span> <span class="n">in</span> <span class="n">the</span> <span class="n">WebView</span> <span class="n">will</span> <span class="n">result</span> <span class="n">in</span> <span class="n">a</span> <span class="n">call</span> <span class="n">into</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">the</span> <span class="n">activities</span> <span class="n">code</span> <span class="n">in</span> <span class="o">{</span><span class="nd">@link</span> <span class="n">DemoJavaScriptInterface</span><span class="err">#</span><span class="n">clickOnAndroid</span><span class="o">()}.</span> <span class="n">This</span> <span class="n">code</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">will</span> <span class="n">turn</span> <span class="n">around</span> <span class="n">and</span> <span class="n">invoke</span> <span class="n">javascript</span> <span class="n">using</span> <span class="n">the</span> <span class="o">{</span><span class="nd">@link</span> <span class="n">WebView</span><span class="err">#</span><span class="n">loadUrl</span><span class="o">(</span><span class="n">String</span><span class="o">)}</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">method</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">Obviously</span> <span class="n">all</span> <span class="n">of</span> <span class="k">this</span> <span class="n">could</span> <span class="n">have</span> <span class="n">been</span> <span class="n">accomplished</span> <span class="n">without</span> <span class="n">calling</span> <span class="n">into</span> <span class="n">the</span> <span class="n">activity</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">and</span> <span class="n">then</span> <span class="n">back</span> <span class="n">into</span> <span class="n">javascript</span><span class="o">,</span> <span class="n">but</span> <span class="k">this</span> <span class="n">code</span> <span class="n">is</span> <span class="n">intended</span> <span class="n">to</span> <span class="n">show</span> <span class="n">how</span> <span class="n">to</span> <span class="n">set</span> <span class="n">up</span> <span class="n">the</span>
+</span><span class='line'> <span class="o">*</span> <span class="n">code</span> <span class="n">paths</span> <span class="k">for</span> <span class="k">this</span> <span class="n">sort</span> <span class="n">of</span> <span class="n">communication</span><span class="o">.</span>
+</span><span class='line'> <span class="o">*</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WebViewDemo</span> <span class="kd">extends</span> <span class="n">Activity</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOG_TAG</span> <span class="o">=</span> <span class="s">&quot;WebViewDemo&quot;</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">private</span> <span class="n">WebView</span> <span class="n">mWebView</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">private</span> <span class="n">Handler</span> <span class="n">mHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Handler</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@Override</span>
+</span><span class='line'><span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">icicle</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">icicle</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">main</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">mWebView</span> <span class="o">=</span> <span class="o">(</span><span class="n">WebView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">webview</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">WebSettings</span> <span class="n">webSettings</span> <span class="o">=</span> <span class="n">mWebView</span><span class="o">.</span><span class="na">getSettings</span><span class="o">();</span>
+</span><span class='line'>    <span class="n">webSettings</span><span class="o">.</span><span class="na">setSavePassword</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">webSettings</span><span class="o">.</span><span class="na">setSaveFormData</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">webSettings</span><span class="o">.</span><span class="na">setJavaScriptEnabled</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'>    <span class="n">webSettings</span><span class="o">.</span><span class="na">setSupportZoom</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mWebView</span><span class="o">.</span><span class="na">setWebChromeClient</span><span class="o">(</span><span class="k">new</span> <span class="n">MyWebChromeClient</span><span class="o">());</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mWebView</span><span class="o">.</span><span class="na">addJavascriptInterface</span><span class="o">(</span><span class="k">new</span> <span class="n">DemoJavaScriptInterface</span><span class="o">(),</span> <span class="s">&quot;demo&quot;</span><span class="o">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mWebView</span><span class="o">.</span><span class="na">loadUrl</span><span class="o">(</span><span class="s">&quot;file:///android_asset/demo.html&quot;</span><span class="o">);</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">final</span> <span class="kd">class</span> <span class="nc">DemoJavaScriptInterface</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">DemoJavaScriptInterface</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     * This is not called on the UI thread. Post a runnable to invoke</span>
+</span><span class='line'><span class="cm">     * loadUrl on the UI thread.</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">clickOnAndroid</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">mHandler</span><span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>                <span class="n">mWebView</span><span class="o">.</span><span class="na">loadUrl</span><span class="o">(</span><span class="s">&quot;javascript:wave()&quot;</span><span class="o">);</span>
+</span><span class='line'>            <span class="o">}</span>
+</span><span class='line'>        <span class="o">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Provides a hook for calling &quot;alert&quot; from javascript. Useful for</span>
+</span><span class='line'><span class="cm"> * debugging your javascript.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">final</span> <span class="kd">class</span> <span class="nc">MyWebChromeClient</span> <span class="kd">extends</span> <span class="n">WebChromeClient</span> <span class="o">{</span>
+</span><span class='line'>    <span class="nd">@Override</span>
+</span><span class='line'>    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onJsAlert</span><span class="o">(</span><span class="n">WebView</span> <span class="n">view</span><span class="o">,</span> <span class="n">String</span> <span class="n">url</span><span class="o">,</span> <span class="n">String</span> <span class="n">message</span><span class="o">,</span> <span class="n">JsResult</span> <span class="n">result</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">Log</span><span class="o">.</span><span class="na">d</span><span class="o">(</span><span class="n">LOG_TAG</span><span class="o">,</span> <span class="n">message</span><span class="o">);</span>
+</span><span class='line'>        <span class="n">result</span><span class="o">.</span><span class="na">confirm</span><span class="o">();</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>首先需要搞懂Activity这个核心概念，基本上是进行android的活动对象事件调度的类，我们看一下android api中的activity的生命周期：</p>
 
@@ -618,32 +773,56 @@ final class MyWebChromeClient extends WebChromeClient {
 <h3>分析html部分代码</h3>
 
 <p>app代码完了，再来看html
-{% codeblock lang:html demo.html %}
-<html></p>
-
-<pre><code>&lt;script language="javascript"&gt;
-    /* This function is invoked by the activity */
-    function wave() {
-        alert("1");
-        document.getElementById("droid").src="android_waving.png";
-        alert("2");
-    }
-&lt;/script&gt;
-&lt;body&gt;
-    &lt;!-- Calls into the javascript interface for the activity --&gt;
-    &lt;a onClick="window.demo.clickOnAndroid()"&gt;&lt;div style="width:80px;
-        margin:0px auto;
-        padding:10px;
-        text-align:center;
-        border:2px solid #202020;" &gt;
-            &lt;img id="droid" src="android_normal.png"/&gt;&lt;br&gt;
-            Click me!
-    &lt;/div&gt;&lt;/a&gt;
-&lt;/body&gt;
-</code></pre>
-
-<p></html>
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>demo.html </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;html&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;pre&gt;&lt;code&gt;</span><span class="ni">&amp;lt;</span>script language=&quot;javascript&quot;<span class="ni">&amp;gt;</span>
+</span><span class='line'>    /* This function is invoked by the activity */
+</span><span class='line'>    function wave() {
+</span><span class='line'>        alert(&quot;1&quot;);
+</span><span class='line'>        document.getElementById(&quot;droid&quot;).src=&quot;android_waving.png&quot;;
+</span><span class='line'>        alert(&quot;2&quot;);
+</span><span class='line'>    }
+</span><span class='line'><span class="ni">&amp;lt;</span>/script<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>body<span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>!-- Calls into the javascript interface for the activity --<span class="ni">&amp;gt;</span>
+</span><span class='line'>    <span class="ni">&amp;lt;</span>a onClick=&quot;window.demo.clickOnAndroid()&quot;<span class="ni">&amp;gt;&amp;lt;</span>div style=&quot;width:80px;
+</span><span class='line'>        margin:0px auto;
+</span><span class='line'>        padding:10px;
+</span><span class='line'>        text-align:center;
+</span><span class='line'>        border:2px solid #202020;&quot; <span class="ni">&amp;gt;</span>
+</span><span class='line'>            <span class="ni">&amp;lt;</span>img id=&quot;droid&quot; src=&quot;android_normal.png&quot;/<span class="ni">&amp;gt;&amp;lt;</span>br<span class="ni">&amp;gt;</span>
+</span><span class='line'>            Click me!
+</span><span class='line'>    <span class="ni">&amp;lt;</span>/div<span class="ni">&amp;gt;&amp;lt;</span>/a<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="ni">&amp;lt;</span>/body<span class="ni">&amp;gt;</span>
+</span><span class='line'><span class="nt">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nt">&lt;p&gt;&lt;/html&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>注意看window.demo.clickOnAndroid这个JavaScript方法，刚刚我们在app代码里用addJavascriptInterface方法生成好了一个window.demo对象，就是通过这个对象，就可以调用app内置方法来实现网页的跳转。</p>
 
