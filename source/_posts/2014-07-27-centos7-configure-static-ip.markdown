@@ -58,3 +58,4 @@ sudo service network restart
 ```
 这样应该就完成配置可以上网了。
 
+ps:也可以使用system-config-network-tui这个软件以GUI方式进行配置，用yum安装即可。
