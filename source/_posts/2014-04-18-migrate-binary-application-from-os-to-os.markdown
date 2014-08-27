@@ -290,4 +290,7 @@ sudo cp /usr/local/lib/libcurl.a /lib/
 这样就肯定能找到了,再次编译运行终于出现php的信息了。
 ![Alt text](/images/evoup/pcc_result2.png)
 
+这里提供整个系统下载，帐号root密码空，供自行研究：）
+http://pan.baidu.com/s/1hqkTnE0
+
 告一段落，下一篇写怎么把这些东西做成rpm直接安装
