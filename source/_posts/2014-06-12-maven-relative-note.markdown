@@ -52,7 +52,7 @@ mvn clean package
 以上命令能直接生成最终的jar包文件，同时实现mvn clean test的所有功能
 
 
-###mvn常用命令
+###常用命令
 编译
 ```
 mvn compile
@@ -63,24 +63,28 @@ mvn compile
 mvn clean
 ```
 
-mvn获取所有依赖并且打包
+获取所有依赖并且打包
 ```
 mvn dependency:copy-dependencies -DoutputDirectory=lib package
 ```
 
-maven不经过测试直接打包
+不经过测试直接打包
 ```
 mvn -DskipTests clean package
 ```
 
 
-###mvn找依赖的方法
+###找依赖的方法
 以下两个网站任意一个直接在搜索框中给出java根类即可，第一个网站还可以在线查看jar包里的方法，可以当在线手册查阅：
 
 https://repository.sonatype.org/
 
 http://mvnrepository.com/
 
+###创建骨架
+```
+mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=myapp
+```
 
 参考：
 《Maven实战》
