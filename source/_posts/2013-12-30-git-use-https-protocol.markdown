@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "git使用https协议"
-date: 2014-12-30 22:09
+date: 2013-12-30 22:09
 comments: true
-categories: version-control 
+categories: version_control 
 ---
 
 git支持的协议主要有git、ssh、http、https这几种，国内防火墙对github的作用下，导致长期使用github服务的程序开发人员要忍受缓慢的push和pull速度。现在终于找到了一个比较不错的方法提升工作效率，那就是使用goagent+git/https的方式。
