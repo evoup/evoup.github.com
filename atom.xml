@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-08-30T19:32:53+08:00</updated>
+  <updated>2014-08-30T22:22:28+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,48 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[git使用https协议]]></title>
+    <link href="http://evoupsight.com/blog/2014/12/30/git-use-https-protocol/"/>
+    <updated>2014-12-30T22:09:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/12/30/git-use-https-protocol</id>
+    <content type="html"><![CDATA[<p>git支持的协议主要有git、ssh、http、https这几种，国内防火墙对github的作用下，导致长期使用github服务的程序开发人员要忍受缓慢的push和pull速度。现在终于找到了一个比较不错的方法提升工作效率，那就是使用goagent+git/https的方式。</p>
+
+<!-- more -->
+
+
+<p>goagent配置这里就不提了，主要给出git端的设置参考,假设是在bash终端下操作git，需要设置这2个环境变量，写到~/.bashrc中再source一下即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">https_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8087&quot;</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">http_proxy</span><span class="o">=</span><span class="s2">&quot;127.0.0.1:8087&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>其实这里是通过linux的http/https代理设置的方法来加速！
+如果是tcsh</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>setenv https_proxy <span class="s2">&quot;127.0.0.1:8087&quot;</span>
+</span><span class='line'>setenv http_proxy <span class="s2">&quot;127.0.0.1:8087&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>同样是把以上的代码加到~/.cshrc中再source一下</p>
+
+<p>速度的问题解决了之后，你会发现其实每次都非常讨厌输入用户名和密码，那请看下文</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git config --global credential.helper store
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样git push就不需要输入密码了，享受成就感吧～</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hiveserver2的maven配置，使用cdh版本]]></title>
@@ -5436,57 +5478,6 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 <img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
 
 <p>告一段落。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（二）]]></title>
-    <link href="http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2/"/>
-    <updated>2014-03-18T22:17:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2</id>
-    <content type="html"><![CDATA[<p>上次的《使用CocoStudio创建骨骼动画》讨论到了如何创建骨骼和绑定骨骼关系，这节开始谈怎么创建帧动画。</p>
-
-<p>我把上次的每个图层命名成每个骨骼后，更新后的：<a href="http://pan.baidu.com/s/1mg0UXJi" target=_blank>工作cocostudio源文件下载</a></p>
-
-<!-- more -->
-
-
-<p><img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/01.png" alt="Alt text" /></p>
-
-<p>点击形体模式之后切换到动画模式<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/02.png" alt="Alt text" /></p>
-
-<p>开始第一个帧动画的制作，右键点击动作列表Animation1<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/03.png" alt="Alt text" /></p>
-
-<p>改名为stand,注意不要改成中文，否则以后写代码调用的时候可能会出现问题<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/04.png" alt="Alt text" /></p>
-
-<p>用鼠标框选全部的帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/05.png" alt="Alt text" /></p>
-
-<p>选择复制帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/06.png" alt="Alt text" /></p>
-
-<p>在60帧处右键，然后点击粘帖帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/07.png" alt="Alt text" /></p>
-
-<p>同样的方法，在30帧处右键点击粘帖帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/08.png" alt="Alt text" /></p>
-
-<p>然后把时间轴移到到30帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/09.png" alt="Alt text" /></p>
-
-<p>接下来编辑造型了，轻微旋转各个关节<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/10.png" alt="Alt text" /></p>
-
-<p>点击隐藏骨骼，可以展现整体角色<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/11.png" alt="Alt text" /></p>
-
-<p>看效果<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/animation.gif" alt="Alt text" /></p>
-
-<p>然后再创建一个run的动作，如法炮制，未完待续&hellip;</p>
 ]]></content>
   </entry>
   
