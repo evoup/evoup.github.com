@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: maven | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/maven/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2014-08-30T17:58:20+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[hiveserver2的maven配置，使用cdh版本]]></title>
+    <link href="http://evoupsight.com/blog/2014/08/30/hiveserver2-maven-config/"/>
+    <updated>2014-08-30T17:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/08/30/hiveserver2-maven-config</id>
+    <content type="html"><![CDATA[<p>hadoop2.0下开发软件我目前主要采用maven做项目构建管理，但要注意要使生产环境的版本和开发的版本一致。可以做的就是先了解生产环境的版本，然后给自己的软件指定相同的版本，避免兼容问题的发生。以下是方法记录。</p>
+
+<!-- more -->
+
+
+<h4>添加仓库</h4>
+
+<p>首先在pom.xml文件中添加repository
+```
+<repositories></p>
+
+<pre><code>&lt;repository&gt;
+    &lt;id&gt;cloudera&lt;/id&gt;
+    &lt;url&gt;https://repository.cloudera.com/artifactory/cloudera-repos/&lt;/url&gt;
+&lt;/repository&gt;
+</code></pre>
+
+<p></repositories>
+```</p>
+
+<h4>加入依赖</h4>
+
+<p>然后改用cdh的依赖，提供的artifactId和version就可以了
+主要是2个包的事情
+```
+<dependency></p>
+
+<pre><code>&lt;groupId&gt;org.apache.hive&lt;/groupId&gt;
+&lt;artifactId&gt;hive-jdbc&lt;/artifactId&gt;
+&lt;version&gt;0.10.0-cdh4.7.0&lt;/version&gt;
+</code></pre>
+
+<p></dependency>
+<dependency></p>
+
+<pre><code>&lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;
+&lt;artifactId&gt;hadoop-common&lt;/artifactId&gt;
+&lt;version&gt;2.0.0-cdh4.7.0&lt;/version&gt;
+</code></pre>
+
+<p></dependency>
+```</p>
+
+<p>依赖的部分，也可以用以下的方式载入
+<dependency></p>
+
+<pre><code>        &lt;groupId&gt;org.apache.hive&lt;/groupId&gt;  
+        &lt;artifactId&gt;htmlparser&lt;/artifactId&gt;  
+        &lt;version&gt;2.0&lt;/version&gt;  
+        &lt;scope&gt;system&lt;/scope&gt;  
+        &lt;systemPath&gt;${project.basedir}/lib/xxx.jar&lt;/systemPath&gt;  
+</code></pre>
+
+<p></dependency></p>
+
+<p>然后是hiveserver2使用和hiveserver1要注意的地方</p>
+
+<p>hiveserver2<p>
+<code>java
+URLHIVE="jdbc:hive2://"+hive_host+":"+hive_port+"/smartmad;auth=noSasl";
+Class.forName("org.apache.hive.jdbc.HiveDriver");
+</code>
+hiveserver1<p>
+<code>java
+URLHIVE="jdbc:hive://"+hive_host+":"+hive_port+"/smartmad;auth=noSasl";
+Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
+</code>
+这里我们从hive改进hiveserver2的包命名的角度不难看出，该版本已成为apache顶级项目。</p>
+
+<h4>参考文章</h4>
+
+<p><a href="http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Installation-Guide/cdh4ig_topic_31.html">http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Installation-Guide/cdh4ig_topic_31.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>
