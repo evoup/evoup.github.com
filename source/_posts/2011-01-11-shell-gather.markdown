@@ -163,6 +163,17 @@ find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
 ```sh
 find . -name "*.h" -exec mv {} temp/ \;
 ```
+把日志的第三个字段去重排序并显示
+cat engine_23.log | awk -F ',' '{print $3}' | sort | uniq -c
+
+ls详细用法<p>
+-l 代表长格式<p>
+-r 代表逆序<p>
+-t 代表按修改时间排序<p>
+-h使用长格式后采用人类可读方式<p>
+```sh
+ls -lrth
+```
 
 AWK的入门
 
