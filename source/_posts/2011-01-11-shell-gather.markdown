@@ -164,15 +164,24 @@ find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
 find . -name "*.h" -exec mv {} temp/ \;
 ```
 把日志的第三个字段去重排序并显示
+```sh
 cat engine_23.log | awk -F ',' '{print $3}' | sort | uniq -c
+```
 
 ls详细用法<p>
--l 代表长格式<p>
--r 代表逆序<p>
--t 代表按修改时间排序<p>
--h使用长格式后采用人类可读方式<p>
+-l代表长格式 -r代表逆序 -t代表按修改时间排序 -h使用长格式后采用人类可读方式
 ```sh
 ls -lrth
+```
+
+shell获取当前路径
+```sh
+$PWD
+```
+
+shell获取脚本所在路径
+```sh
+$(dirname $0)
 ```
 
 AWK的入门
