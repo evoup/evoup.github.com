@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-09-16T16:12:07+08:00</updated>
+  <updated>2014-09-16T16:33:32+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -458,6 +458,10 @@ mysqlimport -uuser -p -h127.0.0.1 dbname importdir/* --field-terminated-by=',' -
 以上这条语句代表把本地文件夹importdir下的所有准备导入的文本，按照以逗号为字段分割符，双引号为行分隔符，以压缩的方式，开12个线程同时导入到位于127.0.0.1上mysql服务器的dbname库中。
 可见这种方案可以多表并发导入，不需要写多条语句就可以完成任务，推荐使用,另外提一句，上面的语句只需要用php的fputcsv函数并指定文件资源和写入行字符串这2个参数就可以了。
 最后，如果使用mysqldump最好不要用-T的方式导出，因为据说无法使用set unique_checks、set autocommit等实现加速导入。</p>
+
+<h4>参考文章</h4>
+
+<p><a href="http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/">http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/</a></p>
 ]]></content>
   </entry>
   
