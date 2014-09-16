@@ -4,10 +4,10 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: cplusplus - Evoup`s Blog</title>
+  <title>导入mysql的几种方法 - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
-  <meta name="description" content="Category: cplusplus">
+  
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -16,7 +16,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://evoupsight.comblog/categories/cplusplus">
+  <link rel="canonical" href="http://evoupsight.com/blog/2012/09/16/mysql-import-method-compare">
   <link href="/favicon.png" type="image/png" rel="icon">
   <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
 
@@ -46,10 +46,10 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li >
+                <li class="active">
                     <a href="/">Blog</a>
                 </li>
-                <li class="active">
+                <li >
                     <a href="/blog/archives">Archives</a>
                 </li>
                 <li >
@@ -83,31 +83,16 @@
         <div id="content">
           <div class="row">
   <div class="page-content col-md-9">
-    <article role="article">
+    <article class="hentry" role="article">
       
-        <header class="page-header">
-          
-          
-            <h1 class="entry-title">
-              Category: Cplusplus
-              
-            </h1>
-          
-        </header>
-      
-      <div class="entry-content">
-        <div id="blog-archives" class="category">
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
 
 
 
-  
-  <h2>2014</h2>
 
-<article class="page-header">
-  
-<h1><a href="/blog/2014/01/09/freebsd-install-boost-for-regex/">freebsd上手动编译boost的boost-regex库</a></h1>
-<p class="meta text-muted">
-  
 
 
 
@@ -116,213 +101,155 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-09-16T14:16:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2012</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        导入mysql的几种方法
+        
+    </h1>
+    
+  </header>
 
 
+<div class="entry-content clearfix"><p>mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。</p>
 
+<!-- more -->
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-09T14:45:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2014</time>
-  
 
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
+<h4>1）mysql加管道符导入</h4>
 
+<p>这是最基本的方法,语法见下：</p>
 
-</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uuser -p dbname &lt; import.sql
+</span></code></pre></td></tr></table></div></figure>
 
-</article>
 
+<p>这种方案导入的时候要注意编码的问题，通过加入–default-character-set = utf8来解决，此外好像对csv和纯文本文件的导入支持比较差。要强制导入成功可以用&mdash;force参数。</p>
 
+<h4>2）load data infile</h4>
 
-<article class="page-header">
-  
-<h1><a href="/blog/2014/01/08/win7-install-vc6/">WIN7下安装VC++6.0的方法</a></h1>
-<p class="meta text-muted">
-  
+<p>这个需要在mysql的shell中跑，语法见下：</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql&gt; use dbname;set names utf8;load data infile <span class="s2">&quot;/path/to/import.csv&quot;</span> into table tbname<span class="o">(</span>field1,field2<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
+<p>这种方案默认的列分隔符为\t而行分隔符为\n，也就是说文本导入默认是unix换行格式的。而空数据的导入默认是认为\N导入之后就是NULL了。除此之外必须指定表名字，也就是说你有多个分表要导入就要写很多语句或者写一个shell遍历这么多的表，效率是可想而知的慢。</p>
 
+<h4>3）source</h4>
 
+<p>这个同样是需要在mysql的shell中跑，语法见下：</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql&gt; use dbname;set names utf8;source import.sql
+</span></code></pre></td></tr></table></div></figure>
 
 
+<p>这种方案我没怎么试过，据说会出现导入过程中卡死，退出表损坏的状况，不推荐大胆尝试。</p>
 
+<h4>4）mysql -e</h4>
 
+<p>这个方法其实就是执行若干sql，语法见下：</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uuser -p -e <span class="s2">&quot;use dbname;set names utf8;insert into tbname(field1,field2) values(&#39;foo&#39;,&#39;bar&#39;);&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2014-01-08T14:09:00+08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2014</time>
-  
 
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
+<p>所以这其实称不上是什么方法，前面的方法2和方法3都可以偷梁换柱啦：）</p>
 
+<h4>5）mysqlimport</h4>
 
-</p>
+<p>这是mysql官方安装包提供的工具了，使用方法：</p>
 
-</article>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysqlimport -uuser -p -h127.0.0.1 dbname importdir/* --field-terminated-by<span class="o">=</span><span class="s1">&#39;,&#39;</span> --filelds-optionally-enclosed-by<span class="o">=</span><span class="s1">&#39;&quot;&#39;</span> --local --compress --use-thread<span class="o">=</span>12
+</span></code></pre></td></tr></table></div></figure>
 
 
-
-  
-  <h2>2010</h2>
-
-<article class="page-header">
-  
-<h1><a href="/blog/2010/11/26/crc32-cpp/">C++实现crc32</a></h1>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
-
-
-  
-  <h2>2009</h2>
-
-<article class="page-header">
-  
-<h1><a href="/blog/2009/09/23/header-file-refered-by-each-other/">关于头文件互相包含的解决方法</a></h1>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-09-23T23:09:00+08:00" pubdate data-updated="true">Sep 23<span>rd</span>, 2009</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
-
-
-<article class="page-header">
-  
-<h1><a href="/blog/2009/06/10/cplusplus-init-a-lot-of-objects/">初始化一组C++对象</a></h1>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-06-10T13:29:00+08:00" pubdate data-updated="true">Jun 10<span>th</span>, 2009</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
-
-
-<article class="page-header">
-  
-<h1><a href="/blog/2009/06/02/cplusplus-string-to-int/">STL中string到int的类型转换</a></h1>
-<p class="meta text-muted">
-  
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-06-02T14:04:00+08:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2009</time>
-  
-
-<span class="glyphicon glyphicon-tags"></span>&nbsp;
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/cplusplus/'>cplusplus</a>
-  
-</span>
-
-
-</p>
-
-</article>
-
+<p>以上这条语句代表把本地文件夹importdir下的所有准备导入的文本，按照以逗号为字段分割符，双引号为行分隔符，以压缩的方式，开12个线程同时导入到位于127.0.0.1上mysql服务器的dbname库中。
+可见这种方案可以多表并发导入，不需要写多条语句就可以完成任务，推荐使用,另外提一句，上面的语句只需要用php的fputcsv函数并指定文件资源和写入行字符串这2个参数就可以了。
+最后，如果使用mysqldump最好不要用-T的方式导出，因为据说无法使用set unique_checks、set autocommit等实现加速导入。</p>
 </div>
 
-      </div>
-      
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2012-09-16T14:16:00+08:00" pubdate data-updated="true">Sep 16<span>th</span>, 2012</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/mysql/'>mysql</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2012/01/09/server-develop-knowledge/" title="Previous Post: 服务器开发知识汇总2010年整理的">&laquo; 服务器开发知识汇总2010年整理的</a></li>
+            
+            
+            <li class="next"><a href="/blog/2012/10/22/freebsd-install-ganglia3-dot-4/" title="Next Post: freebsd安装ganglia3.4">freebsd安装ganglia3.4 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
     </article>
-    
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
   </div>
 
   
-    <aside class="sidebar col-md-3">
-      
-        <section class="panel panel-default">
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">最新发表</h3>
   </div>
@@ -378,9 +305,17 @@
 
 
 
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
 
-      
-    </aside>
+    
+  </aside>
   
 </div>
 
