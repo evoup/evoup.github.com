@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-09-16T16:33:32+08:00</updated>
+  <updated>2014-09-17T11:17:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[sqoop导出数据到mysql]]></title>
+    <link href="http://evoupsight.com/blog/2014/09/16/sqoop-dump-to-mysql/"/>
+    <updated>2014-09-16T18:30:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/09/16/sqoop-dump-to-mysql</id>
+    <content type="html"><![CDATA[<p>现为apache项目的sqoop是原来是一款hadoop第三方开源模块，通过使用sqoop可以使进行hadoop(hive)的数据与传统关系型数据库（mysql、pgsql）交互。可以把关系型数据库导入hdfs，也可以把hdfs的数据导入关系型数据库。这里我用实例记录的方式讲一下怎么通过它把hive中的数据导入到mysql结果表中。</p>
+
+<!-- more -->
+
+
+<h4>安装</h4>
+
+<p>yum install sqoop-noarch sqoop-metastore.noarch</p>
+
+<h4>建表</h4>
+
+<p>首先是hive的表结构</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">use</span> <span class="n">db_work</span><span class="p">;</span>
+</span><span class='line'><span class="k">CREATE</span>  <span class="k">TABLE</span> <span class="n">table_work</span><span class="p">(</span>
+</span><span class='line'>  <span class="n">item</span> <span class="n">string</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">value</span> <span class="n">string</span><span class="p">)</span>
+</span><span class='line'><span class="n">PARTITIONED</span> <span class="k">BY</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">dt</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">tm</span> <span class="nb">int</span><span class="p">)</span>
+</span><span class='line'><span class="k">ROW</span> <span class="n">FORMAT</span> <span class="n">DELIMITED</span>
+</span><span class='line'>  <span class="n">FIELDS</span> <span class="n">TERMINATED</span> <span class="k">BY</span> <span class="s1">&#39;\t&#39;</span>
+</span><span class='line'><span class="n">STORED</span> <span class="k">AS</span> <span class="n">INPUTFORMAT</span>
+</span><span class='line'>  <span class="s1">&#39;org.apache.hadoop.mapred.TextInputFormat&#39;</span>
+</span><span class='line'><span class="n">OUTPUTFORMAT</span>
+</span><span class='line'>  <span class="s1">&#39;org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat&#39;</span>
+</span><span class='line'><span class="k">LOCATION</span>
+</span><span class='line'>  <span class="s1">&#39;hdfs://db_work/hive/warehouse/db_work.db/table_work&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意这里使用\t作为字段分隔符，与之后的sqoop保持一致。</p>
+
+<p>mysql表的格式</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">use</span> <span class="n">testdb</span><span class="p">;</span>
+</span><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="k">result</span><span class="o">`</span> <span class="p">(</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">item</span><span class="o">`</span> <span class="n">mediumtext</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">value</span><span class="o">`</span> <span class="n">mediumtext</span>
+</span><span class='line'><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">MyISAM</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意sqoop导入的字段如果过长，会报错<code>com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column</code> ，这里使用mediumtext解决这个问题。</p>
+
+<h4>导入</h4>
+
+<p>导入语句</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sqoop <span class="nb">export</span> -m8 --connect <span class="s1">&#39;jdbc:mysql://&#39;</span><span class="s2">&quot;${mysql_host}&quot;</span><span class="s1">&#39;:3306/testdb?useUnicode=true&amp;characterEncoding=utf8&#39;</span> --username <span class="k">${</span><span class="nv">mysql_user</span><span class="k">}</span> --password <span class="k">${</span><span class="nv">mysqlpass</span><span class="k">}</span> --table result --export-dir /hive/warehouse/db_work.db/table_work/dt<span class="o">=</span>20140916/tm<span class="o">=</span>1213 --input-fields-terminated-by <span class="s1">&#39;\t&#39;</span> --input-null-string <span class="s1">&#39;\\N&#39;</span> --input-null-non-string <span class="s1">&#39;\\N&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>以上语句可以正确地把名为table_work的hive表，以\t为列分隔符，\N为空数据，导入到名为result的mysql表</p>
+
+<h4>参考文章</h4>
+
+<p>《sqoop 从 hive 导到mysql遇到的问题》
+<a href="http://ju.outofmemory.cn/entry/44398">http://ju.outofmemory.cn/entry/44398</a></p>
+
+<p>《Sqoop1:exportdatatomysql》
+<a href="http://www.haogongju.net/art/2639227">http://www.haogongju.net/art/2639227</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[hiveserver2的maven配置，使用cdh版本]]></title>
@@ -5436,57 +5527,6 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 <img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
 
 <p>告一段落。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（二）]]></title>
-    <link href="http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2/"/>
-    <updated>2014-03-18T22:17:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2</id>
-    <content type="html"><![CDATA[<p>上次的《使用CocoStudio创建骨骼动画》讨论到了如何创建骨骼和绑定骨骼关系，这节开始谈怎么创建帧动画。</p>
-
-<p>我把上次的每个图层命名成每个骨骼后，更新后的：<a href="http://pan.baidu.com/s/1mg0UXJi" target=_blank>工作cocostudio源文件下载</a></p>
-
-<!-- more -->
-
-
-<p><img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/01.png" alt="Alt text" /></p>
-
-<p>点击形体模式之后切换到动画模式<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/02.png" alt="Alt text" /></p>
-
-<p>开始第一个帧动画的制作，右键点击动作列表Animation1<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/03.png" alt="Alt text" /></p>
-
-<p>改名为stand,注意不要改成中文，否则以后写代码调用的时候可能会出现问题<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/04.png" alt="Alt text" /></p>
-
-<p>用鼠标框选全部的帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/05.png" alt="Alt text" /></p>
-
-<p>选择复制帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/06.png" alt="Alt text" /></p>
-
-<p>在60帧处右键，然后点击粘帖帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/07.png" alt="Alt text" /></p>
-
-<p>同样的方法，在30帧处右键点击粘帖帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/08.png" alt="Alt text" /></p>
-
-<p>然后把时间轴移到到30帧<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/09.png" alt="Alt text" /></p>
-
-<p>接下来编辑造型了，轻微旋转各个关节<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/10.png" alt="Alt text" /></p>
-
-<p>点击隐藏骨骼，可以展现整体角色<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/11.png" alt="Alt text" /></p>
-
-<p>看效果<br>
-<img src="http://evoupsight.com/images/evoup/cocostudio_bone_animation2/animation.gif" alt="Alt text" /></p>
-
-<p>然后再创建一个run的动作，如法炮制，未完待续&hellip;</p>
 ]]></content>
   </entry>
   
