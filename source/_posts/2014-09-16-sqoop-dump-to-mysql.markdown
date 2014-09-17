@@ -9,7 +9,9 @@ categories: [hive]
 现为apache项目的sqoop是原来是一款hadoop第三方开源模块，通过使用sqoop可以使进行hadoop(hive)的数据与传统关系型数据库（mysql、pgsql）交互。可以把关系型数据库导入hdfs，也可以把hdfs的数据导入关系型数据库。这里我用实例记录的方式讲一下怎么通过它把hive中的数据导入到mysql结果表中。
 <!-- more -->
 ###安装
+```bash
 yum install sqoop-noarch sqoop-metastore.noarch
+```
 
 ###建表
 首先是hive的表结构
