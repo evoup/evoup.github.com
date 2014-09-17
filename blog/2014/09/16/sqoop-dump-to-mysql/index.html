@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>sqoop导出数据到mysql - Evoup`s Blog</title>
+  <title>sqoop导出hive数据到mysql - Evoup`s Blog</title>
   <meta name="author" content="Evoup`s Blog">
 
   
@@ -107,7 +107,7 @@
     
     
     <h1 class="entry-title">
-        Sqoop导出数据到mysql
+        Sqoop导出hive数据到mysql
         
     </h1>
     
@@ -119,11 +119,11 @@
 <!-- more -->
 
 
-<h4>安装</h4>
+<h3>安装</h3>
 
 <p>yum install sqoop-noarch sqoop-metastore.noarch</p>
 
-<h4>建表</h4>
+<h3>建表</h3>
 
 <p>首先是hive的表结构</p>
 
@@ -177,9 +177,9 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>注意sqoop导入的字段如果过长，会报错<code>com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column</code> ，这里使用mediumtext解决这个问题。</p>
+<p>注意sqoop导入的字段如果过长，会报错<p><code>com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column</code><p>，这里使用mediumtext解决这个问题。</p>
 
-<h4>导入</h4>
+<h3>导入</h3>
 
 <p>导入语句</p>
 
@@ -190,13 +190,20 @@
 
 <p>以上语句可以正确地把名为table_work的hive表，以\t为列分隔符，\N为空数据，导入到名为result的mysql表</p>
 
-<h4>参考文章</h4>
+<h3>其他说明</h3>
+
+<p>其实sqoop每次导出都会生成一个java文件，如果产生了导入错误，是可以人工通过程序干预解决错误的。这需要2个在sqoop命令后加2个参数&mdash;class-name和&mdash;jar-file来完成。</p>
+
+<h3>参考文章</h3>
 
 <p>《sqoop 从 hive 导到mysql遇到的问题》
 <a href="http://ju.outofmemory.cn/entry/44398">http://ju.outofmemory.cn/entry/44398</a></p>
 
 <p>《Sqoop1:exportdatatomysql》
 <a href="http://www.haogongju.net/art/2639227">http://www.haogongju.net/art/2639227</a></p>
+
+<p>《sqoop 使用心得(sqoop增量倒入)》
+<a href="http://www.xuebuyuan.com/1938334.html">http://www.xuebuyuan.com/1938334.html</a></p>
 </div>
 
 
@@ -276,7 +283,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item active" href="/blog/2014/09/16/sqoop-dump-to-mysql/">Sqoop导出数据到mysql</a>
+    <a class="list-group-item active" href="/blog/2014/09/16/sqoop-dump-to-mysql/">Sqoop导出hive数据到mysql</a>
     
     <a class="list-group-item " href="/blog/2014/08/30/hiveserver2-maven-config/">Hiveserver2的maven配置，使用cdh版本</a>
     
