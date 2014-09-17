@@ -53,7 +53,7 @@ sqoop export -m8 --connect 'jdbc:mysql://'"${mysql_host}"':3306/testdb?useUnicod
 以上语句可以正确地把名为table_work的hive表，以\t为列分隔符，\N为空数据，导入到名为result的mysql表
 
 ###其他说明
-其实sqoop每次导出都会生成一个java文件，如果产生了导入错误，是可以人工通过程序干预解决错误的。这需要2个在sqoop命令后加2个参数--class-name和--jar-file来完成。
+其实sqoop每次导出都会生成一个java文件，如果产生了导入错误，是可以人工通过程序干预解决错误的。这需要在sqoop命令后加2个参数--class-name和--jar-file来完成，详情参见sqoop文档。
 
 
 ###参考文章
