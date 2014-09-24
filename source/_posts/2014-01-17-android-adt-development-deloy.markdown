@@ -9,6 +9,9 @@ categories: [android]
 
 <!-- more -->
 
+（2014-09-24 嫌adt配置麻烦的可以直接到android开发者官网下载android-bundle <a href="http://developer.android.com/sdk/index.html#download">点击下载</a>）
+
+
 ###一、安装JDK
 安装JDK，我这里的windows7平台，先下载jdk7，然后安装，我的安装路径为C:\Program Files\Java\jdk1.7.0_25\。
 安装完成后设置环境变量
