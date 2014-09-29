@@ -154,6 +154,10 @@ find . -name "process*.rrd" -ok rm {} \;
 ifconfig | awk '{if(NR==5) print $2}'
 ```
 
+curl上传文件
+curl -X POST -d @/path/to/file.mp4 "http://172.16.25.220:8484/video/create/video/220cf3b6bcac367fe884604efc3a0e56.mp4"
+
+
 整个文件夹内替换字符串
 ```sh
 find . -name "*.php" -exec sed -i '' -e 's/checkDigital/validDigital/g' {} +
