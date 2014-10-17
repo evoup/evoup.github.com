@@ -40,6 +40,10 @@ mysql -uusername -p*** dbname < table_backup.sql
 ```sh
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
 ```
+grep过滤空行
+```sh
+grep -e '^$' -v filename
+```
 
 查看目录里的每个子目录的大小
 ```sh
