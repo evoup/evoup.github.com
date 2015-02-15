@@ -1,0 +1,1757 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: monitor | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/monitor/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2015-02-15T15:08:37+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[基于netsnmp的agent开发]]></title>
+    <link href="http://evoupsight.com/blog/2014/08/03/netsnmp-daemon-dev/"/>
+    <updated>2014-08-03T17:59:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/08/03/netsnmp-daemon-dev</id>
+    <content type="html"><![CDATA[<p>防止遗忘，实现一个snmp agent，基于ucd-netsnmp，可以无需netsnmp单独运行，加了点获取其他信息的代码。</p>
+
+<!-- more -->
+
+
+<p>struct.h
+```c</p>
+
+<h1>ifndef UCD_SNMP_STRUCT</h1>
+
+<h1>define UCD_SNMP_STRUCT</h1>
+
+<h1>define STRMAX 1024</h1>
+
+<h1>define SHPROC 1</h1>
+
+<h1>define EXECPROC 2</h1>
+
+<h1>define PASSTHRU 3</h1>
+
+<h1>define PASSTHRU_PERSIST 4</h1>
+
+<h1>define MIBMAX 30</h1>
+
+<p>struct extensible {</p>
+
+<pre><code>char            name[STRMAX];
+char            command[STRMAX];
+char            fixcmd[STRMAX];
+int             type;
+int             result;
+char            output[STRMAX];
+struct extensible *next;
+unsigned long   miboid[MIBMAX];
+size_t          miblen;
+int             pid;
+</code></pre>
+
+<p>};</p>
+
+<p>struct myproc {</p>
+
+<pre><code>char            name[STRMAX];
+char            fixcmd[STRMAX];
+int             min;
+int             max;
+struct myproc  *next;
+</code></pre>
+
+<p>};</p>
+
+<p>/<em>
+ * struct mibinfo
+ * {
+ * int numid;
+ * unsigned long mibid[10];
+ * char </em>name;
+ * void (<em>handle) ();
+ * };
+ </em>/</p>
+
+<h1>endif</h1>
+
+<p>```</p>
+
+<p>example.h
+```c
+/<em>
+ *  Template MIB group interface &ndash; example.h
+ *
+ </em>/</p>
+
+<p>/<em>
+ * Don&rsquo;t include ourselves twice
+ </em>/</p>
+
+<h1>ifndef _MIBGROUP_EXAMPLE_H</h1>
+
+<h1>define _MIBGROUP_EXAMPLE_H</h1>
+
+<h1>ifdef __cplusplus</h1>
+
+<p>extern &ldquo;C&rdquo; {</p>
+
+<h1>endif</h1>
+
+<pre><code>/*
+ * We use 'header_generic' from the util_funcs module,
+ *  so make sure this module is included in the agent.
+ */
+</code></pre>
+
+<p>config_require(util_funcs)</p>
+
+<pre><code>/*
+ * Declare our publically-visible functions.
+ * Typically, these will include the initialization and shutdown functions,
+ *  the main request callback routine and any writeable object methods.
+ *
+ * Function prototypes are provided for the callback routine ('FindVarMethod')
+ *  and writeable object methods ('WriteMethod').
+ */
+ void     init_example(void);
+ FindVarMethod var_example;
+ WriteMethod write_exampleint;
+ WriteMethod write_exampletrap;
+ WriteMethod write_exampletrap2;
+
+
+/*
+ * Magic number definitions.
+ * These must be unique for each object implemented within a
+ *  single mib module callback routine.
+ *
+ * Typically, these will be the last OID sub-component for
+ *  each entry, or integers incrementing from 1.
+ *  (which may well result in the same values anyway).
+ *
+ * Here, the second and third objects are form a 'sub-table' and
+ *   the magic numbers are chosen to match these OID sub-components.
+ * This is purely for programmer convenience.
+ * All that really matters is that the numbers are unique.
+ */
+</code></pre>
+
+<h1>define EXAMPLESTRING       1</h1>
+
+<h1>define EXAMPLEINTEGER      21</h1>
+
+<h1>define EXAMPLEOBJECTID         22</h1>
+
+<h1>define EXAMPLETIMETICKS    3</h1>
+
+<h1>define EXAMPLEIPADDRESS        4</h1>
+
+<h1>define EXAMPLECOUNTER      5</h1>
+
+<h1>define EXAMPLEGAUGE            6</h1>
+
+<h1>define EXAMPLETRIGGERTRAP      7</h1>
+
+<h1>define EXAMPLETRIGGERTRAP2     8</h1>
+
+<h1>ifdef __cplusplus</h1>
+
+<p>}</p>
+
+<h1>endif</h1>
+
+<h1>endif                          /<em> _MIBGROUP_EXAMPLE_H </em>/</h1>
+
+<p>```</p>
+
+<p>example.c
+```c
+/<em>
+ *  Template MIB group implementation &ndash; example.c
+ *
+ </em>/</p>
+
+<p>/<em>
+ * include important headers
+ </em>/</p>
+
+<h1>include &lt;net-snmp/net-snmp-config.h></h1>
+
+<h1>if HAVE_STDLIB_H</h1>
+
+<h1>include &lt;stdlib.h></h1>
+
+<h1>endif</h1>
+
+<h1>if HAVE_STRING_H</h1>
+
+<h1>include &lt;string.h></h1>
+
+<h1>else</h1>
+
+<h1>include &lt;strings.h></h1>
+
+<h1>endif</h1>
+
+<p>/<em>
+ * needed by util_funcs.h
+ </em>/</p>
+
+<h1>if TIME_WITH_SYS_TIME</h1>
+
+<h1>ifdef WIN32</h1>
+
+<h1>include &lt;sys/timeb.h></h1>
+
+<h1>else</h1>
+
+<h1>include &lt;sys/time.h></h1>
+
+<h1>endif</h1>
+
+<h1>include &lt;time.h></h1>
+
+<h1>else</h1>
+
+<h1>if HAVE_SYS_TIME_H</h1>
+
+<h1>include &lt;sys/time.h></h1>
+
+<h1>else</h1>
+
+<h1>include &lt;time.h></h1>
+
+<h1>endif</h1>
+
+<h1>endif</h1>
+
+<h1>if HAVE_WINSOCK_H</h1>
+
+<h1>include &lt;winsock.h></h1>
+
+<h1>endif</h1>
+
+<h1>if HAVE_NETINET_IN_H</h1>
+
+<h1>include &lt;netinet/in.h></h1>
+
+<h1>endif</h1>
+
+<h1>include &lt;net-snmp/net-snmp-includes.h></h1>
+
+<h1>include &lt;net-snmp/agent/net-snmp-agent-includes.h></h1>
+
+<p>/<em>
+ * header_generic() comes from here
+ </em>/</p>
+
+<h1>include &ldquo;/usr/include/net-snmp/agent/util_funcs.h&rdquo;</h1>
+
+<p>/<em>
+ * include our .h file
+ </em>/</p>
+
+<h1>include &ldquo;example.h&rdquo;</h1>
+
+<p>   /*</p>
+
+<pre><code>*  Certain objects can be set via configuration file directives.
+*  These variables hold the values for such objects, as they need to
+*   be accessible to both the config handlers, and the callback routine.
+*/
+</code></pre>
+
+<h1>define EXAMPLE_STR_LEN 300</h1>
+
+<h1>define EXAMPLE_STR_DEFAULT &ldquo;life the universe and everything&rdquo;</h1>
+
+<p>int             example_int = 42;
+char            example_str[EXAMPLE_STR_LEN];</p>
+
+<pre><code>    /*
+     * Forward declarations for the config handlers 
+     */
+</code></pre>
+
+<p>void            example_parse_config_exampleint(const char *token,</p>
+
+<pre><code>                                            char *cptr);
+</code></pre>
+
+<p>void            example_parse_config_examplestr(const char *token,</p>
+
+<pre><code>                                            char *cptr);
+</code></pre>
+
+<p>void            example_free_config_exampleint(void);
+void            example_free_config_examplestr(void);</p>
+
+<pre><code>    /*********************
+ *
+ *  Initialisation &amp; common implementation functions
+ *
+ *********************/
+
+/*
+ * This array structure defines a representation of the
+ *  MIB being implemented.
+ *
+ * The type of the array is 'struct variableN', where N is
+ *  large enough to contain the longest OID sub-component
+ *  being loaded.  This will normally be the maximum value
+ *  of the fifth field in each line.  In this case, the second
+ *  and third entries are both of size 2, so we're using
+ *  'struct variable2'
+ *
+ * The supported values for N are listed in &lt;agent/var_struct.h&gt;
+ *  If the value you need is not listed there, simply use the
+ *  next largest that is.
+ *
+ * The format of each line is as follows
+ *  (using the first entry as an example):
+ *      1: EXAMPLESTRING:
+ *          The magic number defined in the example header file.
+ *          This is passed to the callback routine and is used
+ *            to determine which object is being queried.
+ *      2: ASN_OCTET_STR:
+ *          The type of the object.
+ *          Valid types are listed in &lt;snmp_impl.h&gt;
+ *      3: RONLY (or RWRITE):
+ *          Whether this object can be SET or not.
+ *      4: var_example:
+ *          The callback routine, used when the object is queried.
+ *          This will usually be the same for all objects in a module
+ *            and is typically defined later in this file.
+ *      5: 1:
+ *          The length of the OID sub-component (the next field)
+ *      6: {1}:
+ *          The OID sub-components of this entry.
+ *          In other words, the bits of the full OID that differ
+ *            between the various entries of this array.
+ *          This value is appended to the common prefix (defined later)
+ *            to obtain the full OID of each entry.
+ */
+</code></pre>
+
+<p>struct variable2 example_variables[] = {</p>
+
+<pre><code>{EXAMPLESTRING, ASN_OCTET_STR, RONLY, var_example, 1, {1}},
+{EXAMPLEINTEGER, ASN_INTEGER, RWRITE, var_example, 2, {2, 1}},
+{EXAMPLEOBJECTID, ASN_OBJECT_ID, RONLY, var_example, 2, {2, 2}},
+{EXAMPLETIMETICKS, ASN_TIMETICKS, RONLY, var_example, 1, {3}},
+{EXAMPLEIPADDRESS, ASN_IPADDRESS, RONLY, var_example, 1, {4}},
+{EXAMPLECOUNTER, ASN_COUNTER, RONLY, var_example, 1, {5}},
+{EXAMPLEGAUGE, ASN_GAUGE, RONLY, var_example, 1, {6}},
+{EXAMPLETRIGGERTRAP, ASN_INTEGER, RWRITE, var_example, 1, {7}},
+{EXAMPLETRIGGERTRAP2, ASN_INTEGER, RWRITE, var_example, 1, {8}}
+</code></pre>
+
+<p>};</p>
+
+<pre><code>/*
+ * This array defines the OID of the top of the mib tree that we're
+ *  registering underneath.
+ * Note that this needs to be the correct size for the OID being 
+ *  registered, so that the length of the OID can be calculated.
+ *  The format given here is the simplest way to achieve this.
+ */
+</code></pre>
+
+<p>oid             example_variables_oid[] = { 1, 3, 6, 1, 4, 1, 2021, 254 };</p>
+
+<pre><code>/*
+ * This function is called at the time the agent starts up
+ *  to do any initializations that might be required.
+ *
+ * In theory it is optional and can be omitted if no
+ *  initialization is needed.  In practise, every module
+ *  will need to register itself (or the objects being
+ *  implemented will not appear in the MIB tree), and this
+ *  registration is typically done here.
+ *
+ * If this function is added or removed, you must re-run
+ *  the configure script, to detect this change.
+ */
+</code></pre>
+
+<p>void
+init_example(void)
+{</p>
+
+<pre><code>/*
+ * Register ourselves with the agent to handle our mib tree.
+ * The arguments are:
+ *    descr:   A short description of the mib group being loaded.
+ *    var:     The variable structure to load.
+ *                  (the name of the variable structure defined above)
+ *    vartype: The type of this variable structure
+ *    theoid:  The OID pointer this MIB is being registered underneath.
+ */
+REGISTER_MIB("example", example_variables, variable2,
+             example_variables_oid);
+
+
+/*
+ *  Register config handlers for the two objects that can be set
+ *   via configuration file directive.
+ *  Also set a default value for the string object.  Note that the
+ *   example integer variable was initialised above.
+ */
+strncpy(example_str, EXAMPLE_STR_DEFAULT, EXAMPLE_STR_LEN);
+
+snmpd_register_config_handler("exampleint",
+                              example_parse_config_exampleint,
+                              example_free_config_exampleint,
+                              "exampleint value");
+snmpd_register_config_handler("examplestr",
+                              example_parse_config_examplestr,
+                              example_free_config_examplestr,
+                              "examplestr value");
+snmpd_register_config_handler("examplestring",
+                              example_parse_config_examplestr,
+                              example_free_config_examplestr,
+                              "examplestring value");
+
+/*
+ * One common requirement is to read values from the kernel.
+ * This is usually initialised here, to speed up access when the
+ *  information is read in, as a response to an incoming request.
+ *
+ * This module doesn't actually use this mechanism,
+ * so this call is commented out here.
+ */
+/*
+ * auto_nlist( "example_symbol", 0, 0 ); 
+ */
+</code></pre>
+
+<p>}</p>
+
+<pre><code>    /*********************
+ *
+ *  Configuration file handling functions
+ *
+ *********************/
+</code></pre>
+
+<p>void
+example_parse_config_exampleint(const char <em>token, char </em>cptr)
+{</p>
+
+<pre><code>example_int = atoi(cptr);
+</code></pre>
+
+<p>}</p>
+
+<p>void
+example_parse_config_examplestr(const char <em>token, char </em>cptr)
+{</p>
+
+<pre><code>/*
+ * Make sure the string fits in the space allocated for it.
+ */
+if (strlen(cptr) &lt; EXAMPLE_STR_LEN)
+    strcpy(example_str, cptr);
+else {
+    /*
+     * Truncate the string if necessary.
+     * An alternative approach would be to log an error,
+     *  and discard this value altogether.
+     */
+    strncpy(example_str, cptr, EXAMPLE_STR_LEN - 4);
+    example_str[EXAMPLE_STR_LEN - 4] = 0;
+    strcat(example_str, "...");
+    example_str[EXAMPLE_STR_LEN - 1] = 0;
+}
+</code></pre>
+
+<p>}</p>
+
+<pre><code>    /*
+     * We don't need to do anything special when closing down 
+     */
+</code></pre>
+
+<p>void
+example_free_config_exampleint(void)
+{
+}</p>
+
+<p>void
+example_free_config_examplestr(void)
+{
+}</p>
+
+<pre><code>    /*********************
+ *
+ *  System specific implementation functions
+ *
+ *********************/
+
+/*
+ * Define the callback function used in the example_variables structure.
+ * This is called whenever an incoming request refers to an object
+ *  within this sub-tree.
+ *
+ * Four of the parameters are used to pass information in.
+ * These are:
+ *    vp      The entry from the 'example_variables' array for the
+ *             object being queried.
+ *    name    The OID from the request.
+ *    length  The length of this OID.
+ *    exact   A flag to indicate whether this is an 'exact' request
+ *             (GET/SET) or an 'inexact' one (GETNEXT/GETBULK).
+ *
+ * Four of the parameters are used to pass information back out.
+ * These are:
+ *    name     The OID being returned.
+ *    length   The length of this OID.
+ *    var_len  The length of the answer being returned.
+ *    write_method   A pointer to the SET function for this object.
+ *
+ * Note that name &amp; length serve a dual purpose in both roles.
+ */
+</code></pre>
+
+<p>u_char         *
+var_example(struct variable *vp,</p>
+
+<pre><code>        oid * name,
+        size_t * length,
+        int exact, size_t * var_len, WriteMethod ** write_method)
+</code></pre>
+
+<p>{</p>
+
+<pre><code>/*
+ *  The result returned from this function needs to be a pointer to
+ *    static data (so that it can be accessed from outside).
+ *  Define suitable variables for any type of data we may return.
+ */
+static char     string[EXAMPLE_STR_LEN];    /* for EXAMPLESTRING   */
+static oid      oid_ret[8]; /* for EXAMPLEOBJECTID */
+static long     long_ret;   /* for everything else */
+
+/*
+ * Before returning an answer, we need to check that the request
+ *  refers to a valid instance of this object.  The utility routine
+ *  'header_generic' can be used to do this for scalar objects.
+ *
+ * This routine 'header_simple_table' does the same thing for "simple"
+ *  tables. (See the AGENT.txt file for the definition of a simple table).
+ *
+ * Both these utility routines also set up default values for the
+ *  return arguments (assuming the check succeeded).
+ * The name and length are set suitably for the current object,
+ *  var_len assumes that the result is an integer of some form,
+ *  and write_method assumes that the object cannot be set.
+ *
+ * If these assumptions are correct, this callback routine simply
+ * needs to return a pointer to the appropriate value (using 'long_ret').
+ * Otherwise, 'var_len' and/or 'write_method' should be set suitably.
+ */
+DEBUGMSGTL(("example", "var_example entered\n"));
+if (header_generic(vp, name, length, exact, var_len, write_method) ==
+    MATCH_FAILED)
+    return NULL;
+
+
+/*
+ * Many object will need to obtain data from the operating system in
+ *  order to return the appropriate value.  Typically, this is done
+ *  here - immediately following the 'header' call, and before the
+ *  switch statement. This is particularly appropriate if a single 
+ *  interface call can return data for all the objects supported.
+ *
+ * This example module does not rely on external data, so no such
+ *  calls are needed in this case.  
+ */
+
+/*
+ * Now use the magic number from the variable pointer 'vp' to
+ *  select the particular object being queried.
+ * In each case, one of the static objects is set up with the
+ *  appropriate information, and returned mapped to a 'u_char *'
+ */
+switch (vp-&gt;magic) {
+case EXAMPLESTRING:
+    sprintf(string, example_str);
+    /*
+     * Note that the assumption that the answer will be an
+     *  integer does not hold true in this case, so the length
+     *  of the answer needs to be set explicitly.           
+     */
+    *var_len = strlen(string);
+    return (u_char *) string;
+
+case EXAMPLEINTEGER:
+    /*
+     * Here the length assumption is correct, but the
+     *  object is writeable, so we need to set the
+     *  write_method pointer as well as the current value.
+     */
+    long_ret = example_int;
+    *write_method = write_exampleint;
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLEOBJECTID:
+    oid_ret[0] = 1;
+    oid_ret[1] = 3;
+    oid_ret[2] = 6;
+    oid_ret[3] = 1;
+    oid_ret[4] = 4;
+    oid_ret[5] = oid_ret[6] = oid_ret[7] = 42;
+    /*
+     * Again, the assumption regarding the answer length is wrong.
+     */
+    *var_len = 8 * sizeof(oid);
+    return (u_char *) oid_ret;
+
+case EXAMPLETIMETICKS:
+    /*
+     * Here both assumptions are correct,
+     *  so we just need to set up the answer.
+     */
+    long_ret = 363136200;   /* 42 days, 42 minutes and 42.0 seconds */
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLEIPADDRESS:
+    /*
+     * ipaddresses get returned as a long.  ick 
+     */
+    /*
+     * we're returning 127.0.0.1 
+     */
+    long_ret = ntohl(INADDR_LOOPBACK);
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLECOUNTER:
+    long_ret = 42;
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLEGAUGE:
+    long_ret = 42;          /* Do we detect a theme running through these answers? */
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLETRIGGERTRAP:
+    /*
+     * This object is essentially "write-only".
+     * It only exists to trigger the sending of a trap.
+     * Reading it will always return 0.
+     */
+    long_ret = 0;
+    *write_method = write_exampletrap;
+    return (u_char *) &amp; long_ret;
+
+case EXAMPLETRIGGERTRAP2:
+    /*
+     * This object is essentially "write-only".
+     * It only exists to trigger the sending of a v2 trap.
+     * Reading it will always return 0.
+     */
+    long_ret = 0;
+    *write_method = write_exampletrap2;
+    return (u_char *) &amp; long_ret;
+
+default:
+    /*
+     *  This will only be triggered if there's a problem with
+     *   the coding of the module.  SNMP requests that reference
+     *   a non-existant OID will be directed elsewhere.
+     *  If this branch is reached, log an error, so that
+     *   the problem can be investigated.
+     */
+    DEBUGMSGTL(("snmpd", "unknown sub-id %d in examples/var_example\n",
+                vp-&gt;magic));
+}
+/*
+ * If we fall through to here, fail by returning NULL.
+ * This is essentially a continuation of the 'default' case above.
+ */
+return NULL;
+</code></pre>
+
+<p>}</p>
+
+<pre><code>    /*********************
+ *
+ *  Writeable object SET handling routines
+ *
+ *********************/
+</code></pre>
+
+<p>int
+write_exampleint(int action,</p>
+
+<pre><code>             u_char * var_val,
+             u_char var_val_type,
+             size_t var_val_len,
+             u_char * statP, oid * name, size_t name_len)
+</code></pre>
+
+<p>{</p>
+
+<pre><code>/*
+ * Define an arbitrary maximum permissible value 
+ */
+</code></pre>
+
+<h1>define MAX_EXAMPLE_INT 100</h1>
+
+<pre><code>static long     intval;
+static long     old_intval;
+
+switch (action) {
+case RESERVE1:
+    /*
+     *  Check that the value being set is acceptable
+     */
+    if (var_val_type != ASN_INTEGER) {
+        DEBUGMSGTL(("example", "%x not integer type", var_val_type));
+        return SNMP_ERR_WRONGTYPE;
+    }
+    if (var_val_len &gt; sizeof(long)) {
+        DEBUGMSGTL(("example", "wrong length %x", var_val_len));
+        return SNMP_ERR_WRONGLENGTH;
+    }
+
+    intval = *((long *) var_val);
+    printf("you have set the value :%ld",intval);
+    if (intval &gt; MAX_EXAMPLE_INT) {
+        DEBUGMSGTL(("example", "wrong value %x", intval));
+        return SNMP_ERR_WRONGVALUE;
+    }
+    break;
+
+case RESERVE2:
+    /*
+     *  This is conventially where any necesary
+     *   resources are allocated (e.g. calls to malloc)
+     *  Here, we are using static variables
+     *   so don't need to worry about this.
+     */
+    break;
+
+case FREE:
+    /*
+     *  This is where any of the above resources
+     *   are freed again (because one of the other
+     *   values being SET failed for some reason).
+     *  Again, since we are using static variables
+     *   we don't need to worry about this either.
+     */
+    break;
+
+case ACTION:
+    /*
+     *  Set the variable as requested.
+     *   Note that this may need to be reversed,
+     *   so save any information needed to do this.
+     */
+    old_intval = example_int;
+    example_int = intval;
+    break;
+
+case UNDO:
+    /*
+     *  Something failed, so re-set the
+     *   variable to its previous value
+     *  (and free any allocated resources).
+     */
+    example_int = old_intval;
+    break;
+
+case COMMIT:
+    /*
+     *  Everything worked, so we can discard any
+     *   saved information, and make the change
+     *   permanent (e.g. write to the config file).
+     *  We also free any allocated resources.
+     *
+     *  In this case, there's nothing to do.
+     */
+    break;
+
+}
+return SNMP_ERR_NOERROR;
+</code></pre>
+
+<p>}</p>
+
+<p>int
+write_exampletrap(int action,</p>
+
+<pre><code>              u_char * var_val,
+              u_char var_val_type,
+              size_t var_val_len,
+              u_char * statP, oid * name, size_t name_len)
+</code></pre>
+
+<p>{</p>
+
+<pre><code>long            intval;
+
+DEBUGMSGTL(("example", "write_exampletrap entered: action=%d\n",
+            action));
+switch (action) {
+case RESERVE1:
+    /*
+     *  The only acceptable value is the integer 1
+     */
+    if (var_val_type != ASN_INTEGER) {
+        DEBUGMSGTL(("example", "%x not integer type", var_val_type));
+        return SNMP_ERR_WRONGTYPE;
+    }
+    if (var_val_len &gt; sizeof(long)) {
+        DEBUGMSGTL(("example", "wrong length %x", var_val_len));
+        return SNMP_ERR_WRONGLENGTH;
+    }
+
+    intval = *((long *) var_val);
+    if (intval != 1) {
+        DEBUGMSGTL(("example", "wrong value %x", intval));
+        return SNMP_ERR_WRONGVALUE;
+    }
+    break;
+
+case RESERVE2:
+    /*
+     * No resources are required.... 
+     */
+    break;
+
+case FREE:
+    /*
+     * ... so no resources need be freed 
+     */
+    break;
+
+case ACTION:
+    /*
+     *  Having triggered the sending of a trap,
+     *   it would be impossible to revoke this,
+     *   so we can't actually invoke the action here.
+     */
+    break;
+
+case UNDO:
+    /*
+     * We haven't done anything yet,
+     * so there's nothing to undo 
+     */
+    break;
+
+case COMMIT:
+    /*
+     *  Everything else worked, so it's now safe
+     *   to trigger the trap.
+     *  Note that this is *only* acceptable since
+     *   the trap sending routines are "failsafe".
+     *  (In fact, they can fail, but they return no
+     *   indication of this, which is the next best thing!)
+     */
+    DEBUGMSGTL(("example", "write_exampletrap sending the trap\n"));
+    send_easy_trap(SNMP_TRAP_ENTERPRISESPECIFIC, 99);
+    DEBUGMSGTL(("example", "write_exampletrap trap sent\n"));
+    break;
+
+}
+return SNMP_ERR_NOERROR;
+</code></pre>
+
+<p>}</p>
+
+<p>/<em>
+ * this documents how to send a SNMPv2 (and higher) trap via the
+ * send_v2trap() API.
+ *
+ * Coding SNMP-v2 Trap:
+ *
+ * The SNMPv2-Trap PDU contains at least a pair of object names and
+ * values: &ndash; sysUpTime.0 whose value is the time in hundredths of a
+ * second since the netwok management portion of system was last
+ * reinitialized.  &ndash; snmpTrapOID.0 which is part of the trap group SNMPv2
+ * MIB whose value is the object-id of the specific trap you have defined
+ * in your own MIB.  Other variables can be added to caracterize the
+ * trap.
+ *
+ * The function send_v2trap adds automaticallys the two objects but the
+ * value of snmpTrapOID.0 is 0.0 by default. If you want to add your trap
+ * name, you have to reconstruct this object and to add your own
+ * variable.
+ *
+ </em>/</p>
+
+<p>int
+write_exampletrap2(int action,</p>
+
+<pre><code>               u_char * var_val,
+               u_char var_val_type,
+               size_t var_val_len,
+               u_char * statP, oid * name, size_t name_len)
+</code></pre>
+
+<p>{</p>
+
+<pre><code>long            intval;
+
+/*
+ * these variales will be used when we send the trap 
+ */
+oid             objid_snmptrap[] = { 1, 3, 6, 1, 6, 3, 1, 1, 4, 1, 0 };     /* snmpTrapOID.0 */
+oid             demo_trap[] = { 1, 3, 6, 1, 4, 1, 2021, 13, 990 };  /*demo-trap */
+oid             example_string_oid[] =
+    { 1, 3, 6, 1, 4, 1, 2021, 254, 1, 0 };
+static netsnmp_variable_list var_trap;
+static netsnmp_variable_list var_obj;
+
+DEBUGMSGTL(("example", "write_exampletrap2 entered: action=%d\n",
+            action));
+switch (action) {
+case RESERVE1:
+    /*
+     *  The only acceptable value is the integer 1
+     */
+    if (var_val_type != ASN_INTEGER) {
+        DEBUGMSGTL(("example", "%x not integer type", var_val_type));
+        return SNMP_ERR_WRONGTYPE;
+    }
+    if (var_val_len &gt; sizeof(long)) {
+        DEBUGMSGTL(("example", "wrong length %x", var_val_len));
+        return SNMP_ERR_WRONGLENGTH;
+    }
+
+    intval = *((long *) var_val);
+    if (intval != 1) {
+        DEBUGMSGTL(("example", "wrong value %x", intval));
+        return SNMP_ERR_WRONGVALUE;
+    }
+    break;
+
+case RESERVE2:
+    /*
+     * No resources are required.... 
+     */
+    break;
+
+case FREE:
+    /*
+     * ... so no resources need be freed 
+     */
+    break;
+
+case ACTION:
+    /*
+     *  Having triggered the sending of a trap,
+     *   it would be impossible to revoke this,
+     *   so we can't actually invoke the action here.
+     */
+    break;
+
+case UNDO:
+    /*
+     * We haven't done anything yet,
+     * so there's nothing to undo 
+     */
+    break;
+
+case COMMIT:
+    /*
+     *  Everything else worked, so it's now safe
+     *   to trigger the trap.
+     *  Note that this is *only* acceptable since
+     *   the trap sending routines are "failsafe".
+     *  (In fact, they can fail, but they return no
+     *   indication of this, which is the next best thing!)
+     */
+
+    /*
+     * trap definition objects 
+     */
+
+    var_trap.next_variable = &amp;var_obj;      /* next variable */
+    var_trap.name = objid_snmptrap; /* snmpTrapOID.0 */
+    var_trap.name_length = sizeof(objid_snmptrap) / sizeof(oid);    /* number of sub-ids */
+    var_trap.type = ASN_OBJECT_ID;
+    var_trap.val.objid = demo_trap; /* demo-trap objid */
+    var_trap.val_len = sizeof(demo_trap);   /* length in bytes (not number of subids!) */
+
+
+    /*
+     * additional objects 
+     */
+
+
+    var_obj.next_variable = NULL;   /* No more variables after this one */
+    var_obj.name = example_string_oid;
+    var_obj.name_length = sizeof(example_string_oid) / sizeof(oid); /* number of sub-ids */
+    var_obj.type = ASN_OCTET_STR;   /* type of variable */
+    var_obj.val.string = example_str;       /* value */
+    var_obj.val_len = strlen(example_str);
+    DEBUGMSGTL(("example", "write_exampletrap2 sending the v2 trap\n"));
+    send_v2trap(&amp;var_trap);
+    DEBUGMSGTL(("example", "write_exampletrap2 v2 trap sent\n"));
+
+    break;
+
+}
+return SNMP_ERR_NOERROR;
+</code></pre>
+
+<p>}
+```</p>
+
+<p>example-demon.c
+```c
+/<em>主函数：foxmail_new.c </em>/</p>
+
+<h1>include &lt;net-snmp/net-snmp-config.h></h1>
+
+<h1>include &lt;net-snmp/net-snmp-includes.h></h1>
+
+<h1>include &lt;net-snmp/agent/net-snmp-agent-includes.h></h1>
+
+<h1>include &lt;signal.h></h1>
+
+<h1>include &ldquo;example.h&rdquo;</h1>
+
+<h1>define MYDEBUG</h1>
+
+<h1>ifdef MYDEBUG</h1>
+
+<pre><code>#define myprintf(fmt, a...)  printf("%s,%s(),%d:" fmt "\n", __FILE__,__FUNCTION__,__LINE__, ##a)
+</code></pre>
+
+<h1>else</h1>
+
+<pre><code>#define myprintf(fmt, a...)
+</code></pre>
+
+<h1>endif</h1>
+
+<p>static int keep_running;</p>
+
+<p>RETSIGTYPE</p>
+
+<p>stop_server(int a) {</p>
+
+<pre><code>keep_running = 0;
+</code></pre>
+
+<p>}</p>
+
+<p>int main ()
+{
+  int agentx_subagent=0; /<em> change this if you want to be a SNMP master agent </em>/
+  int background = 0; /<em> change this if you want to run in the background </em>/
+  int syslog = 0; /<em> change this if you want to use syslog </em>/</p>
+
+<p>myprintf(&ldquo;it is ok\n&rdquo;);
+  /<em> print log errors to syslog or stderr </em>/</p>
+
+<p>  if (syslog)</p>
+
+<pre><code>snmp_enable_calllog();
+</code></pre>
+
+<p>  else</p>
+
+<pre><code>snmp_enable_stderrlog();
+
+//myprintf("it is ok \n");
+</code></pre>
+
+<p>  /<em> we&rsquo;re an agentx subagent? </em>/</p>
+
+<p>  if (agentx_subagent) {</p>
+
+<pre><code>/* make us a agentx client. */
+
+netsnmp_ds_set_boolean(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_AGENT_ROLE, 1);
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em> run in background, if requested </em>/</p>
+
+<p>  if (background &amp;&amp; netsnmp_daemonize(1, !syslog))</p>
+
+<pre><code>  exit(1);
+</code></pre>
+
+<p>  /<em> Initialize tcpip, if necessary </em>/</p>
+
+<p>  SOCK_STARTUP;</p>
+
+<p>  /<em> Initialize the agent library </em>/</p>
+
+<p>  init_agent(&ldquo;example-demon&rdquo;);
+init_system_mib();
+init_sysORTable();
+init_at();
+init_snmp_mib();
+init_tcp();
+init_icmp();
+init_ip();
+init_udp();
+init_vacm_vars();
+init_memory();
+init_proc();
+init_versioninfo();
+init_pass();
+init_pass_persist();
+init_disk();
+init_loadave();
+init_extensible();
+init_errormib();
+init_file();
+init_snmpEngine();
+init_snmpMPDStats();
+init_usmStats();
+init_usmUser();
+init_var_route();</p>
+
+<p>  /<em> Initialize our mib code here </em>/</p>
+
+<p>init_example();</p>
+
+<p>  /<em> initialize vacm/usm access control  </em>/</p>
+
+<p>  if (!agentx_subagent) {</p>
+
+<pre><code>void  init_vacm_vars();
+
+void  init_usmUser();
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em> Example-demon will be used to read example-demon.conf files. </em>/</p>
+
+<p>  init_snmp(&ldquo;example-demon&rdquo;);</p>
+
+<p>  /<em> If we&rsquo;re going to be a snmp master agent, initial the ports </em>/</p>
+
+<p>  if (!agentx_subagent)</p>
+
+<pre><code>init_master_agent();  /* open the port to listen on (defaults to udp:161) */
+</code></pre>
+
+<p>  /<em> In case we recevie a request to stop (kill -TERM or kill -INT) </em>/</p>
+
+<p>  keep_running = 1;</p>
+
+<p>  signal(SIGTERM, stop_server);</p>
+
+<p>  signal(SIGINT, stop_server);</p>
+
+<p>  snmp_log(LOG_INFO,&ldquo;example-demon is up and running.\n&rdquo;);</p>
+
+<p>  /<em> your main loop here&hellip; </em>/</p>
+
+<p>  while(keep_running) {</p>
+
+<pre><code>/* if you use select(), see snmp_select_info() in snmp_api(3) */
+
+/*     --- OR ---  */
+
+agent_check_and_process(1); /* 0 == don't block */
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em> at shutdown time </em>/</p>
+
+<p>  snmp_shutdown(&ldquo;example-demon&rdquo;);</p>
+
+<p>  SOCK_CLEANUP;</p>
+
+<p>  return 0;</p>
+
+<p>}
+```</p>
+
+<p>example-demon.conf
+```c</p>
+
+<h6>#</h6>
+
+<h1>Access Control</h1>
+
+<h6>#</h6>
+
+<h1>sec.name source community</h1>
+
+<p>rocommunity public
+rwcommunity 223323</p>
+
+<h3>#</h3>
+
+<h1>Second, map the security names into group names:</h1>
+
+<h1>sec.model sec.name</h1>
+
+<p>group MyRWGroup v1 local
+group MyRWGroup v2c local
+group MyRWGroup usm local
+group MyROGroup v1 mynetwork
+group MyROGroup v2c mynetwork
+group MyROGroup usm mynetwork</p>
+
+<h3>#</h3>
+
+<h1>Third, create a view for us to let the groups have rights to:</h1>
+
+<h1>incl/excl subtree mask</h1>
+
+<p>view all included .1 80</p>
+
+<h3>#</h3>
+
+<h1>Finally, grant the 2 groups access to the 1 view with different</h1>
+
+<h1>write permissions:</h1>
+
+<h1>context sec.model sec.level match read write notif</h1>
+
+<p>access MyROGroup &ldquo;&rdquo; any noauth exact all none none
+access MyRWGroup &ldquo;&rdquo; any noauth exact all all none</p>
+
+<p>agentaddress 161</p>
+
+<p>```</p>
+
+<p>Makefile
+```makefile
+CC=gcc
+OBJS2=example-demon.o example.o
+TARGETS=example-demon</p>
+
+<p>CFLAGS=-I. <code>net-snmp-config --cflags</code>
+BUILDLIBS=<code>net-snmp-config --libs</code>
+BUILDAGENTLIBS=<code>net-snmp-config --agent-libs</code></p>
+
+<h1>shared library flags (assumes gcc)</h1>
+
+<p>DLFLAGS=-fPIC –shared</p>
+
+<p>all: $(TARGETS)</p>
+
+<p>example-demon: $(OBJS2)</p>
+
+<pre><code>$(CC) -o example-demon $(OBJS2) $(BUILDAGENTLIBS)
+</code></pre>
+
+<p>clean:</p>
+
+<pre><code>rm $(OBJS2) $(OBJS2) $(TARGETS)
+</code></pre>
+
+<p>```</p>
+
+<p>目前无法获取到系统load，以后用到再深入。</p>
+
+<p>参考文章
+《Snmp Agent开发流程》
+<a href="http://blog.csdn.net/ytz_linuxer/article/details/5985534">http://blog.csdn.net/ytz_linuxer/article/details/5985534</a></p>
+
+<p>《网管SNMP Agent的快速开发》
+<a href="http://www.wangchao.net.cn/bbsdetail_53491.html">http://www.wangchao.net.cn/bbsdetail_53491.html</a></p>
+
+<p>《SNMP监控一些常用OID的总结》
+<a href="http://www.cnblogs.com/aspx-net/p/3554044.html">http://www.cnblogs.com/aspx-net/p/3554044.html</a></p>
+
+<p>《与大家分享uclinux上的ucd-snmp开发过程》
+<a href="http://bbs.chinaunix.net/thread-2112856-1-1.html">http://bbs.chinaunix.net/thread-2112856-1-1.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rrdtool的socket通讯接口rrdsrv]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/rrdsrv-usage/"/>
+    <updated>2014-07-10T17:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/rrdsrv-usage</id>
+    <content type="html"><![CDATA[<p>原来以为rrdtool只是个本地数据库，这次写java程序看了几个rrdtool的java实现的源码,在其中一款中发现原来rrdtool居然还支持inetd超级服务器的用法，也就是rrdsrv。以下以freebsd下rrdsrv的配置为例，介绍使用方法：</p>
+
+<!--more-->
+
+
+<p>假设rrdtool的安装路径在/usr/local/bin/rrdtool，然后存放rrd数据库的路径为/services/rrds/</p>
+
+<p>首先编辑/etc/inetd.conf，加入
+<code>
+rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/
+</code></p>
+
+<p>然后再编辑/etc/services，加入
+<code>
+rrdsrv 13900/tcp
+</code>
+在/etc/rc.conf中
+<code>
+inetd_enable="YES"
+</code></p>
+
+<p>然后
+<code>bash
+sudo /etc/rc.d/inetd start
+</code>
+这样13900端口就支持使用socket方式的rrdtool命令操作了
+```
+[yin@yin-arch rrds]>telnet 127.0.0.1 13900
+Trying 127.0.0.1&hellip;
+Connected to localhost.
+Escape character is &lsquo;^]&rsquo;.</p>
+
+<p>info load.rrd
+filename = &ldquo;load.rrd&rdquo;
+rrd_version = &ldquo;0003&rdquo;
+step = 15
+last_update = 1404984273
+header_size = 1000
+ds[load].index = 0
+ds[load].type = &ldquo;GAUGE&rdquo;
+ds[load].minimal_heartbeat = 120
+ds[load].min = NaN
+ds[load].max = NaN
+ds[load].last_ds = &ldquo;5.73242000000000029303e-01&rdquo;
+ds[load].value = 2.0151107237e+00
+ds[load].unknown_sec = 0
+rra[0].cf = &ldquo;AVERAGE&rdquo;
+rra[0].rows = 5856
+rra[0].cur_row = 5072
+rra[0].pdp_per_row = 1
+rra[0].xff = 5.0000000000e-01
+rra[0].cdp_prep[0].value = NaN
+rra[0].cdp_prep[0].unknown_datapoints = 0
+rra[1].cf = &ldquo;AVERAGE&rdquo;
+rra[1].rows = 20160
+rra[1].cur_row = 9119
+rra[1].pdp_per_row = 4
+rra[1].xff = 5.0000000000e-01
+rra[1].cdp_prep[0].value = 1.1429347927e+00
+rra[1].cdp_prep[0].unknown_datapoints = 0
+rra[2].cf = &ldquo;AVERAGE&rdquo;
+rra[2].rows = 52704
+rra[2].cur_row = 46249
+rra[2].pdp_per_row = 40
+rra[2].xff = 5.0000000000e-01
+rra[2].cdp_prep[0].value = 9.7464362627e+00
+rra[2].cdp_prep[0].unknown_datapoints = 0
+OK u:0.00 s:0.01 r:41.67
+```</p>
+
+<p>值得一提的是，除了支持rrdtool的info、create、update等内置命令，更可以调用系统指令cd、mkdir、ls等指令，非常强大。可以看出作者的编程思路非常奇特，居然还可以这样用。于是我借助这个特性，实现了网络rrdtool指令的操作，like memcache：）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用expect脚本检测telnet瞬断]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately/"/>
+    <updated>2014-01-08T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/08/expect-check-telnet-losing-connection-immediately</id>
+    <content type="html"><![CDATA[<p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
+
+<p>直接上代码了</p>
+
+<!-- more -->
+
+
+<p>```sh</p>
+
+<h1>!/usr/local/bin/expect</h1>
+
+<p>spawn telnet 127.0.0.1 9090
+set timeout  1
+expect {</p>
+
+<pre><code>    "*Escape character is*" {
+            exp_continue
+    }
+    "*Connection closed by foreign host*" {
+            send "note: 1) detect a unsafe connection"
+    }
+</code></pre>
+
+<p>}
+expect {</p>
+
+<pre><code>    "*Connection closed by foreign host*" {
+            send "note: 2) detect a unsafe connection"
+    }
+    send "\\003"
+    exit
+</code></pre>
+
+<p>}
+expect &ldquo;<em>Connection closed by foreign host</em>&rdquo;
+send &ldquo;note: 3) disconnect by client cause timeout or not immediately exit expect&rdquo;
+exit
+expect eof</p>
+
+<p>exit
+expect eof</p>
+
+<p>```</p>
+
+<p>调用者程序可以根据expect输出的note: 3) disconnect by client cause timeout or not immediately exit expect得知telnet上去瞬间失去连接。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用php的snmp模块进行监控数据的获取]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor/"/>
+    <updated>2013-12-10T10:19:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/10/php-use-snmp-module-to-monitor</id>
+    <content type="html"><![CDATA[<p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
+首先下载php软件包。</p>
+
+<!-- more -->
+
+
+<p><code>sh
+$ wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+$ tar xjf php-5.5.6.tar.bz2
+$ cd php-5.5.6
+$ ls ext/snmp/
+config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+$
+</code>
+可见snmp已经自带了，不需要到pecl下载然后放到ext目录。
+<code>sh
+$ sudo yum install libxml2 libxml2-devel
+</code>
+备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
+
+<h3>静态编译</h3>
+
+<p>查一下snmp的安装选项
+<code>sh
+$ ./configure --help | grep snmp
+  --with-snmp=DIR         Include SNMP support
+</code>
+是&mdash;with，了解后继续操作，这里直接使用默认snmp路径
+<code>sh
+$ ./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+$ make
+$ sudo make install
+</code>
+这样静态编译就完成了。</p>
+
+<h3>动态编译</h3>
+
+<p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so
+<code>sh
+$ cd ext/snmp
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+$ cd ../../ext/sockets
+$ /usr/local/php55/bin/phpize
+$ ./configure --with-php-config=/usr/local/php55/bin/php-config
+$ make
+$ sudo make install
+</code>
+然后复制刚才的编译好的so文件到扩展目录到etc目录
+<code>sh
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+$ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+</code>
+编辑php的配置文件
+<code>sh
+$ vi /usr/local/php55/etc/php.ini
+</code>
+加入2行
+<code>sh
+extension=sockets.so
+extension=snmp.so
+</code></p>
+
+<h3>撰写php版的snmp客户端测试程序</h3>
+
+<p>开始写点测试程序，确认snmp已经在本机支持
+<code>sh
+$nc -uvz 127.0.0.1 161
+Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
+</code>
+2014-07-16补充：
+以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句
+<code>sh
+$nc -u 127.0.0.1 161
+</code>
+输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来</p>
+
+<p>已经支持，那么来写程序吧
+<code>php
+&lt;?php
+/**
+ * test.php
+ */
+$host="127.0.0.1";
+$community="public";
+$oid=".1.3.6.1.4.1.2021.10.1.3.1";
+$oid1=".1.3.6.1.4.1.2021.10.1.3.2";
+$oid2=".1.3.6.1.4.1.2021.10.1.3.3";
+$oid3=".1.3.6.1.4.1.2021.4.3.0";
+// 1 minute Load
+echo (snmpget($host,$community,$oid)."\n");
+// 5 minute Load
+echo (snmpget($host,$community,$oid1)."\n");
+// 15 minute Load
+echo (snmpget($host,$community,$oid2)."\n");
+// Total Swap Size
+echo (snmpget($host,$community,$oid3)."\n");
+</code>
+查看结果
+```sh
+$ /usr/local/php55/bin/php test.php
+STRING: 0.05
+STRING: 0.03
+STRING: 0.03
+INTEGER: 2064376 kB</p>
+
+<p>```</p>
+
+<h3>分析总结</h3>
+
+<p>可以看出php的snmp接口还是非常简明优雅的，由此推断你只要学会rrdtool、php和snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我自己写公司监控平台2.0的时候，上级要求使用C api直接获取数据，不走snmp，其实通过对分析ganglia源代码的粗读，也能马上发现其也是采用了原生api调用获取主要监控数据的方式，所以号称比snmpd快和非常节省系统开销。但为了完成任务和系统的拓展性，果然另外支持snmp吧。</p>
+
+<h3>扩展阅读</h3>
+
+<p>请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[centos6.4下搭建zabbix2.0.6]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix/"/>
+    <updated>2013-12-03T13:37:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/03/centos6-dot-4-install-zabbix</id>
+    <content type="html"><![CDATA[<p>最近开始研究各款监控系统，和自己的监控系统进行横向比较找差距，就从单位也在用的zabbix开始，先安装后再这里过一遍流程。</p>
+
+<!-- more -->
+
+
+<p>关闭iptables和selinux
+<code>sh
+sudo service iptables stop
+sudo chkconfig iptables off
+</code>
+临时关闭selinux
+```sh
+setenfoce 0  ##设置为permissive模式</p>
+
+<pre><code>         ##setenforce 1设置SELunix为enforcing模式
+</code></pre>
+
+<p>```
+永久关闭
+修改/etc/selinux/config 文件
+将SELINUX=enforcing改为SELINUX=disabled
+重启机器看到
+getenforce返回Disabled说明已经关闭</p>
+
+<p>再次进入centos6.4，先安装LAMP环境。</p>
+
+<p><code>sh
+yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php-mbstring php-gd php-odbc php-xml php-pear
+</code></p>
+
+<p>然后下载zabbix
+<code>sh
+wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
+</code></p>
+
+<p>继续安装需要的组件
+<code>sh
+yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
+</code></p>
+
+<p>创建zabbix用户帐号
+<code>sh
+sudo useradd zabbix
+sudo usermod -s /sbin/nologin zabbix
+</code></p>
+
+<p>启动mysql
+<code>sh
+sudo service mysqld start
+</code></p>
+
+<p>登录mysql
+<code>sh
+mysql -uroot -p123456
+mysql&gt; create database zabbix;
+mysql&gt; grant all on zabbix.* to zabbix@localhost identified by '123456';
+mysql&gt; use zabbix;
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/schema.sql
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/images.sql
+mysql&gt; source /home/evoup/Downloads/zabbix-2.0.6/database/mysql/data.sql
+mysql&gt; exit
+</code></p>
+
+<p>安装zabbix
+```sh
+./configure &mdash;enable-server &mdash;enable-agent &mdash;with-mysql &mdash;with-net-snmp &mdash;with-libcurl
+Configuration:</p>
+
+<p>  Detected OS:           linux-gnu
+  Install path:          /usr/local
+  Compilation arch:      linux</p>
+
+<p>  Compiler:              gcc
+  Compiler flags:        -g -O2  -I/usr/include/mysql  -g -pipe -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector &mdash;param=ssp-buffer-size=4 -m64 -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -fno-strict-aliasing -fwrapv -fPIC   -DUNIV_LINUX -DUNIV_LINUX       -I/usr/include/rpm -I/usr/local/include -I/usr/lib64/perl5/CORE -I. -I/usr/include</p>
+
+<p>  Enable server:         yes
+  Server details:</p>
+
+<pre><code>With database:         MySQL
+WEB Monitoring via:    cURL
+Native Jabber:         no
+SNMP:                  net-snmp
+IPMI:                  no
+SSH:                   no
+ODBC:                  no
+Linker flags:          -rdynamic      -L/usr/lib64/mysql       -L/usr/lib64  -L/usr/lib64
+Libraries:             -lm -lrt  -lresolv    -lmysqlclient       -lcurl  -lnetsnmp -lcrypto  -lnetsnmp -lcrypto
+</code></pre>
+
+<p>  Enable proxy:          no</p>
+
+<p>  Enable agent:          yes
+  Agent details:</p>
+
+<pre><code>Linker flags:          -rdynamic
+Libraries:             -lm -lrt  -lresolv    -lcurl
+</code></pre>
+
+<p>  Enable Java gateway:   no</p>
+
+<p>  LDAP support:          no
+  IPv6 support:          no</p>
+
+<hr />
+
+<ul>
+<li><pre><code>     Now run 'make install'                       *
+</code></pre></li>
+<li><pre><code>                                                  *
+</code></pre></li>
+<li><pre><code>     Thank you for using Zabbix!                  *
+</code></pre></li>
+<li><pre><code>       &lt;http://www.zabbix.com&gt;                    *
+</code></pre></li>
+</ul>
+
+
+<hr />
+
+<p>```
+好了，我们正式安装</p>
+
+<p><code>sh
+sudo make install
+</code></p>
+
+<p>接下来编辑配置文件
+可以不用sudo，直接切换到root做
+```sh
+cd /usr/local/etc
+cat zabbix_server.conf
+LogFile=/var/log/zabbix_server.log
+DBHost=localhost
+DBName=zabbix
+DBUser=zabbix
+DBPassword=123456</p>
+
+<p>cat zabbix_agent.conf
+LogFile=/tmp/zabbix_agentd.log
+Server=127.0.0.1
+UnsafeUserParameters=1
+```</p>
+
+<p>创建日志文件
+```sh
+touch /var/log/zabbix_server.log
+touch /var/log/zabbix_agent.log</p>
+
+<p>cd &ndash;
+cp misc/init.d/tru64/zabbix_server /etc/init.d/
+cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
+```</p>
+
+<p>2个文件的文件头改成如下
+```sh</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>chkconfig: 35 95 95</h1>
+
+<h1>description:zabbix Agent server</h1>
+
+<p>```</p>
+
+<p>添加服务
+<code>sh
+chkconfig --add zabbix_server
+chkconfig --add zabbix_agentd
+</code></p>
+
+<p>开机自动启动
+<code>sh
+chkconfig zabbix_server on
+chkconfig zabbix_agent on
+</code></p>
+
+<p>文件执行权限
+<code>sh
+chmod +x zabbix_server
+chmod +x zabbix_agentd
+</code></p>
+
+<p>启动
+<code>sh
+sudo /etc/init.d/zabbix_server start
+sudo /etc/init.d/zabbix_agentd start
+</code></p>
+
+<p>安装zabbix web
+<code>sh
+cp -r frontends/php/ /var/www/html/zabbix
+</code></p>
+
+<p>访问<a href="http://ip/zabbix">http://ip/zabbix</a></p>
+
+<p><code>sh
+vim /etc/php.ini
+</code>
+指定
+<code>php
+timezone=Asia/Shanghai
+</code></p>
+
+<p>根据提示修改php配置</p>
+
+<p><code>sh
+yum install -y php-bcmath
+</code></p>
+
+<p>然后再次重启httpd</p>
+
+<p>最后登录前端界面密码为 admin/zabbix</p>
+
+<p>告一段落，接下来学习操作zabbix。</p>
+]]></content>
+  </entry>
+  
+</feed>

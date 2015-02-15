@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: cocos2d-x | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/cocos2d-x/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2015-02-15T15:08:37+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/"/>
+    <updated>2014-02-08T13:10:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary</id>
+    <content type="html"><![CDATA[<p>加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：</p>
+
+<!-- more -->
+
+
+<blockquote><p><i>直接从图片创建：</i>
+{%codeblock lang:cpp cocos2d-x %}
+CCSprite *sprite=CCSprite::create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240
+sprite->setScale(0.5); //缩小50%
+this->addChild(sprite,0); //加载到this场景对象下
+{% endcodeblock %}</p></blockquote>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSprite *sprite = [CCSprite spriteWithFile:@&ldquo;res/pic.png&rdquo;]; //从pic.png创建一个精灵
+sprite.position = ccp(100, 240); //设置坐标为x=100,y=240
+sprite.scale = 0.5; //缩小50%
+[self addChild:sprite z:0]; //加载到self场景对象下
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var sprite; //定义sprite变量
+this.sprite = cc.Sprite.create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+this.sprite.setPosition(new cc.Point(100,240)); //设置坐标为x=100,y=240
+this.sprite.scale = 0.5; //缩小50%
+this.addChild(this.sprite, 0); //加载到this场景对象下
+{% endcodeblock %}</p>
+
+<hr />
+
+<blockquote><p><i>batchnode显示大量精灵：</i>
+<br />注意：batchnode的限制是所有添加到它里面的CCSprite节点的Z轴顺序必须相同，且须使用相同纹理。</p></blockquote>
+
+<p>{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode * batchNode = CCSpriteBatchNode::create(&ldquo;pic.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
+
+<pre><code>CCSprite *sprite = CCSprite::create("pic.png"); //载入图片到精灵，方法效率看起来可以优化（code来自《cocos2d-x游戏开发之旅》）
+batchNode-&gt;addChild(sprite); //将精灵添加到批渲染对象
+</code></pre>
+
+<p>}
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSpriteBatchNode * batchNode = [CCSpriteBatchNode batchNodeWithFile:</p>
+
+<pre><code>@"pic.png"]; //创建批渲染对象
+</code></pre>
+
+<p>[self addChild:batch]; //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
+
+<pre><code>CCSprite *sprite = [CCSpriteBatchNode batchNodeWithFile:@"pic.png"]; //载入图片到精灵
+[batchNode addChild:sprite]; //将精灵添加到批渲染对象
+</code></pre>
+
+<p>} <br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+//首先定义好资源
+var batchNode = cc.SpriteBatchNode.create(&ldquo;pic.png&rdquo;, 50); //定义批渲染对象
+this.addChild(batchNode,0); //把批渲染节点加到this场景对象
+for (i=0;i&lt;100;i++) { //载入100个精灵并分别加到批渲染节点</p>
+
+<pre><code>var sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(0, 0, 85, 121));
+batchNode.addChild(sprite);
+</code></pre>
+
+<p>}
+{% endcodeblock %}</p>
+
+<hr />
+
+<blockquote><p><i>batchnode加framecache结合显示单帧图片</i>
+{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode *batchNode = CCSpriteBatchNode::create(&ldquo;resource.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到this场景对象下
+CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;resources.plist&rdquo;); //帧缓冲加入plist打包好的文件，用texture packer软件可以打包
+CCSprite * sprite = CCSprite::createWithSpriteFrameName(&ldquo;resources_00.png&rdquo;); //读取单帧到精灵
+batchNode->addChild(sprite); //加到批渲染对象
+{% endcodeblock %}</p></blockquote>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:</p>
+
+<pre><code> @"res/resources.plist"]; //加载resource.plist文件到精灵帧缓冲区
+</code></pre>
+
+<p>CCSpriteBatchNode *spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@&ldquo;resources.png&rdquo;]; //从精灵批渲染节点返会一个精灵表
+[self addChild:spriteSheet z:1]; //把精灵表加载到self场景对象下，并设置Z轴顺序为1
+self.sprite = [CCSprite spriteWithSpriteFrameName:@&ldquo;resource_00.png&rdquo;]; //再从缓冲加载单帧图片给精灵
+[spriteSheet addChild:sprite]; //精灵表将该精灵呈现出来<br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+spriteFrameCache.addSpriteFrames(&ldquo;res/resources.plist&rdquo;,&ldquo;res/resources.png&rdquo;); //从精灵批渲染节点返会一个精灵表
+this.sprite = cc.Sprite.createWithSpriteFrameName(&ldquo;resource_00.png&rdquo;); //将单帧精灵图片添加到this场景对象
+var batchNode = cc.SpriteBatchNode.create(&ldquo;res/resources.png&rdquo;);
+batchNode.addChild(this.sprite);
+this.addChild(batchNode);
+{% endcodeblock %}</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[cocos2d-x初心者阶段学习之一]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1/"/>
+    <updated>2014-01-14T14:24:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/14/cocos2d-x-v2.2-newbie-learning-note-1</id>
+    <content type="html"><![CDATA[<h3>序言</h3>
+
+<p>通过一个阶段的cocos2d-iphone的学习，对Objective-C（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocostudio这一套的东西，应该是时候投入该框架的学习。</p>
+
+<!-- more -->
+
+
+<h5>本文参考</h5>
+
+<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
+
+<p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发，然后动手术加载一个飞船。</p>
+
+<h3>加载精灵</h3>
+
+<h4>准备工作</h4>
+
+<p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
+然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
+可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
+然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
+（但是在项目管理器里无法看到，如何添加？TODO）</p>
+
+<h4>添加代码</h4>
+
+<p>在头文件中添加
+{% codeblock lang:cpp HelloWorldScene.h %}
+private:</p>
+
+<pre><code>cocos2d::CCSpriteBatchNode * _batchNode;
+cocos2d::CCSprite * _ship;
+</code></pre>
+
+<p>{% endcodeblock %}
+为什么需要2行代码？因为一个是批渲染对象，用来涵盖全部用到的资源，以及对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
+
+<p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：
+{% codeblock lang:cpp HelloWorldScene.cpp %}
+<em>batchNode = CCSpriteBatchNode::create(&ldquo;Sprites.pvr.ccz&rdquo;);
+this->addChild(</em>batchNode);
+CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;Sprites.plist&rdquo;);</p>
+
+<p><em>ship = CCSprite::createWithSpriteFrameName(&ldquo;SpaceFlier_sm_1.png&rdquo;);
+CCSize winSize = CCDirector::sharedDirector()&ndash;>getWinSize();
+</em>ship->setPosition(ccp(winSize.width * 0.1, winSize.height * 0.5));  <br/>
+<em>batchNode->addChild(</em>ship, 1);
+return true;
+{% endcodeblock %}</p>
+
+<h4>简单的分析</h4>
+
+<p>按流程分析下吧，内存稍微提一下。
+首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
+addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
+接着，确定帧和帧缓冲的关系，通过用addSpriteFramesWithFile函数读取plist文件来实现。
+然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
+只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
+
+<h4>编译看结果</h4>
+
+<p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一艘太空飞船，目的达成。下篇学习如何移动和发射子弹。</p>
+
+<p><img src="/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
+
+<h4>参考阅读</h4>
+
+<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[win7上搭建cocos2d-x2.2.2开发环境]]></title>
+    <link href="http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2/"/>
+    <updated>2014-01-13T00:25:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/01/13/win7-install-cocos2d-x2-dot-2-2</id>
+    <content type="html"><![CDATA[<p>在win7上搭建cocos2d-x的开发环境，主要用到的开发IDE为visual C++2010，为什么不再使用vc6？第一，cocos2d-x本身不支持。第二，支持C++0x的特性。对于现代游戏游戏引擎来说，这是必要的。安装vc
+2010这里就不再讨论。</p>
+
+<!-- more -->
+
+
+<p>直接讲如何进行cocos2d-x的编译了。</p>
+
+<h3>1）下载</h3>
+
+<p>首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
+
+<h3>2）解压和编译cocos2d-x</h3>
+
+<p>接下来是解压,注意不要解压到中文目录，否则接下来生成项目会报错。我解压到了D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2。随后进入cocos2d-x2.2.2文件夹下的cocos2d-x2.2.2文件夹。因为我们是使用vc2010，所以就双击cocos2d-win32.vc2010.sln。
+进到IDE之后，选择解决方案资源管理器下的cocos2d-win32.vc2010,右击选择配置属性-配置，确保每个项目都为debug，可以看到共有17个项目。然后按下F7开始生成解决方案。
+慢慢等，我是等来10来分钟。可以看到17个项目都生成成功了。</p>
+
+<h3>3）创建工程</h3>
+
+<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行
+<code>sh
+cd D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\tools\project-creator\
+create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
+</code>
+其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
+
+<h3>4）编译工程</h3>
+
+<p>最后进入刚刚取名为HelloWorld的项目中
+<code>sh
+cd D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\projects/HelloWorld
+</code>
+双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。</p>
+]]></content>
+  </entry>
+  
+</feed>

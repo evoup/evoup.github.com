@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: linux | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2015-02-15T15:08:37+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[centos7配置静态IP]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/27/centos7-configure-static-ip/"/>
+    <updated>2014-07-27T23:02:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/27/centos7-configure-static-ip</id>
+    <content type="html"><![CDATA[<p>centos7按照初始安装时候的developer类型一路装好,在vmware里已经设置为bridge模式，按理说是会自动按照DHCP联网成功的，结果却发现连网卡都没有激活，这里记录下。</p>
+
+<!-- more -->
+
+
+<p>配置网卡
+<code>
+vim /etc/sysconfig/network-scripts/ifcfg-ens33
+</code></p>
+
+<p>原先的配置是这样的
+<code>
+HWADDR=00:0C:29:2C:E5:30
+TYPE=Ethernet
+BOOTPROTO=static
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=no
+NAME=ens33
+UUID=ea35e10e-ff50-4a7a-92d5-ab54c58d8b44
+ONBOOT=no
+</code></p>
+
+<p>没想到在centos7里默认是不启动网卡的，奇怪的设定啊，所以网卡才没有激活
+改为yes，然后再加上以下几个参数的设置
+<code>
+IPADDR=192.168.2.181
+GATEWAY=192.168.2.1
+DNS1=114.114.114.114
+DNS2=8.8.8.8
+</code></p>
+
+<p>其中IPADDR为网卡地址，GATEWAY为网关地址，我在vmware里采用的bridge，所以就是实际的路由器的地址。
+DNS1和DNS2这2个至少要填DNS1。
+编辑/etc/resolv.conf
+并且在下面加入了
+<code>
+nameserver 114.114.114.114
+nameserver 8.8.8.8
+</code></p>
+
+<p>如果按照上面把/etc/resolv.conf中的dns也配置好之后
+<code>
+sudo service network restart
+</code>
+这样应该就完成配置可以上网了。</p>
+
+<p>ps:也可以使用system-config-network-tui这个软件以GUI方式进行配置，用yum安装即可。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd和linux上安装中文字体]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
+    <updated>2014-06-13T17:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
+    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+
+<!-- more -->
+
+
+<h3>freebsd下</h3>
+
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存
+<code>sh
+sudo cp ukai.ttf /usr/local/share/fonts/
+sudo fc-cache -f -v
+</code></p>
+
+<h3>centos下</h3>
+
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令
+<code>sh
+sudo mkdir /use/share/fonts/msfonts
+sudo cp ukai.ttf /usr/share/fonts/msfonts/
+cd /usr/share/fonts/msfonts/
+sudo mkfontscale
+sudo mkfontdir
+sudo fc-cache -fv
+</code>
+更EZ的方式有
+<code>
+sudo yum  –y  install  fonts-chinese
+</code></p>
+
+<p>于是就可以在rrdtool里指定字体为ukai.ttf了，是不是各种简单:)</p>
+]]></content>
+  </entry>
+  
+</feed>
