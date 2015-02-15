@@ -4,7 +4,7 @@
   <title><![CDATA[Category: java | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-10-17T14:10:57+08:00</updated>
+  <updated>2015-02-15T15:08:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -240,132 +240,143 @@ mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=myapp
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[apache Mina 使用小记]]></title>
-    <link href="http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world/"/>
-    <updated>2013-01-14T14:14:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2013/01/14/apache-mina-hello-world</id>
-    <content type="html"><![CDATA[<p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置
-<code>bash
-setenv JAVA_HOME "/usr/local/diablo-jdk1.6.0/"
-setenv JAVA_BIN "/usr/local/bin/"
-</code>
-下载mina</p>
+    <title type="html"><![CDATA[maven打包时候加入依赖]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/15/maven-add-dependency/"/>
+    <updated>2014-03-15T14:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/15/maven-add-dependency</id>
+    <content type="html"><![CDATA[<p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：</p>
 
-<p><code>bash
-cd /usr/home/evoup/monsrvd-2.1/test/
-fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz
-tar xzf apache-mina-2.0.7-bin.tar.gz
-cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
-cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
-</code>
-除此之外还需要slf4j这个是mina需要使用的日志库
-<code>bash
-fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
-tar xzf slf4j-1.7.2.tar.gz
-cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
-cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
-</code>
-设置好JAVA的CLASSPATH
-<code>bash
-setenv CLASSPATH "/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:."
-</code>
-找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
+<!-- more -->
 
-<p>```java
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
-import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.session.IdleStatus;
-import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
-import org.apache.mina.filter.logging.LoggingFilter;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;</p>
 
-<p>import org.apache.mina.core.service.IoHandlerAdapter;
-import org.apache.mina.core.session.IoSession;
-import java.util.Date;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;</p>
+<p>```</p>
 
-<p>public class MinaTimeServer
-{
-   private static final int PORT = 9123;</p>
-
-<p>   public static void main( String[] args ) throws IOException
-   {</p>
-
-<pre><code>   IoAcceptor acceptor = new NioSocketAcceptor();
-
-   acceptor.getFilterChain().addLast( "logger", new LoggingFilter() );
-   acceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ))));
-
-   acceptor.setHandler( new TimeServerHandler() );
-   acceptor.getSessionConfig().setReadBufferSize( 2048 );
-   acceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
-   acceptor.bind( new InetSocketAddress(PORT) );
+<pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;jar&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;excludes&gt;
+                            &lt;exclude&gt;/conf/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/fonts/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/images/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/sounds/**&lt;/exclude&gt;
+                        &lt;/excludes&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;     
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.2.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;shade&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;transformers&gt;
+                            &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"&gt;
+                                &lt;mainClass&gt;com.company.mod.cls&lt;/mainClass&gt;
+                            &lt;/transformer&gt;
+                        &lt;/transformers&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+                &lt;testFailureIgnore&gt;true&lt;/testFailureIgnore&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+   &lt;/plugins&gt;
+&lt;/build&gt;
 </code></pre>
 
-<p>   }
-}</p>
-
-<p>class TimeServerHandler extends IoHandlerAdapter {</p>
-
-<pre><code>static Logger logger = LoggerFactory.getLogger(TimeServerHandler.class);
-</code></pre>
-
-<p>   //static Logger logger = Logger.getLogger(TimeServerHandler.class);
-   //异常处理
-   public void exceptionCaught(IoSession session, Throwable cause) throws Exception {</p>
-
-<pre><code>   cause.printStackTrace();
-</code></pre>
-
-<p>   }
-   //对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期
-   public void messageReceived(IoSession session, Object message) throws Exception {</p>
-
-<pre><code>   String str = message.toString();
-   if (str.trim().equalsIgnoreCase("quit")) {
-       session.close(true);
-       return;
-   }
-   logger.debug("Rec:" + str);
-   Date date = new Date();
-   session.write(date.toString());
-   logger.debug("Message written...");
-</code></pre>
-
-<p>   }
-   //当连接空闲时的处理
-   public void sessionIdle(IoSession session, IdleStatus status) throws Exception {</p>
-
-<pre><code>   logger.debug("IDLE " + session.getIdleCount(status));
-</code></pre>
-
-<p>   }
-}
-<code>
-</code>
-[evoup@myhost]>telnet 127.0.0.1 9123
-Trying 127.0.0.1&hellip;
-Connected to localhost.</p>
-
-<p>Escape character is &lsquo;^]&rsquo;.
-Mon Jan 14 17:34:04 CST 2013
-Mon Jan 14 17:34:04 CST 2013
-```</p>
+<p>```</p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[java关于ConcurrentModificationException异常]]></title>
-    <link href="http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception/"/>
-    <updated>2009-12-23T15:46:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2009/12/23/java-concurrentmodificationexception</id>
-    <content type="html"><![CDATA[<p>如果出现java.util.ConcurrentModificationException</p>
+    <title type="html"><![CDATA[SpringMVC搭建篇]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/springmvc-first/"/>
+    <updated>2014-02-12T15:49:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/springmvc-first</id>
+    <content type="html"><![CDATA[<p>最近有项目要求必须用java，于是想到了spring，前几天花了一天时间也算调通。这里简单记录下先(其实很详细，我自己要看，哈哈)，其实更喜欢idea，人家都是google官方android开发推荐ide，有专门插件。嗯，扯远了，下面是搭建的过程小记：</p>
 
-<p>主要原因是使用了叠代器，而且删除了某元素。临时的解决方法是设置1个标记，如果遇到该标记略过！</p>
+<!-- more -->
+
+
+<h3>Spring是什么？</h3>
+
+<p>不废话了，自己去查&mdash;</p>
+
+<h3>搭建的环境</h3>
+
+<p>windows7+eclipse kepler sr2+jdk1.7+tomcat7.0</p>
+
+<p>第一个spring程序的代码地址（我借鉴的，也可以自己改改呗:)）：
+<a href="https://github.com/evoup/javaweb.git">https://github.com/evoup/javaweb.git</a>
+签出后我把它放到了c:/code_template文件夹下。
+<img src="/images/evoup/springmvc_first/git_clone_helloworld.jpg" alt="Alt text" /></p>
+
+<h4>eclipse</h4>
+
+<p>首先自然是下载eclipse了，注意版本4.3.2是优化过的版本，4.3.1（SR1）这个版本不是很建议，因为搭建的时候貌似不是很顺利？</p>
+
+<p>32位的下载地址：
+<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip</a></p>
+
+<p>64位的下载地址：
+<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip</a></p>
+
+<p>下完放到任意目录，我的是C:\web，直接解压出来
+<img src="/images/evoup/springmvc_first/eclipse_version.jpg" alt="Alt text" /></p>
+
+<h4>jdk的安装</h4>
+
+<p>就用常用的1.7吧
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</a></p>
+
+<h4>导入项目</h4>
+
+<p>打开eclipse，首先选择工作区
+<img src="/images/evoup/springmvc_first/select_workspace.jpg" alt="Alt text" /></p>
+
+<p>接着选择菜单
+import->Existing Projects into Workspace
+<img src="/images/evoup/springmvc_first/import.jpg" alt="Alt text" /></p>
+
+<p>选择之前的项目导入
+<img src="/images/evoup/springmvc_first/import2.jpg" alt="Alt text" /></p>
+
+<p>右键项目属性，转为dynamic web module项目
+<img src="/images/evoup/springmvc_first/project_property.jpg" alt="Alt text" /></p>
+
+<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> folder &ndash;> 选择src/main/webapp
+这一步就是配置webapp目录要发布到项目的根目录下</p>
+
+<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> Java Build Path Entries &ndash;> 选择Maven Dependencies &ndash;> Finish &ndash;> OK
+完了貌似必须重启以下eclipse kepler sr2
+还有一点小问题</p>
+
+<p>把头上这段去掉
+&lt;!DOCTYPE web-app PUBLIC
+ &ldquo;&ndash;//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&rdquo;
+ &ldquo;<a href="http://java.sun.com/dtd/web-app_2_3.dtd">http://java.sun.com/dtd/web-app_2_3.dtd</a>&rdquo; ></p>
+
+<p> 好了吧？还木有！需要用tomcat8伪装成tomcat7
+ <a href="http://blog.csdn.net/yuzhiyuxia/article/details/26282767">http://blog.csdn.net/yuzhiyuxia/article/details/26282767</a></p>
 ]]></content>
   </entry>
   

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: maven | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/maven/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-10-17T14:10:57+08:00</updated>
+  <updated>2015-02-15T15:08:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -90,6 +90,74 @@ Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
 <h4>参考文章</h4>
 
 <p><a href="http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Installation-Guide/cdh4ig_topic_31.html">http://www.cloudera.com/content/cloudera-content/cloudera-docs/CDH4/4.2.0/CDH4-Installation-Guide/cdh4ig_topic_31.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[maven打包时候加入依赖]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/15/maven-add-dependency/"/>
+    <updated>2014-03-15T14:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/15/maven-add-dependency</id>
+    <content type="html"><![CDATA[<p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：</p>
+
+<!-- more -->
+
+
+<p>```</p>
+
+<pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;jar&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;excludes&gt;
+                            &lt;exclude&gt;/conf/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/fonts/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/images/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/sounds/**&lt;/exclude&gt;
+                        &lt;/excludes&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;     
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.2.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;shade&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;transformers&gt;
+                            &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"&gt;
+                                &lt;mainClass&gt;com.company.mod.cls&lt;/mainClass&gt;
+                            &lt;/transformer&gt;
+                        &lt;/transformers&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+                &lt;testFailureIgnore&gt;true&lt;/testFailureIgnore&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+   &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<p>```</p>
 ]]></content>
   </entry>
   

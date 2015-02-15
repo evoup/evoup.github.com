@@ -105,6 +105,97 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-05-04T14:41:00+08:00" pubdate data-updated="true">May 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/04/rebar-build-erlang-project/">[How To]使用rebar构建erlang 项目</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>rebar这个程序其实是个escript脚本，通过它可以对erlang项目创建、编译、生成和升级。之前一直使用着《Erlang/OTP并发编程实战》EMakefile的方法，进行项目的编译，也很简单，但是后续的又有一套发布的机制。现在很多项目在用rebar，于是我也试了一下，没想到问题还蛮多的，在这里记一下，我只是用了绕过的方法不是很好，因为时间不允许，这里先SORRY一下。我这里的环境为freebsd9.0 amd64 (elrang5.9.1 R15B01),erlang的其他版本，请参看wiki的Release-handling部分调整生成环节的命令。</p>
+
+<p>1）第一步要获取rebar程序，两种方法：自己编译和直接下载。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/05/04/rebar-build-erlang-project/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-21T18:15:00+08:00" pubdate data-updated="true">Apr 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/21/ssh-authorized-keys/">创建ssh信任失败的原因分析和改进</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>今天在给一台服务器做信任的时候出现了完成之后登录会提示输入密码。经过起初的ssh-copy-id和手工拷贝公钥到对方服务器的authorized_keys文件中，到后来的再次ssh-keygen反复试错无果之后，最终把问题锁定在了权限。</p>
+
+<p>除了authorized_keys文件给予644或者600权限，.ssh文件夹给予755权限，此外用户目录的权限也必须是755或711，最终修改用户文件夹权限完成免密码登录。</p>
+
+<p>由此推断：</p>
+
+<p>一，管理员在开帐号的时候采用的错误的脚本。</p>
+
+<p>二，ssh-copy-id这个工具可以改进。</p>
+
+<p>目前简单的方式就是直接把目录权限做成711或者755。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-18T17:52:00+08:00" pubdate data-updated="true">Apr 18<span>th</span>, 2013</time>
         
       </p>
@@ -789,147 +880,6 @@ php-fpm 关闭：</p>
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-27T13:59:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">[转]Erlang监测系统CPU、内存和磁盘</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>os_mon
-Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
-
-<p><font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font></p>
-
-<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
-
-<p>disksup：监测磁盘（Unix、Windows）</p>
-
-<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
-
-<p>os_sup：监测系统日志（Solaris、Windows）</p>
-
-</div>
-  
-  
-    <footer>
-      <a class="btn btn-default" rel="full-article" href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">Read on &rarr;</a>
-    </footer>
-  
-
-
-        </article>
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-04T18:19:00+08:00" pubdate data-updated="true">Feb 4<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/02/04/erlang-self-log-to-file/">Erlang自带日志写文件的方法</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">x</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">-</span><span class="ni">define</span><span class="p">(</span><span class="no">LogsLoaction</span><span class="p">,</span><span class="s">&quot;/tmp/&quot;</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">start</span><span class="p">()</span><span class="o">-&gt;</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="nv">FileName</span> <span class="o">=</span> <span class="o">?</span><span class="nv">LogsLoaction</span><span class="o">++</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="nn">file</span><span class="p">:</span><span class="nf">write_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">,</span> <span class="o">&lt;&lt;</span><span class="s">&quot;start to record&quot;</span><span class="o">&gt;&gt;</span><span class="p">),</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="nn">error_logger</span><span class="p">:</span><span class="nf">logfile</span><span class="p">({</span><span class="n">open</span><span class="p">,</span><span class="nv">FileName</span><span class="p">}),</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="n">info</span><span class="p">(</span><span class="s">&quot;[init] log start </span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
-</span><span class='line'>
-</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -969,7 +919,7 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 118.75%'>Java(5)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 103.75%'>Maven(1)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 122.5%'>Version_control(6)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 122.5%'>Version_control(6)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>
@@ -1013,7 +963,7 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
     </div>
     <footer role="contentinfo"><div class="container">
     <p class="text-muted credits">
-  Copyright &copy; 2014 - Evoup`s Blog<br>
+  Copyright &copy; 2015 - Evoup`s Blog<br>
   <small>
       <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
       <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.

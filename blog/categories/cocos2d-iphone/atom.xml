@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cocos2d-iphone | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cocos2d-iphone/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2014-10-17T14:10:57+08:00</updated>
+  <updated>2015-02-15T15:08:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -24,170 +24,105 @@
 
 
 <blockquote><p><i>直接从图片创建：</i>
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSprite</span> <span class="o">*</span><span class="n">sprite</span><span class="o">=</span><span class="n">CCSprite</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">res</span><span class="o">/</span><span class="n">pic</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//从pic.png创建一个精灵</span>
-</span><span class='line'><span class="n">sprite</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">240</span><span class="p">));</span> <span class="c1">//设置坐标为x=100,y=240</span>
-</span><span class='line'><span class="n">sprite</span><span class="o">-&gt;</span><span class="n">setScale</span><span class="p">(</span><span class="mf">0.5</span><span class="p">);</span> <span class="c1">//缩小50%</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span> <span class="c1">//加载到this场景对象下</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+{%codeblock lang:cpp cocos2d-x %}
+CCSprite *sprite=CCSprite::create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240
+sprite->setScale(0.5); //缩小50%
+this->addChild(sprite,0); //加载到this场景对象下
+{% endcodeblock %}</p></blockquote>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">CCSprite</span> <span class="o">*</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSprite</span> <span class="nl">spriteWithFile:</span><span class="err">@</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">res</span><span class="o">/</span><span class="n">pic</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;];</span> <span class="c1">//从pic.png创建一个精灵</span>
-</span><span class='line'><span class="n">sprite</span><span class="p">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">ccp</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">240</span><span class="p">);</span> <span class="c1">//设置坐标为x=100,y=240</span>
-</span><span class='line'><span class="n">sprite</span><span class="p">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span> <span class="c1">//缩小50%</span>
-</span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">sprite</span> <span class="nl">z:</span><span class="mi">0</span><span class="p">];</span> <span class="c1">//加载到self场景对象下</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSprite *sprite = [CCSprite spriteWithFile:@&ldquo;res/pic.png&rdquo;]; //从pic.png创建一个精灵
+sprite.position = ccp(100, 240); //设置坐标为x=100,y=240
+sprite.scale = 0.5; //缩小50%
+[self addChild:sprite z:0]; //加载到self场景对象下
+{% endcodeblock %}</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-html5 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">sprite</span><span class="p">;</span> <span class="c1">//定义sprite变量</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">res</span><span class="o">/</span><span class="nx">pic</span><span class="p">.</span><span class="nx">png</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span> <span class="c1">//从pic.png创建一个精灵</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">setPosition</span><span class="p">(</span><span class="k">new</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">240</span><span class="p">));</span> <span class="c1">//设置坐标为x=100,y=240</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">scale</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span> <span class="c1">//缩小50%</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">//加载到this场景对象下</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var sprite; //定义sprite变量
+this.sprite = cc.Sprite.create(&ldquo;res/pic.png&rdquo;); //从pic.png创建一个精灵
+this.sprite.setPosition(new cc.Point(100,240)); //设置坐标为x=100,y=240
+this.sprite.scale = 0.5; //缩小50%
+this.addChild(this.sprite, 0); //加载到this场景对象下
+{% endcodeblock %}</p>
 
 <hr />
 
 <blockquote><p><i>batchnode显示大量精灵：</i>
 <br />注意：batchnode的限制是所有添加到它里面的CCSprite节点的Z轴顺序必须相同，且须使用相同纹理。</p></blockquote>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">pic</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//创建批渲染对象</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">batchNode</span><span class="p">);</span> <span class="c1">//批渲染对象加载到self场景对象下</span>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">CCSprite</span> <span class="o">*</span><span class="n">sprite</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;pic.png&quot;</span><span class="p">);</span> <span class="c1">//载入图片到精灵，方法效率看起来可以优化（code来自《cocos2d-x游戏开发之旅》）</span>
-</span><span class='line'><span class="n">batchNode</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">);</span> <span class="c1">//将精灵添加到批渲染对象</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode * batchNode = CCSpriteBatchNode::create(&ldquo;pic.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">batchNode</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSpriteBatchNode</span> <span class="nl">batchNodeWithFile:</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="s">@&quot;pic.png&quot;</span><span class="p">];</span> <span class="c1">//创建批渲染对象</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">batch</span><span class="p">];</span> <span class="c1">//批渲染对象加载到self场景对象下</span>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">CCSprite</span> <span class="o">*</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSpriteBatchNode</span> <span class="nl">batchNodeWithFile:</span><span class="s">@&quot;pic.png&quot;</span><span class="p">];</span> <span class="c1">//载入图片到精灵</span>
-</span><span class='line'><span class="p">[</span><span class="n">batchNode</span> <span class="nl">addChild:</span><span class="n">sprite</span><span class="p">];</span> <span class="c1">//将精灵添加到批渲染对象</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span> <span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<pre><code>CCSprite *sprite = CCSprite::create("pic.png"); //载入图片到精灵，方法效率看起来可以优化（code来自《cocos2d-x游戏开发之旅》）
+batchNode-&gt;addChild(sprite); //将精灵添加到批渲染对象
+</code></pre>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-html5 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="c1">//首先定义好资源</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">batchNode</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">SpriteBatchNode</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">pic</span><span class="p">.</span><span class="nx">png</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="mi">50</span><span class="p">);</span> <span class="c1">//定义批渲染对象</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">batchNode</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span> <span class="c1">//把批渲染节点加到this场景对象</span>
-</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="mi">100</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//载入100个精灵并分别加到批渲染节点&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">createWithTexture</span><span class="p">(</span><span class="nx">batchNode</span><span class="p">.</span><span class="nx">getTexture</span><span class="p">(),</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">rect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">121</span><span class="p">));</span>
-</span><span class='line'><span class="nx">batchNode</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">sprite</span><span class="p">);</span>
-</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>}
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+CCSpriteBatchNode * batchNode = [CCSpriteBatchNode batchNodeWithFile:</p>
+
+<pre><code>@"pic.png"]; //创建批渲染对象
+</code></pre>
+
+<p>[self addChild:batch]; //批渲染对象加载到self场景对象下
+for (int i=0;i&lt;100;i++) {</p>
+
+<pre><code>CCSprite *sprite = [CCSpriteBatchNode batchNodeWithFile:@"pic.png"]; //载入图片到精灵
+[batchNode addChild:sprite]; //将精灵添加到批渲染对象
+</code></pre>
+
+<p>} <br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+//首先定义好资源
+var batchNode = cc.SpriteBatchNode.create(&ldquo;pic.png&rdquo;, 50); //定义批渲染对象
+this.addChild(batchNode,0); //把批渲染节点加到this场景对象
+for (i=0;i&lt;100;i++) { //载入100个精灵并分别加到批渲染节点</p>
+
+<pre><code>var sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(0, 0, 85, 121));
+batchNode.addChild(sprite);
+</code></pre>
+
+<p>}
+{% endcodeblock %}</p>
 
 <hr />
 
 <blockquote><p><i>batchnode加framecache结合显示单帧图片</i>
-<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-x </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//创建批渲染对象</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">batchNode</span><span class="p">);</span> <span class="c1">//批渲染对象加载到this场景对象下</span>
-</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">&amp;</span><span class="n">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources</span><span class="p">.</span><span class="n">plist</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//帧缓冲加入plist打包好的文件，用texture packer软件可以打包</span>
-</span><span class='line'><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">sprite</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;);</span> <span class="c1">//读取单帧到精灵</span>
-</span><span class='line'><span class="n">batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">sprite</span><span class="p">);</span> <span class="c1">//加到批渲染对象</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p></blockquote>
+{%codeblock lang:cpp cocos2d-x %}
+CCSpriteBatchNode *batchNode = CCSpriteBatchNode::create(&ldquo;resource.png&rdquo;); //创建批渲染对象
+this->addChild(batchNode); //批渲染对象加载到this场景对象下
+CCSpriteFrameCache::sharedSpriteFrameCache()&ndash;>addSpriteFramesWithFile(&ldquo;resources.plist&rdquo;); //帧缓冲加入plist打包好的文件，用texture packer软件可以打包
+CCSprite * sprite = CCSprite::createWithSpriteFrameName(&ldquo;resources_00.png&rdquo;); //读取单帧到精灵
+batchNode->addChild(sprite); //加到批渲染对象
+{% endcodeblock %}</p></blockquote>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-iphone </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="p">[[</span><span class="n">CCSpriteFrameCache</span> <span class="n">sharedSpriteFrameCache</span><span class="p">]</span> <span class="nl">addSpriteFramesWithFile:</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span> <span class="s">@&quot;res/resources.plist&quot;</span><span class="p">];</span> <span class="c1">//加载resource.plist文件到精灵帧缓冲区</span>
-</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span><span class="n">spriteSheet</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSpriteBatchNode</span> <span class="nl">batchNodeWithFile:</span><span class="err">@</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resources</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;];</span> <span class="c1">//从精灵批渲染节点返会一个精灵表</span>
-</span><span class='line'><span class="p">[</span><span class="n">self</span> <span class="nl">addChild:</span><span class="n">spriteSheet</span> <span class="nl">z:</span><span class="mi">1</span><span class="p">];</span> <span class="c1">//把精灵表加载到self场景对象下，并设置Z轴顺序为1</span>
-</span><span class='line'><span class="n">self</span><span class="p">.</span><span class="n">sprite</span> <span class="o">=</span> <span class="p">[</span><span class="n">CCSprite</span> <span class="nl">spriteWithSpriteFrameName:</span><span class="err">@</span><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">resource_00</span><span class="p">.</span><span class="n">png</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;];</span> <span class="c1">//再从缓冲加载单帧图片给精灵</span>
-</span><span class='line'><span class="p">[</span><span class="n">spriteSheet</span> <span class="nl">addChild:</span><span class="n">sprite</span><span class="p">];</span> <span class="c1">//精灵表将该精灵呈现出来&lt;br/&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{%codeblock lang:objective-c cocos2d-iphone %}
+[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cocos2d-html5 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">spriteFrameCache</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">SpriteFrameCache</span><span class="p">.</span><span class="nx">getInstance</span><span class="p">();</span>
-</span><span class='line'><span class="nx">spriteFrameCache</span><span class="p">.</span><span class="nx">addSpriteFrames</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">res</span><span class="o">/</span><span class="nx">resources</span><span class="p">.</span><span class="nx">plist</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">res</span><span class="o">/</span><span class="nx">resources</span><span class="p">.</span><span class="nx">png</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span> <span class="c1">//从精灵批渲染节点返会一个精灵表</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">Sprite</span><span class="p">.</span><span class="nx">createWithSpriteFrameName</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">resource_00</span><span class="p">.</span><span class="nx">png</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span> <span class="c1">//将单帧精灵图片添加到this场景对象</span>
-</span><span class='line'><span class="kd">var</span> <span class="nx">batchNode</span> <span class="o">=</span> <span class="nx">cc</span><span class="p">.</span><span class="nx">SpriteBatchNode</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">res</span><span class="o">/</span><span class="nx">resources</span><span class="p">.</span><span class="nx">png</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span>
-</span><span class='line'><span class="nx">batchNode</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">sprite</span><span class="p">);</span>
-</span><span class='line'><span class="k">this</span><span class="p">.</span><span class="nx">addChild</span><span class="p">(</span><span class="nx">batchNode</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<pre><code> @"res/resources.plist"]; //加载resource.plist文件到精灵帧缓冲区
+</code></pre>
+
+<p>CCSpriteBatchNode *spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@&ldquo;resources.png&rdquo;]; //从精灵批渲染节点返会一个精灵表
+[self addChild:spriteSheet z:1]; //把精灵表加载到self场景对象下，并设置Z轴顺序为1
+self.sprite = [CCSprite spriteWithSpriteFrameName:@&ldquo;resource_00.png&rdquo;]; //再从缓冲加载单帧图片给精灵
+[spriteSheet addChild:sprite]; //精灵表将该精灵呈现出来<br/>
+{% endcodeblock %}</p>
+
+<p>{%codeblock lang:javascript cocos2d-html5 %}
+var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+spriteFrameCache.addSpriteFrames(&ldquo;res/resources.plist&rdquo;,&ldquo;res/resources.png&rdquo;); //从精灵批渲染节点返会一个精灵表
+this.sprite = cc.Sprite.createWithSpriteFrameName(&ldquo;resource_00.png&rdquo;); //将单帧精灵图片添加到this场景对象
+var batchNode = cc.SpriteBatchNode.create(&ldquo;res/resources.png&rdquo;);
+batchNode.addChild(this.sprite);
+this.addChild(batchNode);
+{% endcodeblock %}</p>
 ]]></content>
   </entry>
   
