@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2015-02-15T15:37:50+08:00</updated>
+  <updated>2015-04-21T14:50:58+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,271 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[五类方法定义javascript类]]></title>
+    <link href="http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method/"/>
+    <updated>2015-04-21T14:20:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method</id>
+    <content type="html"><![CDATA[<p>自己写js的时候，总结了类的五种写法，可能还不止，以后增加。</p>
+
+<!--more-->
+
+
+<p>第一种，this的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Test1</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">setName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">){</span>
+</span><span class='line'>        <span class="nx">name</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">this</span><span class="p">.</span><span class="nx">sayHello</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="k">return</span> <span class="s2">&quot;Hello &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'><span class="p">}();</span>
+</span><span class='line'><span class="nx">Test1</span><span class="p">.</span><span class="nx">setName</span><span class="p">(</span><span class="s2">&quot;penngo&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Test1======&quot;</span> <span class="o">+</span> <span class="nx">Test1</span><span class="p">.</span><span class="nx">getName</span><span class="p">());</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Test1======&quot;</span> <span class="o">+</span> <span class="nx">Test1</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第二种，return的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Test2</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">setName</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">){</span>
+</span><span class='line'>            <span class="nx">name</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">getName</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">},</span>
+</span><span class='line'>        <span class="nx">sayHello</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>            <span class="k">return</span> <span class="s2">&quot;Hello &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">};</span>
+</span><span class='line'><span class="p">}();</span>
+</span><span class='line'><span class="nx">Test2</span><span class="p">.</span><span class="nx">setName</span><span class="p">(</span><span class="s2">&quot;penngo&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Test2======&quot;</span> <span class="o">+</span> <span class="nx">Test2</span><span class="p">.</span><span class="nx">getName</span><span class="p">());</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Test2======&quot;</span> <span class="o">+</span> <span class="nx">Test2</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第三种,建立空的构造器函数，使其protoype到一个json结构的对象（这样结构会非常清晰）。最后对空的构造器函数new ， 创建实例：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">pri</span><span class="o">=</span><span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span><span class="s2">&quot;soso&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">init</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">pri</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="nx">alert</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">_temp</span><span class="p">(){}</span>
+</span><span class='line'><span class="nx">_temp</span><span class="p">.</span><span class="nx">prototype</span><span class="o">=</span> <span class="nx">pri</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">ss</span><span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">ss</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span class='line'><span class="nx">ss</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">d</span><span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">d</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第四种，jquery扩展类的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Circle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">=</span> <span class="nx">r</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">area</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="nx">diameter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">mycircle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Circle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+</span><span class='line'><span class="nx">alert</span><span class="p">(</span><span class="nx">mycircle</span><span class="p">.</span><span class="nx">r</span> <span class="o">+</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="nx">mycircle</span><span class="p">.</span><span class="nx">area</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>第五种</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Link</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(){};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">Link</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">method1</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method2</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method3</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method4</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意第五种的方式，其实就是加了个return this，这样才可以链式调用。
+结论：目前先用第五种方式来写，如果需要动态扩展用jq的extend比较推荐。</p>
+
+<p>题外话：不想写class还可以写嵌套function的:)</p>
+
+<p>参考连接：
+<a href="http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html">http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html</a></p>
+
+<p><a href="http://www.blogjava.net/pengo/archive/2013/01/08/393931.html">http://www.blogjava.net/pengo/archive/2013/01/08/393931.html</a></p>
+
+<p><a href="http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html">http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html</a></p>
+
+<p><a href="https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808">https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[同步github分支过来的代码库]]></title>
+    <link href="http://evoupsight.com/blog/2015/04/21/sync-fork-github/"/>
+    <updated>2015-04-21T13:53:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2015/04/21/sync-fork-github</id>
+    <content type="html"><![CDATA[<p>主要的步骤是先查看当前fork的远程代码库</p>
+
+<!-- more -->
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git remote -v
+</span><span class='line'>origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+</span><span class='line'>origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后添加一个上游代码库，地址就是之前被fork的那个代码库</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY</span></code></pre></td></tr></table></div></figure>
+
+
+<p>再次查看</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git remote -v
+</span><span class='line'>origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
+</span><span class='line'>origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
+</span><span class='line'>upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (fetch)
+</span><span class='line'>upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (push)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接着用如下命令获取上游代码并合并到当前工作区</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git fetch upstream
+</span><span class='line'>git checkout master
+</span><span class='line'>git merge upstream/master</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后git push origin master即可完成提交。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[sqoop导出hive数据到mysql]]></title>
@@ -5163,380 +5428,6 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 
 
 <p>然后重启hadoop和hive，恢复正常，原因是hadoop的namespaceIDs有异常。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[golang使用syslog日志系统和安装使用第三方包log4go]]></title>
-    <link href="http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go/"/>
-    <updated>2014-04-22T11:25:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go</id>
-    <content type="html"><![CDATA[<h3>使用syslog</h3>
-
-<p>首先介绍下golang的syslog的用法，因为这个其实也很好用，只不过比log4go缺点在于要用syslog那一套（如newsyslog）来手工设置syslog.conf来轮询日志。接下来是一个基本的用法，只有serverity的场景:</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">// syslog init</span>
-</span><span class='line'><span class="kd">func</span> <span class="nx">LogInit</span><span class="p">()</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">Log</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">syslog</span><span class="p">.</span><span class="nx">NewLogger</span><span class="p">(</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_DEBUG</span><span class="p">,</span> <span class="nx">log</span><span class="p">.</span><span class="nx">Lmicroseconds</span><span class="p">)</span> <span class="c1">//设置log facility为LOG_DEBUG</span>
-</span><span class='line'>    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">return</span> <span class="nx">Log</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="c1">//然后打印日志的时候可以调用对应的log level</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>或者使用shell调用的方式，理论上效率会低一点:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="c1">/// using logger</span>
-</span><span class='line'><span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nx">Command</span><span class="p">(</span><span class="s">&quot;logger&quot;</span><span class="p">,</span> <span class="s">&quot;-p&quot;</span><span class="p">,</span> <span class="s">&quot;local0.err&quot;</span><span class="p">,</span> <span class="s">&quot;-t&quot;</span><span class="p">,</span> <span class="s">&quot;bash&quot;</span><span class="p">,</span> <span class="s">&quot;hello bash&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="nx">err</span> <span class="p">=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Run</span><span class="p">()</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;error running cmd!&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后是一个可以log serverity和log facility都可以用上的例子:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
-</span><span class='line'><span class="kn">import</span><span class="p">(</span>
-</span><span class='line'>    <span class="s">&quot;log/syslog&quot;</span>
-</span><span class='line'>  <span class="s">&quot;fmt&quot;</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'><span class="nx">testLogger</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">syslog</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_WARNING</span><span class="p">|</span><span class="nx">syslog</span><span class="p">.</span><span class="nx">LOG_LOCAL0</span><span class="p">,</span> <span class="s">&quot;mytag&quot;</span><span class="p">)</span>
-</span><span class='line'><span class="k">defer</span> <span class="nx">testLogger</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class='line'><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;New() failed: %v\n&quot;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;logger ok&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">test</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;test go syslog&quot;</span><span class="p">))</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>log4go的安装</h3>
-
-<p>言归正传讲安装，不要被log4go的README搞晕了</p>
-
-<!-- more -->
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="nx">Please</span> <span class="nx">see</span> <span class="nx">http</span><span class="p">:</span><span class="c1">//log4go.googlecode.com/</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Installation</span><span class="p">:</span>
-</span><span class='line'><span class="o">-</span> <span class="nx">Run</span> <span class="s">`goinstall log4go.googlecode.com/hg`</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Usage</span><span class="p">:</span>
-</span><span class='line'><span class="o">-</span> <span class="nx">Add</span> <span class="nx">the</span> <span class="nx">following</span> <span class="kn">import</span><span class="p">:</span>
-</span><span class='line'><span class="kn">import</span> <span class="nx">l4g</span> <span class="s">&quot;log4go.googlecode.com/hg&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nx">Acknowledgements</span><span class="p">:</span>
-</span><span class='line'><span class="o">-</span> <span class="nx">pomack</span>
-</span><span class='line'>  <span class="nx">For</span> <span class="nx">providing</span> <span class="nx">awesome</span> <span class="nx">patches</span> <span class="nx">to</span> <span class="nx">bring</span> <span class="nx">log4go</span> <span class="nx">up</span> <span class="nx">to</span> <span class="nx">the</span> <span class="nx">latest</span> <span class="nx">Go</span> <span class="nx">spec</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其实正确的安装方法如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>go get code.google.com/p/log4go
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装完成后默认路径位于</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>/usr/local/go/src/pkg/code.google.com/p/log4go
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>使用log4go</h3>
-
-<p>打开文档看怎么用，有2种方法：</p>
-
-<h4>第一种</h4>
-
-<p>在安装好log4go的机器上运行</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>godoc -http<span class="o">=</span>:6060
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后用浏览器查看
-<a href="http://host:6060/src/pkg/code.google.com/p/log4go/examples/">http://host:6060/src/pkg/code.google.com/p/log4go/examples/</a></p>
-
-<h4>第二种</h4>
-
-<p>直接查看该目录下的例子
-/usr/local/go/src/pkg/code.google.com/p/log4go/examples</p>
-
-<p>主要来看一个日志轮询的怎么做</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kn">package</span> <span class="nx">main</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="p">(</span>
-</span><span class='line'>  <span class="s">&quot;bufio&quot;</span>
-</span><span class='line'>  <span class="s">&quot;fmt&quot;</span>
-</span><span class='line'>  <span class="s">&quot;io&quot;</span>
-</span><span class='line'>  <span class="s">&quot;os&quot;</span>
-</span><span class='line'>  <span class="s">&quot;time&quot;</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="kn">import</span> <span class="nx">l4g</span> <span class="s">&quot;code.google.com/p/log4go&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">const</span> <span class="p">(</span>
-</span><span class='line'>  <span class="nx">filename</span> <span class="p">=</span> <span class="s">&quot;flw.log&quot;</span>
-</span><span class='line'><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class='line'>  <span class="c1">// Get a new logger instance</span>
-</span><span class='line'>  <span class="nx">log</span> <span class="o">:=</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewLogger</span><span class="p">()</span> <span class="c1">//实例化日志对象</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Create a default logger that is logging messages of FINE or higher</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">AddFilter</span><span class="p">(</span><span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">FINE</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewFileLogWriter</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kc">false</span><span class="p">))</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="cm">/* Can also specify manually via the following: (these are the defaults) */</span>
-</span><span class='line'>  <span class="nx">flw</span> <span class="o">:=</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">NewFileLogWriter</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetFormat</span><span class="p">(</span><span class="s">&quot;[%D %T] [%L] (%S) %M&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotate</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateSize</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateLines</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">flw</span><span class="p">.</span><span class="nx">SetRotateDaily</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">AddFilter</span><span class="p">(</span><span class="s">&quot;file&quot;</span><span class="p">,</span> <span class="nx">l4g</span><span class="p">.</span><span class="nx">FINE</span><span class="p">,</span> <span class="nx">flw</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Log some experimental messages</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Finest</span><span class="p">(</span><span class="s">&quot;Everything is created now (notice that I will not be printing to the file)&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;The time is now: %s&quot;</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">().</span><span class="nx">Format</span><span class="p">(</span><span class="s">&quot;15:04:05 MST 2006/01/02&quot;</span><span class="p">))</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Critical</span><span class="p">(</span><span class="s">&quot;Time to close out!&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Close the log</span>
-</span><span class='line'>  <span class="nx">log</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Print what was logged to the file (yes, I know I&#39;m skipping error checking)</span>
-</span><span class='line'>  <span class="nx">fd</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">in</span> <span class="o">:=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nx">NewReader</span><span class="p">(</span><span class="nx">fd</span><span class="p">)</span>
-</span><span class='line'>  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Print</span><span class="p">(</span><span class="s">&quot;Messages logged to file were: (line numbers not included)\n&quot;</span><span class="p">)</span>
-</span><span class='line'>  <span class="k">for</span> <span class="nx">lineno</span> <span class="o">:=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">;</span> <span class="nx">lineno</span><span class="o">++</span> <span class="p">{</span>
-</span><span class='line'>      <span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">in</span><span class="p">.</span><span class="nx">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
-</span><span class='line'>          <span class="k">break</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%3d:\t%s&quot;</span><span class="p">,</span> <span class="nx">lineno</span><span class="p">,</span> <span class="nx">line</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="nx">fd</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Remove the file so it&#39;s not lying around</span>
-</span><span class='line'>  <span class="nx">os</span><span class="p">.</span><span class="nx">Remove</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>代码就不多说了，唯一值得注意的是log4go貌似达到指定的日志数上限了之后就不会再去掉旧的文件，更新新的文件了，也就是再也无法记录日志，这个是需要程序考虑的，完。</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[win7下cocos2d-js3.0 alpha生成android项目]]></title>
-    <link href="http://evoupsight.com/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android/"/>
-    <updated>2014-03-25T19:37:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/03/25/win7-cocos-2djs-3-dot-0-alpha-with-android</id>
-    <content type="html"><![CDATA[<p>折腾了比较长的时间，主要是从cocos2d-html5入门开始做demo，然后到jsb的部分，发现走不通，于是又去研究了cocos2d-x3.0 v3.0 rc0如何生成android项目，发现发布是可以的，但是安装到模拟器又是闪退。花了两三天时间（间断）终于完成，放这里共享下。</p>
-
-<!-- more -->
-
-
-<h3>需要的软件</h3>
-
-<p>首先当然是下载好cocos2d-js了，放到c:\cocos2d-jsb中：<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/01.png" alt="Alt text" /></p>
-
-<p>然后请安装好这些工具NDK（r9b）, android SDK（20131030）, ANT（1.9.3），Python（2.7.6）<br>
-下图中红色框住的部分为实际使用到的软件</p>
-
-<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/02.png" alt="Alt text" /></p>
-
-<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/03.png" alt="Alt text" /></p>
-
-<p>python要配置好环境变量，在cmd命令调出python，可以看到版本号:<br></p>
-
-<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/04.png" alt="Alt text" /></p>
-
-<h3>安装</h3>
-
-<p>万事俱备，到了见证奇迹的时刻,在这之前，请先安装好命令行，其实就是写入几个环境变量<br>
-方法是：开始-运行-cmd，进入控制台，然后定位到C:\cocos2d-jsb\Cocos2d-JS-v3.0-alpha,接下来输入:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>python setup.py
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后在对应的NDK_ROOT环境变量中输入c:\android\android-ndk-r9b-windows-x86_64\android-ndk-r9b,<br>
-在ANDROID_SDK_ROOT环境变量中输入c:\android\adt-bundle-windows-x86_64-20131030\sdk<br>
-在ANT_ROOT中环境变量中输入c:\ant\apache-ant-1.9.3\bin<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/05.png" alt="Alt text" /></p>
-
-<p>这些操作完成后，你会发现win7好像并没有加载出这些环境变量，我的方法是重启（嗯！你没看错，反正我是重启才能加载，晕）。<br></p>
-
-<p>重启完成之后,我们试一下这些环境变量是否OK，注意windows下批处理程序变量的命名方式为%变量名%<br></p>
-
-<p><img src="http://evoupsight.com/images/evoup/cocos2d-js_android/06.png" alt="Alt text" /></p>
-
-<h3>产生项目</h3>
-
-<p>比如说要在c:/projects下创建一个有native编译支持的，名为projectFirst的项目，需要在控制台输入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>%COCOS_CONSOLE_ROOT%/cocos new projectFirst -l js -d c:/projects
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>等一会儿就创建完毕<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/07.png" alt="Alt text" /></p>
-
-<h3>编译项目</h3>
-
-<p>如果要编译成android项目，只要执行如下指令即可：<br></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>&gt; <span class="nb">cd </span>c:<span class="se">\p</span>rojects<span class="se">\p</span>rojectFirst
-</span><span class='line'>&gt; %COCOS_CONSOLE_ROOT%/cocos compile -p android
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>之后要耐心等待项目编译完成，顺便说一句，没有vc2012是不能够编译cocos2d-js3.0的，因为现在引擎支持C++11了。<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/08.png" alt="Alt text" /></p>
-
-<p>等待编译完成<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/09.png" alt="Alt text" /></p>
-
-<p>这样就在runtime\android\下生成了projectFirst-debug-unaligned.apk</p>
-
-<h3>在android模拟器测试</h3>
-
-<p>这个只要注意如果是2d-js的项目，在模拟器里面是需要打开use host gpu<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
-
-<p>启动模拟器后，用adb安装软件进去<br></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>%ANDROID_SDK_ROOT%/platform-tools/adb install c:<span class="se">\p</span>rojects<span class="se">\p</span>rojectFirst<span class="se">\r</span>untime<span class="se">\a</span>ndroid<span class="se">\p</span>rojectFirst-debug-unaligned.apk
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安装完成后运行程序<br>
-<img src="http://evoupsight.com/images/evoup/cocos2d-js_android/10.png" alt="Alt text" /></p>
-
-<p>告一段落。</p>
 ]]></content>
   </entry>
   
