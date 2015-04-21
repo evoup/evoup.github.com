@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: hadoop | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/hadoop/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2015-02-15T15:39:31+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[编译cdh47下hive的contrib源码]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib/"/>
+    <updated>2014-07-31T10:18:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib</id>
+    <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去
+<code>
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar
+</code></p>
+
+<!-- more -->
+
+
+<p>看下工程路径build.xml的29行
+<code>
+&lt;import file="../build-common.xml"/&gt;
+</code></p>
+
+<p>于是编辑上级目录的build-common.xml文件
+<code>
+266   &lt;path id="classpath"&gt;
+267     &lt;pathelement location="${build.dir.hive}/service/classes"/&gt;
+268     &lt;pathelement location="${build.dir.hive}/common/classes"/&gt;
+269     &lt;pathelement location="${build.dir.hive}/serde/classes"/&gt;
+270     &lt;pathelement location="${build.dir.hive}/metastore/classes"/&gt;
+271     &lt;pathelement location="${build.dir.hive}/ql/classes"/&gt;
+272     &lt;pathelement location="${build.dir.hive}/beeline/classes"/&gt;
+273     &lt;pathelement location="${build.dir.hive}/cli/classes"/&gt;
+274     &lt;pathelement location="${build.dir.hive}/shims/classes"/&gt;
+275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
+276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
+277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
+278 &lt;!--{ { {把缺少的hadoop加入--&gt;
+279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
+280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
+281 &lt;!--} } }--&gt;
+282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
+283     &lt;path refid="common-classpath"/&gt;
+284   &lt;/path&gt;
+</code></p>
+
+<p>像上面这样把2个包加入。</p>
+
+<p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
+，最后编译的jar包存到了ivy的路径下
+```
+compile:</p>
+
+<pre><code> [echo] Project: contrib
+[javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 'LimitedPrivate' 的注释方法 'value()': 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
+[javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+[javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
+[javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[javac] 1 个警告
+ [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.
+</code></pre>
+
+<p>jar:</p>
+
+<pre><code> [echo] Project: contrib
+  [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
+</code></pre>
+
+<p>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
+[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
+[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
+[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
+[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml</p>
+
+<p>BUILD SUCCESSFUL
+Total time: 19 seconds
+```
+ok
+这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
+
+<p>参考互联网文章《如何在Ant中引入第三方Jar包》，链接已挂删除了：）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[centos上hadoop2.x hdfs支持lzo]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop-with-lzo/"/>
+    <updated>2014-07-30T18:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop-with-lzo</id>
+    <content type="html"><![CDATA[<p>总体来说要让hadoop2.x的hdfs支持lzo压缩格式，是和hadoop1.x下配置方式一样的。下文记录一下配置过程。</p>
+
+<!-- more -->
+
+
+<p>首先安装lzo
+<code>bash
+sudo yum install lzo-devel.x86_64 lzop.x86_64
+</code></p>
+
+<p>下载twitter的hadoop-lzo项目
+<code>bash
+git clone https://github.com/twitter/hadoop-lzo.git
+</code></p>
+
+<p>64位环境的需要设置两个环境变量：
+<code>bash
+$ vim ~/.bashrc
+export CFLAGS=-m64
+export CXXFLAGS=-m64
+</code></p>
+
+<p>开始编译
+<code>bash
+mvn clean package -Dmaven.test.skip=true
+</code></p>
+
+<p>出现警告
+<code>bash
+[WARNING] Javadoc Warnings
+[WARNING] /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:115: 警告 - @return 标记没有参数。
+[WARNING] /home/hadoop/software/hadoop-lzo/src/main/java/com/hadoop/compression/lzo/LzoIndexer.java:51: 警告 - @param argument "lzoUri" 不是参数名称。
+[INFO] Building jar: /home/hadoop/software/hadoop-lzo/target/hadoop-lzo-0.4.20-SNAPSHOT-javadoc.jar
+</code>
+不用管，编译ok。</p>
+
+<p>需要把本地库和jar包放到hadoop对应目录中
+<code>bash
+cp target/native/Linux-amd64-64/lib/* $HADOOP_HOME/lib/native/
+cp target/hadoop-lzo-0.4.20-SNAPSHOT.jar  $HADOOP_HOME/share/hadoop/mapreduce/lib/
+</code></p>
+
+<p>3 修改hadoop的配置文件core-site.xml
+修改/增加以下2个参数：
+```java
+io.compression.codecs
+org.apache.hadoop.io.compress.GzipCodec,
+org.apache.hadoop.io.compress.DefaultCodec,
+org.apache.hadoop.io.compress.BZip2Codec,
+com.hadoop.compression.lzo.LzoCodec,
+com.hadoop.compression.lzo.LzopCodec</p>
+
+<p>io.compression.codec.lzo.class
+com.hadoop.compression.lzo.LzoCodec
+```
+然后重启hadoop看效果。</p>
+
+<p>参考
+<a href="http://www.linuxidc.com/Linux/2014-05/101090.htm">http://www.linuxidc.com/Linux/2014-05/101090.htm</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop2.x本地库安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader/"/>
+    <updated>2014-07-30T18:00:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop2x-nativecodeloader</id>
+    <content type="html"><![CDATA[<p>运行hadoop cli时会出现 <code>14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...</code>
+<code>using builtin-java classes where applicable</code>
+虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法解决，过程还是比较漫长，要解决的要有耐心看下文了。</p>
+
+<!-- more -->
+
+
+<h3>首先查看本地库</h3>
+
+<p><code>bash
+ls $HADOOP_HOME/lib/native/
+</code></p>
+
+<p>发现动态库不存在,按照上文述及，也会这个错误。
+查看系统的libc版本
+<code>bash
+$ ll /lib64/libc.so.6
+lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -&gt; libc-2.18.so
+</code></p>
+
+<p>系统的版本为2.18</p>
+
+<p>参考cdh手册
+<a href="http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide">http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide</a></p>
+
+<p>找一个hadoop-mapreduce1-project的项目用ant跑一下
+ant -Dcompile.native=true</p>
+
+<p>期间会报错jvm-check需要1.6，我的是1.7，直接修改ant的build.xml文件，把里面的1.6改成1.7就可以了。</p>
+
+<p>慢慢等编译完成，报错以下依赖没有解决
+```
+[ivy:resolve] :: resolution report :: resolve 11214ms :: artifacts dl 10ms</p>
+
+<pre><code>    ---------------------------------------------------------------------
+    |                  |            modules            ||   artifacts   |
+    |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+    ---------------------------------------------------------------------
+    |      common      |   10  |   2   |   0   |   0   ||   8   |   0   |
+    ---------------------------------------------------------------------
+</code></pre>
+
+<p>[ivy:resolve]
+[ivy:resolve] :: problems summary ::
+[ivy:resolve] :::: WARNINGS
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]           ::          UNRESOLVED DEPENDENCIES         ::
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]           :: org.codehaus.jackson#jackson-mapper-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-mapper-asl;1.0.1 {common=[default]}:
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-mapper-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-mapper-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar
+[ivy:resolve]           :: org.codehaus.jackson#jackson-core-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-core-asl;1.0.1 {common=[default]}:
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-core-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom
+[ivy:resolve]   reactor-repo: unable to get resource for org/codehaus/jackson#jackson-core-asl;1.0.1: res=${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: ${reactor.repo}/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar
+[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::
+[ivy:resolve]
+[ivy:resolve] :: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS</p>
+
+<p>BUILD FAILED
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:440: impossible to resolve dependencies:</p>
+
+<pre><code>    resolve failed - see output for details
+</code></pre>
+
+<p>Total time: 1 minute 33 seconds
+```</p>
+
+<p>少几个jar包，能不能通过直接复制到.ivy2目录的方式解决呢？暂时没这个能力</p>
+
+<p>尝试进到内部工程文件
+<code>
+cd ./src/contrib/capacity-scheduler/
+</code>
+直接ant,报错一样的</p>
+
+<p>原来是要定义reactor.repo这个参数
+参考《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》
+<a href="http://www.verydemo.com/demo_c161_i273713.html">http://www.verydemo.com/demo_c161_i273713.html</a>
+解决办法：</p>
+
+<p>   需要定义reactor.repo的url：</p>
+
+<p>  在/usr/hadoop/src/hadoop-mapreduce1-project/ivy/ivysettings.xml文件中添加：
+```
+ &lt;property name=&ldquo;reactor.repo&rdquo;</p>
+
+<pre><code>       value="http://repo1.maven.org/maven2/"
+</code></pre>
+
+<p>  override=&ldquo;false&rdquo;/>
+```
+添加之后就能找到jackson</p>
+
+<p>但是继续编译会出现
+```
+compile:</p>
+
+<pre><code> [echo] contrib: gridmix
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+[javac] Compiling 31 source files to /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build/contrib/gridmix/classes
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:396: 错误: 类型参数? extends T不在类型变量E的范围内
+[javac]   private &lt;T&gt; String getEnumValues(Enum&lt;? extends T&gt;[] e) {
+[javac]                                         ^
+[javac]   其中, T,E是类型变量:
+[javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object
+[javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:399: 错误: 类型参数? extends T不在类型变量E的范围内
+[javac]     for (Enum&lt;? extends T&gt; v : e) {
+[javac]               ^
+[javac]   其中, T,E是类型变量:
+[javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object
+[javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;
+[javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+[javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[javac] 注: 某些输入文件使用了未经检查或不安全的操作。
+[javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[javac] 2 个错误
+</code></pre>
+
+<p>BUILD FAILED
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred while executing this line:
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: Compile failed; see the compiler error output for details.
+```</p>
+
+<h2>可以参考《hadoop1.0.3编译eclipse plug-in》</h2>
+
+<p><a href="http://www.th7.cn/Program/java/201208/88028.shtml">http://www.th7.cn/Program/java/201208/88028.shtml</a></p>
+
+<hr />
+
+<p>所以修改代码把Enum&lt;? extends T>改成Enum&lt;?>
+重新用ant编译
+编译成功
+再用
+<code>
+ant -Dcompile.native=true
+</code>
+看看能否编译出libhadoop.so</p>
+
+<p>编译成功
+<code>
+$ find . -type f -name "libhadoop.so"
+</code>
+但是没有编译出libhadoop.so？</p>
+
+<p>官方文档误导了（说是ant，在根目录又没有ant的配置文件，根目录下build文件夹的native目录是空的），其实要用maven编译！
+其实需要完全编译hadoop才行《hadoop2.2.0 centos 编译安装详解》
+<a href="http://f.dataguru.cn/thread-245387-1-1.html">http://f.dataguru.cn/thread-245387-1-1.html</a></p>
+
+<p><code>bash
+cd /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src
+mvn package -Pdist,native -DskipTests -Dtar
+</code></p>
+
+<p>报错<code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.0</code>
+<code>:enforce (default) on project hadoop-main: Some Enforcer rules have failed.</code>
+<code>Look above for specific messages explaining why the rule failed. -&gt; [Help 1]</code></p>
+
+<p><a href="http://zhwj184.iteye.com/blog/1528627">http://zhwj184.iteye.com/blog/1528627</a>
+如果为了提高执行速度，不想运行这个插件，则可以通过-Denforcer.skip=true或者简单的-Dskip=true就可以跳过这个这个插件的运行。如果mvn package过程中出现有关这个插件的异常，则可以简单通过这个参数跳过这个验证。</p>
+
+<p>那么直接在编译中加参数-Denforcer.skip=true
+<code>
+mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip=true
+</code></p>
+
+<p>再编译，这么很慢，要下载的文件很多
+再次报错 <code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:</code>
+<code>run (compile-proto) on project hadoop-common: An Ant</code>
+<code>BuildException has occured: exec returned: 1 -&gt; [Help 1]</code></p>
+
+<p>参考《hadoop源码编译问题》
+<a href="http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy">http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy</a></p>
+
+<p>看来是protoc版本过低导致的
+<code>bash
+wget http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz
+</code></p>
+
+<p>被墙的自己想办法
+<code>``bash
+tar xzf protobuf-2.4.1.tar.gz
+cd protobuf-2.4.1
+[hadoop@mdn4namenode1 protobuf-2.4.1]$ ./configure
+checking build system type... x86_64-unknown-linux-gnu
+checking host system type... x86_64-unknown-linux-gnu
+checking target system type... x86_64-unknown-linux-gnu
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking for a thread-safe mkdir -p... /usr/bin/mkdir -p
+checking for gawk... gawk
+checking whether make sets $(MAKE)... yes
+checking for gcc... no
+checking for cc... no
+checking for cl.exe... no
+configure: error: in</code>/home/hadoop/software/protobuf-2.4.1':
+configure: error: no acceptable C compiler found in $PATH
+See `config.log' for more details.</p>
+
+<p>sudo yum install gcc
+```</p>
+
+<p>继续安装
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+
+<p>又出现很多问题
+<code>
+sudo yum install gcc-c++
+</code></p>
+
+<p>再次
+<code>bash
+./configure
+make
+sudo make install
+</code></p>
+
+<p>回来继续编译hadoop
+<code>
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:run (make) on project hadoop-common: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program "cmake" (in directory "/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-common-project/hadoop-common/target/native"): error=2, 没有那个文件或目录 -&gt; [Help 1]
+</code></p>
+
+<p>没装cmake
+<code>
+sudo yum install cmake
+</code></p>
+
+<p>还有一些也装上
+<code>
+sudo yum install pkgconfig  openssl openssl-devel
+</code></p>
+
+<p>这些可以参考《64位操作系统下重新编译hadoop-2.2.0》（这文章提到应该用mvn package -DskipTests -Pdist,native -Dtar来编译hadoop2）
+<a href="http://blog.itpub.net/20777547/viewspace-1147174">http://blog.itpub.net/20777547/viewspace-1147174</a>
+<code>
+[INFO]                                                                                                                             [40/1862]
+[INFO] Apache Hadoop Main ................................ SUCCESS [5.349s]
+[INFO] Apache Hadoop Project POM ......................... SUCCESS [3.432s]
+[INFO] Apache Hadoop Annotations ......................... SUCCESS [6.518s]
+[INFO] Apache Hadoop Assemblies .......................... SUCCESS [0.875s]
+[INFO] Apache Hadoop Project Dist POM .................... SUCCESS [3.334s]
+[INFO] Apache Hadoop Auth ................................ SUCCESS [6.069s]
+[INFO] Apache Hadoop Auth Examples ....................... SUCCESS [4.573s]
+[INFO] Jets3t Cloudera Dependencies ...................... SUCCESS [6.534s]
+[INFO] Apache Hadoop Common .............................. SUCCESS [2:01.338s]
+[INFO] Apache Hadoop Common Project ...................... SUCCESS [0.452s]
+[INFO] Apache Hadoop HDFS ................................ SUCCESS [2:06.706s]
+[INFO] Apache Hadoop HttpFS .............................. SUCCESS [24.891s]
+[INFO] Apache Hadoop HDFS Project ........................ SUCCESS [0.744s]
+[INFO] hadoop-yarn ....................................... SUCCESS [28.902s]
+[INFO] hadoop-yarn-api ................................... SUCCESS [1:08.858s]
+[INFO] hadoop-yarn-common ................................ SUCCESS [56.000s]
+[INFO] hadoop-yarn-server ................................ SUCCESS [0.517s]
+[INFO] hadoop-yarn-server-common ......................... SUCCESS [16.093s]
+[INFO] hadoop-yarn-server-nodemanager .................... SUCCESS [31.421s]
+[INFO] hadoop-yarn-server-web-proxy ...................... SUCCESS [7.293s]
+[INFO] hadoop-yarn-server-resourcemanager ................ SUCCESS [22.440s]
+[INFO] hadoop-yarn-server-tests .......................... SUCCESS [1.168s]
+[INFO] hadoop-yarn-client ................................ SUCCESS [8.536s]
+[INFO] hadoop-yarn-applications .......................... SUCCESS [0.276s]
+[INFO] hadoop-yarn-applications-distributedshell ......... SUCCESS [4.767s]
+[INFO] hadoop-mapreduce-client ........................... SUCCESS [0.433s]
+[INFO] hadoop-mapreduce-client-core ...................... SUCCESS [54.060s]
+[INFO] hadoop-yarn-applications-unmanaged-am-launcher .... SUCCESS [5.197s]
+[INFO] hadoop-yarn-site .................................. SUCCESS [0.517s]
+[INFO] hadoop-yarn-project ............................... SUCCESS [36.840s]
+[INFO] hadoop-mapreduce-client-common .................... SUCCESS [33.592s]
+[INFO] hadoop-mapreduce-client-shuffle ................... SUCCESS [5.179s]
+[INFO] hadoop-mapreduce-client-app ....................... SUCCESS [18.536s]
+[INFO] hadoop-mapreduce-client-hs ........................ SUCCESS [9.267s]
+[INFO] hadoop-mapreduce-client-jobclient ................. SUCCESS [10.860s]
+[INFO] hadoop-mapreduce-client-hs-plugins ................ SUCCESS [4.425s]
+[INFO] Apache Hadoop MapReduce Examples .................. SUCCESS [14.302s]
+[INFO] hadoop-mapreduce .................................. SUCCESS [4.028s]
+[INFO] Apache Hadoop MapReduce Streaming ................. SUCCESS [9.253s]
+[INFO] Apache Hadoop Distributed Copy .................... SUCCESS [1:14.406s]
+[INFO] Apache Hadoop Archives ............................ SUCCESS [4.108s]
+[INFO] Apache Hadoop Rumen ............................... SUCCESS [11.244s]
+[INFO] Apache Hadoop Gridmix ............................. SUCCESS [10.038s]
+[INFO] Apache Hadoop Data Join ........................... SUCCESS [5.673s]
+[INFO] Apache Hadoop Extras .............................. SUCCESS [6.033s]
+[INFO] Apache Hadoop Pipes ............................... SUCCESS [14.666s]
+[INFO] Apache Hadoop Tools Dist .......................... SUCCESS [3.519s]
+[INFO] Apache Hadoop Tools ............................... SUCCESS [0.066s]
+[INFO] Apache Hadoop Distribution ........................ SUCCESS [30.039s]
+[INFO] Apache Hadoop Client .............................. SUCCESS [20.618s]
+[INFO] Apache Hadoop Mini-Cluster ........................ SUCCESS [2.427s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 15:51.852s
+[INFO] Finished at: Fri Jul 25 17:40:23 CST 2014
+[INFO] Final Memory: 127M/305M
+[INFO] ------------------------------------------------------------------------
+</code>
+全部编译成功，然后找下libhadoop.so
+<code>bash
+$ find . -name "libhadoop.so"
+./src/hadoop-common-project/hadoop-common/target/hadoop-common-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+./src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/libhadoop.so
+./src/hadoop-dist/target/hadoop-2.0.0-cdh4.7.0/lib/native/libhadoop.so
+</code>
+编译出来了，然后放到文章一开始说的$HADOOP_HOME/lib/native/目录下面，以后运行就不再报错了。</p>
+
+<p>参考文章
+<a href="http://www.linuxidc.com/Linux/2012-04/59200.htm">《Hadoop本地库与系统版本不一致引起的错误解决方法》</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop put文件报DataStreamer Exception异常]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/30/hadoop-put-warn-datastreamer-exception/"/>
+    <updated>2014-07-30T17:05:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/30/hadoop-put-warn-datastreamer-exception</id>
+    <content type="html"><![CDATA[<p>今天在一个hadoop节点上传测试文件的时候
+<code>bash
+$ bin/hadoop fs -put /home/hadoop/project/s3log.txt /yin_test/s3log
+</code>
+出现如下报错:</p>
+
+<!-- more -->
+
+
+<p>```
+14/07/25 13:23:05 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform&hellip; using builtin-java classes where app
+licable
+14/07/25 13:23:06 WARN hdfs.DFSClient: DataStreamer Exception
+org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /yin_test/s3log/s3log.txt.<em>COPYING</em> could only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation.</p>
+
+<pre><code>    at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget(BlockManager.java:1361)
+    at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2362)
+    at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:501)
+    at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslato
+</code></pre>
+
+<p>rPB.java:299)</p>
+
+<pre><code>    at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProt
+</code></pre>
+
+<p>ocolProtos.java:44954)</p>
+
+<pre><code>    at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:453)
+    at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1002)
+    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1752)
+    at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1748)
+    at java.security.AccessController.doPrivileged(Native Method)
+    at javax.security.auth.Subject.doAs(Subject.java:415)
+    at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1438)
+    at org.apache.hadoop.ipc.Server$Handler.run(Server.java:1746)
+
+    at org.apache.hadoop.ipc.Client.call(Client.java:1238)
+    at org.apache.hadoop.ipc.ProtobufRpcEngine$Invoker.invoke(ProtobufRpcEngine.java:202)
+    at com.sun.proxy.$Proxy9.addBlock(Unknown Source)
+    at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+    at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    at java.lang.reflect.Method.invoke(Method.java:606)
+    at org.apache.hadoop.io.retry.RetryInvocationHandler.invokeMethod(RetryInvocationHandler.java:164)
+    at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:83)
+    at com.sun.proxy.$Proxy9.addBlock(Unknown Source)
+</code></pre>
+
+<p>```
+已经把防火墙关了，经过一番查询研究，原来是dfs.namenode.name.dir和dfs.datanode.data.dir再重新格式化后要被清空的原因。删除这2个目录下的文件，然后重新格式化，再次put恢复正常。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[hadoop2.0cdh4.6.0完全分布式安装]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute/"/>
+    <updated>2014-07-10T15:57:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/10/hadoop2-dot-0cdh4-dot-6-0-fullly-distrbute</id>
+    <content type="html"><![CDATA[<p>hadoop2.0 cdh4安装（完全分布式）</p>
+
+<!-- more -->
+
+
+<p>vmware版本8.0.4 build-744019</p>
+
+<p>首先规划3台虚拟机
+<code>
+ ,'''''''''''''''''''''':'''''''''''''''''':''''''''''''''''''''''''''''''''''''''''''''|
+ |        usage         |        IP        |                  Hostname                  |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | namenode1,datanode1  | 192.168.216.183  |    mdn3namenode1.net,mdn3datanode1.net     |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | namenode2,datanode2  | 192.168.216.184  |    mdn3namenode2.net,mdn3datanode2.net     |
+ |                      |                  |                                            |
+ |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
+ | datanode2,nfs server | 192.168.216.185  |    mdn3datanode3.net,mdn3nfsserver.net     |
+ |                      |                  |                                            |
+  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+</code></p>
+
+<h3>准备工作</h3>
+
+<p>先安装JDK1.6 linux:先把已经安装的openjdk卸载,安装sun jdk1.6,去oracle下载 （j2se就够了）
+<code>bash
+$ rpm -qa | grep jdk
+java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+$ sudo rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+$ sudo chmod +x jdk-6u45-linux-x64-rpm.bin
+$ sudo ./jdk-6u45-linux-x64-rpm.bin
+</code></p>
+
+<p>hadoop所有操作都是用hadoop帐号，下面添加（如果已经创建了帐号无须添加）
+```bash
+$ groupadd hadoop
+$ useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop</p>
+
+<p>$ mkdir -p /home/hadoop
+$ chgrp -R hadoop /home/hadoop
+$ chown -R hadoop /home/hadoop
+```</p>
+
+<p>环境变量(在centos里不管编辑~/.profile还是~/.bash_profile都不能加载环境变量，正确的应该是在~/.bashrc中，而如果是root用户，应该可以直接在/etc/profile中编辑)
+<code>bash
+$ vi ~/.bashrc
+export HADOOP_HOME="/usr/local/hadoop"
+export JAVA_HOME="/usr/java/jdk1.6.0_45"
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+</code></p>
+
+<p>切换到hadoop帐号，进行免密码的ssh登录设置
+<code>bash
+$ su hadoop
+$ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+$ cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+$ chmod 600 ~/.ssh/authorized_keys
+</code></p>
+
+<p>给出我的hadoop/hbase版本
+```
+Name        : hadoop-hdfs-namenode
+Arch        : x86_64
+Version     : 2.0.0+1554
+Release     : 1.cdh4.6.0.p0.16.el6</p>
+
+<p>Name        : hbase-master
+Arch        : x86_64
+Version     : 0.94.15+86
+Release     : 1.cdh4.6.0.p0.14.el6
+```</p>
+
+<p>然后是cdh的软件下载url
+<a href="http://archive.cloudera.com/cdh4">http://archive.cloudera.com/cdh4</a>
+这个路径下有很多的软件。</p>
+
+<p>下载cdh4.6的几个包安装
+<code>bash
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz
+$ sudo mkdir /usr/local/hadoop/
+$ tar xzf hadoop-2.0.0-cdh4.6.0.tar.gz
+$ sudo mv hadoop-2.0.0-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/hadoop-2.0.0-cdh4.6.0 /usr/local/hadoop
+$ sudo chown -R hadoop:hadoop /usr/local/hadoop
+</code>
+创建存储临时文件temp、data和name节点数据的目录
+<code>sh
+$ sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/
+$ sudo chown -R hadoop:hadoop /usr/local/hadoop
+</code></p>
+
+<p>好了，准备工作终了</p>
+
+<p>开始配置
+配置/usr/local/hadoop/etc/hadoop/core-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;fs.defaultFS&lt;/name&gt;
+            &lt;value&gt;hdfs://mdn3namenode1.net:9000&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;io.file.buffer.size&lt;/name&gt;
+            &lt;value&gt;131072&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+            &lt;value&gt;file:/usr/local/hadoop/temp&lt;/value&gt;
+            &lt;description&gt;Abase for other temporary directories.&lt;/description&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.proxyuser.hduser.hosts&lt;/name&gt;
+            &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;hadoop.proxyuser.hduser.groups&lt;/name&gt;
+            &lt;value&gt;*&lt;/value&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:9001&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+    &lt;value&gt;file:/usr/local/hadoop/dfs/name&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+            &lt;value&gt;file:/usr/local/hadoop/dfs/data&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.replication&lt;/name&gt;
+            &lt;value&gt;3&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;dfs.webhdfs.enabled&lt;/name&gt;
+            &lt;value&gt;true&lt;/value&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/madpred-site.xml
+<code>sh
+cp mapred-site.xml.template mapred-site.xml
+</code>
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+            &lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:10020&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:19888&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration></p>
+
+<p>```</p>
+
+<p>配置/usr/local/hadoop/etc/hadoop/yarn-site.xml
+```xml
+<configuration></p>
+
+<pre><code>    &lt;property&gt;
+            &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+            &lt;value&gt;mapreduce.shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;/name&gt;
+            &lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8032&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8030&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8031&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8033&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+            &lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;
+            &lt;value&gt;mdn3namenode1.net:8088&lt;/value&gt; &lt;!-- master域名或者master的ip --&gt;
+    &lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+```</p>
+
+<p>编辑slave的名字
+直接讲slave的域名或者slave的ip按照一行一个的规则写进去
+<code>
+mdn3datanode2.net
+mdn3datanode3.net
+</code></p>
+
+<p>复制到各台机器上
+<code>sh
+$ cd /usr/local/
+$ sudo scp -dr hadoop@192.168.216.183:/usr/local/hadoop .
+$ sudo chown -R hadoop:hadoop hadoop/
+</code></p>
+
+<p>格式化hdfs
+在namenode上执行
+<code>sh
+/usr/local/hadoop/bin/hadoop namenode -format
+</code></p>
+
+<h3>hbase的安装配置</h3>
+
+<p>hbase依赖zookeeper，需要先去下载
+<code>sh
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz
+$ tar xzf zookeeper-3.4.5-cdh4.6.0.tar.gz
+$ sudo mv zookeeper-3.4.5-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/zookeeper-3.4.5-cdh4.6.0 /usr/local/zookeeper
+$ sudo chown -R hadoop:hadoop /usr/local/zookeeper
+$ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg
+</code>
+zookeeper准备完毕，可以继续安装hbase</p>
+
+<p><code>sh
+$ cd /home/software/
+$ wget http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.15-cdh4.6.0.tar.gz
+$ sudo mkdir /usr/local/hbase/
+$ tar xzf hbase-0.94.15-cdh4.6.0.tar.gz
+$ sudo mv hbase-0.94.15-cdh4.6.0 /usr/local/
+$ sudo mv /usr/local/hbase-0.94.15-cdh4.6.0 /usr/local/hbase
+$ sudo chown -R hadoop:hadoop /usr/local/hbase
+</code></p>
+
+<p>若干配置步骤
+配置hbase-site.xml
+```xml
+<configuration></p>
+
+<pre><code>&lt;property&gt;
+    &lt;name&gt;hbase.rootdir&lt;/name&gt;
+    &lt;value&gt;hdfs://mdn3namenode1.net:9000/hbase&lt;/value&gt;
+
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.cluster.distributed&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.master&lt;/name&gt;
+    &lt;value&gt;mdn3datanode1.net:60000&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;hbase.zookeeper.quorum&lt;/name&gt;
+    &lt;value&gt;mdn3datanode1.net&lt;/value&gt;    &lt;!-- 这里配置若干个zookeeper的服务器地址，需要是奇数个 --&gt;
+&lt;/property&gt;
+</code></pre>
+
+<p></configuration>
+<code>
+配置hbase-env.sh
+</code>xml
+export HBASE_MANAGES_ZK=false
+```
+不要hbase托管zookeeper</p>
+
+<p>配置regionservers
+<code>
+mdn3datanode2.net
+mdn3datanode3.net
+</code></p>
+
+<p>启动hbase
+<code>sh
+/usr/local/hbase/bin/start-hbase.sh
+/usr/local/hbase/bin/hbase-daemons.sh start thrift
+</code>
+hbase启动完成.</p>
+
+<h3>配置hbase可能碰到几个问题的说明：</h3>
+
+<p>1) 报错
+<code>ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent'</code></p>
+
+<p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
+最后的hosts我这里是这样
+```
+[hadoop@localhost conf]$ more /etc/hosts</p>
+
+<h1>127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</h1>
+
+<p>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+```</p>
+
+<p>2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
+<code>WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available</code></p>
+
+<p>3) <code>java.net.ConnectException: Connection refused</code>
+这是要求hadoop中的slaves配置和hbase的regionservers要一致。</p>
+
+<h3>hive的安装</h3>
+
+<p><code>sh
+cd /home/software
+wget http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.6.0.tar.gz
+tar xzf hive-0.10.0-cdh4.6.0.tar.gz
+sudo mv hive-0.10.0-cdh4.6.0 /usr/local/
+sudo mv /usr/local/hive-0.10.0-cdh4.6.0 /usr/local/hive
+chown -R hadoop:hadoop /usr/local/hive
+</code></p>
+
+<h3>hive的配置</h3>
+
+<p>在~/.bashrc中加入
+<code>bash
+export HIVE_HOME=/usr/local/hive
+export HIVE_CONF_DIR=$HIVE_HOME/conf
+export HIVE_LIB=$HIVE_HOME/lib
+export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
+</code></p>
+
+<p>在conf/hive-site.xml中
+```
+<configuration>
+<property>
+  <name>hive.metastore.local</name>
+  <value>true</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionURL</name>
+  <value>jdbc:mysql://localhost:3306/hive</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionDriverName</name>
+  <value>com.mysql.jdbc.Driver</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+  <value>hive</value>
+</property></p>
+
+<p><property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+  <value>hive</value>
+</property>
+<property>
+  <name>datanucleus.fixedDatastore</name>
+  <value>false</value>
+</property></p>
+
+<p></configuration></p>
+
+<p>```</p>
+
+<p>这里要安装mysql作为元数据服务器，参考这篇 <a href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/</a></p>
+
+<p>然后/bin/hive后，成功进入shell
+```</p>
+
+<blockquote><p>create table test (key string);
+<code>``
+如果遇到下面的报错
+</code> FAILED: Error in metadata: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.metastore.HiveMetaStoreClient `</p></blockquote>
+
+<p><code>FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask</code>
+建表错误
+开始以为hive没有访问mysql的权限,以root用户登录mysql然后赋予hive用户权限：
+<code>
+grant all privileges on *.* to hive@localhost identified by 'hive';
+grant all privileges on *.* to hive@192.168.216.183 identified by 'hive';
+</code>
+发现问题依旧</p>
+
+<p>其实是要在hive-site.xml中把
+<code>
+&lt;property&gt;
+  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
+  &lt;value&gt;jdbc:mysql://localhost:3306/hive&lt;/value&gt;
+&lt;/property&gt;
+</code>
+改成
+<code>
+&lt;property&gt;
+  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
+  &lt;value&gt;jdbc:mysql://192.168.216.183:3306/hive&lt;/value&gt;
+&lt;/property&gt;
+</code></p>
+
+<p>问题依旧，打开hive的调试模式
+<code>
+bin/hive -hiveconf hive.root.logger=DEBUG,console
+</code>
+<code>14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect.</code>
+<code>Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore</code></p>
+
+<p>在配置文件里删除hive.metastore.local属性。</p>
+
+<p>最后查得原因是没有安装mysql驱动，只要把mysql-connector-java-5.1.22-bin.jar放到lib下就可以了</p>
+
+<p>然后
+```
+hive> create table test (key string);
+OK
+Time taken: 42.259 seconds</p>
+
+<p>hive> show tables;
+OK
+test
+Time taken: 0.279 seconds
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

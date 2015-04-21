@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>freebsd6.2i386安装subversion1.8.8 - Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/2013/04/17/freebsd6-dot-2i386-install-subversion">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <article class="hentry" role="article">
+      
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-17T14:45:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+    <h1 class="entry-title">
+        freebsd6.2i386安装subversion1.8.8
+        
+    </h1>
+    
+  </header>
+
+
+<div class="entry-content clearfix"><p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code>Could not find bsd.port.options.mk</code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
+
+<p>注意编译subversion的时候会出现
+<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+
+<!-- more -->
+
+
+<p>对g++做个软连接</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装依赖</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software/
+</span><span class='line'><span class="nv">$ </span>axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf apr-1.5.0.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>apr-1.5.0
+</span><span class='line'><span class="nv">$ </span>./configure
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span><span class='line'><span class="nv">$ </span>fetch http://mirror.bit.edu.cn/apache//apr/apr-util-1.5.3.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xjf apr-util-1.5.3.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>apr-util-1.5.3
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>安装subversion</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software
+</span><span class='line'><span class="nv">$ </span>fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf subversion-1.8.8.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>subversion-1.8.8
+</span><span class='line'><span class="nv">$ </span>fetch http://www.sqlite.org/sqlite-amalgamation-3071501.zip
+</span><span class='line'><span class="nv">$ </span>unzip sqlite-amalgamation-3071501.zip
+</span><span class='line'><span class="nv">$ </span>mv sqlite-amalgamation-3071501 sqlite-amalgamation
+</span><span class='line'><span class="nv">$ </span>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这样是可以用基本的svn签出提交了，但是后来又在签出代码时发现了svn e170000 unrecognized url scheme for http（https）的问题。
+原来少安装一个模块serf（1.8版本之前用neon），安装次序分别为python2.7->scons2.3.1->serf1.3.4</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/software
+</span><span class='line'><span class="nv">$ </span>fetch https://www.python.org/ftp/python/2.7/Python-2.7.tgz
+</span><span class='line'><span class="nv">$ </span>tar xzf Python-2.7
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>Python-2.7
+</span><span class='line'><span class="nv">$ </span>./configure
+</span><span class='line'><span class="nv">$ </span>make
+</span><span class='line'><span class="nv">$ </span>sudo make install
+</span><span class='line'><span class="nv">$ </span>fetch http://cznic.dl.sourceforge.net/project/scons/scons/2.3.1/scons-2.3.1.tar.gz
+</span><span class='line'><span class="nv">$ </span>tar xzf scons-2.3.1.tar.gz
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>scons-2.3.1
+</span><span class='line'><span class="nv">$ </span>sudo python setup.py install --standard-lib
+</span><span class='line'><span class="nv">$ </span>fetch http://serf.googlecode.com/svn/src_releases/serf-1.3.4.tar.bz2
+</span><span class='line'><span class="nv">$ </span>tar xjf serf-1.3.4.tar.bz2
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>serf-1.3.4
+</span><span class='line'><span class="nv">$ </span>scons <span class="nv">APR</span><span class="o">=</span>/usr/local/apr/ <span class="nv">APU</span><span class="o">=</span>/usr/local/apr/
+</span><span class='line'><span class="nv">$ </span>sudo scons install
+</span><span class='line'>scons: Reading SConscript files ...
+</span><span class='line'>scons: <span class="k">done </span>reading SConscript files.
+</span><span class='line'>scons: Building targets ...
+</span><span class='line'>Install file: <span class="s2">&quot;libserf-1.a&quot;</span> as <span class="s2">&quot;/usr/local/lib/libserf-1.a&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;libserf-1.so.1.3.0&quot;</span> as <span class="s2">&quot;/usr/local/lib/libserf-1.so.1.3.0&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf_bucket_types.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf_bucket_types.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf_bucket_util.h&quot;</span> as <span class="s2">&quot;/usr/local/include/serf-1/serf_bucket_util.h&quot;</span>
+</span><span class='line'>Install file: <span class="s2">&quot;serf-1.pc&quot;</span> as <span class="s2">&quot;/usr/local/lib/pkgconfig/serf-1.pc&quot;</span>
+</span><span class='line'>scons: <span class="k">done </span>building targets.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>重新安装subversion，把openssl也带上</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ../subversion-1.8.8
+</span><span class='line'><span class="nv">$ </span>./configure --with-apr<span class="o">=</span>/usr/local/apr/ --with-apr-util<span class="o">=</span>/usr/local/apr/ --with-openssl --with-serf<span class="o">=</span>/usr/local/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果遇到找不到libintl.h</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo ln -s /usr/local/include/libintl.h /usr/include/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后编译</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make
+</span><span class='line'>sudo make install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>收工</p>
+</div>
+
+
+      <footer>
+        <p class="meta text-muted">
+          
+  
+
+<span class="glyphicon glyphicon-user"></span> <span class="byline author vcard">Posted by <span class="fn">Evoup`s Blog</span></span>
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-17T14:45:00+08:00" pubdate data-updated="true">Apr 17<span>th</span>, 2013</time>
+          
+
+<span class="glyphicon glyphicon-tags"></span>&nbsp;
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/freebsd/'>freebsd</a>, <a class='category' href='/blog/categories/version-control/'>version_control</a>
+  
+</span>
+
+
+        </p>
+        
+          <div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+        
+        
+          <ul class="meta text-muted pager">
+            
+            <li class="previous"><a href="/blog/2013/04/13/rrdtool-graph-cannot-parse-vname/" title="Previous Post: rrdtool graph报错Cannot parse vname from DEF">&laquo; rrdtool graph报错Cannot parse vname from DEF</a></li>
+            
+            
+            <li class="next"><a href="/blog/2013/04/18/migrate-binary-application-from-os-to-os/" title="Next Post: 在操作系统之间迁移二进制程序之一">在操作系统之间迁移二进制程序之一 &raquo;</a></li>
+            
+          </ul>
+        
+      </footer>
+    </article>
+
+  <section id="comment">
+    <h1>发表评论</h1>
+    <!-- Duoshuo Comment BEGIN -->
+	<div class="ds-thread"></div>
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"evoupsight"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- Duoshuo Comment END -->
+  </section>
+
+  </div>
+
+  
+  <aside class="sidebar col-md-3">
+    
+      <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2014/09/16/sqoop-dump-to-mysql/">Sqoop导出hive数据到mysql</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/30/hiveserver2-maven-config/">Hiveserver2的maven配置，使用cdh版本</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/03/netsnmp-daemon-dev/">基于netsnmp的agent开发</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/31/compile-cdh47-hive-contrib/">编译cdh47下hive的contrib源码</a>
+    
+    <a class="list-group-item " href="/blog/2014/07/30/hadoop-with-lzo/">centos上hadoop2.x Hdfs支持lzo</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 111.25%'>Javascript(3)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 122.5%'>Version_control(6)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐's Blog</a>
+        </li>
+    </ul>
+</section><section>
+<!--<h1>我的豆瓣主页</h1>-->
+<div>
+<!--<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>-->
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?selection=random&picsize=small&show=collection&n=3&cat=movie%7Cbook%7Cmusic&columns=3"></script>
+</div>
+</section>
+
+
+
+
+<section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最近访客</h3>
+  </div>
+  <div class="list-group">
+    <ul class="ds-recent-visitors" data-num-items="10" ></ul>    
+  </div>
+</section>
+
+    
+  </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2015 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

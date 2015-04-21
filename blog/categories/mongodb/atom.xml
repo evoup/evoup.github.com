@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mongodb | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/mongodb/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2015-02-15T15:39:31+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[nginx反向代理mongodb的web页面]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb/"/>
+    <updated>2013-01-05T15:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb</id>
+    <content type="html"><![CDATA[<p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
+
+<!-- more -->
+
+
+<p><a href="http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface">http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface</a></p>
+
+<p>{% codeblock nginx配置文件 lang:bash %}
+&hellip;
+location / {</p>
+
+<pre><code>   access_log /var/log/access.log access1;
+
+   proxy_redirect     off;
+
+   proxy_connect_timeout      90;
+
+   proxy_send_timeout         90;
+
+   proxy_read_timeout         90;
+
+   proxy_buffer_size          4k;
+
+   proxy_buffers              432k;
+
+   proxy_busy_buffers_size    64k;
+
+   proxy_temp_file_write_size 64k;
+
+   add_header Cache-Control no-cache;
+
+   proxy_pass http://172.16.30.184:28017;
+</code></pre>
+
+<p>   }</p>
+
+<p>}
+&hellip;
+{% endcodeblock %}
+不足：只能从根目录进行代理,如需更加完善，需要装编译nginx的时候， &mdash;with-http_stub_status_module</p>
+
+<p>然后参考《nginx反代加替换傻瓜教程》进行配置</p>
+]]></content>
+  </entry>
+  
+</feed>
