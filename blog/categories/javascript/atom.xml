@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: javascript | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-12T13:03:52+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[五类方法定义javascript类]]></title>
+    <link href="http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method/"/>
+    <updated>2015-04-21T14:20:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method</id>
+    <content type="html"><![CDATA[<p>自己写js的时候，总结了类的五种写法，可能还不止，以后增加。</p>
+
+<!--more-->
+
+
+<p>第一种，this的方式：
+```javascript</p>
+
+<pre><code>var Test1 = function(){
+    var name = "";
+    this.setName = function(username){
+        name = username;
+    }
+    this.getName = function(){
+        return name;
+    }
+    this.sayHello = function(){
+        return "Hello " + this.getName();
+    }
+    return this;
+}();
+Test1.setName("penngo");
+console.log("Test1======" + Test1.getName());
+console.log("Test1======" + Test1.sayHello());
+</code></pre>
+
+<p>```</p>
+
+<p>第二种，return的方式：
+```javascript</p>
+
+<pre><code>var Test2 = function(){
+    var name = "";
+    return {
+        setName:function(username){
+            name = username;
+        },
+        getName:function(){
+            return name;
+        },
+        sayHello:function(){
+            return "Hello " + this.getName();
+        }
+    };
+}();
+Test2.setName("penngo");
+console.log("Test2======" + Test2.getName());
+    console.log("Test2======" + Test2.sayHello());
+</code></pre>
+
+<p>```</p>
+
+<p>第三种,建立空的构造器函数，使其protoype到一个json结构的对象（这样结构会非常清晰）。最后对空的构造器函数new ， 创建实例：
+```javascript
+var pri={</p>
+
+<pre><code>name:"soso",
+init:function(name){
+    this.name=name
+},
+pri:function(){
+    alert(this.name)
+}
+</code></pre>
+
+<p>}
+function <em>temp(){}
+</em>temp.prototype= pri
+var s =new _temp()
+s.init(123)
+s.pri()</p>
+
+<p>var ss=new _temp()
+ss.init(1234)
+ss.pri()
+s.pri()</p>
+
+<p>var d=new _temp()
+d.pri()
+```</p>
+
+<p>第四种，jquery扩展类的方式：
+```javascript
+var Circle = function(x, y, r) {</p>
+
+<pre><code>  this.x = x;
+  this.y = y;
+  this.r = r;
+</code></pre>
+
+<p>}</p>
+
+<p>$.extend(Circle.prototype, {</p>
+
+<pre><code>  area: function() {
+        return Math.PI * this.r * this.r;
+  },
+  diameter: function() {
+        return 2 * this.r;
+  }
+</code></pre>
+
+<p>});</p>
+
+<p>var mycircle = new Circle(100, 200, 50);
+alert(mycircle.r + &lsquo; &ndash;> &rsquo; + mycircle.area());
+```</p>
+
+<p>第五种
+```javascript
+var Link = function (){};</p>
+
+<p>Link.prototype = {</p>
+
+<pre><code>method1: function (){console.log(1);return this;},
+method2: function (){console.log(2);return this;},
+method3: function (){console.log(3);return this;},
+method4: function (){console.log(4);return this;}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>注意第五种的方式，其实就是加了个return this，这样才可以链式调用。
+结论：目前先用第五种方式来写，如果需要动态扩展用jq的extend比较推荐。</p>
+
+<p>题外话：不想写class还可以写嵌套function的:)</p>
+
+<p>参考连接：
+<a href="http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html">http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html</a></p>
+
+<p><a href="http://www.blogjava.net/pengo/archive/2013/01/08/393931.html">http://www.blogjava.net/pengo/archive/2013/01/08/393931.html</a></p>
+
+<p><a href="http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html">http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html</a></p>
+
+<p><a href="https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808">https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[W3的父框架下另一子框架跳转]]></title>
+    <link href="http://evoupsight.com/blog/2008/05/23/parent-frame-location/"/>
+    <updated>2008-05-23T21:15:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2008/05/23/parent-frame-location</id>
+    <content type="html"><![CDATA[<p><code>javascript
+parent.window.frames[i].location.href="http://www.baidu.com"
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[js获取cookie]]></title>
+    <link href="http://evoupsight.com/blog/2008/05/22/js-get-cookie/"/>
+    <updated>2008-05-22T16:31:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2008/05/22/js-get-cookie</id>
+    <content type="html"><![CDATA[<p>直接参考网易的函数
+```javascript
+function getCookie(name) {
+   var search = name + &ldquo;=&rdquo;
+   if(document.cookie.length > 0) {</p>
+
+<pre><code>  offset = document.cookie.indexOf(search)
+  if(offset != -1) {
+     offset += search.length
+     end = document.cookie.indexOf(";", offset)
+     if(end == -1) end = document.cookie.length
+     return unescape(document.cookie.substring(offset, end))
+  }
+  else return ""
+</code></pre>
+
+<p>   }
+```</p>
+
+<hr>
+
+
+<p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo
+<code>javascript
+var foo= $.cookie('name');
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[JS跳出框架]]></title>
+    <link href="http://evoupsight.com/blog/2008/05/19/js-exit-frame/"/>
+    <updated>2008-05-19T22:39:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2008/05/19/js-exit-frame</id>
+    <content type="html"><![CDATA[<p>```javascript</p>
+
+<script language= "JavaScript">
+  <!--Break out of frames
+    if (top.frames.length > 0)
+    top.location=self.document.location;
+  //-->
+</script>
+
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

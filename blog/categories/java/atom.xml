@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: java | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/java/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-12T13:03:52+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[编译cdh47下hive的contrib源码]]></title>
+    <link href="http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib/"/>
+    <updated>2014-07-31T10:18:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib</id>
+    <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中去
+<code>
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar
+</code></p>
+
+<!-- more -->
+
+
+<p>看下工程路径build.xml的29行
+<code>
+&lt;import file="../build-common.xml"/&gt;
+</code></p>
+
+<p>于是编辑上级目录的build-common.xml文件
+<code>
+266   &lt;path id="classpath"&gt;
+267     &lt;pathelement location="${build.dir.hive}/service/classes"/&gt;
+268     &lt;pathelement location="${build.dir.hive}/common/classes"/&gt;
+269     &lt;pathelement location="${build.dir.hive}/serde/classes"/&gt;
+270     &lt;pathelement location="${build.dir.hive}/metastore/classes"/&gt;
+271     &lt;pathelement location="${build.dir.hive}/ql/classes"/&gt;
+272     &lt;pathelement location="${build.dir.hive}/beeline/classes"/&gt;
+273     &lt;pathelement location="${build.dir.hive}/cli/classes"/&gt;
+274     &lt;pathelement location="${build.dir.hive}/shims/classes"/&gt;
+275     &lt;pathelement location="${build.dir.hive}/hwi/classes"/&gt;
+276     &lt;pathelement location="${build.dir.hive}/jdbc/classes"/&gt;
+277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes"/&gt;
+278 &lt;!--{ { {把缺少的hadoop加入--&gt;
+279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar"/&gt;
+280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar"/&gt;
+281 &lt;!--} } }--&gt;
+282     &lt;fileset dir="${basedir}" includes="lib/*.jar"/&gt;
+283     &lt;path refid="common-classpath"/&gt;
+284   &lt;/path&gt;
+</code></p>
+
+<p>像上面这样把2个包加入。</p>
+
+<p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
+，最后编译的jar包存到了ivy的路径下
+```
+compile:</p>
+
+<pre><code> [echo] Project: contrib
+[javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
+[javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 'LimitedPrivate' 的注释方法 'value()': 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
+[javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+[javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
+[javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[javac] 1 个警告
+ [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.
+</code></pre>
+
+<p>jar:</p>
+
+<pre><code> [echo] Project: contrib
+  [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
+</code></pre>
+
+<p>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
+[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
+[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
+[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
+[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml</p>
+
+<p>BUILD SUCCESSFUL
+Total time: 19 seconds
+```
+ok
+这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
+
+<p>参考互联网文章《如何在Ant中引入第三方Jar包》，链接已挂删除了：）</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[apache common configure依赖注意]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/13/apache-common-configure/"/>
+    <updated>2014-06-13T15:35:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/13/apache-common-configure</id>
+    <content type="html"><![CDATA[<p>基于maven使用apache的common-configuration的过程中，遇到一个依赖小问题，记录下</p>
+
+<!-- more -->
+
+
+<p>关于这个包commons-configuration-1.6.jar,注意一定要有三个包才能使用，见下pom片段</p>
+
+<p>```
+<dependencies></p>
+
+<pre><code>&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-configuration&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-configuration&lt;/artifactId&gt;
+
+    &lt;version&gt;1.8&lt;/version&gt;
+
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-beanutils&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-beanutils&lt;/artifactId&gt;
+
+    &lt;version&gt;1.8.0&lt;/version&gt;
+
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+
+    &lt;groupId&gt;commons-jxpath&lt;/groupId&gt;
+
+    &lt;artifactId&gt;commons-jxpath&lt;/artifactId&gt;
+
+    &lt;version&gt;1.3&lt;/version&gt;
+
+&lt;/dependency&gt;
+</code></pre>
+
+<p></dependencies>
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[maven使用小计]]></title>
+    <link href="http://evoupsight.com/blog/2014/06/12/maven-relative-note/"/>
+    <updated>2014-06-12T14:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/06/12/maven-relative-note</id>
+    <content type="html"><![CDATA[<h3>介绍</h3>
+
+<p>maven是java的一个比较有名的项目构建工具，类似的工具还有ant、gradle等，采用vim+maven构建java项目需要了解maven的基本操作，以下是项目收集到的一些使用套路和细节注意点。</p>
+
+<!-- more -->
+
+
+<h3>安装(其实无需安装)</h3>
+
+<p>由于可能地址被墙，在国内maven下载依赖比较慢，最好在编辑/etc/hosts，并在其中加上依赖服务器的IP地址，如下：
+<code>
+199.27.77.129 repo.maven.apache.org
+</code></p>
+
+<p>下载和解压安装包
+<code>
+mkdir /home/software/
+fetch http://down1.chinaunix.net/distfiles/apache-maven-3.0.4-bin.tar.gz
+tar xzf apache-maven-3.0.4-bin.tar.gz
+</code></p>
+
+<p>然后在~/.cshrc中指定(我这里是使用tcsh作为shell环境)
+<code>
+setenv M2_HOME "/usr/home/software/apache-maven-3.0.4"
+setenv MAVEN_OPTS "-Xms128m -Xmx512m"
+set path=( $path $M2_HOME/bin )
+</code>
+接着
+<code>
+source ~/.cshrc
+</code>
+就可以使用mvn命令了</p>
+
+<h3>基本测试构建</h3>
+
+<p>生成测试
+<code>
+mvn clean test
+</code>
+以上命令能直接生成class文件，并且支持自动测试（需要引入Junt并编写测试代码）</p>
+
+<p>生成测试和打包
+<code>
+mvn clean package
+</code>
+以上命令能直接生成最终的jar包文件，同时实现mvn clean test的所有功能</p>
+
+<h3>常用命令</h3>
+
+<p>编译
+<code>
+mvn compile
+</code></p>
+
+<p>清理（删除所有test，package，compile等生成的文件）
+<code>
+mvn clean
+</code></p>
+
+<p>获取所有依赖并且打包
+<code>
+mvn dependency:copy-dependencies -DoutputDirectory=lib package
+</code></p>
+
+<p>不经过测试直接打包
+<code>
+mvn -DskipTests clean package
+</code></p>
+
+<h3>找依赖的方法</h3>
+
+<p>以下两个网站任意一个直接在搜索框中给出java根类即可，第一个网站还可以在线查看jar包里的方法，可以当在线手册查阅：</p>
+
+<p><a href="https://repository.sonatype.org/">https://repository.sonatype.org/</a></p>
+
+<p><a href="http://mvnrepository.com/">http://mvnrepository.com/</a></p>
+
+<h3>创建骨架</h3>
+
+<p><code>
+mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=myapp
+</code></p>
+
+<p>参考：
+《Maven实战》</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[maven打包时候加入依赖]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/15/maven-add-dependency/"/>
+    <updated>2014-03-15T14:52:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/15/maven-add-dependency</id>
+    <content type="html"><![CDATA[<p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：</p>
+
+<!-- more -->
+
+
+<p>```</p>
+
+<pre><code>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;jar&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;excludes&gt;
+                            &lt;exclude&gt;/conf/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/fonts/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/images/**&lt;/exclude&gt;
+                            &lt;exclude&gt;/sounds/**&lt;/exclude&gt;
+                        &lt;/excludes&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;     
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.2.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;shade&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                        &lt;transformers&gt;
+                            &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"&gt;
+                                &lt;mainClass&gt;com.company.mod.cls&lt;/mainClass&gt;
+                            &lt;/transformer&gt;
+                        &lt;/transformers&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
+            &lt;configuration&gt;
+                &lt;testFailureIgnore&gt;true&lt;/testFailureIgnore&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+   &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SpringMVC搭建篇]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/12/springmvc-first/"/>
+    <updated>2014-02-12T15:49:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/12/springmvc-first</id>
+    <content type="html"><![CDATA[<p>最近有项目要求必须用java，于是想到了spring，前几天花了一天时间也算调通。这里简单记录下先(其实很详细，我自己要看，哈哈)，其实更喜欢idea，人家都是google官方android开发推荐ide，有专门插件。嗯，扯远了，下面是搭建的过程小记：</p>
+
+<!-- more -->
+
+
+<h3>Spring是什么？</h3>
+
+<p>不废话了，自己去查&mdash;</p>
+
+<h3>搭建的环境</h3>
+
+<p>windows7+eclipse kepler sr2+jdk1.7+tomcat7.0</p>
+
+<p>第一个spring程序的代码地址（我借鉴的，也可以自己改改呗:)）：
+<a href="https://github.com/evoup/javaweb.git">https://github.com/evoup/javaweb.git</a>
+签出后我把它放到了c:/code_template文件夹下。
+<img src="/images/evoup/springmvc_first/git_clone_helloworld.jpg" alt="Alt text" /></p>
+
+<h4>eclipse</h4>
+
+<p>首先自然是下载eclipse了，注意版本4.3.2是优化过的版本，4.3.1（SR1）这个版本不是很建议，因为搭建的时候貌似不是很顺利？</p>
+
+<p>32位的下载地址：
+<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip</a></p>
+
+<p>64位的下载地址：
+<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip</a></p>
+
+<p>下完放到任意目录，我的是C:\web，直接解压出来
+<img src="/images/evoup/springmvc_first/eclipse_version.jpg" alt="Alt text" /></p>
+
+<h4>jdk的安装</h4>
+
+<p>就用常用的1.7吧
+<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</a></p>
+
+<h4>导入项目</h4>
+
+<p>打开eclipse，首先选择工作区
+<img src="/images/evoup/springmvc_first/select_workspace.jpg" alt="Alt text" /></p>
+
+<p>接着选择菜单
+import->Existing Projects into Workspace
+<img src="/images/evoup/springmvc_first/import.jpg" alt="Alt text" /></p>
+
+<p>选择之前的项目导入
+<img src="/images/evoup/springmvc_first/import2.jpg" alt="Alt text" /></p>
+
+<p>右键项目属性，转为dynamic web module项目
+<img src="/images/evoup/springmvc_first/project_property.jpg" alt="Alt text" /></p>
+
+<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> folder &ndash;> 选择src/main/webapp
+这一步就是配置webapp目录要发布到项目的根目录下</p>
+
+<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> Java Build Path Entries &ndash;> 选择Maven Dependencies &ndash;> Finish &ndash;> OK
+完了貌似必须重启以下eclipse kepler sr2
+还有一点小问题</p>
+
+<p>把头上这段去掉
+&lt;!DOCTYPE web-app PUBLIC
+ &ldquo;&ndash;//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&rdquo;
+ &ldquo;<a href="http://java.sun.com/dtd/web-app_2_3.dtd">http://java.sun.com/dtd/web-app_2_3.dtd</a>&rdquo; ></p>
+
+<p> 好了吧？还木有！需要用tomcat8伪装成tomcat7
+ <a href="http://blog.csdn.net/yuzhiyuxia/article/details/26282767">http://blog.csdn.net/yuzhiyuxia/article/details/26282767</a></p>
+]]></content>
+  </entry>
+  
+</feed>
