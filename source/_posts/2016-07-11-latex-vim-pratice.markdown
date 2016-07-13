@@ -84,7 +84,7 @@ locate ctex-xecjk-winfonts.def | xargs sudo vim
 接下来就可以开始latex中文写作之旅了!
 
 ###后记
-这里还没有考虑繁体中文的配置，以后补上。
+这里还没有考虑繁体中文的配置，还有vim的preview pdf插件没有测试成功，以后补上。
 
 
 ###参考文章
