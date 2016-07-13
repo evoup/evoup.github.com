@@ -105,6 +105,50 @@
 
 
 
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-30T12:14:00+08:00" pubdate data-updated="true">Nov 30<span>th</span>, 2010</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2010/11/30/memory-alignment/">目前看到的对内存对齐问题最好的解释</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>简单的说，对于一个class或是struct：</p>
+
+<p>按里面所占字节最大的类型为位域任何变量的存储不能跨位域 比如：</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2010/11/30/memory-alignment/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
 <span class="glyphicon glyphicon-calendar"></span> <time datetime="2010-11-26T19:07:00+08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2010</time>
         
       </p>
@@ -586,85 +630,6 @@
 
         </article>
       
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2009-10-06T15:49:00+08:00" pubdate data-updated="true">Oct 6<span>th</span>, 2009</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2009/10/06/win32-c-call-python/">关于win32程序调用python脚本的发布问题</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>工作遇到某个项目，要在某个java的软件上模拟输入实现GUI自动化操作，就是类似外挂的功能，过程中遇到要判断图片相似度（因为抓不到java软件的win32句柄，只好判断GUI控件的大致外观来操作），我就想到了python的PIL库来干。原先的思路是这样的，先做个exe,然后直接通过python的capi，调用python脚本工作。后来发现非控制台程序的exe，嵌入python是会有这样那样的问题出现。参见《PyRun_SimpleString的无穷怨念》</p>
-
-<!-- readmore -->
-
-
-<p><a href="http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx">http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx</a></p>
-
-<p>于是在dll里面去嵌入python，dll里面可以用win32线程来调度python脚本的执行状态。</p>
-
-<p>然后就涉及到发布的问题，先是这样子出现
-“由于应用程序配置不正确，应用程序未能启动。重新安装应用程序可能会纠正这个问题。”</p>
-
-<p>查了下资料,<a href="http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html">http://blog.solrex.cn/articles/py2exe-for-python-26-sucks.html</a>
-意思是python2.6是vc++2008编译的，所以要装Microsoft Visual C++ 2008 Redistributable Package。</p>
-
-<p>再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。</p>
-
-<p>这个过程大致如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># setup.py</span>
-</span><span class='line'><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">py2exe</span>
-</span><span class='line'><span class="n">setup</span><span class="p">(</span><span class="n">console</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;hello.py&quot;</span><span class="p">])</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>运行setup.py，记得要传一个参数</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">py2e</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>于是生成的dist文件夹里就是发布好的程序了。
-按照这个思路，解压library.zip里面的程序到dll目录也就可以运行了，试验发现如果是dll的话， w9xpopen.exe到是不必打包带进去了，这样我的dll连同这些文件都放到一个目录里，exe调用这个 dll就完成任务了。我的dll是Release版本的，因为我带的dll是python26.dll而不是python26_d.dll， 这样客户机再也不必安装python就可以运行带有python脚本的程序了。</p>
-
-<p>总结：这谁想出来的，搞得这么复杂，LUA就没有这么复杂，直接2个DLL就完事了，但是估计调用 库的话也是一样的。</p>
-
-<p>后记：其实非商业项目可以用selenium这类GUI自动化测试软件来干，也就是写写脚本。</p>
-</div>
-  
-  
-
-
-        </article>
-      
     </div>
 
     <ul class="pager">
@@ -688,6 +653,8 @@
   
   <div id="recent_posts" class="list-group">
     
+    <a class="list-group-item " href="/blog/2016/07/13/svm/">Svm</a>
+    
     <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
@@ -695,8 +662,6 @@
     <a class="list-group-item " href="/blog/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
     
     <a class="list-group-item " href="/blog/2014/09/16/sqoop-dump-to-mysql/">Sqoop导出hive数据到mysql</a>
-    
-    <a class="list-group-item " href="/blog/2014/08/30/hiveserver2-maven-config/">Hiveserver2的maven配置，使用cdh版本</a>
     
   </div>
 </section>
