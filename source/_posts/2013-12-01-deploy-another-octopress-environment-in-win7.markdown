@@ -23,6 +23,7 @@ continue.
 查阅README.markdown
 **Note**: Octopress requires a minimum Ruby version of `1.9.3-p0`.
 原来需要安装ruby1.9.3。
+(2016-07-25　注：ubuntu上的octopress现在只要1.91也是可以的了)
 
 
 ###问题2 （在装完devkit之前utf-8环境变量不要设置）
@@ -55,7 +56,14 @@ gem install rdoc bundler
 bundle install
 ```
 这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。
-
+(2016-07-25 在ubuntu上如果报错，An error occured while installing RedCloth (4.2.9)，可以sudo apt-get install ruby1.9.1-full，再执行以下语句,然而由于国内对ruby网站做了限制，建议先加入taobao的ruby镜像)
+```ruby
+cd octopress/
+sudo gem install bundler
+sudo gem install RedCloth -v '4.2.9'
+bundle install
+rake install
+```
 
 ##博客恢复篇
 签出自己的octopress项目,我的放在e:\octopress
@@ -64,12 +72,14 @@ cd e:\octopress\
 git clone git@github.com:you/you.github.com.git 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
+git config --global http.proxy 'socks5://127.0.0.1:1080' 
 cd you.github.com
 git checkout source
 rake setup_github_pages
 cd _deploy
 git pull origin master
 ```
+设置git config --global http.proxy 'socks5://127.0.0.1:1080' 是因为国内的网络环境（你懂的）<br>
 所有的资料都从远程origin仓库的master分支取回来了！<br>
 (注意如果出现setup_github_pages不能用的话，可能要把ruby软链接下,见下图)
 ![Alt text](/images/evoup/octopress_rake_setup_github_pages.png)
@@ -89,3 +99,10 @@ git pull origin source
 cd _deploy  
 git pull origin master  
 ```
+###参考链接
+《淘宝ruby镜像站》
+https://ruby.taobao.org/
+
+《stackoverflow的octopress安装提问帖》
+http://stackoverflow.com/questions/12119138/failed-to-build-gem-native-extension-when-install-redcloth-4-2-9-install-linux
+
