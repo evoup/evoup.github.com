@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-14T13:17:25+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[octopress2报错undefined method `[] for nill:NilClass]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass/"/>
+    <updated>2014-02-09T22:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/09/octopress2-undefined-method-for-nill-nilclass</id>
+    <content type="html"><![CDATA[<p>今天在用octopress生成博客静态页的时候，出现如下警告
+<code>Liquid Exception: undefined method '[]' for nil:NilClass</code>
+看下错误上下文先，上次记得这个问题是括号不能连写导致的，这次又是为啥呢？</p>
+
+<!-- more -->
+
+
+<p>```
+$ rake generate</p>
+
+<h2>Generating Site with Jekyll</h2>
+
+<p>unchanged sass/screen.scss
+Configuration from E:/octopress2/evoup.github.com/_config.yml
+Building site: source &ndash;> public</p>
+
+<h2>Generating Categories..</h2>
+
+<p> => Creating Categories Tag Cloud
+ => Creating Categories Sidebar
+Liquid Exception: undefined method <code>[]' for nil:NilClass in 2014-02-08-cocos2d-x
+-cocos2d-iphone-cocos2d-html5-sprite-and-animation-summary.markdown
+E:/octopress2/evoup.github.com/plugins/pygments_code.rb:14:in</code>highlight'
+E:/octopress2/evoup.github.com/plugins/code_block.rb:82:in <code>render'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:94:in</code>bloc
+k in render_all'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:92:in <code>coll
+ect'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:92:in</code>rend
+er_all'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/liquid-2.3.0/lib/liquid/block.rb:82:in `rend
+```
+是看来是语法高亮的语法问题，认为代码有错，2个括号居然不能分开写：</p>
+
+<blockquote><p>sprite->setPosition( ccp(100, 240) ); //设置坐标为x=100,y=240
+<br/>
+必须写成sprite->setPosition(ccp(100, 240)); //设置坐标为x=100,y=240</p></blockquote>
+
+<p>以下问题发现在这个ruby版本
+ruby 1.9.3p484 (2013-11-22) [i386-mingw32]</p>
+
+<p>但奇怪的是公司里的环境没有问题，先记一笔备忘。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[克隆你的octopress博客到win7]]></title>
+    <link href="http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7/"/>
+    <updated>2013-12-01T18:25:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/12/01/deploy-another-octopress-environment-in-win7</id>
+    <content type="html"><![CDATA[<p>由于之前octopress博客是在公司的机器上搭的，想到在家里笔记本上的win7也搞一个环境，方便及时写写技术博客。参考网文《【像黑客一样写博客之五】博客克隆》进行摸索，终于实践成功。</p>
+
+<p>但我的方法稍微有点区别,这里采用clone的方式比较快，主要省去一个remote add环节：）只要主要注意几个问题，就可以轻松搞定，顺序看就行。</p>
+
+<!-- more -->
+
+
+<h2>环境篇：</h2>
+
+<p>这个可以参考大多数搭建octopress博客的文章了，这里一笔带过，之把出现的问题记一笔方便日后查阅。</p>
+
+<h3>问题1（ruby的版本）</h3>
+
+<p>当我装到bundle install的时候，出现了如下问题
+<code>
+An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
+continue.
+</code>
+查阅README.markdown
+<strong>Note</strong>: Octopress requires a minimum Ruby version of <code>1.9.3-p0</code>.
+原来需要安装ruby1.9.3。</p>
+
+<h3>问题2 （在装完devkit之前utf-8环境变量不要设置）</h3>
+
+<p>而安装ruby1.9.3,相应需要安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
+直接解压到e:\devkit
+然后再
+<code>ruby
+cd e:\devkit
+ruby dk.rb init
+C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)
+</code>
+原来是环境变量不能先设置为UTF-8，这个是要特别注意的。</p>
+
+<p>然后就可以执行devkit的安装了：
+<code>ruby
+ruby dk.rb init
+ruby dk.rb install
+</code>
+接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：
+<code>sh
+LANG=zh_CN.UTF-8
+LC_ALL=zh_CN.UTF-8
+</code></p>
+
+<p>继续安装2个必要的gem（rdoc和bundler），注意bundle install的时候要进入octopress的目录，因为其中的Gemfile文件是要被读取的，否则会报错<code>could not locate gemfile</code></p>
+
+<p><code>ruby
+gem install rdoc bundler
+bundle install
+</code>
+这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。</p>
+
+<h2>博客恢复篇</h2>
+
+<p>签出自己的octopress项目,我的放在e:\octopress
+<code>sh
+cd e:\octopress\
+git clone git@github.com:you/you.github.com.git
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+cd you.github.com
+git checkout source
+rake setup_github_pages
+cd _deploy
+git pull origin master
+</code>
+所有的资料都从远程origin仓库的master分支取回来了！<br>
+(注意如果出现setup_github_pages不能用的话，可能要把ruby软链接下,见下图)
+<img src="/images/evoup/octopress_rake_setup_github_pages.png" alt="Alt text" /></p>
+
+<p>然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。
+<code>sh
+cd ..
+git checkout source
+</code>
+再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source</p>
+
+<p>最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
+<code>sh
+cd e:\octopress\you.github.com
+git pull origin source
+cd _deploy  
+git pull origin master  
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[octopress添加社会化分享和添加多说评论]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/09/octopress-add-share-discuss/"/>
+    <updated>2013-10-09T16:14:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/09/octopress-add-share-discuss</id>
+    <content type="html"><![CDATA[<h3>社会化分享</h3>
+
+<p>社会化分享主要采用的是bshare</p>
+
+<p>在_config.yml中增加bshare:true,在"source/_includes/post"下的share.html中添加如下代码</p>
+
+<p>```js</p>
+
+<div class="bshare-custom"><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div>
+
+
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script>
+
+
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+
+
+<p>```
+这样就完成了一键分享的功能。</p>
+
+<h3>社会化评论</h3>
+
+<p>octopress默认采用第三方评论系统disqus，但是国内用户普遍都不使用，可以采用duoshuo。
+首先在 source/post/ 下创建duoshuo.html
+然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
+在source/_layouts/post.html中，将对应的disqus代码改为：
+```js
+
+<code>
+在source/\_config/yml中，添加：
+</code>sh
+duoshuo_name: 你在多说创建的站点名称
+```</p>
+
+<p>不出意外，分享和评论就添加完成了，最后不要忘记生成就可以了。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[博客搬家到github]]></title>
+    <link href="http://evoupsight.com/blog/2013/09/29/change-blog-to-github/"/>
+    <updated>2013-09-29T16:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/09/29/change-blog-to-github</id>
+    <content type="html"><![CDATA[<p>之前使用了将近一年的google app engine建博客，GFW间断性地对ghs.googlehosted.com进行屏蔽，同时用google帐号评论也太逊了，换个吧，开篇！</p>
+]]></content>
+  </entry>
+  
+</feed>

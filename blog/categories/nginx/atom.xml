@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nginx | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-14T13:17:25+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[配置nginx支持rrdcgi]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi/"/>
+    <updated>2013-10-25T17:27:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/25/nginx-with-rrdcgi</id>
+    <content type="html"><![CDATA[<p>开始在web界面上加载监控图表了，用rrdrool graph生成图，但是发现只能够生成。于是想当然地试了一下rrdcgi，本以为能够出图，结果还是创建图片，html来加载图片。最后发现ganglia的图表中居然也是先提取在临时目录生成好的图片，然后用php来生成头，最后再删除图片。不过顺便把nginx下配置CGI程序的知识学会了，权且记一笔。</p>
+
+<!-- more -->
+
+
+<h3>RRDCGI的使用</h3>
+
+<p>首先是编写graph.cgi
+```bash</p>
+
+<h1>!/usr/local/bin/rrdcgi</h1>
+
+<p> &lt;RRD::GRAPH</p>
+
+<pre><code>  /services/cgi-bin/load.png
+  --imginfo '&lt;IMG SRC=/rrdgraph/%s WIDTH=%lu HEIGHT=%lu &gt;'
+  --lazy --title="load"
+  --start 1382666836 --end 1382677047
+  --width 705 --height 245
+  --alt-autoscale
+      DEF:load=/services/rrds/yin-arch_ac101eb8/load.rrd:load:AVERAGE
+      HRULE:1#ff0000:"warning value"
+  AREA:load#3d3d3d:load&gt;
+</code></pre>
+
+<p><code>
+语法基本和rrdgraph的差不多，没什么好说的，这样等等会生成出来一个html代码叫做
+</code>html
+<IMG SRC=/rrdgraph/load.png WIDTH=786 HEIGHT=324 >
+```
+首先在webroot下创建一个软连接rrdgraph，成的图片的src所指向rrdgraph文件夹，其实是个软连接，指向路径为/services/cgi-bin/
+这么做是为了在nginx配置方便。</p>
+
+<p>要怎么在shell中直接验证能出图呢？
+```bash
+sudo rrdcgi graph.cgi &lt; /dev/null
+(offline mode: enter name=value pairs on standard input)
+Content-Type: text/html
+Content-Length: 53</p>
+
+<p> <IMG SRC=/rrdgraph/load.png WIDTH=786 HEIGHT=324 >
+```
+很明显这样子是得到了load.png这个图片文件。然后把这个cgi文件移到/services/cgi-bin/目录下待机。</p>
+
+<h3>nginx的对rrdcgi支持的配置</h3>
+
+<p>首先需要安装好perl，还需要用到以下库：（以下版本可能过旧，直接到CPAN的网站搜索安装）
+```bash
+wget <a href="http://www.cpan.org/modules/by-module/FCGI/FCGI-0.67.tar.gz">http://www.cpan.org/modules/by-module/FCGI/FCGI-0.67.tar.gz</a>
+tar -zxf FCGI-0.67.tar.gz
+cd FCGI-0.67
+perl Makefile.PL
+make &amp;&amp; make install
+cd ..</p>
+
+<p>wget <a href="http://search.cpan.org/CPAN/authors/id/G/GB/GBJK/FCGI-ProcManager-0.18.tar.gz">http://search.cpan.org/CPAN/authors/id/G/GB/GBJK/FCGI-ProcManager-0.18.tar.gz</a>
+tar -zxf FCGI-ProcManager-0.18.tar.gz
+cd FCGI-ProcManager-0.18
+perl Makefile.PL
+make &amp;&amp; make install
+cd ..</p>
+
+<p>wget <a href="http://search.cpan.org/CPAN/authors/id/I/IN/INGY/IO-All-0.39.tar.gz">http://search.cpan.org/CPAN/authors/id/I/IN/INGY/IO-All-0.39.tar.gz</a>
+tar zxf IO-All-0.39.tar.gz
+cd IO-All-0.39
+perl Makefile.PL
+make &amp;&amp; make install
+<code>
+安装 nginx-fcgi 脚本：
+</code>bash
+wget <a href="http://hily.me/blog/wp-content/uploads/2010/01/nginx-fcgi.txt">http://hily.me/blog/wp-content/uploads/2010/01/nginx-fcgi.txt</a></p>
+
+<p>mv nginx-fcgi.txt /usr/sbin/nginx-fcgi</p>
+
+<p>chmod +x /usr/sbin/nginx-fcgi
+<code>
+如果不用 sudo 方式运行 nginx-fcgi，请注释掉 nginx-fcgi 脚本中的：
+</code>bash
+if ( $> == “0″ ) {
+print “\n\tERROR\tRunning as a root!\n”;
+print “\tSuggested not to do so !!!\n\n”;
+exit 1;
+}
+<code>
+启动 nginx-fcgi：
+</code>bash
+sudo nginx-fcgi -l /var/log/nginx/nginx-fcgi.log -pid /var/run/nginx-fcgi.pid -S /var/run/nginx-fcgi.sock
+```</p>
+
+<p>注意一定要为 socket 添加 nginx 帐户的权限，否则 cgi 会执行失败。
+新建 nginx-fcgi 脚本指令配置，直接从 fastcgi_params 复制模板：
+<code>bash
+cp /etc/nginx/fastcgi_params /etc/nginx/nginx_fcgi_params
+</code></p>
+
+<p>去除尾部的：
+```bash</p>
+
+<h1>PHP only, required if PHP was built with –enable-force-cgi-redirect</h1>
+
+<p>fastcgi_param  REDIRECT_STATUS    200;
+```</p>
+
+<p>最后的cgi站点配置：
+```bash</p>
+
+<pre><code>    location / {
+        root   /webroot;
+        index  index.html index.htm;
+    }
+
+    location ~ ^/cgi-bin/.*\.cgi$
+    {
+        fastcgi_index  index.cgi;
+        fastcgi_param  SCRIPT_FILENAME    /services$fastcgi_script_name;
+        include        nginx_fcgi_params;
+        fastcgi_read_timeout    5m;
+        fastcgi_pass   unix:/var/run/nginx-fcgi.sock;
+    }
+</code></pre>
+
+<p>```
+重启nginx，访问地址<a href="http://192.168.216.145/cgi-bin/graph.cgi">http://192.168.216.145/cgi-bin/graph.cgi</a></p>
+
+<p>看到已经有图了
+<img src="/images/evoup/rrdtool_load_graph2.png" alt="Alt text" /></p>
+
+<h3>参考链接</h3>
+
+<p><a href="http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html">http://oss.oetiker.ch/rrdtool/doc/rrdcgi.en.html</a></p>
+
+<p><a href="http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample">http://wiki.qpsmtpd.org/doku.php?id=resources:statistics:rrdcgi-sample</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下nginx+Php5.3.8+php-fpm源码安装之二]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2/"/>
+    <updated>2013-04-08T16:33:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-2</id>
+    <content type="html"><![CDATA[<p>nginx端的配置
+首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
+
+<p><code>
+&lt;?php
+phpinfo();
+</code></p>
+
+<p>安装nginx
+安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
+
+<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
+或者
+<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
+即可看到php输出的信息。</p>
+
+<p>默认nginx的fastcgi脚本似乎不直接支持php，需要创建一个文件php_fcgi_params.conf，然后在此文件中加入类似如下的代码：</p>
+
+<p>```sh</p>
+
+<h1>php_fcgi_params.conf</h1>
+
+<p>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;                                                                                                                 <br/>
+fastcgi_param  SERVER_SOFTWARE    nginx;                                                                                                                   <br/>
+fastcgi_param  QUERY_STRING       $query_string;                                                                                                           <br/>
+fastcgi_param  REQUEST_METHOD     $request_method;                                                                                                         <br/>
+fastcgi_param  CONTENT_TYPE       $content_type;                                                                                                           <br/>
+fastcgi_param  CONTENT_LENGTH     $content_length;                                                                                                         <br/>
+fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;                                                                                      <br/>
+fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;</p>
+
+<h1>fastcgi_param  SCRIPT_NAME        $request_uri;</h1>
+
+<p>fastcgi_param  PATH_INFO          $fastcgi_script_name;                                                                                                    <br/>
+fastcgi_param  REQUEST_URI        $request_uri;                                                                                                            <br/>
+fastcgi_param  DOCUMENT_URI       $document_uri;                                                                                                           <br/>
+fastcgi_param  DOCUMENT_ROOT      $document_root;                                                                                                          <br/>
+fastcgi_param  SERVER_PROTOCOL    $server_protocol;                                                                                                        <br/>
+fastcgi_param  REMOTE_ADDR        $remote_addr;                                                                                                            <br/>
+fastcgi_param  REMOTE_PORT        $remote_port;                                                                                                            <br/>
+fastcgi_param  SERVER_ADDR        $server_addr;                                                                                                            <br/>
+fastcgi_param  SERVER_PORT        $server_port;                                                                                                            <br/>
+fastcgi_param  SERVER_NAME        $server_name;</p>
+
+<h1>PHP only, required if PHP was built with &mdash;enable-force-cgi-redirect</h1>
+
+<p>fastcgi_param  REDIRECT_STATUS    200;</p>
+
+<p>fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
+```</p>
+
+<p>在nginx.conf中的server上下文中添加
+```</p>
+
+<pre><code>    location ~ ^/pma/.*$ {
+        #access_log /var/log/access_beta.log access1;
+        index index.php index.html index.htm;
+        root /services/www/;
+        fastcgi_index   index.php;
+        include /usr/local/etc/nginx/php_fcgi_params.conf;
+        fastcgi_pass 127.0.0.1:9000;
+    }
+</code></pre>
+
+<p>```</p>
+
+<p>启动nignx
+<code>sh
+$ /usr/local/etc/rc.d/ngnix start
+</code></p>
+
+<p>访问浏览器<a href="http://192.168.216.198/pma/">http://192.168.216.198/pma/</a></p>
+
+<p><img src="/images/evoup/php-fpm-pma.png" alt="Alt text" /></p>
+
+<p>done!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[freebsd下nginx+Php5.3.8+php-fpm源码安装之一]]></title>
+    <link href="http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/"/>
+    <updated>2013-04-08T01:03:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1</id>
+    <content type="html"><![CDATA[<p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
+
+<h3>pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3>
+
+<p>i.memcache-3.0.4->memcache<br>
+ii.APC-3.1.4->apc<br>
+iii.imagick-3.0.0->imagick<br>
+(已经把memcache,apc模块源码放到ext子目录中,名称如上)</p>
+
+<p><code>sh
+$ cd /your/phpsrcdir
+$ rm configure
+$ ./buildconf --force
+$ ./configure --help   #(选项出现了!)
+</code></p>
+
+<h3>预装软件：</h3>
+
+<p>ImageMagick
+<code>sh
+$ make WITHOUT_X11=yes install clean
+</code></p>
+
+<p>(时间较长，干点别的去)
+libevent(php-fpm需要,ports)
+<code>sh
+$ make install clean
+</code></p>
+
+<p>curl(ports)
+<code>sh
+$ make install clean
+</code></p>
+
+<p>libmcrypt(ports)
+<code>sh
+make install clean
+</code></p>
+
+<h4>手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，</h4>
+
+<p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd
+<code>sh
+$'./configure' '--prefix=/usr/local/php5_admin' '--with-layout=GNU' '--with-config-file-scan-dir=/usr/local/php5_admin/etc/php' '--disable-all' '--enable-dom' '--enable-filter' '--enable-hash' '--enable-json' '--with-mcrypt' '--with-curl' '--with-pcre-regex' '--enable-mbstring' '--enable-ctype' '--enable-session' '--enable-libxml' '--enable-simplexml' '--enable-pdo' '--with-pdo-mysql=mysqlnd' '--with-mysqli=mysqlnd' '--with-mysql' '--enable-sysvsem' '--enable-sysvshm' '--enable-apc' '--enable-memcache' '--with-imagick=/usr/local' '--enable-fpm' --with-zlib --with-bz2 --enable-zip
+</code></p>
+
+<p>注意
+make时候会报错
+解决方法：
+修改fpm_sockets.c代码：
+<code>
+info.tcpi_sacked =&gt; info.__tcpi_sacked  
+info.tcpi_unacked =&gt; info.__tcpi_unacked  
+</code></p>
+
+<h4>配置</h4>
+
+<p><code>sh
+$ cp /usr/local/php5_admin/etc/php-fpm.conf.default /usr/local/php5_admin/etc/php-fpm.conf
+</code></p>
+
+<p>几个需要配置的参数
+<code>sh
+pm.max_children
+pm.start_servers
+pm.min_spare_servers
+pm.max_spare_servers
+</code></p>
+
+<p>编辑启动脚本/usr/local/etc/rc.d/phpfpm
+```sh</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>PROVIDE: phpfpm</h1>
+
+<h1>REQUIRE: DAEMON</h1>
+
+<p>#</p>
+
+<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
+
+<p>#</p>
+
+<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+
+<h1>Default is &ldquo;NO&rdquo;.</h1>
+
+<p>#</p>
+
+<h1>Last-Modified: 2010-09-14 23:30:20</h1>
+
+<p>name=&ldquo;phpfpm&rdquo;
+. /etc/rc.subr
+rcvar=<code>set_rcvar</code>
+load_rc_config ${name}
+eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
+eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
+command=${server}
+extra_commands=&ldquo;reload&rdquo;
+sig_reload=&ldquo;USR2&rdquo;
+pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm.pid&rdquo;</p>
+
+<h1>command_args=&ldquo;&rdquo;</h1>
+
+<p>run_rc_command &ldquo;$1&rdquo;
+```
+   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动创建</p>
+
+<p>在/etc/rc.conf中加入
+<code>
+phpfpm_enable="YES"
+</code></p>
+
+<p>然后启动
+<code>sh
+$ /usr/local/etc/rc.d/phpfpm start
+</code></p>
+
+<p>备注，其实：上面的phpfpm配置文件是错误的，原因如下：</p>
+
+<blockquote><p>php 5.3.3以上的php版本源码中已经内嵌了php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
+configure的时候添加编译参数即可。
+但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm
+(start|stop|reload)等命令，需要使用信号控制：
+master进程可以理解以下信号：
+INT, TERM 立刻终止
+QUIT 平滑终止
+USR1 重新打开日志文件
+USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p></blockquote>
+
+<p>示例：
+注意这边的单引号为“esc下面那个键（~）”
+php-fpm 关闭：
+<code>sh
+$ kill -INT `cat /usr/local/php/var/run/php-fpm.pid`
+</code>
+php-fpm 重启：
+<code>sh
+$ kill -USR2 `cat /usr/local/php/var/run/php-fpm.pid`
+</code>
+查看php-fpm进程：
+<code>sh
+$ ps aux | grep -c php-fpm
+</code>
+查看php-fpm进程数：
+<code>sh
+$ ps aux | grep -c php-fpm | wc -l
+</code></p>
+
+<p>正确的脚本应该是这样的
+```sh</p>
+
+<h1>!/bin/sh</h1>
+
+<h1>PROVIDE: phpfpm</h1>
+
+<h1>REQUIRE: DAEMON</h1>
+
+<p>#</p>
+
+<h1>Add the following lines to /etc/rc.conf to run phpfpm:</h1>
+
+<p>#</p>
+
+<h1>phpfpm_enable (bool):   Set it to &ldquo;YES&rdquo; to enable {phpfpm}.</h1>
+
+<h1>Default is &ldquo;NO&rdquo;.</h1>
+
+<p>#</p>
+
+<h1>Last-Modified: 2012-11-22 10:27:43</h1>
+
+<p>name=&ldquo;phpfpm&rdquo;
+. /etc/rc.subr
+rcvar=<code>set_rcvar</code>
+load_rc_config ${name}
+eval ${name}<em>enable=\${${name}</em>enable:&ndash;&ldquo;NO&rdquo;}
+eval server=\${${name}_server:&ndash;&ldquo;/usr/local/php5_admin/sbin/php-fpm&rdquo;}
+command=${server}
+extra_commands=&ldquo;reload&rdquo;
+sig_reload=&ldquo;USR2&rdquo;
+sig_stop=&ldquo;INT&rdquo;
+pidfile=&ldquo;/usr/local/php5_admin/var/run/php-fpm.pid&rdquo;
+fpmconffile=&ldquo;/usr/local/php5_admin/etc/php-fpm.conf&rdquo;
+command_args=&ldquo;-g ${pidfile} -y ${fpmconffile}&rdquo;</p>
+
+<h1>run_rc_command $1</h1>
+
+<p>run_rc_command $*
+```</p>
+
+<p>下篇讲nginx的配置</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[nginx反向代理mongodb的web页面]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb/"/>
+    <updated>2013-01-05T15:32:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/05/nginx-reverse-proxy-mongodb</id>
+    <content type="html"><![CDATA[<p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
+
+<!-- more -->
+
+
+<p><a href="http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface">http://serverfault.com/questions/418212/nginx-reverse-proxy-to-mongodb-rest-interface</a></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>nginx配置文件 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&amp;hellip;
+</span><span class='line'>location / <span class="o">{</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt;   access_log /var/log/access.log access1;
+</span><span class='line'>
+</span><span class='line'>   proxy_redirect     off;
+</span><span class='line'>
+</span><span class='line'>   proxy_connect_timeout      90;
+</span><span class='line'>
+</span><span class='line'>   proxy_send_timeout         90;
+</span><span class='line'>
+</span><span class='line'>   proxy_read_timeout         90;
+</span><span class='line'>
+</span><span class='line'>   proxy_buffer_size          4k;
+</span><span class='line'>
+</span><span class='line'>   proxy_buffers              432k;
+</span><span class='line'>
+</span><span class='line'>   proxy_busy_buffers_size    64k;
+</span><span class='line'>
+</span><span class='line'>   proxy_temp_file_write_size 64k;
+</span><span class='line'>
+</span><span class='line'>   add_header Cache-Control no-cache;
+</span><span class='line'>
+</span><span class='line'>   proxy_pass http://172.16.30.184:28017;
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;   <span class="o">}</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;<span class="o">}</span>
+</span><span class='line'>&amp;hellip;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+不足：只能从根目录进行代理,如需更加完善，需要装编译nginx的时候， &mdash;with-http_stub_status_module</p>
+
+<p>然后参考《nginx反代加替换傻瓜教程》进行配置</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[解决nginx upstream send too big header]]></title>
+    <link href="http://evoupsight.com/blog/2012/11/22/nginx-upstream-send-too-big-header/"/>
+    <updated>2012-11-22T15:01:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2012/11/22/nginx-upstream-send-too-big-header</id>
+    <content type="html"><![CDATA[<p>遭遇nginx upstream sent too big header while reading response header from upstream</p>
+
+<p>这个问题会导致输出502头信息。</p>
+
+<p>在fastcgi_params中加以下2行
+<code>sh
+fastcgi_buffer_size 128k;
+fastcgi_buffers 8 128k;
+</code></p>
+
+<p>原因是nginx处理header太大了，还有一个原因就是我写程序的时候发header太多了，只能发一次，调试的时候再去做了。</p>
+]]></content>
+  </entry>
+  
+</feed>
