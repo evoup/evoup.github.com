@@ -137,7 +137,8 @@
 
 <p>查阅README.markdown
 <strong>Note</strong>: Octopress requires a minimum Ruby version of <code>1.9.3-p0</code>.
-原来需要安装ruby1.9.3。</p>
+原来需要安装ruby1.9.3。
+(2016-07-25　注：ubuntu上的octopress现在只要1.91也是可以的了)</p>
 
 <h3>问题2 （在装完devkit之前utf-8环境变量不要设置）</h3>
 
@@ -183,7 +184,21 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。</p>
+<p>这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。
+(2016-07-25 在ubuntu上如果报错，An error occured while installing RedCloth (4.2.9)，可以sudo apt-get install ruby1.9.1-full，再执行以下语句,然而由于国内对ruby网站做了限制，建议先加入taobao的ruby镜像)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">cd</span> <span class="n">octopress</span><span class="o">/</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">gem</span> <span class="n">install</span> <span class="n">bundler</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">gem</span> <span class="n">install</span> <span class="no">RedCloth</span> <span class="o">-</span><span class="n">v</span> <span class="s1">&#39;4.2.9&#39;</span>
+</span><span class='line'><span class="n">bundle</span> <span class="n">install</span>
+</span><span class='line'><span class="n">rake</span> <span class="n">install</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h2>博客恢复篇</h2>
 
@@ -198,10 +213,12 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
+<span class='line-number'>10</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>e:<span class="se">\o</span>ctopress<span class="se">\</span>
 </span><span class='line'>git clone git@github.com:you/you.github.com.git
 </span><span class='line'>git config --global user.email <span class="s2">&quot;you@example.com&quot;</span>
 </span><span class='line'>git config --global user.name <span class="s2">&quot;Your Name&quot;</span>
+</span><span class='line'>git config --global http.proxy <span class="s1">&#39;socks5://127.0.0.1:1080&#39;</span>
 </span><span class='line'><span class="nb">cd </span>you.github.com
 </span><span class='line'>git checkout <span class="nb">source</span>
 </span><span class='line'>rake setup_github_pages
@@ -210,7 +227,8 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>所有的资料都从远程origin仓库的master分支取回来了！<br>
+<p>设置git config &mdash;global http.proxy &lsquo;socks5://127.0.0.1:1080&rsquo; 是因为国内的网络环境（你懂的）<br>
+所有的资料都从远程origin仓库的master分支取回来了！<br>
 (注意如果出现setup_github_pages不能用的话，可能要把ruby软链接下,见下图)
 <img src="/images/evoup/octopress_rake_setup_github_pages.png" alt="Alt text" /></p>
 
@@ -237,6 +255,14 @@
 </span><span class='line'>git pull origin master
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h3>参考链接</h3>
+
+<p>《淘宝ruby镜像站》
+<a href="https://ruby.taobao.org/">https://ruby.taobao.org/</a></p>
+
+<p>《stackoverflow的octopress安装提问帖》
+<a href="http://stackoverflow.com/questions/12119138/failed-to-build-gem-native-extension-when-install-redcloth-4-2-9-install-linux">http://stackoverflow.com/questions/12119138/failed-to-build-gem-native-extension-when-install-redcloth-4-2-9-install-linux</a></p>
 </div>
 
 
