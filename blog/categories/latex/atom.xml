@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: latex | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/latex/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-25T00:34:38+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[linux下latex中文配置小记]]></title>
+    <link href="http://evoupsight.com/blog/2016/07/12/latex-vim-pratice/"/>
+    <updated>2016-07-12T13:02:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2016/07/12/latex-vim-pratice</id>
+    <content type="html"><![CDATA[<p>好久没有更新blog了，又得开始啦，不然传不习乎都忘记了。这里主要记录下vim下配置latex的一些经过，整个过程还是比较快可以上手的。
+这里没有去手动下载安装texlive2015，而是采取直接apt安装。</p>
+
+<!-- more -->
+
+
+<p><code>
+sudo apt-get install texlive texlive-math-extra texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-pictures texlive-science latex-beamer texlive-base texlive-bibtex-extra
+</code>
+当然也可以下载完整的latexlive-full，但比较占用磁盘空间。
+<code>
+sudo apt-get install texlive-full latex-beamer
+</code>
+由于磁盘空间充裕，为避免可能出现的各种麻烦，我选择了后者的完整安装。
+安装完后，继续安装CJK的相关软件包（仅仅为了获取中文支持）：
+<code>
+sudo apt-get install latex-cjk-chinese ttf-arphic-* hbf-*
+</code>
+然后做测试，将下面的文件保存为helloworld.tex
+<code>
+\documentclass{article}
+\usepackage{CJKutf8}
+\begin{document}  
+\begin{CJK}{UTF8}{gkai}
+这是一个楷体中文测试，处理简体字。
+\end{CJK}
+\begin{CJK}{UTF8}{gbsn}
+这是一个宋体中文测试，处理简体字。
+\end{CJK}
+\begin{CJK}{UTF8}{bkai}
+這是一個big5編碼的楷體中文測試，處理繁體文字。  
+\end{CJK}
+\begin{CJK}{UTF8}{bsmi}
+這是一個个big5編碼的明體中文測試，處理繁體文字。  
+\end{CJK}  
+\end{document}  
+</code>
+然后运行pdflatex helloworld.tex，正常的话应该就可以看到生成的能正确显示中文的pdf格式文件了。
+安装evince，这是用来查看pdf文件的。
+<code>
+sudo apt-get install evince
+</code>
+查看pdf
+<code>
+evince helloworld.pdf
+</code>
+<img src="/images/evoup/evince_pdf_latex.png" alt="Alt text" /></p>
+
+<p>接下来就可以装字体了
+<code>
+sudo apt-get install fontforge
+</code>
+这样是不够的，还需要一堆windows的字体，宋体、仿宋、黑体等,这里提供下载：</p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">SimSun.ttc</a></p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2MXRZdDBZc3V4c1Eudo">simhei.ttf</a></p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2anEwakdfdnBCQzg">simkai.ttf</a></p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2eW9lczVrQ18zUUU">TimesNewRoman.ttf</a></p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2UGVneTVFWkJ5dkE">STXingkai.ttf</a></p>
+
+<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">simfang.ttf</a>
+<code>
+sudo cp simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf /usr/share/fonts
+cd /usr/share/fonts
+sudo chmod 644 simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf
+sudo mkfontscale &amp;&amp; sudo mkfontdir
+sudo fc-cache -fsv
+</code>
+然后还是找不到某些字体，需要hack一下latexlive的配置文件
+<code>
+locate ctex-xecjk-winfonts.def | xargs sudo vim
+修改其中的[SIMKAI.TTF]为KaiTi_GB2312
+修改其中的[SIMFANG.TTF]为FangSong_GB2312
+</code>
+接下来就可以开始latex中文写作之旅了!</p>
+
+<h3>后记</h3>
+
+<p>这里还没有考虑繁体中文的配置，还有vim的preview pdf插件没有测试成功，以后补上。</p>
+
+<h3>参考文章</h3>
+
+<p>Linux下Texlive的ctex包中文字体问题
+<a href="https://huxuan.org/2012/07/14/chinese-font-problem-of-ctex-in-texlive-under-linux/">https://huxuan.org/2012/07/14/chinese-font-problem-of-ctex-in-texlive-under-linux/</a></p>
+
+<p>Ubuntu 14.04/14.10 系统安装 Latex及配置中文字体[修订]
+<a href="http://blog.csdn.net/bensnake/article/details/43279329">http://blog.csdn.net/bensnake/article/details/43279329</a></p>
+]]></content>
+  </entry>
+  
+</feed>

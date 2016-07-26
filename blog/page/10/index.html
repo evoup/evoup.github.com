@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Evoup`s Blog</title>
+  <meta name="author" content="Evoup`s Blog">
+
+  
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://evoupsight.com/blog/page/10">
+  <link href="/favicon.png" type="image/png" rel="icon">
+  <link href="/atom.xml" rel="alternate" title="Evoup`s Blog" type="application/atom+xml">
+
+  <link href="/assets/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+
+  <script src="/javascripts/libs/jquery/jquery-2.0.3.min.js"></script>
+  
+
+</head>
+
+  <body   >
+    <div id="wrap">
+      <header role="banner">
+        <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Evoup`s Blog</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active">
+                    <a href="/">Blog</a>
+                </li>
+                <li >
+                    <a href="/blog/archives">Archives</a>
+                </li>
+                <li >
+                    <a href="/blog/opensource">开源项目</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a class="subscribe-rss" href="/atom.xml" title="subscribe via RSS">
+                        <span class="visible-xs">RSS</span>
+                        <img class="hidden-xs" src="/images/rss.png" alt="RSS">
+                    </a>
+                </li>
+                
+            </ul>
+            
+                <form class="search navbar-form navbar-right" action="http://google.com/search" method="GET">
+                    <input type="hidden" name="q" value="site:evoupsight.com">
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="q" placeholder="Search">
+                    </div>
+                </form>
+            
+        </div>
+    </div>
+</nav>
+
+
+      </header>
+      <div id="main" class="container">
+        <div id="content">
+          <div class="row">
+  <div class="page-content col-md-9">
+    <div class="blog-index">
+      
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T01:03:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/">freebsd下nginx+Php5.3.8+php-fpm源码安装之一</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
+
+<h3>pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3>
+
+<p>i.memcache-3.0.4->memcache<br>
+ii.APC-3.1.4->apc<br>
+iii.imagick-3.0.0->imagick<br>
+(已经把memcache,apc模块源码放到ext子目录中,名称如上)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /your/phpsrcdir
+</span><span class='line'><span class="nv">$ </span>rm configure
+</span><span class='line'><span class="nv">$ </span>./buildconf --force
+</span><span class='line'><span class="nv">$ </span>./configure --help   <span class="c">#(选项出现了!)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>预装软件：</h3>
+
+<p>ImageMagick</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make <span class="nv">WITHOUT_X11</span><span class="o">=</span>yes install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>(时间较长，干点别的去)
+libevent(php-fpm需要,ports)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>curl(ports)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>libmcrypt(ports)</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>make install clean
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，</h4>
+
+<p>&mdash;enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="s1">$&#39;./configure&#39;</span> <span class="s1">&#39;--prefix=/usr/local/php5_admin&#39;</span> <span class="s1">&#39;--with-layout=GNU&#39;</span> <span class="s1">&#39;--with-config-file-scan-dir=/usr/local/php5_admin/etc/php&#39;</span> <span class="s1">&#39;--disable-all&#39;</span> <span class="s1">&#39;--enable-dom&#39;</span> <span class="s1">&#39;--enable-filter&#39;</span> <span class="s1">&#39;--enable-hash&#39;</span> <span class="s1">&#39;--enable-json&#39;</span> <span class="s1">&#39;--with-mcrypt&#39;</span> <span class="s1">&#39;--with-curl&#39;</span> <span class="s1">&#39;--with-pcre-regex&#39;</span> <span class="s1">&#39;--enable-mbstring&#39;</span> <span class="s1">&#39;--enable-ctype&#39;</span> <span class="s1">&#39;--enable-session&#39;</span> <span class="s1">&#39;--enable-libxml&#39;</span> <span class="s1">&#39;--enable-simplexml&#39;</span> <span class="s1">&#39;--enable-pdo&#39;</span> <span class="s1">&#39;--with-pdo-mysql=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysqli=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysql&#39;</span> <span class="s1">&#39;--enable-sysvsem&#39;</span> <span class="s1">&#39;--enable-sysvshm&#39;</span> <span class="s1">&#39;--enable-apc&#39;</span> <span class="s1">&#39;--enable-memcache&#39;</span> <span class="s1">&#39;--with-imagick=/usr/local&#39;</span> <span class="s1">&#39;--enable-fpm&#39;</span> --with-zlib --with-bz2 --enable-zip
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意
+make时候会报错
+解决方法：
+修改fpm_sockets.c代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>info.tcpi_sacked <span class="o">=</span>&gt; info.__tcpi_sacked
+</span><span class='line'>info.tcpi_unacked <span class="o">=</span>&gt; info.__tcpi_unacked
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>配置</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cp /usr/local/php5_admin/etc/php-fpm.conf.default /usr/local/php5_admin/etc/php-fpm.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>几个需要配置的参数</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>pm.max_children
+</span><span class='line'>pm.start_servers
+</span><span class='line'>pm.min_spare_servers
+</span><span class='line'>pm.max_spare_servers
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编辑启动脚本/usr/local/etc/rc.d/phpfpm</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># PROVIDE: phpfpm</span>
+</span><span class='line'><span class="c"># REQUIRE: DAEMON</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class='line'><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Last-Modified: 2010-09-14 23:30:20</span>
+</span><span class='line'><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class='line'>. /etc/rc.subr
+</span><span class='line'><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class='line'>load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class='line'><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class='line'><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class='line'><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class='line'><span class="c">#command_args=&quot;&quot; </span>
+</span><span class='line'>run_rc_command <span class="s2">&quot;$1&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动创建</p>
+
+<p>在/etc/rc.conf中加入</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">phpfpm_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后启动</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/etc/rc.d/phpfpm start
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>备注，其实：上面的phpfpm配置文件是错误的，原因如下：</p>
+
+<blockquote><p>php 5.3.3以上的php版本源码中已经内嵌了php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
+configure的时候添加编译参数即可。
+但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm
+(start|stop|reload)等命令，需要使用信号控制：
+master进程可以理解以下信号：
+INT, TERM 立刻终止
+QUIT 平滑终止
+USR1 重新打开日志文件
+USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p></blockquote>
+
+<p>示例：
+注意这边的单引号为“esc下面那个键（~）”
+php-fpm 关闭：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">kill</span> -INT <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>php-fpm 重启：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">kill</span> -USR2 <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看php-fpm进程：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>ps aux | grep -c php-fpm
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>查看php-fpm进程数：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>ps aux | grep -c php-fpm | wc -l
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>正确的脚本应该是这样的</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#!/bin/sh</span>
+</span><span class='line'><span class="c"># PROVIDE: phpfpm</span>
+</span><span class='line'><span class="c"># REQUIRE: DAEMON</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class='line'><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Last-Modified: 2012-11-22 10:27:43</span>
+</span><span class='line'><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class='line'>. /etc/rc.subr
+</span><span class='line'><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class='line'>load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class='line'><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class='line'><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class='line'><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class='line'><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class='line'><span class="nv">sig_stop</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span>
+</span><span class='line'><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class='line'><span class="nv">fpmconffile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/etc/php-fpm.conf&quot;</span>
+</span><span class='line'><span class="nv">command_args</span><span class="o">=</span><span class="s2">&quot;-g ${pidfile} -y ${fpmconffile}&quot;</span>
+</span><span class='line'><span class="c">#run_rc_command $1</span>
+</span><span class='line'>run_rc_command <span class="nv">$*</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下篇讲nginx的配置</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-03-25T10:54:00+08:00" pubdate data-updated="true">Mar 25<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/25/php-zookeeper/">Php和zookeeper交互获取hbase的master状态</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><h3>为什么要使用zookeeper扩展</h3>
+
+<p>公司用了HHVM这玩意来编译php，其实我要给它NO，因为连zookeeper都没支持，如果要支持，要自己写扩展，这是一个奇葩的节奏。所以我们还是采用php脚本方式来调用pecl扩展来实现php和zookeeper通讯。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/03/25/php-zookeeper/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-03-01T13:39:00+08:00" pubdate data-updated="true">Mar 1<span>st</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/03/01/erlang-c-nif/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-27T13:59:00+08:00" pubdate data-updated="true">Feb 27<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">[转]Erlang监测系统CPU、内存和磁盘</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>os_mon
+Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
+
+<p><font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font></p>
+
+<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
+
+<p>disksup：监测磁盘（Unix、Windows）</p>
+
+<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
+
+<p>os_sup：监测系统日志（Solaris、Windows）</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/02/27/erlang-monitor-cpu-memory-disk/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-04T18:19:00+08:00" pubdate data-updated="true">Feb 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/04/erlang-self-log-to-file/">Erlang自带日志写文件的方法</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">x</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">define</span><span class="p">(</span><span class="no">LogsLoaction</span><span class="p">,</span><span class="s">&quot;/tmp/&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">start</span><span class="p">()</span><span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nv">FileName</span> <span class="o">=</span> <span class="o">?</span><span class="nv">LogsLoaction</span><span class="o">++</span><span class="s">&quot;log.txt&quot;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">file</span><span class="p">:</span><span class="nf">write_file</span><span class="p">(</span><span class="nv">FileName</span><span class="p">,</span> <span class="o">&lt;&lt;</span><span class="s">&quot;start to record&quot;</span><span class="o">&gt;&gt;</span><span class="p">),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="nn">error_logger</span><span class="p">:</span><span class="nf">logfile</span><span class="p">({</span><span class="n">open</span><span class="p">,</span><span class="nv">FileName</span><span class="p">}),</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="n">info</span><span class="p">(</span><span class="s">&quot;[init] log start </span><span class="si">~n</span><span class="s">&quot;</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">info</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">info_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">).</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">error</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nn">error_logger</span><span class="p">:</span><span class="nf">error_msg</span><span class="p">(</span><span class="nv">String</span><span class="p">,</span><span class="nv">Value</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-02-04T16:57:00+08:00" pubdate data-updated="true">Feb 4<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/04/log4erl-install-using/">Log4erl 安装使用</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>目前项目急需一套可记录到文件并能自动轮询的机制的日志系统，考虑良久，最后置自带gen_event和标准日志函数于不顾，决定用log4erl。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/02/04/log4erl-install-using/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-01-14T14:14:00+08:00" pubdate data-updated="true">Jan 14<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/14/apache-mina-hello-world/">Apache Mina 使用小记</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv JAVA_HOME <span class="s2">&quot;/usr/local/diablo-jdk1.6.0/&quot;</span>
+</span><span class='line'>setenv JAVA_BIN <span class="s2">&quot;/usr/local/bin/&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>下载mina</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/home/evoup/monsrvd-2.1/test/
+</span><span class='line'>fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz
+</span><span class='line'>tar xzf apache-mina-2.0.7-bin.tar.gz
+</span><span class='line'>cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
+</span><span class='line'>cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>除此之外还需要slf4j这个是mina需要使用的日志库</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
+</span><span class='line'>tar xzf slf4j-1.7.2.tar.gz
+</span><span class='line'>cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
+</span><span class='line'>cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>设置好JAVA的CLASSPATH</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>setenv CLASSPATH <span class="s2">&quot;/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:.&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.net.InetSocketAddress</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.nio.charset.Charset</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoAcceptor</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IdleStatus</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.ProtocolCodecFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.codec.textline.TextLineCodecFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.filter.logging.LoggingFilter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.transport.socket.nio.NioSocketAcceptor</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.service.IoHandlerAdapter</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.apache.mina.core.session.IoSession</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.LoggerFactory</span><span class="o">;</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">org.slf4j.Logger</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MinaTimeServer</span>
+</span><span class='line'><span class="o">{</span>
+</span><span class='line'>   <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">PORT</span> <span class="o">=</span> <span class="mi">9123</span><span class="o">;</span>
+</span><span class='line'>
+</span><span class='line'>   <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span>
+</span><span class='line'>   <span class="o">{</span>
+</span><span class='line'>       <span class="n">IoAcceptor</span> <span class="n">acceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NioSocketAcceptor</span><span class="o">();</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;logger&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">LoggingFilter</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getFilterChain</span><span class="o">().</span><span class="na">addLast</span><span class="o">(</span> <span class="s">&quot;codec&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ProtocolCodecFilter</span><span class="o">(</span> <span class="k">new</span> <span class="n">TextLineCodecFactory</span><span class="o">(</span> <span class="n">Charset</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span> <span class="s">&quot;UTF-8&quot;</span> <span class="o">))));</span>
+</span><span class='line'>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">setHandler</span><span class="o">(</span> <span class="k">new</span> <span class="n">TimeServerHandler</span><span class="o">()</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setReadBufferSize</span><span class="o">(</span> <span class="mi">2048</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">getSessionConfig</span><span class="o">().</span><span class="na">setIdleTime</span><span class="o">(</span> <span class="n">IdleStatus</span><span class="o">.</span><span class="na">BOTH_IDLE</span><span class="o">,</span> <span class="mi">10</span> <span class="o">);</span>
+</span><span class='line'>       <span class="n">acceptor</span><span class="o">.</span><span class="na">bind</span><span class="o">(</span> <span class="k">new</span> <span class="n">InetSocketAddress</span><span class="o">(</span><span class="n">PORT</span><span class="o">)</span> <span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">class</span> <span class="nc">TimeServerHandler</span> <span class="kd">extends</span> <span class="n">IoHandlerAdapter</span> <span class="o">{</span>
+</span><span class='line'>    <span class="kd">static</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="n">TimeServerHandler</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</span><span class='line'>   <span class="c1">//static Logger logger = Logger.getLogger(TimeServerHandler.class);</span>
+</span><span class='line'>   <span class="c1">//异常处理</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">exceptionCaught</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Throwable</span> <span class="n">cause</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">cause</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>   <span class="c1">//对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">messageReceived</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">Object</span> <span class="n">message</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+</span><span class='line'>       <span class="k">if</span> <span class="o">(</span><span class="n">str</span><span class="o">.</span><span class="na">trim</span><span class="o">().</span><span class="na">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;quit&quot;</span><span class="o">))</span> <span class="o">{</span>
+</span><span class='line'>           <span class="n">session</span><span class="o">.</span><span class="na">close</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+</span><span class='line'>           <span class="k">return</span><span class="o">;</span>
+</span><span class='line'>       <span class="o">}</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Rec:&quot;</span> <span class="o">+</span> <span class="n">str</span><span class="o">);</span>
+</span><span class='line'>       <span class="n">Date</span> <span class="n">date</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Date</span><span class="o">();</span>
+</span><span class='line'>       <span class="n">session</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">date</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;Message written...&quot;</span><span class="o">);</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'>   <span class="c1">//当连接空闲时的处理</span>
+</span><span class='line'>   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">sessionIdle</span><span class="o">(</span><span class="n">IoSession</span> <span class="n">session</span><span class="o">,</span> <span class="n">IdleStatus</span> <span class="n">status</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span><span class='line'>       <span class="n">logger</span><span class="o">.</span><span class="na">debug</span><span class="o">(</span><span class="s">&quot;IDLE &quot;</span> <span class="o">+</span> <span class="n">session</span><span class="o">.</span><span class="na">getIdleCount</span><span class="o">(</span><span class="n">status</span><span class="o">));</span>
+</span><span class='line'>   <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="o">[</span><span class="n">evoup</span><span class="nd">@myhost</span><span class="o">]&gt;</span><span class="n">telnet</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span> <span class="mi">9123</span>
+</span><span class='line'><span class="n">Trying</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">...</span>
+</span><span class='line'><span class="n">Connected</span> <span class="n">to</span> <span class="n">localhost</span><span class="o">.</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">Escape</span> <span class="n">character</span> <span class="n">is</span> <span class="err">&#39;</span><span class="o">^]</span><span class="err">&#39;</span><span class="o">.</span>
+</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
+</span><span class='line'><span class="n">Mon</span> <span class="n">Jan</span> <span class="mi">14</span> <span class="mi">17</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">04</span> <span class="n">CST</span> <span class="mi">2013</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-01-09T11:42:00+08:00" pubdate data-updated="true">Jan 9<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/">关于socket阻塞与非阻塞情况下的recv、send、read、write返回值</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><h4>recv：</h4>
+
+<p>阻塞与非阻塞recv返回值没有区分，都是 &lt;0：出错，=0：连接关闭，>0接收到数据大小，</p>
+
+<p>特别：非阻塞模式下返回 值 &lt;0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况 下认为连接是正常的，继续接收。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-01-06T17:37:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/06/golang-daemonize/">Golang的守护进程化</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>golang的守护进程化代码，参考了网上的代码，结合自己的项目，去掉了一些没用的代码，增加了fork时候的判断处理，我的机器是freebsd，fork会报errno:0,忽略，原因见代码注释。</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/01/06/golang-daemonize/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-01-05T15:32:00+08:00" pubdate data-updated="true">Jan 5<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">Nginx反向代理mongodb的web页面</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>需要配置nginx来反向代理出mongodb的web页面，参考这篇文章</p>
+
+</div>
+  
+  
+    <footer>
+      <a class="btn btn-default" rel="full-article" href="/blog/2013/01/05/nginx-reverse-proxy-mongodb/">Read on &rarr;</a>
+    </footer>
+  
+
+
+        </article>
+      
+    </div>
+
+    <ul class="pager">
+      
+        <li class="previous"><a href="/blog/page/11/">&larr;&nbsp;Older</a></li>
+      
+      <li><a href="/blog/archives">Blog Archives</a></li>
+      
+        <li class="next"><a href="/blog/page/9/">Newer&nbsp;&rarr;</a></li>
+      
+    </ul>
+  </div>
+
+  
+    <aside class="sidebar col-md-3">
+      
+        <section class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">最新发表</h3>
+  </div>
+  
+  <div id="recent_posts" class="list-group">
+    
+    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    
+    <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+    
+    <a class="list-group-item " href="/blog/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+    
+    <a class="list-group-item " href="/blog/2014/09/16/sqoop-dump-to-mysql/">Sqoop导出hive数据到mysql</a>
+    
+    <a class="list-group-item " href="/blog/2014/08/30/hiveserver2-maven-config/">Hiveserver2的maven配置，使用cdh版本</a>
+    
+  </div>
+</section>
+
+
+<section>
+<h1>分类</h1>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+</section>
+
+<section>
+    <h1>新浪微博</h1>
+    <ul id="weibo">
+    <li>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2839412552&verifier=2533dcd4&dpc=1"></iframe>
+    </li>
+    </ul>
+</section><section>
+    <h1>友情链接</h1>
+    <ul>
+        <li>
+            <a href="http://www.konanblog.info" target=_BLANK>Konan`s blog</a>
+        </li>
+    </ul>
+	    <ul>
+        <li>
+            <a href="http://www.yrzhll.com/" target=_BLANK>蝶姐&#8217;s Blog</a>
+        </li>
+    </ul>
+</section><section>
+<!--<h1>我的豆瓣主页</h1>&#8211;>
+<div>
+<!--<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?show=wishlist&n=9&columns=3&hidelogo=yes&cat=movie|book" ></script>&#8211;>
+<script type="text/javascript" src="http://www.douban.com/service/badge/evoupYin/?selection=random&picsize=small&show=collection&n=3&cat=movie%7Cbook%7Cmusic&columns=3"></script>
+</div>
+</section>
+
+
+
+
+
+      
+    </aside>
+  
+</div>
+
+        </div>
+      </div>
+    </div>
+    <footer role="contentinfo"><div class="container">
+    <p class="text-muted credits">
+  Copyright &copy; 2016 - Evoup`s Blog<br>
+  <small>
+      <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>,
+      <span class="credit">customized with <a href="https://github.com/kAworu/octostrap3">octostrap3</a></span>.
+  </small>
+</p>
+
+</div>
+</footer>
+    <script src="/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/javascripts/modernizr-2.0.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F2793871dfb78c3a9ad26e39cae55c3a6' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+  </body>
+</html>

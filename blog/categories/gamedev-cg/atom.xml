@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: gamedev-cg | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/gamedev-cg/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-07-25T00:34:38+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（二）]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2/"/>
+    <updated>2014-03-18T22:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/18/use-cocostudio-create-bone-animation2</id>
+    <content type="html"><![CDATA[<p>上次的《使用CocoStudio创建骨骼动画》讨论到了如何创建骨骼和绑定骨骼关系，这节开始谈怎么创建帧动画。</p>
+
+<p>我把上次的每个图层命名成每个骨骼后，更新后的：<a href="http://pan.baidu.com/s/1mg0UXJi" target=_blank>工作cocostudio源文件下载</a></p>
+
+<!-- more -->
+
+
+<p><img src="/images/evoup/cocostudio_bone_animation2/01.png" alt="Alt text" /></p>
+
+<p>点击形体模式之后切换到动画模式<br>
+<img src="/images/evoup/cocostudio_bone_animation2/02.png" alt="Alt text" /></p>
+
+<p>开始第一个帧动画的制作，右键点击动作列表Animation1<br>
+<img src="/images/evoup/cocostudio_bone_animation2/03.png" alt="Alt text" /></p>
+
+<p>改名为stand,注意不要改成中文，否则以后写代码调用的时候可能会出现问题<br>
+<img src="/images/evoup/cocostudio_bone_animation2/04.png" alt="Alt text" /></p>
+
+<p>用鼠标框选全部的帧<br>
+<img src="/images/evoup/cocostudio_bone_animation2/05.png" alt="Alt text" /></p>
+
+<p>选择复制帧<br>
+<img src="/images/evoup/cocostudio_bone_animation2/06.png" alt="Alt text" /></p>
+
+<p>在60帧处右键，然后点击粘帖帧<br>
+<img src="/images/evoup/cocostudio_bone_animation2/07.png" alt="Alt text" /></p>
+
+<p>同样的方法，在30帧处右键点击粘帖帧<br>
+<img src="/images/evoup/cocostudio_bone_animation2/08.png" alt="Alt text" /></p>
+
+<p>然后把时间轴移到到30帧<br>
+<img src="/images/evoup/cocostudio_bone_animation2/09.png" alt="Alt text" /></p>
+
+<p>接下来编辑造型了，轻微旋转各个关节<br>
+<img src="/images/evoup/cocostudio_bone_animation2/10.png" alt="Alt text" /></p>
+
+<p>点击隐藏骨骼，可以展现整体角色<br>
+<img src="/images/evoup/cocostudio_bone_animation2/11.png" alt="Alt text" /></p>
+
+<p>看效果<br>
+<img src="/images/evoup/cocostudio_bone_animation2/animation.gif" alt="Alt text" /></p>
+
+<p>然后再创建一个run的动作，如法炮制，未完待续&hellip;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[使用CocoStudio创建骨骼动画（一）]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/16/use-cocostudio-create-bone-animation1/"/>
+    <updated>2014-03-16T00:28:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/16/use-cocostudio-create-bone-animation1</id>
+    <content type="html"><![CDATA[<p>需要给哥么介绍怎么倒腾美术使用的美术创作工具CocoStudio（版本1.3）的Animation Editor，所以得先打个头阵研究一番，备忘一下。</p>
+
+<!-- more -->
+
+
+<p>打开之前我的另一篇《设计2D游戏玩家角色》博客里面提供的PSD源文件，然后开工。明确要怎么分割的部分：<br></p>
+
+<h3>从PSD文件导出部件</h3>
+
+<p>下面给出导出图层的规则，有+的代表有2个图层，复制的时候均采用ctrl+shift+c合并拷贝，再用ctrl+n创建新文件，最后ctrl+c粘帖到新文件上，然后导出为透明png24的方式：</p>
+
+<p>左脚+左脚轮廓线=>左脚<br>
+左腿+左腿轮廓线=>左腿<br>
+左大腿+左大腿轮廓线=>左大腿<br>
+右脚+右脚轮廓线=>右脚<br>
+右小腿+右小腿轮廓线=>右小腿<br>
+右大腿+右大腿轮廓线=>右大腿<br>
+左手整手臂+左手整手臂轮廓线=>左手整手臂<br>
+兜裆布=>兜裆布<br>
+身体+身体轮廓线=>身体<br>
+右手臂+右手臂轮廓线=>右手臂<br>
+右手下臂+右手下臂轮廓线=>右手下臂<br>
+胸衣=>胸衣<br>
+围巾=>围巾<br>
+头部+头部轮廓线=头部<br>
+眼睛<br>
+马尾+马尾轮廓线=>马尾<br>
+头发+头发轮廓线=>头发<br>
+发箍+发箍轮廓线=》发箍<br></p>
+
+<p>最后得到这些图素<a href="http://pan.baidu.com/s/1bnzlv9X" target=_BLANK>cuted_player.zip</a></p>
+
+<h3>打开CocoStudio操作</h3>
+
+<p>接下来让我们打开CocoStudio开始编辑动画，首先进入Animation Editor<br>
+<img src="/images/evoup/cocostudio_bone_animation/01.png" alt="Alt text" /></p>
+
+<p>然后创建新项目，名为player_swordgirl<br>
+<img src="/images/evoup/cocostudio_bone_animation/02.png" alt="Alt text" /></p>
+
+<p>在界面右侧的资源窗口右键-“导入”-&ldquo;导入文件&rdquo;<br>
+<img src="/images/evoup/cocostudio_bone_animation/03.png" alt="Alt text" /></p>
+
+<p>完成导入<br>
+<img src="/images/evoup/cocostudio_bone_animation/04.png" alt="Alt text" /></p>
+
+<p>在主界面上点击创建骨骼，如果再次点击停止创建回到pose mode。我们先创建躯干部份的骨骼。<br>
+<img src="/images/evoup/cocostudio_bone_animation/05.png" alt="Alt text" /></p>
+
+<p><img src="/images/evoup/cocostudio_bone_animation/06.png" alt="Alt text" /></p>
+
+<p>创建完成之后，把身体的图片赋到该骨骼上，需要注意这里有个bug，就是直接点击骨骼然后把图片拖到右面XX的话，保存项目后，再次打开会发现图片消失了（没想到这个bug1.3还是没修好啊）。
+规避这个问题的方法很简单，就是把图片先拖到骨骼旁边，然后右键选择绑定到骨头，这样就不会再消失了。<br>
+<img src="/images/evoup/cocostudio_bone_animation/07.png" alt="Alt text" /></p>
+
+<p><img src="/images/evoup/cocostudio_bone_animation/08.png" alt="Alt text" /></p>
+
+<p><img src="/images/evoup/cocostudio_bone_animation/09.png" alt="Alt text" /></p>
+
+<p>使用平移工具把身体放到骨骼外围，骨骼嘛自然要待在组织里啊
+<img src="/images/evoup/cocostudio_bone_animation/10.png" alt="Alt text" /></p>
+
+<p>同样的方法创建出围巾
+<img src="/images/evoup/cocostudio_bone_animation/11.png" alt="Alt text" /></p>
+
+<p>下面介绍一下骨骼的父关系，这个很好理解的，比如说身体和头，某种程度上说身体就是主躯干，外围设施（比如四肢、头、尾巴等）都是根据身体来依附上去的，这种依附关系的产生，导致移动身体其他外围设施是会跟着发生位移的，那么就可以称这些外围设施和身体有父关系，它的父关系是身体这块骨骼。
+右击围巾选择绑定父关系到前一骨骼（身体所在的那块骨骼）<br>
+<img src="/images/evoup/cocostudio_bone_animation/12.png" alt="Alt text" /></p>
+
+<p>然后试着移动身体，你会发现围巾跟着移动了，很神奇不是吗？：）</p>
+
+<p>接下来如法炮制了，我只讲下哪个绑定哪个<br>
+头部绑定父关系到围巾<br>
+<img src="/images/evoup/cocostudio_bone_animation/13.png" alt="Alt text" /></p>
+
+<p>眼睛绑定父关系到头部，胸衣绑定父关系到头部<br>
+<img src="/images/evoup/cocostudio_bone_animation/14.png" alt="Alt text" /></p>
+
+<p>头发绑定父关系到头部<br>
+<img src="/images/evoup/cocostudio_bone_animation/15.png" alt="Alt text" /></p>
+
+<p>发箍绑定父关系到头部<br>
+<img src="/images/evoup/cocostudio_bone_animation/16.png" alt="Alt text" /></p>
+
+<p>马尾绑定父关系到发箍<br>
+<img src="/images/evoup/cocostudio_bone_animation/17.png" alt="Alt text" /></p>
+
+<p>右手臂绑定父关系到身体<br>
+<img src="/images/evoup/cocostudio_bone_animation/18.png" alt="Alt text" /></p>
+
+<p>右手下臂绑定父关系到右手臂<br>
+<img src="/images/evoup/cocostudio_bone_animation/19.png" alt="Alt text" /></p>
+
+<p>左手臂绑定父关系到身体<br>
+<img src="/images/evoup/cocostudio_bone_animation/20.png" alt="Alt text" /></p>
+
+<p>兜裆布绑定父关系到身体<br>
+<img src="/images/evoup/cocostudio_bone_animation/21.png" alt="Alt text" /></p>
+
+<p>左大腿绑定父关系到身体<br>
+<img src="/images/evoup/cocostudio_bone_animation/22.png" alt="Alt text" /></p>
+
+<p>右大腿绑定父关系到身体<br>
+<img src="/images/evoup/cocostudio_bone_animation/23.png" alt="Alt text" /></p>
+
+<p>左小腿绑定父关系到左大腿<br>
+<img src="/images/evoup/cocostudio_bone_animation/24.png" alt="Alt text" /></p>
+
+<p>右小腿绑定父关系到右大腿<br>
+<img src="/images/evoup/cocostudio_bone_animation/25.png" alt="Alt text" /></p>
+
+<p>左脚绑定父关系到左小腿<br>
+<img src="/images/evoup/cocostudio_bone_animation/26.png" alt="Alt text" /></p>
+
+<p>右脚绑定父关系到右小腿<br>
+<img src="/images/evoup/cocostudio_bone_animation/27.png" alt="Alt text" /></p>
+
+<p><a href="http://pan.baidu.com/s/1dDIKi1V" target=_BLANK>CocoStudio项目源文件下载</a></p>
+
+<p>下一篇将怎么做骨骼动画</p>
+
+<p>思考：眨眼动画要怎么处理呢？</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[设计2D游戏玩家角色]]></title>
+    <link href="http://evoupsight.com/blog/2014/03/14/2d-player-charactor-pratice/"/>
+    <updated>2014-03-14T23:47:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/03/14/2d-player-charactor-pratice</id>
+    <content type="html"><![CDATA[<p>目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。<br>
+最终稿（完成时间2小时+修正1小时，初次尝试，PS）</p>
+
+<!-- more -->
+
+
+<p><img src="/images/evoup/2dcharactor_cg/01.png" alt="Alt text" /></p>
+
+<p>1.用2b铅笔绘制头部轮廓线，然后用柔边圆压力大小上次，这里的技巧是可以先用魔棒工具选择头部轮廓线图层内部，然后转到头部图层用alt + del填充，接着使用锁定透明色的方法继续用柔边圆压力大小上色，这样叠上去的颜色就不会画到轮廓线外面了。</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/02.png" alt="Alt text" /></p>
+
+<p>2.继续在头部曾上画一层头发轮廓线，然后在后面加一层，按照上面的填充方法如法炮制画出头发</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/03.png" alt="Alt text" /></p>
+
+<p>3.继续画出发箍</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/04.png" alt="Alt text" /></p>
+
+<p>4.马尾，层位于头部以下</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/05.png" alt="Alt text" /></p>
+
+<ol>
+<li>围巾</li>
+</ol>
+
+
+<p><img src="/images/evoup/2dcharactor_cg/06.png" alt="Alt text" /></p>
+
+<p>6.身体</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/07.png" alt="Alt text" /></p>
+
+<p>7.胸衣</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/08.png" alt="Alt text" /></p>
+
+<p>8.右手臂，画在最顶层</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/09.png" alt="Alt text" /></p>
+
+<p>9.右手下臂</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/10.png" alt="Alt text" /></p>
+
+<p>10.右大腿，身体后的一层</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/11.png" alt="Alt text" /></p>
+
+<p>11.右小腿</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/12.png" alt="Alt text" /></p>
+
+<p>12.左大腿，放到右大腿下层</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/13.png" alt="Alt text" /></p>
+
+<p>13.右下腿</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/14.png" alt="Alt text" /></p>
+
+<p>14.兜裆布</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/15.png" alt="Alt text" /></p>
+
+<p>15.左手整手臂</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/16.png" alt="Alt text" /></p>
+
+<p>16.到最后还不是最后(哈哈，孙艺真的《共犯》台词嘛)，其实下面才是重要的活啊，线稿太粗了，我们要用钢笔来修正。方法是用钢笔工具去照描，可以用ctrl点一下旁边来起新的路径，全部描绘好后，用以下设置</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/18.png" alt="Alt text" /></p>
+
+<p>然后点击右键->描边路径，可以选压力（我这里没有选），见下：</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/17.png" alt="Alt text" /></p>
+
+<p>就可以得到下面的结果了</p>
+
+<p><img src="/images/evoup/2dcharactor_cg/01.png" alt="Alt text" /></p>
+
+<p>如果觉得路径碍事，可以用ctrl+shift+h来关闭显示，或者点击视图->显示->目标路径。</p>
+
+<p>总结不足：下脚轮廓线其实可以去掉，像素外框线可以在圆润点，我只处理了头发那个图层，可以用第16步骤来修正。</p>
+
+<p><a href="http://pan.baidu.com/s/1hqKFQ1e" target=_BLANK>PS源文件</a></p>
+]]></content>
+  </entry>
+  
+</feed>
