@@ -14,10 +14,13 @@ categories:             freebsd
 首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。
 
 在crontab内加入
+
 ```bash
 */15  *   *   *   *   *   root   ntpdate 210.72.145.44
 ```
+
 以及在/etc/rc.conf中
+
 ```bash
 ntpdate_enable="YES"
 ```
@@ -26,6 +29,7 @@ ntpdate_enable="YES"
 通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？</br>
 首先需要点击vmware的菜单VM -> Install VMware Tools</br>
 vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
+
 ```bash
 cd /usr/port/dist
 sudo fetch ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz
@@ -40,7 +44,9 @@ sudo pkg_add compat6x-amd64.tbz
 *                                                                             *
 *******************************************************************************
 ```
+
 安装依赖库后，切换到root后，执行如下指令：
+
 ```bash
 mount /cdrom
 cd /tmp
@@ -48,9 +54,11 @@ tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
 cd vmware-tools-distrib
 ./vmware-install.pl
 ```
+
 这样vmware-tool就搞定了。
 最后为了保险起先，关闭系统后，编辑.vmx文件
 加上下面的时间同步的代码
+
 ```bash
 tools.syncTime = "TRUE"
 time.synchronize.continue = "TRUE"
