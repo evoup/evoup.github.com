@@ -4,7 +4,7 @@
   <title><![CDATA[Category: freebsd | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/freebsd/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:48:25+08:00</updated>
+  <updated>2016-08-03T16:14:37+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -238,20 +238,24 @@ ffmpeg.show_warnings =&gt; 0 =&gt; 0
 <h3 id="section">消极的方法</h3>
 <p>首先可以尝试加上ntpdate自动来同步，不过这个方法比较死。</p>
 
-<p>在crontab内加入
-<code>bash
+<p>在crontab内加入</p>
+
+<p><code>bash
 */15  *   *   *   *   *   root   ntpdate 210.72.145.44
-</code>
-以及在/etc/rc.conf中
-<code>bash
+</code></p>
+
+<p>以及在/etc/rc.conf中</p>
+
+<p><code>bash
 ntpdate_enable="YES"
 </code></p>
 
 <h3 id="section-1">积极的方法</h3>
 <p>通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？&lt;/br&gt;
 首先需要点击vmware的菜单VM -&gt; Install VMware Tools&lt;/br&gt;
-vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
-<code>bash
+vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。</p>
+
+<p><code>bash
 cd /usr/port/dist
 sudo fetch ftp://ftp5.tw.freebsd.org/BSD/FreeBSD/ports/amd64/packages-8-current/Latest/compat6x-amd64.tbz
 sudo pkg_add compat6x-amd64.tbz
@@ -264,19 +268,23 @@ sudo pkg_add compat6x-amd64.tbz
 * http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/kernelconfig.html *
 *                                                                             *
 *******************************************************************************
-</code>
-安装依赖库后，切换到root后，执行如下指令：
-<code>bash
+</code></p>
+
+<p>安装依赖库后，切换到root后，执行如下指令：</p>
+
+<p><code>bash
 mount /cdrom
 cd /tmp
 tar xzpf /cdrom/vmware-freebsd-tools.tar.gz
 cd vmware-tools-distrib
 ./vmware-install.pl
-</code>
-这样vmware-tool就搞定了。
+</code></p>
+
+<p>这样vmware-tool就搞定了。
 最后为了保险起先，关闭系统后，编辑.vmx文件
-加上下面的时间同步的代码
-<code>bash
+加上下面的时间同步的代码</p>
+
+<p><code>bash
 tools.syncTime = "TRUE"
 time.synchronize.continue = "TRUE"
 time.synchronize.restore = "TRUE"
