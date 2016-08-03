@@ -207,9 +207,11 @@ http://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/kepler/sr
 ![Alt text](/images/evoup/android_cdt_ndk/20.png)
 
 右键项目的Properties，在"C/C++ Build"中取消默认的" Use default build command "的打勾，在Build Command中输入对应bash加空格加ndk-build的路径，我这里是C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build<br>
+
 ```sh
 bash C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build
 ```
+
 ![Alt text](/images/evoup/android_cdt_ndk/21.png)
 
 在"C/C++ General"的Paths and Symbols中：在Includes下add新的GNU C依赖路径,根据自己的avd（andriod virtual device）的版本设置对应的头文件，我这里是android17的，则C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\platforms\android-17\arch-arm\usr\include,其他项目可以安装实际环境酌情调整依赖头文件的版本<br>
