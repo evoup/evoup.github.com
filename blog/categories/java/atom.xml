@@ -4,7 +4,7 @@
   <title><![CDATA[Category: java | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/java/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:08:07+08:00</updated>
+  <updated>2016-08-03T15:10:39+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -19,104 +19,68 @@
     <updated>2014-07-31T10:18:00+08:00</updated>
     <id>http://evoupsight.com/blog/2014/07/31/compile-cdh47-hive-contrib</id>
     <content type="html"><![CDATA[<p>进入hive的src/contrib目录，开始编译，提示需要这几个包得加到classpath中
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
-</span><span class='line'>/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar</span></code></pre></td></tr></table></div></figure></notextile></div>
+{% codeblock %}
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar
+/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar
+{% endcodeblock %}
 <!-- more --></p>
 
 <p>看下工程路径build.xml的29行
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;import file="../build-common.xml" /></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+{% codeblock %}
+<import file="../build-common.xml" />
+{% endcodeblock %}</p>
 
 <p>于是编辑上级目录的build-common.xml文件
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>266   &lt;path id="classpath">
-</span><span class='line'>267     &lt;pathelement location="${build.dir.hive}/service/classes" />
-</span><span class='line'>268     &lt;pathelement location="${build.dir.hive}/common/classes" />
-</span><span class='line'>269     &lt;pathelement location="${build.dir.hive}/serde/classes" />
-</span><span class='line'>270     &lt;pathelement location="${build.dir.hive}/metastore/classes" />
-</span><span class='line'>271     &lt;pathelement location="${build.dir.hive}/ql/classes" />
-</span><span class='line'>272     &lt;pathelement location="${build.dir.hive}/beeline/classes" />
-</span><span class='line'>273     &lt;pathelement location="${build.dir.hive}/cli/classes" />
-</span><span class='line'>274     &lt;pathelement location="${build.dir.hive}/shims/classes" />
-</span><span class='line'>275     &lt;pathelement location="${build.dir.hive}/hwi/classes" />
-</span><span class='line'>276     &lt;pathelement location="${build.dir.hive}/jdbc/classes" />
-</span><span class='line'>277     &lt;pathelement location="${build.dir.hive}/hbase-handler/classes" />
-</span><span class='line'>278 &lt;!--{ { {把缺少的hadoop加入-->
-</span><span class='line'>279     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar" />
-</span><span class='line'>280     &lt;pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar" />
-</span><span class='line'>281 &lt;!--} } }-->
-</span><span class='line'>282     &lt;fileset dir="${basedir}" includes="lib/*.jar" />
-</span><span class='line'>283     &lt;path refid="common-classpath" />
-</span><span class='line'>284   &lt;/path></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+{% codeblock %}
+266   <path id="classpath">
+267     <pathelement location="${build.dir.hive}/service/classes" />
+268     <pathelement location="${build.dir.hive}/common/classes" />
+269     <pathelement location="${build.dir.hive}/serde/classes" />
+270     <pathelement location="${build.dir.hive}/metastore/classes" />
+271     <pathelement location="${build.dir.hive}/ql/classes" />
+272     <pathelement location="${build.dir.hive}/beeline/classes" />
+273     <pathelement location="${build.dir.hive}/cli/classes" />
+274     <pathelement location="${build.dir.hive}/shims/classes" />
+275     <pathelement location="${build.dir.hive}/hwi/classes" />
+276     <pathelement location="${build.dir.hive}/jdbc/classes" />
+277     <pathelement location="${build.dir.hive}/hbase-handler/classes" />
+278 <!--{ { {把缺少的hadoop加入-->
+279     <pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar" />
+280     <pathelement location="/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/mapreduce1/hadoop-core-2.0.0-mr1-cdh4.7.0.jar" />
+281 <!--} } }-->
+282     <fileset dir="${basedir}" includes="lib/*.jar" />
+283     <path refid="common-classpath" />
+284   </path>
+{% endcodeblock %}</p>
 
 <p>像上面这样把2个包加入。</p>
 
 <p>然后回到工程文件，执行ant，提示将编译contrib包，一路过去，没有问题
 ，最后编译的jar包存到了ivy的路径下
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>compile:
-</span><span class='line'>     [echo] Project: contrib
-</span><span class='line'>    [javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
-</span><span class='line'>    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 ‘LimitedPrivate’ 的注释方法 ‘value()’: 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
-</span><span class='line'>    [javac] 注: 某些输入文件使用或覆盖了已过时的 API。
-</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
-</span><span class='line'>    [javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
-</span><span class='line'>    [javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
-</span><span class='line'>    [javac] 1 个警告
-</span><span class='line'>     [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>jar:
-</span><span class='line'>     [echo] Project: contrib
-</span><span class='line'>      [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
-</span><span class='line'>[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
-</span><span class='line'>[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
-</span><span class='line'>[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
-</span><span class='line'>[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
-</span><span class='line'>[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>BUILD SUCCESSFUL
-</span><span class='line'>Total time: 19 seconds</span></code></pre></td></tr></table></div></figure></notextile></div>
+{% codeblock %}
+compile:
+     [echo] Project: contrib
+    [javac] Compiling 39 source files to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/classes
+    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/share/hadoop/common/hadoop-common-2.0.0-cdh4.7.0.jar(org/apache/hadoop/fs/Path.class): 警告: 无法找到类型 ‘LimitedPrivate’ 的注释方法 ‘value()’: 找不到org.apache.hadoop.classification.InterfaceAudience的类文件
+    [javac] 注: 某些输入文件使用或覆盖了已过时的 API。
+    [javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+    [javac] 注: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/org/apache/hadoop/hive/contrib/udf/example/UDFExampleStructPrint.java使用了未经检查或不安全的操作。
+    [javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+    [javac] 1 个警告
+     [copy] Warning: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/contrib/src/java/conf does not exist.</p>
+
+<p>jar:
+     [echo] Project: contrib
+      [jar] Building jar: /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/hive-contrib-0.10.0-cdh4.7.0.jar
+[ivy:publish] :: delivering :: org.apache.hive#hive-contrib;0.10.0-cdh4.7.0 :: 0.10.0-cdh4.7.0 :: integration :: Fri Jul 25 10:54:42 CST 2014
+[ivy:publish]   delivering ivy file to /home/hadoop/software/hive-0.10.0-cdh4.7.0/src/build/contrib/ivy-0.10.0-cdh4.7.0.xml
+[ivy:publish] :: publishing :: org.apache.hive#hive-contrib
+[ivy:publish]   published hive-contrib to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/jars/hive-contrib.jar
+[ivy:publish]   published ivy to /home/hadoop/.ivy2/local/org.apache.hive/hive-contrib/0.10.0-cdh4.7.0/ivys/ivy.xml</p>
+
+<p>BUILD SUCCESSFUL
+Total time: 19 seconds
+{% endcodeblock %}
 ok
 这样就得到了hive-contrib.jar文件,解包看一下内容。没问题，都包含了。</p>
 
@@ -284,108 +248,58 @@ mvn archetype:create -DgroupId=com.mycompany.app -DartifactId=myapp
     <content type="html"><![CDATA[<p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：
 <!-- more --></p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>pom.xml </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>    <span class="nt">&lt;build&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;plugins&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;groupid&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;artifactid&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;executions&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;execution&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;goals&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;goal&gt;</span>jar<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;excludes&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;exclude&gt;</span>/conf/**<span class="nt">&lt;/exclude&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;exclude&gt;</span>/fonts/**<span class="nt">&lt;/exclude&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;exclude&gt;</span>/images/**<span class="nt">&lt;/exclude&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;exclude&gt;</span>/sounds/**<span class="nt">&lt;/exclude&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;/excludes&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;groupid&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;artifactid&gt;</span>maven-shade-plugin<span class="nt">&lt;/artifactid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;version&gt;</span>1.2.1<span class="nt">&lt;/version&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;executions&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;execution&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;phase&gt;</span>package<span class="nt">&lt;/phase&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;goals&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;goal&gt;</span>shade<span class="nt">&lt;/goal&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;/goals&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;transformers&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;transformer</span> <span class="na">implementation=</span><span class="s">&quot;org.apache.maven.plugins.shade.resource.ManifestResourceTransformer&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>                                    <span class="nt">&lt;mainclass&gt;</span>com.company.mod.cls<span class="nt">&lt;/mainclass&gt;</span>
-</span><span class='line'>                                <span class="nt">&lt;/transformer&gt;</span>
-</span><span class='line'>                            <span class="nt">&lt;/transformers&gt;</span>
-</span><span class='line'>                        <span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;/execution&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/executions&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;plugin&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;groupid&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;artifactid&gt;</span>maven-surefire-plugin<span class="nt">&lt;/artifactid&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>                    <span class="nt">&lt;testfailureignore&gt;</span>true<span class="nt">&lt;/testfailureignore&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;/configuration&gt;</span>
-</span><span class='line'>            <span class="nt">&lt;/plugin&gt;</span>
-</span><span class='line'>       <span class="nt">&lt;/plugins&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/build&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:xml pom.xml %}
+    <build>
+        <plugins>
+            <plugin>
+                <groupid>org.apache.maven.plugins</groupid>
+                <artifactid>maven-jar-plugin</artifactid>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>/conf/**</exclude>
+                                <exclude>/fonts/**</exclude>
+                                <exclude>/images/**</exclude>
+                                <exclude>/sounds/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>     
+                <groupid>org.apache.maven.plugins</groupid>
+                <artifactid>maven-shade-plugin</artifactid>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainclass>com.company.mod.cls</mainclass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupid>org.apache.maven.plugins</groupid>
+                <artifactid>maven-surefire-plugin</artifactid>
+                <configuration>
+                    <testfailureignore>true</testfailureignore>
+                </configuration>
+            </plugin>
+       </plugins>
+    </build>
+{% endcodeblock %}</p>
 
 ]]></content>
   </entry>

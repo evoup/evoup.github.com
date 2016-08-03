@@ -4,7 +4,7 @@
   <title><![CDATA[Category: octopress | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/octopress/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:08:07+08:00</updated>
+  <updated>2016-08-03T15:10:39+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -191,9 +191,9 @@ http://stackoverflow.com/questions/12119138/failed-to-build-gem-native-extension
 
 <p>在_config.yml中增加bshare:true,在”source/_includes/post”下的share.html中添加如下代码</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-custom&quot;</span><span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">&lt;</span><span class="nx">a</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;分享到QQ空间&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-qzone&quot;</span><span class="o">&gt;&lt;</span><span class="err">/a&gt;&lt;a title=&quot;分享到新浪微博&quot; class=&quot;bshare-sinaminiblog&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到人人网&quot; class=&quot;bshare-renren&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到腾讯微博&quot; class=&quot;bshare-qqmb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到网易微博&quot; class=&quot;bshare-neteasemb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;更多平台&quot; class=&quot;bshare-more bshare-more-icon more-style-addthis&quot;&gt;&lt;/a&gt;&lt;span class=&quot;BSHARE_COUNT bshare-share-count&quot;&gt;0&lt;/span&gt;&amp;lt;/div&amp;gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/buttonLite.js#style=-1&amp;amp;uuid=&amp;amp;pophcol=2&amp;amp;lang=zh&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/bshareC0.js&quot;&gt;&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:javascript %}
+&lt;div class="bshare-custom"&gt;<a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到网易微博" class="bshare-neteasemb"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span>&lt;/div&gt;<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+{% endcodeblock %}</p>
 
 <p>这样就完成了一键分享的功能。</p>
 
@@ -204,13 +204,18 @@ http://stackoverflow.com/questions/12119138/failed-to-build-gem-native-extension
 在source/_layouts/post.html中，将对应的disqus代码改为：</p>
 
 <p><code>bash
-
+{% if site.duoshuo_name and page.comments == true %}
+  &lt;section id="comment"&gt;
+    &lt;h1&gt;发表评论&lt;/h1&gt;
+    {% include post/duoshuo.html %}
+  &lt;/section&gt;
+{% endif %}
 </code></p>
 
 <p>在source/_config/yml中，添加：
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>duoshuo_name: 你在多说创建的站点名称
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+{% codeblock lang:bash %}
+duoshuo_name: 你在多说创建的站点名称
+{% endcodeblock %}</p>
 
 <p>不出意外，分享和评论就添加完成了，最后不要忘记生成就可以了。</p>
 
