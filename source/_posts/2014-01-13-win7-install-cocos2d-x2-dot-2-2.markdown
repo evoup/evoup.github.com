@@ -22,18 +22,20 @@ categories: cocos2d-x
 
 ###3）创建工程
 编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行
+
 ```sh
 cd D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\tools\project-creator\
 create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp 
 ```
+
 其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。
 
 ###4）编译工程
 最后进入刚刚取名为HelloWorld的项目中
+
 ```sh
 cd D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\projects/HelloWorld
 ```
+
 双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。
-
-
 
