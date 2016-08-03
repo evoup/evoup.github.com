@@ -4,7 +4,7 @@
   <title><![CDATA[Category: version_control | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/version-control/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:20:04+08:00</updated>
+  <updated>2016-08-03T15:23:14+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -20,32 +20,40 @@
     <id>http://evoupsight.com/blog/2015/04/21/sync-fork-github</id>
     <content type="html"><![CDATA[<p>主要的步骤是先查看当前fork的远程代码库
 <!-- more -->
-{% codeblock lang:bash %}
-git remote -v
-origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git remote -v
+</span><span class='line'>origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git <span class="o">(</span>fetch<span class="o">)</span>
+</span><span class='line'>origin  https://github.com/YOUR_USERNAME/YOUR_FORK.git <span class="o">(</span>push<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>然后添加一个上游代码库，地址就是之前被fork的那个代码库
-{% codeblock lang:bash %}
-git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git remote add upstream https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>再次查看
-{% codeblock lang:bash %}
-git remote -v
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (fetch)
-origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git (push)
-upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (fetch)
-upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git (push)
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git remote -v
+</span><span class='line'>origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git <span class="o">(</span>fetch<span class="o">)</span>
+</span><span class='line'>origin    https://github.com/YOUR_USERNAME/YOUR_FORK.git <span class="o">(</span>push<span class="o">)</span>
+</span><span class='line'>upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git <span class="o">(</span>fetch<span class="o">)</span>
+</span><span class='line'>upstream  https://github.com/ORIGINAL_OWNER/ORIGINAL_REPOSITORY.git <span class="o">(</span>push<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>接着用如下命令获取上游代码并合并到当前工作区
-{% codeblock lang:bash %}
-git fetch upstream
-git checkout master
-git merge upstream/master
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git fetch upstream
+</span><span class='line'>git checkout master
+</span><span class='line'>git merge upstream/master
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>最后git push origin master即可完成提交。</p>
 

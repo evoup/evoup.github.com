@@ -4,7 +4,7 @@
   <title><![CDATA[Category: cplusplus | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/cplusplus/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:20:04+08:00</updated>
+  <updated>2016-08-03T15:23:14+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -149,13 +149,18 @@ http://stackoverflow.com/questions/302914/crc32-c-or-c-implementation</p>
 <p>java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
 这样子大概会这么写</p>
 
-<p>{% codeblock lang:java cls_player.java %}
-package com.evoup.player_enemy
-import …
-class cls_player{
-   …
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>cls_player.java </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
+</span><span class='line'><span class="kn">import</span> <span class="err">…</span>
+</span><span class='line'><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
+</span><span class='line'>   <span class="err">…</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>然后看搜到了这篇文章
 http://topic.csdn.net/t/20051106/18/4375160.html</p>
@@ -171,28 +176,41 @@ http://topic.csdn.net/t/20051106/18/4375160.html</p>
 
 <p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
 
-<p>{% codeblock lang:cpp %}
-#include “B.h”</p>
-
-<p>class CA: public CDialog
-{
-    friend class CB;
-    public:
-    CB* m_b; //注意一定要是指针类型
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include “B.h”&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">CA</span><span class="o">:</span> <span class="k">public</span> <span class="n">CDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">friend</span> <span class="k">class</span> <span class="nc">CB</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>在另一个类中可以这样声明:</p>
 
-<p>{% codeblock lang:cpp %}
-#include “A.h”
-class CB: public CDialog
-{
-    friend class CA;
-    public:
-    CA * m_a; //注意一定要是指针类型
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include “A.h”</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CB</span><span class="o">:</span> <span class="k">public</span> <span class="n">CDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">friend</span> <span class="k">class</span> <span class="nc">CA</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
 
@@ -200,32 +218,43 @@ class CB: public CDialog
 
 <p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
 
-<p>{% codeblock lang:cpp %}
-#include “B.h”
-class CA: public CDialog
-{
-    friend class CB;
-    public:
-    CB* m_b; //注意一定要是指针类型
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include “B.h”</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CA</span><span class="o">:</span> <span class="k">public</span> <span class="n">CDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">friend</span> <span class="k">class</span> <span class="nc">CB</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>在另一个类中可以这样声明:</p>
 
-<p>{% codeblock lang:cpp %}
-class CA;
-class CB: public CDialog
-{
-    public:
-    CA * m_a; //注意一定要是指针类型
-}
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">class</span> <span class="nc">CA</span><span class="p">;</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CB</span><span class="o">:</span> <span class="k">public</span> <span class="n">CDialog</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">public</span><span class="o">:</span>
+</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>在cb.cpp文件中包含头文件</p>
 
-<p>{% codeblock lang:cpp %}
-#include “ca.h”
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="cp">#include “ca.h”</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了</p>
 ]]></content>
