@@ -40,14 +40,17 @@ static ErlNifFunc nif_funcs[] =
 ERL_NIF_INIT(getloadtest,nif_funcs,NULL,NULL,NULL,NULL)
 {% endcodeblock %}
 以下写下简单的调用过程：
+
 ```bash
+{% codeblock lang:gcc %}
 gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-```
+{% endcodeblock %}
+
 
 还没有在app里试验，如果是标准app
-```bash
+{% codeblock lang:gcc %}
 gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-```
+{% endcodeblock %}
 
 就可以生成供NIF调用的动态链接库
 
@@ -79,14 +82,14 @@ Eshell V5.9.1  (abort with ^G)
 ```
 reference:
 
-http://www.erlang.org/doc/tutorial/nif.html
+[http://www.erlang.org/doc/tutorial/nif.html](http://www.erlang.org/doc/tutorial/nif.html)
 
-http://www.erlang.org/doc/man/erl_nif.html
+[http://www.erlang.org/doc/man/erl_nif.html](http://www.erlang.org/doc/man/erl_nif.html)
 
-http://blog.csdn.net/d52787790/article/details/7103288
+[http://blog.csdn.net/d52787790/article/details/7103288](http://blog.csdn.net/d52787790/article/details/7103288)
 
-http://blog.csdn.net/keyeagle/article/details/7009208
+[http://blog.csdn.net/keyeagle/article/details/7009208](http://blog.csdn.net/keyeagle/article/details/7009208)
 
-http://www.freebsd.org/cgi/man.cgi?query=getloadavg
+[http://www.freebsd.org/cgi/man.cgi?query=getloadavg](http://www.freebsd.org/cgi/man.cgi?query=getloadavg)
 
  
