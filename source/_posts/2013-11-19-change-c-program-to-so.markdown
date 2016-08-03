@@ -46,7 +46,9 @@ int main(int argc, char **argv) {
 ```makefile
 gcc -Wall test.c -o test
 ```
+
 测试：
+
 ```sh
 ./test -a1 -b1 -c -d
 option a:'1'
@@ -54,6 +56,7 @@ option b:'1'
 option c:'(null)'
 option d:'(null)'
 ```
+
 稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
 其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。
 
@@ -95,6 +98,7 @@ int dlmain(int argc, char **argv) {
 {% endcodeblock %}
 
 测试一下
+
 ```makefile
 gcc -Wall plug.c -o plug
 ./plug
@@ -104,6 +108,7 @@ option c:'(null)'
 option d:'(null)'
 in dll
 ```
+
 ok，没有问题，直接转换成动态库
 {% codeblock plug.c lang:c %}
 #include <stdio.h>
@@ -143,9 +148,11 @@ int dlmain(int argc, char **argv) {
 {% endcodeblock %}
 
 编译动态连接库
+
 ```makefile
 gcc -shared -o plug.so plug.c -fpic
 ```
+
 这样就得到了plug.so
 
 接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
@@ -163,6 +170,7 @@ int main(int argc,char **argv) {
 }
 {% endcodeblock %}
 编译执行看结果
+
 ```makefile
 gcc main.c -lc -fpic -o main
 ./main
