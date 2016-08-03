@@ -32,6 +32,7 @@ Datanodes available: 0 (0 total, 0 dead)
 原来是要求datanode的VERSION文件和namenode的要一致
 
 于是到namenode上看文件
+
 ```sh
 [hadoop@mdn2 current]$more /u01/app/hadoopTmp/dfs/name/current/VERSION
 #Mon Feb 24 16:48:12 CST 2014
@@ -40,6 +41,7 @@ cTime=0
 storageType=NAME_NODE
 layoutVersion=-31
 ```
+
 namespaceID为1235115105
 
 到datanode里查看发现不存在
