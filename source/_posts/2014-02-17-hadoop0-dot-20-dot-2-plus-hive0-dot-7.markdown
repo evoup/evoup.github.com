@@ -222,7 +222,7 @@ OFF
 
 已经关了，再次建表测试
 
-```sql
+```
 bin/hive
 hive> create table test (key string);
 OK
