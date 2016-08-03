@@ -158,30 +158,34 @@ hadoop0.20.203+hive0.7
 
 <p>(vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)</tab></p>
 
-<p>启动hive建表:
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>启动hive建表:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">hive&gt;  CREATE EXTERNAL TABLE MYTEST<span class="o">(</span>id INT, name STRING<span class="o">)</span>
-</span><span class="line">&gt; COMMENT <span class="s1">&#39;this is a test&#39;</span>
-</span><span class="line">&gt; ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="s1">&#39;\t&#39;</span>
-</span><span class="line">&gt; STORED AS TEXTFILE
-</span><span class="line">&gt;LOCATION <span class="s1">&#39;/data/test&#39;</span>;
-</span><span class="line">OK
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-注意这一步要求原本的hdfs目录下没有/data/test文件夹，如果有的话，hive是要报错的。
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="n">hive</span><span class="o">&gt;</span>  <span class="k">CREATE</span> <span class="k">EXTERNAL</span> <span class="k">TABLE</span> <span class="n">MYTEST</span><span class="p">(</span><span class="n">id</span> <span class="nb">INT</span><span class="p">,</span> <span class="n">name</span> <span class="n">STRING</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;</span> <span class="k">COMMENT</span> <span class="s1">&#39;this is a test&#39;</span>
+</span><span class="line"><span class="o">&gt;</span> <span class="k">ROW</span> <span class="n">FORMAT</span> <span class="n">DELIMITED</span> <span class="n">FIELDS</span> <span class="n">TERMINATED</span> <span class="k">BY</span> <span class="s1">&#39;\t&#39;</span>
+</span><span class="line"><span class="o">&gt;</span> <span class="n">STORED</span> <span class="k">AS</span> <span class="n">TEXTFILE</span>
+</span><span class="line"><span class="o">&gt;</span><span class="k">LOCATION</span> <span class="s1">&#39;/data/test&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="n">OK</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>注意这一步要求原本的hdfs目录下没有/data/test文件夹，如果有的话，hive是要报错的。
 还有存储格式有三种textfile、rcfile和sequencefile。其中多数情况用textfile就可以了，如果要压缩，可以考虑后两者。</p>
 
-<p>进入hadoop，开始导入
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">/bin/hadoop fs -put test.txt /data/test
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+<p>进入hadoop，开始导入</p>
 
-<p>回到hive，用简单的HQL查询语句查询id为4的记录
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">/bin/hadoop fs -put test.txt /data/test
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>回到hive，用简单的HQL查询语句查询id为4的记录</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -194,22 +198,22 @@ hadoop0.20.203+hive0.7
 <span class="line-number">11</span>
 <span class="line-number">12</span>
 <span class="line-number">13</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">hive&gt; <span class="k">select</span> * from mytest where <span class="nv">id</span> <span class="o">=</span> 4;
-</span><span class="line">Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
-</span><span class="line">Launching Job 1 out of 1
-</span><span class="line">Number of reduce tasks is <span class="nb">set </span>to 0 since there<span class="err">&#39;</span>s no reduce operator
-</span><span class="line">Starting <span class="nv">Job</span> <span class="o">=</span> job_201402191826_0007, Tracking <span class="nv">URL</span> <span class="o">=</span> http://mdn2.net:50030/jobdetails.jsp?jobid<span class="o">=</span>job_201402191826_0007
-</span><span class="line">Kill <span class="nv">Command</span> <span class="o">=</span> /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker<span class="o">=</span>mdn2.net:9025 -kill job_201402191826_0007
-</span><span class="line">2014-02-20 00:16:34,842 Stage-1 <span class="nv">map</span> <span class="o">=</span> 0%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class="line">2014-02-20 00:16:40,889 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 0%
-</span><span class="line">2014-02-20 00:16:46,936 Stage-1 <span class="nv">map</span> <span class="o">=</span> 100%,  <span class="nv">reduce</span> <span class="o">=</span> 100%
-</span><span class="line">Ended <span class="nv">Job</span> <span class="o">=</span> job_201402191826_0007
-</span><span class="line">OK
-</span><span class="line">4       <span class="k">case</span>
-</span><span class="line">Time taken: 21.36 seconds
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="n">hive</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">mytest</span> <span class="k">where</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+</span><span class="line"><span class="n">Total</span> <span class="n">MapReduce</span> <span class="n">jobs</span> <span class="o">=</span> <span class="mi">1</span>
+</span><span class="line"><span class="n">Launching</span> <span class="n">Job</span> <span class="mi">1</span> <span class="k">out</span> <span class="k">of</span> <span class="mi">1</span>
+</span><span class="line"><span class="nb">Number</span> <span class="k">of</span> <span class="n">reduce</span> <span class="n">tasks</span> <span class="k">is</span> <span class="k">set</span> <span class="k">to</span> <span class="mi">0</span> <span class="n">since</span> <span class="n">there</span><span class="err">&#39;</span><span class="n">s</span> <span class="k">no</span> <span class="n">reduce</span> <span class="k">operator</span>
+</span><span class="line"><span class="n">Starting</span> <span class="n">Job</span> <span class="o">=</span> <span class="n">job_201402191826_0007</span><span class="p">,</span> <span class="n">Tracking</span> <span class="n">URL</span> <span class="o">=</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">mdn2</span><span class="p">.</span><span class="n">net</span><span class="p">:</span><span class="mi">50030</span><span class="o">/</span><span class="n">jobdetails</span><span class="p">.</span><span class="n">jsp</span><span class="o">?</span><span class="n">jobid</span><span class="o">=</span><span class="n">job_201402191826_0007</span>
+</span><span class="line"><span class="n">Kill</span> <span class="n">Command</span> <span class="o">=</span> <span class="o">/</span><span class="n">u01</span><span class="o">/</span><span class="n">app</span><span class="o">/</span><span class="n">hadoop</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="p">..</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">hadoop</span> <span class="n">job</span>  <span class="o">-</span><span class="n">Dmapred</span><span class="p">.</span><span class="n">job</span><span class="p">.</span><span class="n">tracker</span><span class="o">=</span><span class="n">mdn2</span><span class="p">.</span><span class="n">net</span><span class="p">:</span><span class="mi">9025</span> <span class="o">-</span><span class="n">kill</span> <span class="n">job_201402191826_0007</span>
+</span><span class="line"><span class="mi">2014</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">34</span><span class="p">,</span><span class="mi">842</span> <span class="n">Stage</span><span class="o">-</span><span class="mi">1</span> <span class="k">map</span> <span class="o">=</span> <span class="mi">0</span><span class="o">%</span><span class="p">,</span>  <span class="n">reduce</span> <span class="o">=</span> <span class="mi">0</span><span class="o">%</span>
+</span><span class="line"><span class="mi">2014</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span><span class="mi">889</span> <span class="n">Stage</span><span class="o">-</span><span class="mi">1</span> <span class="k">map</span> <span class="o">=</span> <span class="mi">100</span><span class="o">%</span><span class="p">,</span>  <span class="n">reduce</span> <span class="o">=</span> <span class="mi">0</span><span class="o">%</span>
+</span><span class="line"><span class="mi">2014</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">20</span> <span class="mi">00</span><span class="p">:</span><span class="mi">16</span><span class="p">:</span><span class="mi">46</span><span class="p">,</span><span class="mi">936</span> <span class="n">Stage</span><span class="o">-</span><span class="mi">1</span> <span class="k">map</span> <span class="o">=</span> <span class="mi">100</span><span class="o">%</span><span class="p">,</span>  <span class="n">reduce</span> <span class="o">=</span> <span class="mi">100</span><span class="o">%</span>
+</span><span class="line"><span class="n">Ended</span> <span class="n">Job</span> <span class="o">=</span> <span class="n">job_201402191826_0007</span>
+</span><span class="line"><span class="n">OK</span>
+</span><span class="line"><span class="mi">4</span>       <span class="k">case</span>
+</span><span class="line"><span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">21</span><span class="p">.</span><span class="mi">36</span> <span class="n">seconds</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是&lt;1秒的。好啦，收工。</p>
+<p>hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是&lt;1秒的。</p>
 </div>
 
 
