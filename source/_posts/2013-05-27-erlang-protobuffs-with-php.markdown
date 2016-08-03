@@ -9,14 +9,14 @@ categories:     [erlang,php]
 
 <!-- more -->
 
-可以在这里下载，git://github.com/basho/erlang_protobuffs.git
+可以在这里下载，[https://github.com/basho/erlang_protobuffs.git](https://github.com/basho/erlang_protobuffs.git)
 
 先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。
 
-```bash
+{% codeblock lang:bash %}
 cd erlang_protobuffs
 make all
-```
+{% endcodeblock %}
 
 这样就可以使用了，接下来给出一个测试的protobuf文件
 
@@ -33,7 +33,7 @@ message test {
 cd ebin  
 ```
            
-```erlang
+{% codeblock lang:erlang %}
 erl
 1> protobuffs_compile:generate_source("test.proto").
 
@@ -46,7 +46,7 @@ Writing header file to "test_pb.hrl"
 Writing src file to "test_pb.erl"
 
 ok
-```
+{% endcodeblock %}
 
 这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。
 
@@ -202,7 +202,15 @@ function to_hex_str ($num)
 ?>
 {% endcodeblock %}
 
-运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,"0",STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,"0",STR_PAD_LEFT)然后打包消息头。
+运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则
+{% codeblock lang:php %}
+str_pad($str,4,"0",STR_PAD_LEFT);
+{% endcodeblock %}
+然后打包消息头，如果服务端packet参数后跟4，则
+{% codeblock lang:php %}
+str_pad($str,8,"0",STR_PAD_LEFT);
+{% endcodeblock %}
+然后打包消息头。
 
 最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。
 
