@@ -194,40 +194,7 @@ MathJax.Hub.Config({
 </span><span class="line"><span class="n">ERL_NIF_INIT</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">,</span><span class="n">nif_funcs</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="nb">NULL</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>以下写下简单的调用过程：
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
-
-<p>还没有在app里试验，如果是标准app
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
-
-<p>就可以生成供NIF调用的动态链接库</p>
-
-<p>然后是erlang的，调用很简单：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>getloadtest.erl </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">getloadtest</span><span class="p">).</span>
-</span><span class="line"><span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">,</span> <span class="n">getloadavg_ex</span><span class="o">/</span><span class="mi">0</span><span class="p">]).</span>
-</span><span class="line"><span class="p">-</span><span class="ni">on_load</span><span class="p">(</span><span class="n">init</span><span class="o">/</span><span class="mi">0</span><span class="p">).</span>
-</span><span class="line">
-</span><span class="line"><span class="nf">init</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class="line">   <span class="nn">erlang</span><span class="p">:</span><span class="nf">load_nif</span><span class="p">(</span><span class="s">&quot;./getloadtest&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span>
-</span><span class="line">
-</span><span class="line"><span class="nf">getloadavg_ex</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class="line">   <span class="s">&quot;NIF library not loaded&quot;</span><span class="p">.</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>以下写下简单的调用过程：</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -238,27 +205,72 @@ MathJax.Hub.Config({
 <span class="line-number">7</span>
 <span class="line-number">8</span>
 <span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">Eshell V5.9.1  <span class="o">(</span>abort with ^G<span class="o">)</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">{</span>% codeblock lang:gcc %<span class="o">}</span>
+</span><span class="line">gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
+</span><span class="line"><span class="o">{</span>% endcodeblock %<span class="o">}</span>
 </span><span class="line">
-</span><span class="line">1&gt; c<span class="o">(</span>getloadtest<span class="o">)</span>.
 </span><span class="line">
-</span><span class="line"><span class="o">{</span>ok,getloadtest<span class="o">}</span>
+</span><span class="line">还没有在app里试验，如果是标准app
+</span><span class="line"><span class="o">{</span>% codeblock lang:gcc %<span class="o">}</span>
+</span><span class="line">gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
+</span><span class="line"><span class="o">{</span>% endcodeblock %<span class="o">}</span>
 </span><span class="line">
-</span><span class="line">2&gt; getloadtest:getloadavg_ex<span class="o">()</span>.
+</span><span class="line">就可以生成供NIF调用的动态链接库
 </span><span class="line">
-</span><span class="line"><span class="s2">&quot;2.263184&quot;</span>
+</span><span class="line">然后是erlang的，调用很简单：
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="o">{</span>% codeblock getloadtest.erl lang:erlang %<span class="o">}</span>
+</span><span class="line">-module<span class="o">(</span>getloadtest<span class="o">)</span>.
+</span><span class="line">-export<span class="o">([</span>init/0, getloadavg_ex/0<span class="o">])</span>.
+</span><span class="line">-on_load<span class="o">(</span>init/0<span class="o">)</span>.
+</span><span class="line">
+</span><span class="line">init<span class="o">()</span> -&gt;
+</span><span class="line">   erlang:load_nif<span class="o">(</span><span class="s2">&quot;./getloadtest&quot;</span>, 0<span class="o">)</span>.
+</span><span class="line">
+</span><span class="line">getloadavg_ex<span class="o">()</span> -&gt;
+</span><span class="line">   <span class="s2">&quot;NIF library not loaded&quot;</span>.
+</span><span class="line"><span class="o">{</span>% endcodeblock %<span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>reference:</p>
+<p>bash <br />
+Eshell V5.9.1  (abort with ^G)</p>
 
-<p>http://www.erlang.org/doc/tutorial/nif.html</p>
+<p>1&gt; c(getloadtest).</p>
 
-<p>http://www.erlang.org/doc/man/erl_nif.html</p>
+<p>{ok,getloadtest}</p>
 
-<p>http://blog.csdn.net/d52787790/article/details/7103288</p>
+<p>2&gt; getloadtest:getloadavg_ex().</p>
 
-<p>http://blog.csdn.net/keyeagle/article/details/7009208</p>
+<p>“2.263184”
+&#8220;`
+reference:</p>
 
-<p>http://www.freebsd.org/cgi/man.cgi?query=getloadavg</p>
+<p><a href="http://www.erlang.org/doc/tutorial/nif.html">http://www.erlang.org/doc/tutorial/nif.html</a></p>
+
+<p><a href="http://www.erlang.org/doc/man/erl_nif.html">http://www.erlang.org/doc/man/erl_nif.html</a></p>
+
+<p><a href="http://blog.csdn.net/d52787790/article/details/7103288">http://blog.csdn.net/d52787790/article/details/7103288</a></p>
+
+<p><a href="http://blog.csdn.net/keyeagle/article/details/7009208">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
+
+<p><a href="http://www.freebsd.org/cgi/man.cgi?query=getloadavg">http://www.freebsd.org/cgi/man.cgi?query=getloadavg</a></p>
 
 </div>
 
