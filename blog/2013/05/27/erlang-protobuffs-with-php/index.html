@@ -141,11 +141,11 @@ MathJax.Hub.Config({
 
 <!-- more -->
 
-<p>可以在这里下载，git://github.com/basho/erlang_protobuffs.git</p>
+<p>可以在这里下载，<a href="https://github.com/basho/erlang_protobuffs.git">https://github.com/basho/erlang_protobuffs.git</a></p>
 
 <p>先安装，我基本没有很好的安装，直接放到临时路径，要生成源代码的时候，进入该目录，生成，然后复制生成好的源代码文件到自己的项目目录里。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 </pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd </span>erlang_protobuffs
 </span><span class="line">make all
@@ -168,7 +168,7 @@ MathJax.Hub.Config({
 </pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd </span>ebin
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -474,7 +474,19 @@ MathJax.Hub.Config({
 </span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则str_pad($str,4,”0”,STR_PAD_LEFT)然后打包消息头，如果服务端packet参数后跟4，则str_pad($str,8,”0”,STR_PAD_LEFT)然后打包消息头。</p>
+<p>运行上面的php客户端可以和erlang版本的server.erl服务端实现二进制CS互通。期间由于不理解erlang的packet含义，用抓包查了一下才搞定的。不明白原理的，可以尝试抓一下包，然后测试。同时获取了消息体的长度后，可用php的函数dechex()函数获取十六进制代码，然后有这样一个规律。如果erlang服务端packet参数后为2，则</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="nb">str_pad</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nx">STR_PAD_LEFT</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后打包消息头，如果服务端packet参数后跟4，则</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="nb">str_pad</span><span class="p">(</span><span class="nv">$str</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="s2">&quot;0&quot;</span><span class="p">,</span><span class="nx">STR_PAD_LEFT</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后打包消息头。</p>
 
 <p>最后，还有一个要注意，erlang版本的protocolbuf不知道为什么，int32和int64最多不能超过10位，在项目里我一概成了string类型。其他，optinal类型对于不一定出现的数据也是很好用的。</p>
 
