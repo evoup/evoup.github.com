@@ -11,13 +11,14 @@ categories: hadoop
 下面描述一下过程
 <!-- more -->
 
-
 把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表
-```sh
+
+```sql
 create external table nginxlog (ipaddress string, ...更多字段省略) COMMENT 'nginx log' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as textfile    location '/data/log';
 ```
 
 把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。
+
 ```sh
 $ tar xjf server01-20140131.txt.bz2
 $ tar xjf server02-20140131.txt.bz2
@@ -33,7 +34,8 @@ Found 2 items
 ```
 
 然后马上就可以查询了
-```
+
+```sql
 hive> select count(*) from nginxlog;
 Total MapReduce jobs = 1
 Launching Job 1 out of 1
@@ -58,12 +60,14 @@ Time taken: 75.321 seconds
 ```
 
 这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询
+
 ```
 bin/hive> create external table nginxlog2 (ipaddress string, ...,更多字段) COMMENT 'nginx log rcfile format' ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' stored as RCFile    location '/data/log2';
 ```
 
 然后用
-```
+
+```sql
 hive> SET hive.exec.compress.output=true;
 hive> SET io.rcfile.compression.type=BLOCK;
 hive> insert overwrite table nginxlog2 select * from nginxlog;
@@ -90,7 +94,8 @@ Time taken: 209.088 seconds
 ```
 
 然后再次select，对比一下时间
-```
+
+```sql
 hive> select count(*) from nginxlog2;
 Total MapReduce jobs = 1
 Launching Job 1 out of 1
@@ -114,8 +119,8 @@ OK
 2492916
 Time taken: 55.656 seconds
 ```
+
 我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。
 
 这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。
-
 
