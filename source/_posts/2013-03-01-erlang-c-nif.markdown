@@ -42,13 +42,13 @@ ERL_NIF_INIT(getloadtest,nif_funcs,NULL,NULL,NULL,NULL)
 以下写下简单的调用过程：
 
 ```bash
-{% codeblock lang:gcc %}
+{% codeblock lang:bash %}
 gcc -o getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
 {% endcodeblock %}
 
 
 还没有在app里试验，如果是标准app
-{% codeblock lang:gcc %}
+{% codeblock lang:bash %}
 gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/local/lib/erlang/erts-5.9.1/include/ cgetloadavg.c
 {% endcodeblock %}
 
@@ -69,8 +69,7 @@ getloadavg_ex() ->
    "NIF library not loaded".
 {% endcodeblock %}
 
---------------------------------
-{% codeblock getloadtest.erl lang:erlang %}
+{% codeblock lang:erlang %}
 Eshell V5.9.1  (abort with ^G)
 1> c(getloadtest).
 {ok,getloadtest}
@@ -90,4 +89,3 @@ reference:
 
 [http://www.freebsd.org/cgi/man.cgi?query=getloadavg](http://www.freebsd.org/cgi/man.cgi?query=getloadavg)
 
- 
