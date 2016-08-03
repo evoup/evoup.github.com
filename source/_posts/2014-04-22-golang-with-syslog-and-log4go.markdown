@@ -23,6 +23,7 @@ func LogInit() *log.Logger {
 ```
 
 或者使用shell调用的方式，理论上效率会低一点:
+
 ```go
 /// using logger
 cmd := exec.Command("logger", "-p", "local0.err", "-t", "bash", "hello bash")
@@ -33,6 +34,7 @@ if err != nil {
 ```
 
 然后是一个可以log serverity和log facility都可以用上的例子:
+
 ```go
 package main
 import(
@@ -77,6 +79,7 @@ go get code.google.com/p/log4go
 ```
 
 安装完成后默认路径位于
+
 ```sh
 /usr/local/go/src/pkg/code.google.com/p/log4go
 ```
@@ -85,6 +88,7 @@ go get code.google.com/p/log4go
 打开文档看怎么用，有2种方法：
 ####第一种
 在安装好log4go的机器上运行
+
 ```sh
 godoc -http=:6060
 ```
@@ -159,4 +163,3 @@ func main() {
 ```
 
 代码就不多说了，唯一值得注意的是log4go貌似达到指定的日志数上限了之后就不会再去掉旧的文件，更新新的文件了，也就是再也无法记录日志，这个是需要程序考虑的，完。
-
