@@ -6,7 +6,6 @@ comments: true
 categories: [hadoop] 
 ---
 
-
 ###什么是hive
 
 > hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。 其优点是学习成本低，可以通过类SQL语句快速实现简单的MapReduce统计，不必开发专门的MapReduce应用，十分适合数据仓库的统计分析。
@@ -20,6 +19,7 @@ categories: [hadoop]
 
 先提一下，之前我的hadoop安装在/u01/app/hadoop目录下，同样的我们下载到改目录下，然后开始安装
 注意我的hadoop版本为hadooop-0.20.203.0.tgz，与此匹配的版本为hive0.7.0
+
 ```sh
 cd /u01/app
 wget http://archive.apache.org/dist/hive/hive-0.7.1/hive-0.7.1-bin.tar.gz
@@ -29,26 +29,32 @@ ln -s hive-0.7.1-bin.tar.gz hive
 
 ####环境变量设置
 在~/.profile中加入
+
 ```sh
 export HIVE_HOME=/u01/app/hive
 export HIVE_CONF_DIR=/u01/app/hive/conf
 ```
 
 在系统中指出hive的配置文件所在
+
 ```sh
 export PATH=$HIVE_HOME/bin:PATH
 ```
+
 这个实现输入hive，hive service就会自动相应，而不用输入hive所在的绝对路径。
+
 ```sh
 export HIVE_LIB=$HIVE_HOME/lib
 ```
 
 记得用source让profile生效
+
 ```sh
 source ~/.profile
 ```
 
 然后是进行hive配置文件的配置
+
 ```sh
 cd /u01/app/hive/conf
 cp hive-env.sh.template hive-env.sh
@@ -63,6 +69,7 @@ vim hive-env.sh
 
 
 ####安装mysql
+
 ```sh
 //卸载老版本的mysql软件包
 yum remove mysql mysql-*
@@ -78,6 +85,7 @@ mysql_upgrade
 ```
 
 ####修改mysql用户密码
+
 ```sh
 # mysql -u root mysql   //默认的没有密码直接进去的
 mysql>use mysql;
@@ -89,6 +97,7 @@ mysql>flush privileges;
 mysql>exit
 ```
 ####设置mysql为开机自动启动
+
 ```sh
 sudo /sbin/chkconfig --add mysqld
 sudo /sbin/chkconfig mysqld on
@@ -98,14 +107,16 @@ sudo /sbin/chkconfig mysqld on
 在conf目录下创建hive-site.xml
 
 创建hive数据库给hive做元数据表
-```sh
+
+```sql
 create database hive;
 grant all privileges on *.* to hive@localhost identified by 'hive';
 flush privileges;
 ```
 
 运行hive
-```sh
+
+```java
 cd /u01/app/hive
 /bin/hive
 Exception in thread "main" java.lang.NoClassDefFoundError: jline/ArgumentCompletor$ArgumentDelimiter
@@ -120,10 +131,12 @@ Caused by: java.lang.ClassNotFoundException: jline.ArgumentCompletor$ArgumentDel
         at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
         ... 3 more
 ```
+
 这个只需要把hive/lib下的jline-0.9.94.jar复制到$HADOOP/lib下即可。
 
 再次启动
-```sh
+
+```java
 bin/hive
 Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/hadoop/hive/conf/HiveConf
         at java.lang.Class.forName0(Native Method)
@@ -138,27 +151,31 @@ Caused by: java.lang.ClassNotFoundException: org.apache.hadoop.hive.conf.HiveCon
 ```
 
 需要修改$HADOOP/conf/的hadoop-env.sh中的
-```sh
+
+```bash
 export HADOOP_CLASSPATH=$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
 ```
 
 改成
 
-```sh
+```bash
 export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_HOME/hbase-0.90.3.jar:$HBASE_HOME:$HBASE_HOME/lib/zookeeper-3.2.2.jar:$HBASE_HOME/conf
 ```
 
 然后可以启动hive了
-```sh
+
+```bash
 bin/hive
 WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
 Hive history file=/tmp/hadoop/hive_job_log_hadoop_201402170220_1889385824.txt
 hive>
 ```
+
 有警告，估计是jdk我用的1.7导致的，可以先不管，接下来可以试试hive的操作了。
 
 •建立测试表test
-```sh
+
+```sql
 > create table test (key string);
 > show tables;
 FAILED: Error in metadata: javax.jdo.JDOFatalInternalException: Error creating transactional connection factory
@@ -169,38 +186,43 @@ FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTa
 
 原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。
 
-``sh
+``sql
 > show tables;
 OK
 Time taken: 0.082 seconds
 ```
 
 一个表也没有，创建表吧
-···sh
+
+```sql
 > create table test (key string);
 FAILED: Error in metadata: MetaException(message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
 ```
 
 namenode为什么是安全模式？
 hadoop启动的时候是在安全模式，查看一下现在的模式状态
+
 ```sh
 bin/hadoop dfsadmin –safemode get
 ON
 ```
 
 那就关了
+
 ```sh
 bin/hadoop dfsadmin -safemode leave
 ```
 
 再次查看
+
 ```sh
 bin/hadoop dfsadmin –safemode get
 OFF
 ```
 
 已经关了，再次建表测试
-```sh
+
+```sql
 bin/hive
 hive> create table test (key string);
 OK
@@ -210,7 +232,6 @@ OK
 test
 Time taken: 0.14 seconds
 ```
-
 
 ###参考文章
 
