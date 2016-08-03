@@ -116,11 +116,11 @@ Link.prototype = {
 题外话：不想写class还可以写嵌套function的:)
 
 参考连接：
-http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html
+[http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html](http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html)
 
-http://www.blogjava.net/pengo/archive/2013/01/08/393931.html
+[http://www.blogjava.net/pengo/archive/2013/01/08/393931.html](http://www.blogjava.net/pengo/archive/2013/01/08/393931.html)
 
-http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html
+[http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html](http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html)
 
-https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808
+[https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808](https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808)
 
