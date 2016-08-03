@@ -41,6 +41,7 @@ Cygwin的下载地址：http://www.cygwin.com/
 
 ####测试cygwin环境
 运行c:/cygwin64/Cygwin.bat,输入
+
 ```sh
 cygcheck -c cygwin
 make -v
@@ -65,14 +66,17 @@ cd $ndk
 ####测试NDK，编译一个例子
 例子可以在$ndk/sample/hello-jni中找到<br>
 进入cygwin.bat中输入编译指令
+
 ```
 cd $ndk/sample/hello-jni
 $ndk/ndk-build
 ```
+
 一会儿就能编译完成，见下<br>
 ![Alt text](/images/evoup/android_cdt_ndk/08.png)
 
 进入libs目录查看结果,观察是否生成了so文件，如果生成则说明你的NDK已经运行正常了。<br>
+
 ```
 $ cd libs/armeabi/
 $ ls
@@ -218,8 +222,6 @@ bash C:\android\android-ndk-r9d-windows-x86_64\android-ndk-r9d\ndk-build
 --------------------------
 
 ###参考文章
-《Android NDK 安装与配置》
-http://my.oschina.net/owen123456/blog/85658
+[《Android NDK 安装与配置》](http://my.oschina.net/owen123456/blog/85658)
 
-《Android: NDK编程入门笔记》
-http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html
+[《Android: NDK编程入门笔记》](http://www.cnblogs.com/hibraincol/archive/2011/05/30/2063847.html)
