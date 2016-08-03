@@ -5,19 +5,25 @@ date: 2014-07-30 18:00
 comments: true
 categories: [hadoop]
 ---
-运行hadoop cli时会出现 ` 14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...` 
+运行hadoop cli时会出现 
+
+` 14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...` 
+
 ` using builtin-java classes where applicable `
+
 虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法解决，过程还是比较漫长，要解决的要有耐心看下文了。
 <!-- more -->
 
 
 ###首先查看本地库
+
 ```bash
 ls $HADOOP_HOME/lib/native/
 ```
 
 发现动态库不存在,按照上文述及，也会这个错误。
 查看系统的libc版本
+
 ```bash
 $ ll /lib64/libc.so.6
 lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -> libc-2.18.so
@@ -26,16 +32,20 @@ lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -> libc-2.18.so
 系统的版本为2.18
 
 参考cdh手册
-http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide
+[NativeLibraries.html#Native_Libraries_Guide](http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide)
 
 
 找一个hadoop-mapreduce1-project的项目用ant跑一下
+
+```bash
 ant -Dcompile.native=true
+```
 
 期间会报错jvm-check需要1.6，我的是1.7，直接修改ant的build.xml文件，把里面的1.6改成1.7就可以了。
 
 慢慢等编译完成，报错以下依赖没有解决
-```
+
+```bash
 [ivy:resolve] :: resolution report :: resolve 11214ms :: artifacts dl 10ms
         ---------------------------------------------------------------------
         |                  |            modules            ||   artifacts   |
@@ -71,28 +81,34 @@ Total time: 1 minute 33 seconds
 少几个jar包，能不能通过直接复制到.ivy2目录的方式解决呢？暂时没这个能力
 
 尝试进到内部工程文件
-```
+
+```bash
 cd ./src/contrib/capacity-scheduler/
 ```
+
 直接ant,报错一样的
 
 原来是要定义reactor.repo这个参数
-参考《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》
-http://www.verydemo.com/demo_c161_i273713.html
+参考
+[《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》](http://www.verydemo.com/demo_c161_i273713.html)
+
 解决办法： 
 
    需要定义reactor.repo的url：
 
   在/usr/hadoop/src/hadoop-mapreduce1-project/ivy/ivysettings.xml文件中添加：
-```
+
+```bash
  <property name="reactor.repo"
            value="http://repo1.maven.org/maven2/"
   override="false"/>
 ```
+
 添加之后就能找到jackson
 
 但是继续编译会出现
-```
+
+```bash
 compile:
      [echo] contrib: gridmix
     [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
@@ -121,24 +137,25 @@ BUILD FAILED
 /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: Compile failed; see the compiler error output for details.
 ```
 
-可以参考《hadoop1.0.3编译eclipse plug-in》
--------------------------------------------------------------------------------------
-http://www.th7.cn/Program/java/201208/88028.shtml
+可以参考[《hadoop1.0.3编译eclipse plug-in》](http://www.th7.cn/Program/java/201208/88028.shtml)
 
------------------------------------------------------------------------------------------
 所以修改代码把Enum<? extends T>改成Enum<?>
 重新用ant编译
 编译成功
 再用
-```
+
+```bash
 ant -Dcompile.native=true
 ```
+
 看看能否编译出libhadoop.so
 
 编译成功
+
+```bash
+find . -type f -name "libhadoop.so"
 ```
-$ find . -type f -name "libhadoop.so"
-```
+
 但是没有编译出libhadoop.so？
 
 官方文档误导了（说是ant，在根目录又没有ant的配置文件，根目录下build文件夹的native目录是空的），其实要用maven编译！
@@ -158,7 +175,8 @@ http://zhwj184.iteye.com/blog/1528627
 如果为了提高执行速度，不想运行这个插件，则可以通过-Denforcer.skip=true或者简单的-Dskip=true就可以跳过这个这个插件的运行。如果mvn package过程中出现有关这个插件的异常，则可以简单通过这个参数跳过这个验证。
 
 那么直接在编译中加参数-Denforcer.skip=true
-```
+
+```bash
 mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip=true
 ```
 
@@ -167,15 +185,16 @@ mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip=true
 ` run (compile-proto) on project hadoop-common: An Ant `
 ` BuildException has occured: exec returned: 1 -> [Help 1] `
 
-参考《hadoop源码编译问题》
-http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy
+参考[《hadoop源码编译问题》](http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy)
 
 看来是protoc版本过低导致的
+
 ```bash
 wget http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz
 ```
 
 被墙的自己想办法
+
 ```bash
 tar xzf protobuf-2.4.1.tar.gz
 cd protobuf-2.4.1
@@ -199,14 +218,17 @@ sudo yum install gcc
 ```
 
 继续安装
+
 ` configure: error: C++ preprocessor "/lib/cpp" fails sanity check `
 
 又出现很多问题
-```
+
+```bash
 sudo yum install gcc-c++
 ```
 
 再次
+
 ```bash
 ./configure
 make
@@ -214,23 +236,27 @@ sudo make install
 ```
 
 回来继续编译hadoop
+
 ```
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:run (make) on project hadoop-common: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program "cmake" (in directory "/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-common-project/hadoop-common/target/native"): error=2, 没有那个文件或目录 -> [Help 1]
 ```
 
 没装cmake
-```
+
+```bash
 sudo yum install cmake
 ```
 
 还有一些也装上
-```
+
+```bash
 sudo yum install pkgconfig  openssl openssl-devel 
 ```
 
 这些可以参考《64位操作系统下重新编译hadoop-2.2.0》（这文章提到应该用mvn package -DskipTests -Pdist,native -Dtar来编译hadoop2）
 http://blog.itpub.net/20777547/viewspace-1147174
-```
+
+```bash
 [INFO]                                                                                                                             [40/1862]
 [INFO] Apache Hadoop Main ................................ SUCCESS [5.349s]
 [INFO] Apache Hadoop Project POM ......................... SUCCESS [3.432s]
@@ -291,13 +317,16 @@ http://blog.itpub.net/20777547/viewspace-1147174
 [INFO] Final Memory: 127M/305M
 [INFO] ------------------------------------------------------------------------
 ```
+
 全部编译成功，然后找下libhadoop.so
+
 ```bash
 $ find . -name "libhadoop.so"
 ./src/hadoop-common-project/hadoop-common/target/hadoop-common-2.0.0-cdh4.7.0/lib/native/libhadoop.so
 ./src/hadoop-common-project/hadoop-common/target/native/target/usr/local/lib/libhadoop.so
 ./src/hadoop-dist/target/hadoop-2.0.0-cdh4.7.0/lib/native/libhadoop.so
 ```
+
 编译出来了，然后放到文章一开始说的$HADOOP_HOME/lib/native/目录下面，以后运行就不再报错了。
 
 

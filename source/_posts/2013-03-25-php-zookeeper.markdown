@@ -13,7 +13,8 @@ categories: [php,hadoop,zookeeper]
 ###扩展
 以下是php的pecl版zookeeper扩展的下载地址http://pecl.php.net/get/zookeeper-0.2.2.tgz<br>
 可以看到php版本的要求是>5.2.0
-```sh
+
+```bash
 cd /home/software
 wget http://pecl.php.net/get/zookeeper-0.2.2.tgz
 tar xzf zookeeper-0.2.2.tgz
@@ -21,7 +22,8 @@ tar xzf zookeeper-0.2.2.tgz
 
 ###依赖库
 很可惜，该扩展的安装还需要你先去在本地下好zookeeper依赖库，那么我们开始吧。首先是zookeeper的安装，去apache下载好并解压<br>
-```sh
+
+```bash
 cd /home/software
 wget http://apache.fayea.com/apache-mirror/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 tar xzf zookeeper-3.4.6.tar.gz
@@ -33,7 +35,7 @@ sudo make install
 ###php端编译
 这里就给一个静态编译的例子好了,以最新版本的php5.3.8为例，进入源码文件夹后
 
-```sh
+```bash
 $ cd /home/software/php-5.3.8/
 $ cp -r /home/software/zookeeper-0.2.2 ext/zookeeper
 $ ls ext/zookeeper/
@@ -47,7 +49,7 @@ $ sudo make install
 
 安装完成后查看是否支持
 
-```sh
+```bash
 $ /usr/local/php5.3.8._zookeeper/bin/php -i | grep 'libzookeeper version'
 libzookeeper version => 3.4.3
 ```
@@ -56,7 +58,7 @@ libzookeeper version => 3.4.3
 ###最终的获取
 找一台非托管zk的hbase，这里假设是127.0.0.1，端口为2181
 
-```php
+{% codeblock lang:php %}
 <?php
 class zookeeper_instance extends Zookeeper {
     function connect_cb($type, $event, $string) {
@@ -78,15 +80,15 @@ echo "connect ok\n";
 $zkm=$zk->get("/hbase/master");
 print_r($zkm);
 ?>
-```
+{% endcodeblock %}
 
 查看结果,已经获取到了master
-```
+
+```bash
 [yin@yin-arch php_zookeeper_sample]>/usr/home/yin/local/bin/php5_new/bin/php test_zk_gethbasemaster.php
 instance ok
 connect ok
 ▒25469@namenode1namenode1,60000,1395387861310[yin@yin-arch php_zookeeper_sample]>
-
 ```
 
 收工!

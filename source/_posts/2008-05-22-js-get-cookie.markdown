@@ -6,7 +6,7 @@ comments: true
 categories:    javascript
 ---
 直接参考网易的函数
-```javascript
+{% codeblock lang:javascript %}
 function getCookie(name) {
    var search = name + "="
    if(document.cookie.length > 0) {
@@ -19,10 +19,10 @@ function getCookie(name) {
       }
       else return ""
    }
-```
+{% endcodeblock %}
 
 <hr>
 后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo
-```javascript
+{% codeblock lang:javascript %}
 var foo= $.cookie('name');
-```
+{% endcodeblock %}

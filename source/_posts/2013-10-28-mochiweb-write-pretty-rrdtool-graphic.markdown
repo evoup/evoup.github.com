@@ -8,6 +8,7 @@ categories:       [erlang,rrdtool]
 
 今天做rrdtool图表，发现ganglia的图表还是不错的，我就一个一个来模仿，先从one minute load开始。通过mochiweb在restful接口直接出图。
 <!-- more -->
+
 ```erlang
 -module(webapi_func_graph).
 -include("include/inc.hrl").
@@ -48,6 +49,7 @@ get(Selector,Req,Key) ->
             io:format("[other]~n")
     end.
 ```
+
 注意点，我没有使用rrdcgi这个东西是因为，手册上没有说可以直接输出二进制文件流，第二即使可以用，mochiweb也没有cgi的接口可以对接。
 访问我的restful接口http://192.168.216.145/mmsapi2.0beta/get/graph/@self/yin-arch_ac101eb8?start=1382927568&end=1382944644&w=395&h=141
 

@@ -8,8 +8,8 @@ categories: monitor
 
 防止遗忘，实现一个snmp agent，基于ucd-netsnmp，可以无需netsnmp单独运行，加了点获取其他信息的代码。
 <!-- more -->
-struct.h
-```c
+
+{% codeblock lang:c struct.h %}
 #ifndef UCD_SNMP_STRUCT
 #define UCD_SNMP_STRUCT
 
@@ -52,9 +52,9 @@ struct myproc {
  */
 
 #endif
-```
+{% endcodeblock %}
 
-example.h
+{% codeblock lang:c example.c %}
 ```c
 /*
  *  Template MIB group interface - example.h
@@ -124,10 +124,10 @@ config_require(util_funcs)
 
 #endif                          /* _MIBGROUP_EXAMPLE_H */
 
-```
+{% endcodeblock %}
 
-example.c
-```c
+
+{% codeblock lang:c example.c %}
 /*
  *  Template MIB group implementation - example.c
  *
@@ -872,10 +872,10 @@ write_exampletrap2(int action,
     }
     return SNMP_ERR_NOERROR;
 }
-```
+{% endcodeblock %}
 
-example-demon.c
-```c
+
+{% codeblock lang:c example-demon.c %}
 /*主函数：foxmail_new.c */
 
 #include <net-snmp/net-snmp-config.h>
@@ -1028,10 +1028,10 @@ init_example();
   return 0;
 
 }
-```
+{% endcodeblock %}
 
-example-demon.conf
-```c
+
+{% codeblock lang:c example-demon.conf %}
 ###############################################################################
 # Access Control
 ###############################################################################
@@ -1065,11 +1065,9 @@ access MyROGroup "" any noauth exact all none none
 access MyRWGroup "" any noauth exact all all none
 
 agentaddress 161
+{% endcodeblock %}
 
-```
-
-Makefile
-```makefile
+{% codeblock lang:makefile makefile %}
 CC=gcc
 OBJS2=example-demon.o example.o
 TARGETS=example-demon
@@ -1088,7 +1086,7 @@ example-demon: $(OBJS2)
 
 clean:
 	rm $(OBJS2) $(OBJS2) $(TARGETS)
-```
+{% endcodeblock %}
 
 目前无法获取到系统load，以后用到再深入。
 

@@ -16,10 +16,10 @@ categories:  octopress
 ###问题1（ruby的版本）
 
 当我装到bundle install的时候，出现了如下问题
-```
-An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
-continue.
-```
+
+` An error occurred while installing rdiscount (2.0.7.3), and Bundler cannot
+continue. `
+
 查阅README.markdown
 **Note**: Octopress requires a minimum Ruby version of `1.9.3-p0`.
 原来需要安装ruby1.9.3。
@@ -31,19 +31,24 @@ continue.
 而安装ruby1.9.3,相应需要安装DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe
 直接解压到e:\devkit
 然后再
+
 ```ruby
 cd e:\devkit
 ruby dk.rb init
 C:/Ruby193/lib/ruby/1.9.1/win32/registry.rb:173:in `tr': invalid byte sequence in UTF-8 (ArgumentError)
 ```
+
 原来是环境变量不能先设置为UTF-8，这个是要特别注意的。
 
 然后就可以执行devkit的安装了：
+
 ```ruby
 ruby dk.rb init
 ruby dk.rb install
 ```
+
 接着设置环境变量（win7可以用开始搜索程序和文件，输入编辑系统环境变量）：
+
 ```sh
 LANG=zh_CN.UTF-8
 LC_ALL=zh_CN.UTF-8
@@ -55,8 +60,10 @@ LC_ALL=zh_CN.UTF-8
 gem install rdoc bundler
 bundle install
 ```
+
 这样开发环境就算和之前一致了，这里没有说git的安装，和网上说的没有特别之处，反正装完了需要把git/bin目录加到环境变量PATH中去。
 (2016-07-25 在ubuntu上如果报错，An error occured while installing RedCloth (4.2.9)，可以sudo apt-get install ruby1.9.1-full，再执行以下语句,然而由于国内对ruby网站做了限制，建议先加入taobao的ruby镜像)
+
 ```ruby
 cd octopress/
 sudo gem install bundler
@@ -67,6 +74,7 @@ rake install
 
 ##博客恢复篇
 签出自己的octopress项目,我的放在e:\octopress
+
 ```sh
 cd e:\octopress\
 git clone git@github.com:you/you.github.com.git 
@@ -79,26 +87,32 @@ rake setup_github_pages
 cd _deploy
 git pull origin master
 ```
+
 设置git config --global http.proxy 'socks5://127.0.0.1:1080' 是因为国内的网络环境（你懂的）<br>
 所有的资料都从远程origin仓库的master分支取回来了！<br>
 (注意如果出现setup_github_pages不能用的话，可能要把ruby软链接下,见下图)
+
 ![Alt text](/images/evoup/octopress_rake_setup_github_pages.png)
 
 
 然后切记切换回source分支，因为master分支的是octopress通过rake部署自动提交进行维护的。
+
 ```sh
 cd ..
 git checkout source
 ```
+
 再次rake generate和rake preview以及rake deploy发现已经可以发布了，最后还需要把相关的提交了，git add . 和git commit -a以及git push origin source
 
 最后注意游走在不同的octopress博客环境处理博客之前，需要同步github仓库的数据
+
 ```sh
 cd e:\octopress\you.github.com 
 git pull origin source 
 cd _deploy  
 git pull origin master  
 ```
+
 ###参考链接
 《淘宝ruby镜像站》
 https://ruby.taobao.org/

@@ -10,6 +10,7 @@ categories: [php,monitor]
 下面先论述如以--enable或者--with的方式来把snmp静态编译到php中去。
 首先下载php软件包。
 <!-- more -->
+
 ```sh
 $ wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
 $ tar xjf php-5.5.6.tar.bz2
@@ -18,28 +19,36 @@ $ ls ext/snmp/
 config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
 $
 ```
+
 可见snmp已经自带了，不需要到pecl下载然后放到ext目录。
+
 ```sh
 $ sudo yum install libxml2 libxml2-devel 
 ```
+
 备注如果一意孤行，只装libxml2，呵呵，那么你将收到` configure: error: xml2-config not found. Please check your libxml2 installation. `的报错。同样，你要是不装net-snmp-devel，就可以收到` configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation `的报错。 
 
 ###静态编译
 查一下snmp的安装选项
+
 ```sh
 $ ./configure --help | grep snmp
   --with-snmp=DIR         Include SNMP support
 ```
+
 是--with，了解后继续操作，这里直接使用默认snmp路径
+
 ```sh
 $ ./configure --prefix=/usr/local/php55_static_snmp --with-snmp --ebable-sockets 
 $ make
 $ sudo make install
 ```
+
 这样静态编译就完成了。
 
 ###动态编译
 假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so
+
 ```sh
 $ cd ext/snmp
 $ /usr/local/php55/bin/phpize
@@ -52,16 +61,22 @@ $ ./configure --with-php-config=/usr/local/php55/bin/php-config
 $ make
 $ sudo make install
 ```
+
 然后复制刚才的编译好的so文件到扩展目录到etc目录
+
 ```sh
 $ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
 $ cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
 ```
+
 编辑php的配置文件
+
 ```sh
 $ vi /usr/local/php55/etc/php.ini
 ```
+
 加入2行
+
 ```sh
 extension=sockets.so 
 extension=snmp.so
@@ -69,18 +84,23 @@ extension=snmp.so
 
 ###撰写php版的snmp客户端测试程序
 开始写点测试程序，确认snmp已经在本机支持
+
 ```sh
 $nc -uvz 127.0.0.1 161
 Connection to 127.0.0.1 161 port [udp/snmp] succeeded!
 ```
+
 2014-07-16补充：
 以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句
+
 ```sh
 $nc -u 127.0.0.1 161
 ```
+
 输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来
 
 已经支持，那么来写程序吧
+
 ```php
 <?php
 /**
@@ -101,15 +121,15 @@ echo (snmpget($host,$community,$oid2)."\n");
 // Total Swap Size
 echo (snmpget($host,$community,$oid3)."\n");
 ```
+
 查看结果
+
 ```sh
 $ /usr/local/php55/bin/php test.php
 STRING: 0.05
 STRING: 0.03
 STRING: 0.03
 INTEGER: 2064376 kB
-
-
 ```
 
 ###分析总结

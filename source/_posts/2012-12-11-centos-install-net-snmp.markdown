@@ -11,10 +11,10 @@ categories: [monitor]
 以上文字摘自百度百科。而所谓snmp agent，个人理解就是能够实现snmp的read和snmp和get等标准snmp协议交互操作的容器，它可以提供默认的MIB和自定义的MIB。
 
 ###centos上安装net-snmp的过程
+
 ```sh
 $ sudo yum install net-snmp
 ```
-
 
 
 ###配置snmpd
@@ -25,25 +25,31 @@ $ sudo yum install net-snmp
 主要是控制那台机器可以访问snmp
 
 ####1、查找以下字段：
-```
+
+```sh
 sec.name source          community
 com2sec notConfigUser default       public
 ```
+
 将"comunity"字段改为你要设置的密码.比如"public".                                            
 将“default”改为你想哪台机器可以看到你的snmp信息,如127.0.0.1
 
 ####2、查找以下字段：
-```
+
+```sh
 # Finally, grant the group read-only access to the systemview view.
 #       group          context sec.model sec.level prefix read   write notif
 access notConfigGroup ""      any       noauth    exact all none none
 ```
+
 将"read"字段改为all.
 ####3、查找以下字段：
-```
+
+```sh
 #           incl/excl subtree                          mask
 #view all    included .1                               80
 ```
+
 将该行前面的"#"去掉.
 保存关闭.
 
@@ -55,17 +61,20 @@ snmpwalk是对OID的遍历，必须从根节点一次遍历，而不能通过某
 编辑完成之后可以测试，需要用到snmpwalk和snmpget
 
 缺少snmpwalk和snmpget的可以安装
+
 ```sh
 $ sudo yum install net-snmp-utils
 ```
 
 启动snmpd
+
 ```sh
 $ sudo /etc/init.d/snmpd start
 $ sudo /sbin/chkconfig snmpd on
 ```
 
 测试是否开启snmp服务
+
 ```sh
 $ snmpwalk -v 2c -c public 127.0.0.1 if
 IF-MIB::ifIndex.1 = INTEGER: 1
@@ -115,13 +124,16 @@ IF-MIB::ifSpecific.2 = OID: SNMPv2-SMI::zeroDotZero
 ```
 
 获取load信息
+
 ```sh
 $ snmpwalk -v 2c 127.0.0.1 -c public .1.3.6.1.4.1.2021.10.1.3
 UCD-SNMP-MIB::laLoad.1 = STRING: 0.03
 UCD-SNMP-MIB::laLoad.2 = STRING: 0.03
 UCD-SNMP-MIB::laLoad.3 = STRING: 0.00
 ```
+
 同样可以尝试使用snmp版本1来获取
+
 ```sh
 $ snmpwalk -v 1 -c public localhost .1.3.6.1.4.1.2021.10.1.3
 UCD-SNMP-MIB::laLoad.1 = STRING: 0.01
@@ -135,18 +147,22 @@ UCD-SNMP-MIB::laLoad.3 = STRING: 0.00
 
 
 确认本机开放snmp端口，由于snmp协议基于udp，所以采用基于tcp的telnet来测试是不奏效的，可以利用nc来测试，如下
+
 ```sh
 $ nc -uvz 192.168.216.177 161
 Connection to 192.168.216.177 161 port [udp/snmp] succeeded!
 ```
 
 如果打开了IPTABLES,确保本机的udp161端口对外开放，或者说入站通讯端口为udp161
+
 ```sh
 $ sudo /sbin/iptables -I INPUT -p udp --dport 161 -j ACCEPT
 $ sudo /etc/rc.d/init.d/iptables save
 $ sudo /etc/init.d/iptables restart
 ```
+
 或者直接在/etc/sysconfig/iptable中增加一行：
+
 ```sh
 -A RH-Firewall-1-INPUT -m state –state NEW -m udp -p udp –dport 161 -j ACCEPT
 ```

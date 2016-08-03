@@ -112,6 +112,7 @@ public class WebViewDemo extends Activity {
 ![Alt text](/images/evoup/activity_lifecycle.png)
 
 它有以下7个方法可以被重写：
+
 ```java
 public class Activity extends ApplicationContext {  
        protected void onCreate(Bundle savedInstanceState);  
@@ -123,8 +124,10 @@ public class Activity extends ApplicationContext {
        protected void onDestroy();  
    }  
 ```
+
 也就是onCreate创建，onStart开始、onRestart重启、onResume恢复、onPause暂停、onStop停止和onDestory销毁时，这些方法都能够被重写，不难看出这些方法和Activity生命周期是息息相关的。
 本例子就只要重写onCreate即可，看代码：
+
 ```java
     @Override
     public void onCreate(Bundle icicle) {
@@ -146,6 +149,7 @@ public class Activity extends ApplicationContext {
         mWebView.loadUrl("file:///android_asset/demo.html");
     }
 ```
+
 其中R.java这个为android的资源类，工程自动会维护这里暂时不用去考虑。首先是调用超类的onCreate方法来必要的初始化。然后设置试图为资源类的main。再来从资源类的webview中找到Id返回WebView类型的对象mWebView这个变量中。然后是WebSettings类对象webSettings的参数设置，这里setSavePassword和setSaveFormData代表不要保存表单控件的数据和密码，setJavaScriptEnabled设置为允许webview调用JavaScript，setSupportZoom设置为不允许缩放。由于要用到JavaScript，所以需要调用setWebChromeClient。
 
 我们需要仔细看下addJavascriptInterface这个函数的说明
@@ -157,6 +161,7 @@ public class Activity extends ApplicationContext {
 再看下2个参数，前一个为注入webview的Java对象（DemoJavaScriptInterface），后一个为暴露给JavaScript的对象名字（demo），本例中除了webview把点击消息传递给html，html中的JavaScript也要和webview交互，在哪里交互？伟大的google为我们想到JavaScript的顶层window对象，在下面动态创建了一个子对象，这里就是第二个参数demo，这个等等到了html再讲。
 
 马上来看第一个参数的实现
+
 ```java
     final class DemoJavaScriptInterface {
 
@@ -177,6 +182,7 @@ public class Activity extends ApplicationContext {
         }
     }
 ```
+
 直接一个构造函数什么都不做，然后直接用句柄提交实现了Runnable类的引用，再深入Runnable探究下
 
 > The Runnable interface should be implemented by any class whose instances are intended to be executed by a thread. The class must define a method of no arguments called run. 
@@ -184,6 +190,7 @@ public class Activity extends ApplicationContext {
 Runnable就一个方法，run给实现了就行，这里是直接调用demo.html页面里的JavaScript的wave方法。
 
 看下一段代码
+
 ```java
     /**
      * Provides a hook for calling "alert" from javascript. Useful for
@@ -198,6 +205,7 @@ Runnable就一个方法，run给实现了就行，这里是直接调用demo.html
         }
     }
 ```
+
 这里是对刚才指定的WebChromeClient对象MyWebChromeClient，进行onJsAlert的重写，可以看到其实就是在打印日志。
 
 --------------------------------

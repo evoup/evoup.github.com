@@ -20,8 +20,8 @@ sudo gmake install
 ```
 
 配置
-```bash
 
+```bash
 global
     maxconn 5120
     chroot /usr/local/haproxy14
@@ -56,4 +56,4 @@ backend tcpserver
 
 ###参考链接
 
-http://cbonte.github.io/haproxy-dconv/configuration-1.4.html
+[HAProxy Configuration Manual](http://cbonte.github.io/haproxy-dconv/configuration-1.4.html)

@@ -6,11 +6,14 @@ comments: true
 categories: [hadoop]
 ---
 今天在一个hadoop节点上传测试文件的时候
+
 ```bash
 $ bin/hadoop fs -put /home/hadoop/project/s3log.txt /yin_test/s3log
 ```
+
 出现如下报错:
 <!-- more -->
+
 ```
 14/07/25 13:23:05 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where app
 licable
@@ -43,4 +46,5 @@ ocolProtos.java:44954)
         at org.apache.hadoop.io.retry.RetryInvocationHandler.invoke(RetryInvocationHandler.java:83)
         at com.sun.proxy.$Proxy9.addBlock(Unknown Source)
 ```
+
 已经把防火墙关了，经过一番查询研究，原来是dfs.namenode.name.dir和dfs.datanode.data.dir再重新格式化后要被清空的原因。删除这2个目录下的文件，然后重新格式化，再次put恢复正常。

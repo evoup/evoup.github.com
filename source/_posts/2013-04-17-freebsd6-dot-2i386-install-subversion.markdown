@@ -14,12 +14,14 @@ categories: [version_control,freebsd]
 <!-- more -->
 
 对g++做个软连接
-```sh
+
+```bash
 $ sudo ln -s /usr/bin/g++ /usr/local/bin/g++44
 ```
 
 ###安装依赖
-```sh
+
+```bash
 $ cd ~/software/
 $ axel http://apache.fayea.com/apache-mirror//apr/apr-1.5.0.tar.gz
 $ tar xzf apr-1.5.0.tar.gz
@@ -35,7 +37,8 @@ $ sudo make install
 ```
 
 ###安装subversion
-```sh
+
+```bash
 $ cd ~/software
 $ fetch http://mirrors.hust.edu.cn/apache/subversion/subversion-1.8.8.tar.gz
 $ tar xzf subversion-1.8.8.tar.gz
@@ -47,9 +50,11 @@ $ ./configure --with-apr=/usr/local/apr/ --with-apr-util=/usr/local/apr/
 $ make
 $ sudo make install
 ```
+
 这样是可以用基本的svn签出提交了，但是后来又在签出代码时发现了svn e170000 unrecognized url scheme for http（https）的问题。
 原来少安装一个模块serf（1.8版本之前用neon），安装次序分别为python2.7->scons2.3.1->serf1.3.4
-```
+
+```bash
 $ cd ~/software
 $ fetch https://www.python.org/ftp/python/2.7/Python-2.7.tgz
 $ tar xzf Python-2.7
@@ -79,17 +84,21 @@ scons: done building targets.
 ```
 
 重新安装subversion，把openssl也带上
-```sh
+
+```bash
 $ cd ../subversion-1.8.8
 $ ./configure --with-apr=/usr/local/apr/ --with-apr-util=/usr/local/apr/ --with-openssl --with-serf=/usr/local/
 ```
+
 如果遇到找不到libintl.h
 
-```
+```bash
 $ sudo ln -s /usr/local/include/libintl.h /usr/include/
 ```
+
 然后编译
-```sh
+
+```bash
 make
 sudo make install
 ```

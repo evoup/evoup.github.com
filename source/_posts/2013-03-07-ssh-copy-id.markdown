@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "非常便捷的ssh信任制作脚本ssh-copy-id"
-date: 2013-10-17 17:29
+date: 2013-03-07 17:29
 comments: true
 categories:           shell
 ---
@@ -11,6 +11,7 @@ ssh-copy-id在版本比较高的freebsd的port中提供了，安装即可。手�
 <!-- more -->
 
 实验：hostA: 172.16.30.184:22  hostB:211.136.104.189:9999
+
 ```bash
 >ssh-keygen -t rsa
 
@@ -37,46 +38,43 @@ The key fingerprint is:
 The key's randomart image is:
 
 +--[ RSA 2048]----+
-
 |+== . .o...o+.   |
-
 |oooO .  . .+.    |
-
 |ooE +   . o.     |
-
 | . o   . .       |
-
 |        S        |
-
 |                 |
-
 |                 |
-
 |                 |
-
 |                 |
-
 +-----------------+
 ```
 然后运行如下脚本，按照提示输入密码即可
+
 ```bash
 ssh-copy-id '-p 9999 -i /usr/home/user/.ssh/id_rsa.pub user@211.136.104.189'
 ```
+
 更加简单的使用方法，不带i参数，默认使用当前用户的id_rsa.pub公钥
+
 ```bash
 ssh-copy-id user@211.136.104.189
 ```
+
 这样子就可以了。
 
 如果要建立非22端口的信任。
 例：建立到211.136.221.207的信任，ssh的端口为8887，用户名为user
+
 ```bash
 ssh-copy-id "-p8887 user@211.136.221.207"
 ```
+
 这样就可以了。
 
 ###port中没有怎么办？
 直接创建一个文件叫做/usr/local/bin/ssh-copy-id，注意文件权限要为555，以及所有者为root
+
 ```sh
 #!/bin/sh
 
@@ -131,7 +129,6 @@ Now try logging into the machine, with "ssh '$host'", and check in:
 to make sure we haven't added extra keys that you weren't expecting.
 
 EOF
-
 ```
 
 参考：

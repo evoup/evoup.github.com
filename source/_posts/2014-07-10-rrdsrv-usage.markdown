@@ -13,25 +13,32 @@ categories: [monitor,rrdtool]
 假设rrdtool的安装路径在/usr/local/bin/rrdtool，然后存放rrd数据库的路径为/services/rrds/
 
 首先编辑/etc/inetd.conf，加入
-```
+
+```bash
 rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/
 ```
 
 然后再编辑/etc/services，加入
-```
+
+```bash
 rrdsrv 13900/tcp
 ```
+
 在/etc/rc.conf中
-```
+
+```bash
 inetd_enable="YES"
 ```
 
 然后
+
 ```bash
 sudo /etc/rc.d/inetd start
 ```
+
 这样13900端口就支持使用socket方式的rrdtool命令操作了
-```
+
+```bash
 [yin@yin-arch rrds]>telnet 127.0.0.1 13900
 Trying 127.0.0.1...
 Connected to localhost.

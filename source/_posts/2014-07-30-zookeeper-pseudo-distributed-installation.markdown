@@ -15,6 +15,7 @@ categories: zookeeper
 准备一台机器，假定IP为192.168.216.198。
 
 ####下载安装软件
+
 ```bash
 $ cd /home/hadoop/software
 $ wget http://mirror.bit.edu.cn/apache/zookeeper/zookeeper-3.4.5/zookeeper-3.4.5.tar.gz
@@ -24,6 +25,7 @@ $ sudo mv /usr/local/zookeeper-3.4.5/ /usr/local/zookeeper
 ```
 
 ####配置三个实例的myid
+
 ```bash
 $ mkdir -p /home/hadoop/zoo/zk1 /home/hadoop/zoo/zk2 /home/hadoop/zoo/zk3
 $ echo "1" > /home/hadoop/zoo/zk1/myid
@@ -32,6 +34,7 @@ $ echo "3" > /home/hadoop/zoo/zk3/myid
 ```
 
 ####分配制作三个配置文件
+
 ```bash
 $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo1.cfg
 $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo2.cfg
@@ -69,11 +72,13 @@ $sudo vim /usr/local/zookeeper/conf/zoo3.cfg
 ```
 
 ####给当前用户账户访问权限（可选）
+
 ```bash
 $ sudo chown -R hadoop:hadoop /usr/local/zookeeper
 ```
 
 ####启动集群
+
 ```bash
 $ /usr/local/zookeeper/bin/zkServer.sh start /usr/local/zookeeper/conf/zoo1.cfg
 JMX enabled by default
@@ -95,6 +100,7 @@ Starting zookeeper ... STARTED
 ```
 
 ####查看zookeeper工作文件目录结构
+
 ```bash
 $ ls -R /home/hadoop/zoo/
 /home/hadoop/zoo/:
@@ -120,6 +126,7 @@ acceptedEpoch  currentEpoch  snapshot.100000000
 ```
 
 ####查看zookeeper运行情况
+
 ```bash
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
 /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo2.cfg
@@ -128,18 +135,22 @@ acceptedEpoch  currentEpoch  snapshot.100000000
 
 报错，需要修正zkServer.sh
 把
-```
+
+```bash
     #STAT=`$JAVA "-Dzookeeper.log.dir=${ZOO_LOG_DIR}" "-Dzookeeper.root.logger=${ZOO_LOG4J_PROP}" \
              #-cp "$CLASSPATH" $JVMFLAGS org.apache.zookeeper.client.FourLetterWordMain localhost \
              #$(grep "^[[:space:]]*clientPort" "$ZOOCFG" | sed -e 's/.*=//') srvr 2> /dev/null    \
           #| grep Mode`
 ```
+
 给注释了，然后在其下加一行
-```
+
+```bash
     STAT=`echo stat | nc 127.0.0.1 $(grep clientPort "$ZOOCFG" | sed -e 's/.*=//') 2> /dev/null| grep Mode`
 ```
 
 这样就妥妥的了:)
+
 ```bash
 $ /usr/local/zookeeper/bin/zkServer.sh status /usr/local/zookeeper/conf/zoo1.cfg
 JMX enabled by default
@@ -156,6 +167,7 @@ Mode: follower
 ```
 
 ####加入启动项
+
 ```bash
 sudo vim /etc/rc.d/rc.local
 #!/bin/sh

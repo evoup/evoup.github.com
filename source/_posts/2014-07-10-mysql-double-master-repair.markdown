@@ -11,6 +11,7 @@ categories: [mysql]
 <!--more-->
 
 ###恢复主主的工具
+
 ```bash
 > wget http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz 
 > tar xzf percona-toolkit-2.2.6.tar.gz
@@ -23,6 +24,7 @@ Writing Makefile for percona-toolkit
 > sudo cpan YAML
 > sudo cpan DBD::mysql
 ```
+
 出现询问是否yes，一路选择yes
 
 
@@ -30,12 +32,14 @@ Writing Makefile for percona-toolkit
 ` FAILED--Further testing stopped: ERROR: Access denied for user 'root'@'localhost' (using password: NO) `
 
 进入mysql修改一下默认密码为空
-```
+
+```mysql
 GRANT ALL PRIVILEGES ON *.* TO root@'localhost' IDENTIFIED BY '';
 flush privileges;
 ```
 
 回来继续
+
 ```bash
 sudo cpan DBD::mysql
 make
@@ -43,14 +47,18 @@ sudo make install
 ```
 
 ###检查完整性
+
 ```bash
 [yinjia@hm15hadoop01 percona-toolkit-2.2.6]>sudo pt-table-checksum  --recursion-method=processlist
 ```
+
 ` Cannot connect to h=10.10.8.45 `
+
 ` Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information. `
 
 
 报错，在主上运行
+
 ```
 mysql> show slave hosts;
 +-----------+------+------+-----------+
@@ -65,6 +73,7 @@ mysql> show slave hosts;
 
 到slave上，my.cnf中添加report_host=10.10.8.45 #设置成本机IP，然后重启slave
 回到主上
+
 ```
 mysql> show slave hosts;
 +-----------+------------+------+-----------+
@@ -81,24 +90,29 @@ Diffs cannot be detected because no slaves were found.  Please read the --recurs
 ```
 
 问题依旧,修改shell
-```
+
+```bash
 [yinjia@hm15hadoop01 percona-toolkit-2.2.6]>pt-table-checksum --recursion-method=hosts --no-check-binlog-format --nocheck-replication-filters --replicate=monitor1_db.checksums --databases=monitor1_db --tables=httplog_status h=10.10.8.45,u=madcore,p=madcore,P=3306
             TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
 06-30T13:33:50      0      1     5415       4       0   0.377 monitor1_db.httplog_status
 ```
 
 看到DIFFS1，即为有1行差异
-```
+
+```bash
 [yinjia@hm15hadoop02 ~/software]>pt-table-checksum --recursion-method=hosts --no-check-binlog-format --nocheck-replication-filters --replicate=monitor1_db.checksums --databases=monitor1_db --tables=httplog_status h=10.10.8.44,u=madcore,p=madcore,P=3306
             TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
 06-30T13:34:58      0      1     5395       4       0   0.371 monitor1_db.httplog_status
 ```
+
 可以看到现在DIFF是1，证明有差异。所以要同步，怎么同步，使用pt-table-sync进行修复
 
 ###修复同步
-```
+
+```bash
 pt-table-sync --replicate=monitor1_db.checksums h=10.10.8.44,u=madcore,p=madcore h=10.10.8.45,u=madcore,p=madcore --print --execute
 ```
+
 分别是主的IP，从的IP。针对两边分别修复，最后再看一下pt-table-checksum 发现DIFF为0证明数据同步成功。
 
 

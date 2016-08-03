@@ -9,15 +9,19 @@ categories: monitor
 
 <!-- more -->
 关闭iptables和selinux
+
 ```sh
 sudo service iptables stop
 sudo chkconfig iptables off
 ```
+
 临时关闭selinux
+
 ```sh
 setenfoce 0  ##设置为permissive模式
              ##setenforce 1设置SELunix为enforcing模式
 ```
+
 永久关闭
 修改/etc/selinux/config 文件
 将SELINUX=enforcing改为SELINUX=disabled
@@ -31,27 +35,32 @@ yum install -y httpd mysql mysql-server mysql-devel php php-mysql php-common php
 ```
 
 然后下载zabbix
+
 ```sh
 wget http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/2.0.6/zabbix-2.0.6.tar.gz/download
 ```
 
 继续安装需要的组件
+
 ```sh
 yum install -y curl curl-devel net-snmp net-snmp-devel perl-DBI
 ```
 
 创建zabbix用户帐号
+
 ```sh
 sudo useradd zabbix
 sudo usermod -s /sbin/nologin zabbix
 ```
 
 启动mysql
+
 ```sh
 sudo service mysqld start
 ```
 
 登录mysql
+
 ```sh
 mysql -uroot -p123456
 mysql> create database zabbix;
@@ -64,6 +73,7 @@ mysql> exit
 ```
 
 安装zabbix
+
 ```sh
 ./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl
 Configuration:
@@ -106,6 +116,7 @@ Configuration:
 *              <http://www.zabbix.com>                    *
 ***********************************************************
 ```
+
 好了，我们正式安装
 
 ```sh
@@ -114,6 +125,7 @@ sudo make install
 
 接下来编辑配置文件
 可以不用sudo，直接切换到root做
+
 ```sh
 cd /usr/local/etc
 cat zabbix_server.conf
@@ -130,6 +142,7 @@ UnsafeUserParameters=1
 ```
 
 创建日志文件
+
 ```sh
 touch /var/log/zabbix_server.log
 touch /var/log/zabbix_agent.log
@@ -140,6 +153,7 @@ cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
 ```
 
 2个文件的文件头改成如下
+
 ```sh
 #!/bin/sh
 #chkconfig: 35 95 95
@@ -147,30 +161,35 @@ cp misc/init.d/tru64/zabbix_agentd /etc/init.d/
 ```
 
 添加服务
+
 ```sh
 chkconfig --add zabbix_server
 chkconfig --add zabbix_agentd
 ```
 
 开机自动启动
+
 ```sh
 chkconfig zabbix_server on
 chkconfig zabbix_agent on
 ```
 
 文件执行权限
+
 ```sh
 chmod +x zabbix_server
 chmod +x zabbix_agentd
 ```
 
 启动
+
 ```sh
 sudo /etc/init.d/zabbix_server start
 sudo /etc/init.d/zabbix_agentd start
 ```
 
 安装zabbix web
+
 ```sh
 cp -r frontends/php/ /var/www/html/zabbix
 ```
@@ -181,8 +200,9 @@ cp -r frontends/php/ /var/www/html/zabbix
 vim /etc/php.ini
 ```
 指定
+
 ```php
-timezone=Asia/Shanghai
+timezone = Asia/Shanghai
 ```
 
 根据提示修改php配置
@@ -196,23 +216,5 @@ yum install -y php-bcmath
 最后登录前端界面密码为 admin/zabbix
 
 告一段落，接下来学习操作zabbix。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

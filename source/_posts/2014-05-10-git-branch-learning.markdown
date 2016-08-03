@@ -13,33 +13,39 @@ categories: [version_control]
 git的默认分支是master
 
 创建分支
-```
+
+```bash
 git branch branchname 
 ```
 
 显示所有分支
-```
+
+```bash
 git show-branch
 ```
 
 查看当前分支
-```
+
+```bash
 git status
 ```
 
 提交分支
-```
+
+```bash
 git push origin branchname
 ```
 
 切换到名字为branchname的分支
-```
+
+```bash
 git checkout branchname
 ```
 
 
 创建一个分支，然后把这个分支同步到远程仓库
-```sh
+
+```bash
 git branch branchname
 git checkout branchname
 git push origin branchname

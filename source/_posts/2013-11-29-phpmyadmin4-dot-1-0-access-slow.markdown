@@ -12,10 +12,13 @@ categories: [php,mysql]
 ###第一步
 文件名./libraries/Util.class.php文件
 查找
+
 ```php
 return strftime($date, $timestamp);
 ```
+
 替换为
+
 ```php
 if(extension_loaded('gettext'))
   return strftime($date, $timestamp);
@@ -24,6 +27,7 @@ if(extension_loaded('gettext'))
 ###第二步
 文件名./version_check.php文件
 注释掉以下代码
+
 ```php
 $version = PMA_Util::getLatestVersion();
 
@@ -34,6 +38,7 @@ echo json_encode(
         )
     );
 ```
+
 ###第三步
 直接浏览器访问/setup路径，进行设置
 

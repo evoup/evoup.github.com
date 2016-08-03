@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "git使用https协议"
+title: "git免密码使用https协议"
 date: 2013-12-30 22:09
 comments: true
 categories: version_control 
@@ -10,37 +10,45 @@ git支持的协议主要有git、ssh、http、https这几种，国内防火墙�
 <!-- more -->
 
 goagent配置这里就不提了，主要给出git端的设置参考,假设是在bash终端下操作git，需要设置这2个环境变量，写到~/.bashrc中再source一下即可
+
 ```bash
 export https_proxy="127.0.0.1:8087"
 export http_proxy="127.0.0.1:8087"
 ```
+
 其实这里是通过linux的http/https代理设置的方法来加速！
 如果是tcsh
-```sh
+
+```bash
 setenv https_proxy "127.0.0.1:8087"
 setenv http_proxy "127.0.0.1:8087"
 ```
+
 同样是把以上的代码加到~/.cshrc中再source一下
 
 速度的问题解决了之后，你会发现其实每次都非常讨厌输入用户名和密码，那请看下文
 
 执行
-```sh
+
+```bash
 touch $HOME/.git-credentials
 ```
 
 编辑$HOME/.get-credentials
 加入
+
+```bash
+https://username:password@github.com
 ```
-https://{$username}:{$password}@github.com
-```
-其中{$username}和{$password}分别为你的git用户名和密码
+
+其中username和password分别为你的git用户名和密码
 
 再执行
-```sh
+
+```bash
 git config --global credential.helper store
 ```
 
-这样git push就不需要输入密码了，享受成就感吧～
+这样git push就不需要输入密码了，享受成就感吧
 
 

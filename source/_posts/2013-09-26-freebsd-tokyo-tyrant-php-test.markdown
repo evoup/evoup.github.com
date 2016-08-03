@@ -14,11 +14,14 @@ Tokyo Tyrant（ttserver）是一款分布式nosql数据库，内部主要是用T
 编译的方式还是分静态方式和动态方式，特点是静态编译之后运行效率较高，但是需要重新编译php源码，动态编译只需要编译出动态链接库，然后在php.ini上加载so=XXXX.so即可。需要知晓php的版本在5.2以上（实际测试发现php的版本也不能太高，php5.2.10测试通过）,此外编译前必须先安装tt，否则会收到` configure: error: Please reinstall the Tokyo Tyrant distribution
 的报错。
 ####安装编译依赖
+
 ```sh
 $ cd /usr/ports/databases/tokyotyrant
 $ sudo make install clean
 ```
+
 ####静态方式
+
 ```sh
 $ cd /home/software
 $ fetch http://museum.php.net/php5/php-5.2.10.tar.bz2
@@ -33,13 +36,16 @@ $ ./configure --prefix=/usr/local/php_tt --with-tokyo-tyrant
 $ make
 $ sudo make install
 ``` 
+
 查看模块是否成功安装
+
 ```sh
 $ /usr/local/php_tt/bin/php -m | grep tokyo
 tokyo_tyrant
 ```
 
 ####动态方式(假设php已经安装在/usr/local/php_tt)
+
 ```sh
 $ cd /home/software
 $ fetch http://pecl.php.net/get/tokyo_tyrant-0.7.0.tgz
@@ -50,23 +56,28 @@ $ ./configure --with-php-config=/usr/local/php_tt/bin/php-config
 $ make
 $ sudo make install
 ```
+
 然后复制刚才的编译好的so文件到扩展目录到etc目录
+
 ```sh
 $ cp /usr/local/php_tt/lib/php/extensions/no-debug-non-zts-20090626/tokyo_tyrant.so /usr/local/php_tt/etc/
 ```
 
 编辑php的配置文件
+
 ```sh
 vi /usr/local/php_tt/etc/php.ini
 ```
+
 加入1行
+
 ```sh
 extension=tokyo_tyrant.so
 ```
 
-
 ####测试1
 编辑php文件
+
 ```php
 <?php
 /**
@@ -86,7 +97,9 @@ foreach ($it as $key => $val) {
 }
 ?>
 ```
+
 运行
+
 ```sh
 /usr/local/php_tt/bin/php test.php
 language:C/C++
@@ -143,6 +156,7 @@ Array                                                                           
 )
 key: language, val: C/C++
 ```
+
 可以看到这个扩展的遍历功能相当好用:)
 
 ####参考

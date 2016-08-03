@@ -8,7 +8,8 @@ categories: [c-language,monitor]
 监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。
 <!-- more -->
 直接贴代码了，除了mem_total之外基本都正确。total的部分，先用sysctl -a | grep realmem解决
-```c
+
+{% codeblock lang:c free.c %}
 /*
  * free.c - Display FreeBSD memory information
  * Wed Nov 26 19:34:54 IST 2008 vinod <vinod@segfault.in>
@@ -136,7 +137,7 @@ main(int argc, char *argv[])
 
         return (EXIT_SUCCESS);
 }
-```
+{% endcodeblock %}
 
 ###项目位置
 

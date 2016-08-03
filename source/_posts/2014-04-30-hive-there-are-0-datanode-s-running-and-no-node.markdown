@@ -6,12 +6,15 @@ comments: true
 categories: [hadoop,hive]
 ---
 
-hive查询报错` c
-ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation `
+hive查询报错
+
+` could only be replicated to 0 nodes instead of minReplication (=1). `
+
+` There are 0 datanode(s) running and no node(s) are excluded in this operation `
 
 <!-- more -->
 
-```
+```bash
 hive> select count(*) from httplog_2014_05_26_2017;
 Total MapReduce jobs = 1
 Launching Job 1 out of 1
@@ -36,12 +39,12 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 ```
 
 需要清理目录，其中hadoop为当前用户的名字
+
 ```bash
 cd /tmp/hadoop
 rm -rf *
 ```
 
 然后重启hadoop和hive，恢复正常，原因是hadoop的namespaceIDs有异常。
-
 
 

@@ -11,6 +11,7 @@ categories: nginx
 
  
 在fastcgi_params中加以下2行
+
 ```sh
 fastcgi_buffer_size 128k;
 fastcgi_buffers 8 128k;

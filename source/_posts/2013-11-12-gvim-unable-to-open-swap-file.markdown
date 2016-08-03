@@ -19,7 +19,9 @@ to avoid this error.  See |swap-file|.
 ```
 说是无法创建交换文件。
 其实只要这么解决：
+
 ```vim
 :set directory=.,$TEMP
 ```
+
 或者指定一个实际存在路径。

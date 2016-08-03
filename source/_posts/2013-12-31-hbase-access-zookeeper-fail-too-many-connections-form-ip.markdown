@@ -28,7 +28,8 @@ categories:  [hbase,hadoop,zookeeper]
 
 
 如何监控zookeeper的其他指标，这里列出zoo.cfg的配置文件
-```
+
+```bash
 dataDir = 数据存放路径
 
 dataLogDir = 日志存放路径
@@ -59,6 +60,7 @@ group.gid = sid:sid (一个ID， 值是多个sid, 中间以:分割， 一个sid�
 
 weight.sid=整型
 ```
+
 可以看出还有至少2个参数是需要考虑的minSessionTimeout和maxSessionTimeout需要调优，得用JMX监控一段时间得出结论了。
 
 同样的发现thrift也存在类似一连就断开的问题，下篇博文再作分析。

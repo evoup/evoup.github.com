@@ -12,14 +12,16 @@ categories: [freebsd,rrdtool,linux]
 
 ###freebsd下
 直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存
-```sh
+
+```bash
 sudo cp ukai.ttf /usr/local/share/fonts/
 sudo fc-cache -f -v
 ```
 
 ###centos下
 把字体放到/usr/share/fonts/msfonts下，然后执行几个命令
-```sh
+
+```bash
 sudo mkdir /use/share/fonts/msfonts
 sudo cp ukai.ttf /usr/share/fonts/msfonts/
 cd /usr/share/fonts/msfonts/
@@ -27,8 +29,10 @@ sudo mkfontscale
 sudo mkfontdir
 sudo fc-cache -fv
 ```
+
 更EZ的方式有
-```
+
+```bash
 sudo yum  –y  install  fonts-chinese
 ```
 

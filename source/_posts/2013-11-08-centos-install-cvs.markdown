@@ -13,35 +13,44 @@ categories: version_control
 在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端
 
 ####1.安装xinetd
+
 ```bash
 rpm -q xinetd 
 ```
+
 没有安装的话
+
 ```bash 
 yum install xinetd
 ```
 
 ####2.安装cvs
+
 ```bash
 rpm -q cvs
 ```
+
 我的系统显示
 cvs-1.11.23-15.el6.x86_64
 如果没有安装的话可以
+
 ```bash
 yum install cvs
 ```
 
 ####3.配置帐号
 切换到root，执行：
+
 ```bash
 groupadd cvs
 useradd -g cvs cvsroot
 passwd cvsroot
 ```
+
 这样帐号就配置好了。
 
 ####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver
+
 ```bash
 # default: off
 # description: The CVS service can record the history of your source \
@@ -68,15 +77,19 @@ service cvspserver
 
 ####5.初始化和启动
 初始化项目仓库的命令为
+
 ```bash
 cvs -d /home/cvsroot init
 ```
+
 就是在刚才配置的env = HOME=/home/cvsroot目录长噢乖创建代码仓库
 
 接下来重启xinetd
+
 ```bash
 /etc/rc.d/init.d/xinetd restart
 ```
+
 测试cvs是否存在
 lsof -p 2401
 或者

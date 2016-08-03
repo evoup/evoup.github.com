@@ -13,20 +13,21 @@ categories:          [erlang,rrdtool,monitor]
 
 rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。
 
-
 关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html
-
 
 ##准备工作
 在freebsd上安装rrdtool1.2以上的版本
 <!-- more -->
+
 ```bash
 cd /usr/port/databases/rrdtool12
 sudo make install clean
 ```
+
 erlang对应接口的安装
 
 在项目中rebar.conf对应位置中加入8-11行的内容
+
 {% codeblock rebar.conf lang:erlang start:0 mark:8-11 %}
 {deps, [
     {mochiweb, "1.5.1",
@@ -45,6 +46,7 @@ erlang对应接口的安装
 
 以及
 rel/reltool.config对应位置中加入第13、30行的内容
+
 {% codeblock rebar.conf lang:erlang start:0 mark:13,30 %}
 {sys, [
        {lib_dirs, ["../apps", "../deps"]},
@@ -99,15 +101,14 @@ rel/reltool.config对应位置中加入第13、30行的内容
            {copy, "files/vm.args", "releases/\{\{rel_vsn\}\}/vm.args"}
           ]}.
 {% endcodeblock %}
-这样就算安装完成了（需要注意项目使用了rebar）
 
+这样就算安装完成了（需要注意项目使用了rebar）
 
 ##创建RRD数据库
 
 然后我们参考下开源监控软件ganglia的load_one数据库结构：
 
-
-```
+```bash
 rrdtool info load_one.rrd
 
 filename = "load_one.rrd"
@@ -166,6 +167,7 @@ rrdtool:create(PidRrdtool, "load.rrd", [{"load", 'GAUGE', [120, 0, 100]}],
  
 ##更新数据库
 这个比较简单了，就是update
+
 ```erlang
 %%写入rrd数据库
 %%Load为客户端上传的监控到的load数值
@@ -175,6 +177,7 @@ rrdtool:update(PidRrdtool, "load.rrd", [{"load", list_to_float(Load)}], now()).
 ##简单的绘图
 
 这里用最原始的方法，rrdtool graph来画图
+
 {% codeblock  make_graph.sh %}
 #!/bin/sh
 rrdtool graph  myLoad.png                    \
@@ -189,7 +192,6 @@ rrdtool graph  myLoad.png                    \
 运行该脚本，最后绘图效果见此:
 
 ![Alt text](/images/evoup/rrdtool_load_graph.png)
- 
  
  
  

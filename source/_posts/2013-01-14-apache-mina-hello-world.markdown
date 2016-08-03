@@ -6,10 +6,12 @@ comments: true
 categories:        [java]
 ---
 apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置
+
 ```bash
 setenv JAVA_HOME "/usr/local/diablo-jdk1.6.0/"
 setenv JAVA_BIN "/usr/local/bin/"
 ```
+
 下载mina
 
 ```bash
@@ -19,21 +21,26 @@ tar xzf apache-mina-2.0.7-bin.tar.gz
 cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .
 cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .
 ```
+
 除此之外还需要slf4j这个是mina需要使用的日志库
+
 ```bash
 fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz
 tar xzf slf4j-1.7.2.tar.gz
 cp slf4j-1.7.2/slf4j-api-1.7.2.jar .
 cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .
 ```
+
 设置好JAVA的CLASSPATH
+
 ```bash
 setenv CLASSPATH "/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:."
 ```
+
 找到mina的TimeServer的例子 http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html 代码最后是这个样子，先不用管细节
 
 
-```java
+{% codeblock lang:java MinaTimeServer.java %}
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
@@ -92,8 +99,9 @@ class TimeServerHandler extends IoHandlerAdapter {
        logger.debug("IDLE " + session.getIdleCount(status));
    }
 }
-```
-```
+{% endcodeblock %}
+
+```bash
 [evoup@myhost]>telnet 127.0.0.1 9123
 Trying 127.0.0.1...
 Connected to localhost.

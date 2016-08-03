@@ -7,6 +7,7 @@ categories: php
 ---
 工作中需要在代码里把文件编码先判断其格式，然后转换为UTF-8直接上代码了
 <!-- more -->
+
 ```php
 $allFiles=array('/path/to/file0','/path/to/file1');
 foreach($allFiles as $file) {

@@ -21,6 +21,7 @@ http://blog.csdn.net/skyremember/archive/2008/09/17/2941174.aspx
 再来就是csdn上面交流得来的，先把涉及到的python脚本用py2exe发布出来。
 
 这个过程大致如下
+
 ```python
 # setup.py
 from distutils.core import setup
@@ -29,6 +30,7 @@ setup(console=["hello.py"])
 ```
 
 运行setup.py，记得要传一个参数
+
 ```python
 python setup.py py2e
 ```

@@ -6,11 +6,10 @@ comments: true
 categories: [php,nginx]
 ---
 
-
 nginx端的配置
 首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：
 
-```
+```php
 <?php
 phpinfo();
 ```
@@ -53,6 +52,7 @@ fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
 ```
 
 在nginx.conf中的server上下文中添加
+
 ```
         location ~ ^/pma/.*$ {
             #access_log /var/log/access_beta.log access1;
@@ -65,6 +65,7 @@ fastcgi_param       HTTP_X_REQUESTED_WITH       $http_x_requested_with;
 ```
 
 启动nignx
+
 ```sh
 $ /usr/local/etc/rc.d/ngnix start
 ```

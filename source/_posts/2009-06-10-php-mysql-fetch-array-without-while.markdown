@@ -7,6 +7,7 @@ categories:          php
 ---
 原来mysql_fetch_array也可以直接就分配到一个array，不用while
 方法是
+
 ```php
 $num=mysql_num_rows($result);
 if ($num==0) return 0;

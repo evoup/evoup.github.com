@@ -8,7 +8,8 @@ categories: [java,maven]
 
 maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：
 <!-- more -->
-```
+
+{% codeblock lang:xml pom.xml %}
     <build>
         <plugins>
             <plugin>
@@ -59,4 +60,5 @@ maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下�
             </plugin>
        </plugins>
     </build>
-```
+{% endcodeblock %}
+

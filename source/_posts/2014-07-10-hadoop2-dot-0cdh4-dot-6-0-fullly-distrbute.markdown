@@ -12,7 +12,8 @@ hadoop2.0 cdh4安装（完全分布式）
 vmware版本8.0.4 build-744019
 
 首先规划3台虚拟机
-```
+
+```bash
  ,'''''''''''''''''''''':'''''''''''''''''':''''''''''''''''''''''''''''''''''''''''''''|
  |        usage         |        IP        |                  Hostname                  |
  |                      |                  |                                            |
@@ -31,6 +32,7 @@ vmware版本8.0.4 build-744019
 ###准备工作
 
 先安装JDK1.6 linux:先把已经安装的openjdk卸载,安装sun jdk1.6,去oracle下载 （j2se就够了）
+
 ```bash
 $ rpm -qa | grep jdk
 java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
@@ -40,6 +42,7 @@ $ sudo ./jdk-6u45-linux-x64-rpm.bin
 ```
 
 hadoop所有操作都是用hadoop帐号，下面添加（如果已经创建了帐号无须添加）
+
 ```bash
 $ groupadd hadoop
 $ useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
@@ -50,6 +53,7 @@ $ chown -R hadoop /home/hadoop
 ```
 
 环境变量(在centos里不管编辑~/.profile还是~/.bash_profile都不能加载环境变量，正确的应该是在~/.bashrc中，而如果是root用户，应该可以直接在/etc/profile中编辑)
+
 ```bash
 $ vi ~/.bashrc 
 export HADOOP_HOME="/usr/local/hadoop"
@@ -60,6 +64,7 @@ export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 
 
 切换到hadoop帐号，进行免密码的ssh登录设置
+
 ```bash
 $ su hadoop
 $ ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
@@ -69,7 +74,8 @@ $ chmod 600 ~/.ssh/authorized_keys
 
 
 给出我的hadoop/hbase版本
-```
+
+```bash
 Name        : hadoop-hdfs-namenode
 Arch        : x86_64
 Version     : 2.0.0+1554
@@ -86,6 +92,7 @@ http://archive.cloudera.com/cdh4
 这个路径下有很多的软件。
 
 下载cdh4.6的几个包安装
+
 ```bash
 $ cd /home/software/
 $ wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz
@@ -96,7 +103,8 @@ $ sudo mv /usr/local/hadoop-2.0.0-cdh4.6.0 /usr/local/hadoop
 $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 ```
 创建存储临时文件temp、data和name节点数据的目录
-```sh
+
+```bash
 $ sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/ 
 $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 ```
@@ -105,6 +113,7 @@ $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 
 开始配置
 配置/usr/local/hadoop/etc/hadoop/core-site.xml
+
 ```xml
 <configuration>
         <property>
@@ -132,6 +141,7 @@ $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 ```
 
 配置/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+
 ```xml
 <configuration>
         <property>
@@ -158,9 +168,11 @@ $ sudo chown -R hadoop:hadoop /usr/local/hadoop
 ```
 
 配置/usr/local/hadoop/etc/hadoop/madpred-site.xml
-```sh
+
+```bash
 cp mapred-site.xml.template mapred-site.xml
 ```
+
 ```xml
 <configuration>
         <property>
@@ -176,10 +188,10 @@ cp mapred-site.xml.template mapred-site.xml
                 <value>mdn3namenode1.net:19888</value> <!-- master域名或者master的ip -->
         </property>
 </configuration>
-
 ```
 
 配置/usr/local/hadoop/etc/hadoop/yarn-site.xml
+
 ```xml
 <configuration>
         <property>
@@ -215,13 +227,15 @@ cp mapred-site.xml.template mapred-site.xml
 
 编辑slave的名字
 直接讲slave的域名或者slave的ip按照一行一个的规则写进去
-```
+
+```bash
 mdn3datanode2.net
 mdn3datanode3.net
 ```
 
 复制到各台机器上
-```sh
+
+```bash
 $ cd /usr/local/
 $ sudo scp -dr hadoop@192.168.216.183:/usr/local/hadoop .
 $ sudo chown -R hadoop:hadoop hadoop/
@@ -229,13 +243,15 @@ $ sudo chown -R hadoop:hadoop hadoop/
 
 格式化hdfs
 在namenode上执行
-```sh
+
+```bash
 /usr/local/hadoop/bin/hadoop namenode -format
 ```
 
 ###hbase的安装配置
 hbase依赖zookeeper，需要先去下载
-```sh
+
+```bash
 $ cd /home/software/
 $ wget http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz
 $ tar xzf zookeeper-3.4.5-cdh4.6.0.tar.gz
@@ -246,7 +262,7 @@ $ sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo
 ```
 zookeeper准备完毕，可以继续安装hbase
 
-```sh
+```bash
 $ cd /home/software/
 $ wget http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.15-cdh4.6.0.tar.gz
 $ sudo mkdir /usr/local/hbase/
@@ -259,6 +275,7 @@ $ sudo chown -R hadoop:hadoop /usr/local/hbase
 
 若干配置步骤
 配置hbase-site.xml
+
 ```xml
 <configuration>
     <property>
@@ -280,20 +297,25 @@ $ sudo chown -R hadoop:hadoop /usr/local/hbase
     </property>
 </configuration>
 ```
+
 配置hbase-env.sh
-```xml
+
+```bash
 export HBASE_MANAGES_ZK=false
 ```
+
 不要hbase托管zookeeper
 
 配置regionservers
-```
+
+```bash
 mdn3datanode2.net
 mdn3datanode3.net
 ```
 
 启动hbase
-```sh
+
+```bash
 /usr/local/hbase/bin/start-hbase.sh
 /usr/local/hbase/bin/hbase-daemons.sh start thrift
 ```
@@ -306,7 +328,8 @@ hbase启动完成.
 
 是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
 最后的hosts我这里是这样
-```
+
+```bash
 [hadoop@localhost conf]$ more /etc/hosts
 #127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
@@ -322,7 +345,8 @@ hbase启动完成.
 这是要求hadoop中的slaves配置和hbase的regionservers要一致。
 
 ###hive的安装
-```sh
+
+```bash
 cd /home/software
 wget http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.6.0.tar.gz
 tar xzf hive-0.10.0-cdh4.6.0.tar.gz
@@ -333,6 +357,7 @@ chown -R hadoop:hadoop /usr/local/hive
 
 ###hive的配置
 在~/.bashrc中加入
+
 ```bash
 export HIVE_HOME=/usr/local/hive
 export HIVE_CONF_DIR=$HIVE_HOME/conf
@@ -341,7 +366,8 @@ export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
 ```
 
 在conf/hive-site.xml中
-```
+
+```xml
 <configuration>
 <property>
   <name>hive.metastore.local</name>
@@ -373,36 +399,42 @@ export PATH=$PATH:$JAVA_HOME/bin:$ZOOKEEPER_HOME:$HIVE_HOME
 </property>
 
 </configuration>
-
 ```
 
 这里要安装mysql作为元数据服务器，参考这篇 http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/
 
 然后/bin/hive后，成功进入shell
-```
+
+```bash
 > create table test (key string);
 ```
+
 如果遇到下面的报错
 ` FAILED: Error in metadata: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.metastore.HiveMetaStoreClient `
 
 ` FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask `
 建表错误
 开始以为hive没有访问mysql的权限,以root用户登录mysql然后赋予hive用户权限：
-```
+
+```sql
 grant all privileges on *.* to hive@localhost identified by 'hive';
 grant all privileges on *.* to hive@192.168.216.183 identified by 'hive';
 ```
+
 发现问题依旧
 
 其实是要在hive-site.xml中把
-```
+
+```xml
 <property>
   <name>javax.jdo.option.ConnectionURL</name>
   <value>jdbc:mysql://localhost:3306/hive</value>
 </property>
 ```
+
 改成
-```
+
+```xml
 <property>
   <name>javax.jdo.option.ConnectionURL</name>
   <value>jdbc:mysql://192.168.216.183:3306/hive</value>
@@ -410,9 +442,11 @@ grant all privileges on *.* to hive@192.168.216.183 identified by 'hive';
 ```
 
 问题依旧，打开hive的调试模式
-```
+
+```bash
 bin/hive -hiveconf hive.root.logger=DEBUG,console
 ```
+
 ` 14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect. `
 ` Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore `
 
@@ -421,7 +455,8 @@ bin/hive -hiveconf hive.root.logger=DEBUG,console
 最后查得原因是没有安装mysql驱动，只要把mysql-connector-java-5.1.22-bin.jar放到lib下就可以了
 
 然后
-```
+
+```bash
 hive> create table test (key string);
 OK
 Time taken: 42.259 seconds
@@ -431,5 +466,4 @@ OK
 test
 Time taken: 0.279 seconds
 ```
-
 

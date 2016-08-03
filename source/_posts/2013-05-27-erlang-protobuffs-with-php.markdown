@@ -28,6 +28,7 @@ message test {
 
 
 进入ebin目录准备生成
+
 ```bash
 cd ebin  
 ```
@@ -46,6 +47,7 @@ Writing src file to "test_pb.erl"
 
 ok
 ```
+
 这样生成就完毕了，一共生成2个文件test_pb.hrl和test_pb.erl。
 
 然后写一个server端测试，照搬erlang程序设计中的最入门的单线程例子改了改，一处理完就断的那种,在代码里引入该文件。
@@ -72,7 +74,6 @@ start_nano_server() ->
    gen_tcp:close(Listen),
 
    loop(Socket).
-
 
 
 loop(Socket) ->
@@ -186,7 +187,6 @@ function pack_data ($data) {
    return $head.$body;
 
 }
-
 
 
 function to_hex_str ($num)

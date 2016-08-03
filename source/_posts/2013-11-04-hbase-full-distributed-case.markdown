@@ -21,6 +21,7 @@ cd hbase/conf
 
 编辑hbase-env.sh
 指定java的路径,默认HBASE_MANAGES_ZK=true，这个代表采用hbase来托管zookeeper，这样重启hbase会连带重启zookeeper
+
 ```bash
 export HBASE_OPTS="-ea -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode"
 export JAVA_HOME=/usr/java/jdk1.6.0_29
@@ -32,6 +33,7 @@ export HBASE_MANAGES_ZK=true
 --------------
 
 (补充：2014-2-19 发现这么写还不能加载，放到~/.bashrc中才对，见下)
+
 ```bash
 export HADOOP_HOME=/u01/app/hadoop
 ```
@@ -39,6 +41,7 @@ export HADOOP_HOME=/u01/app/hadoop
 --------------
 
 编辑hbase-site.xml
+
 ```xml
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -88,6 +91,7 @@ export HADOOP_HOME=/u01/app/hadoop
  2.hbase.zookeeper.quorum 的个数必须是奇数，否则也可以启动hbase，只不过用thrift接口时无法使用，会类似这样的错`INFO org.apache.hadoop.hbase.client.HConnectionManager$HConnectionImplementation:` <br> `ZooKeeper available but no active master location found` 
 
 修改regionservers文件（同hadoop的slaves文件）
+
 ```bash
 mdn2datanode1.net
 mdn2datanode2.net
@@ -114,9 +118,6 @@ export HBASE_MANAGES_ZK=true
 export HBASE_MANAGES_ZK=false
 ```
 
-```bash
-```
-
 编辑~/.profile,加入关于zk环境变量的设置
 
 ```bash
@@ -124,6 +125,7 @@ export ZOOKEEPER_HOME="/u01/app/zookeeper/"
 PATH=$ZOOKEEPER_HOME/bin:$PATH
 export PATH
 ```
+
 ```bash
 cd /u01/app
 wget http://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/zookeeper-3.4.4/zookeeper-3.4.4.tar.gz
@@ -138,5 +140,4 @@ cd ../bin
 最后重启整个hadoop/hbase搞定，jps看下跑的进程。收工。
 
 ![Alt text](/images/evoup/hbase_vmware.png)
-
 

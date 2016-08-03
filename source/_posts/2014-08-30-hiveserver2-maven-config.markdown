@@ -11,18 +11,21 @@ hadoop2.0下开发软件我目前主要采用maven做项目构建管理，但要
 
 ####添加仓库
 首先在pom.xml文件中添加repository
-```
+
+{% codeblock lang:xml pom.xml %}
 <repositories>
     <repository>
         <id>cloudera</id>
         <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
     </repository>
 </repositories>
-```
+{% endcodeblock %}
+
 ####加入依赖
 然后改用cdh的依赖，提供的artifactId和version就可以了
 主要是2个包的事情
-```
+
+{% codeblock lang:xml pom.xml %}
 <dependency>
     <groupId>org.apache.hive</groupId>
     <artifactId>hive-jdbc</artifactId>
@@ -33,10 +36,11 @@ hadoop2.0下开发软件我目前主要采用maven做项目构建管理，但要
     <artifactId>hadoop-common</artifactId>
     <version>2.0.0-cdh4.7.0</version>
 </dependency>
-```
+{% endcodeblock %}
 
 
 依赖的部分，也可以用以下的方式载入
+{% codeblock lang:xml pom.xml %}
 <dependency>  
             <groupId>org.apache.hive</groupId>  
             <artifactId>htmlparser</artifactId>  
@@ -44,19 +48,24 @@ hadoop2.0下开发软件我目前主要采用maven做项目构建管理，但要
             <scope>system</scope>  
             <systemPath>${project.basedir}/lib/xxx.jar</systemPath>  
 </dependency>  
+{% endcodeblock %}
 
 然后是hiveserver2使用和hiveserver1要注意的地方
 
-hiveserver2<p>
+hiveserver2
+
 ```java
 URLHIVE="jdbc:hive2://"+hive_host+":"+hive_port+"/smartmad;auth=noSasl";
 Class.forName("org.apache.hive.jdbc.HiveDriver");
 ```
-hiveserver1<p>
+
+hiveserver1
+
 ```java
 URLHIVE="jdbc:hive://"+hive_host+":"+hive_port+"/smartmad;auth=noSasl";
 Class.forName("org.apache.hadoop.hive.jdbc.HiveDriver");
 ```
+
 这里我们从hive改进hiveserver2的包命名的角度不难看出，该版本已成为apache顶级项目。
 
 

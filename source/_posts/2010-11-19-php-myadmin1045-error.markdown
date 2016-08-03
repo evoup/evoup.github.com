@@ -10,6 +10,7 @@ categories: php
 
 记得在./libraries/config.default.php
 已经制定好了需要的变量。 
+
 ```php
  57 $cfg['Servers'][$i]['host']          = '172.16.27.55'; // MySQL hostname or IP address
  58 $cfg['Servers'][$i]['port']          = '3306';          // MySQL port - leave blank for default port
@@ -26,8 +27,8 @@ categories: php
 ```
 
 
-
 同时
+
 ```php
  40  * The 'cookie' auth_type uses blowfish algorithm to encrypt the password. If
  41  * at least one server configuration uses 'cookie' auth_type, enter here a
@@ -36,6 +37,7 @@ categories: php
  44  */
  45 $cfg['blowfish_secret'] = 's#$dcrnm^9fk2';
 ```
+
 这部分也指定完毕。
 
 但是还是会报告1045，最后清除浏览器缓存，终于搞定。
