@@ -7,17 +7,14 @@ categories: freebsd
 ---
 
 今天有台虚拟机进行时间的同步报错
+
 ```sh
 ntpdate ntp.sjtu.edu.cn
 
 19 Nov 15:38:54 ntpdate[93376]: step-systime: Operation not permitted
 ```
 
-搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。
-
-
-
-
+原来许多VPS分给用户的虚拟机也存在类似症状，是宿主机不允许修改时间，最后通知系统管理员修改搞定。
 
 
 

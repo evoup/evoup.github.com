@@ -26,8 +26,8 @@ ntpdate_enable="YES"
 ```
 
 ###更好的方法
-通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？
-首先需要点击vmware的菜单VM -> Install VMware Tools
+通过安装vmware-tool来一劳永逸的解决。那么我们如何在freebsd中安装vmware-tool呢？  
+首先需要点击vmware的菜单VM -> Install VMware Tools  
 vmware-tool是一个perl脚本，先要安装好perl。然后要准备好compat6x-amd64安装包才能继续。
 
 ```bash
