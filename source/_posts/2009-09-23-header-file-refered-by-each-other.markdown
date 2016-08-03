@@ -24,7 +24,6 @@ java倒是没有什么问题，所以java的话会这样子cls_player.java和cls
 这样子大概会这么写
 
 {% codeblock lang:java cls_player.java %}
-#
 package com.evoup.player_enemy
 import ...
 class cls_player{
@@ -47,7 +46,7 @@ http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/1199
  
 我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
 
-```c
+{% codeblock lang:cpp %}
 #include "B.h"
  
 class CA: public CDialog
@@ -56,11 +55,11 @@ class CA: public CDialog
     public:
     CB* m_b; //注意一定要是指针类型
 }
-```
+{% endcodeblock %}
  
 在另一个类中可以这样声明:
 
-```c
+{% codeblock lang:cpp %}
 #include "A.h"
 class CB: public CDialog
 {
@@ -68,7 +67,7 @@ class CB: public CDialog
     public:
     CA * m_a; //注意一定要是指针类型
 }
-```
+{% endcodeblock %}
  
 最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！
  
@@ -76,7 +75,7 @@ class CB: public CDialog
  
 我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
 
-```c
+{% codeblock lang:cpp %}
 #include "B.h"
 class CA: public CDialog
 {
@@ -84,23 +83,23 @@ class CA: public CDialog
     public:
     CB* m_b; //注意一定要是指针类型
 }
-```
+{% endcodeblock %}
  
 在另一个类中可以这样声明:
 
-```c
+{% codeblock lang:cpp %}
 class CA;
 class CB: public CDialog
 {
     public:
     CA * m_a; //注意一定要是指针类型
 }
-```
+{% endcodeblock %}
  
 在cb.cpp文件中包含头文件
 
-```c
+{% codeblock lang:cpp %}
 #include "ca.h"
-```
+{% endcodeblock %}
  
 最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了
