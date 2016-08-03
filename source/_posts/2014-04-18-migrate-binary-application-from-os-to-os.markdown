@@ -14,17 +14,21 @@ categories: freebsd
 ###程序定位和复制
 ####主程序的复制
 这个程序就是pcc，首先找一下pcc的路径。
+
 ```sh
 $ whereis pcc
 pcc: /usr/bin/pcc /usr/ports/lang/pcc
 ```
 
 可见pcc所在/usr/bin/目录下，先把这个复制过去
+
 ```sh
 $ sudo scp user@hostA:/usr/bin/pcc /usr/bin/
 ```
+
 ####程序依赖库的复制
 如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：
+
 ```sh
 $ ldd /usr/bin/pcc
 /usr/bin/pcc:
@@ -37,6 +41,7 @@ $ ldd /usr/bin/pcc
         libm.so.4 => /lib/libm.so.4 (0x2835c000)
         libc.so.6 => /lib/libc.so.6 (0x28372000)
 ```
+
 好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。
 
 ```sh
@@ -55,6 +60,7 @@ $ sudo gmake install
 ```
 
 安装完成返回来继续复制，要注意已经存在的不能去盖了
+
 ```sh
 $ ldd /usr/bin/pcc
 /usr/bin/pcc:
@@ -69,27 +75,34 @@ $ ldd /usr/bin/pcc
 ```
 
 好的，只要not found的我们从HostA复制过来
+
 ```sh
 $ sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
 $ sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/
 $ sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/
 $ sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/
 ```
+
 然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
 试试看，其实已经可以了：
 ![Alt text](/images/evoup/pcc_result.png)
 
 但是要真正能使用这个软件，还需要复制/opt过来
+
 ```sh
 scp -dr user@hostA:/opt /
 sudo chown root -R /opt
 ```
+
 然后写一个php测试脚本
+
 ```php
 <?php
 phpinfo();
 ```
+
 编译
+
 ```sh
 $ pcc --static index.php -o index
 >./index
@@ -219,6 +232,7 @@ rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh
 {% endcodeblock %}
 
 看来还有一些项目要复制或者软连接到/usr/lib/去
+
 ```sh
 sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
 sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/
@@ -258,7 +272,9 @@ sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/
 sudo scp user@hostA:/etc/pcc.conf /etc/
 sudo scp user@hostA:/etc/pcc_conf.conf /etc/
 ```
+
 再次运行
+
 ```sh
 $ pcc --static index.php -o index
 
@@ -266,12 +282,16 @@ $ pcc --static index.php -o index
 Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn't load because: Shared object "libpcre.so.0" not found, required by "libphp-pcre_u.so", dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so
 You may wish to remove this extension from /etc/pcc.conf if it exists. -- error-handler
 ```
+
 又出现一个
+
 ```sh
 sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
 sudo scp user@hostA:/usr/local/lib/libgcc_s.so.1 /usr/local/lib/
 ```
+
 再编译
+
 ```
 $ pcc --static index.php -o index
 Error: problem running command 'gcc', exit status 1
@@ -283,10 +303,13 @@ ERR:
 Error: problem running command 'gcc', exit status 1
 >>>   cleaning up...
 ```
+
 这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接
+
 ```sh
 sudo cp /usr/local/lib/libcurl.a /lib/
 ```
+
 这样就肯定能找到了,再次编译运行终于出现php的信息了。
 ![Alt text](/images/evoup/pcc_result2.png)
 
