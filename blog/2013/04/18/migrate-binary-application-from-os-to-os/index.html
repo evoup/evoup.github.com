@@ -144,20 +144,24 @@ MathJax.Hub.Config({
 <!-- more -->
 <p>###程序定位和复制
 ####主程序的复制
-这个程序就是pcc，首先找一下pcc的路径。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>whereis pcc
-</span><span class="line">pcc: /usr/bin/pcc /usr/ports/lang/pcc
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+这个程序就是pcc，首先找一下pcc的路径。</p>
 
-<p>可见pcc所在/usr/bin/目录下，先把这个复制过去
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/bin/pcc /usr/bin/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-####程序依赖库的复制
-如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>whereis pcc
+</span><span class="line">pcc: /usr/bin/pcc /usr/ports/lang/pcc
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>可见pcc所在/usr/bin/目录下，先把这个复制过去</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/bin/pcc /usr/bin/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="section-1">程序依赖库的复制</h4>
+<p>如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -167,7 +171,7 @@ MathJax.Hub.Config({
 <span class="line-number">8</span>
 <span class="line-number">9</span>
 <span class="line-number">10</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>ldd /usr/bin/pcc
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>ldd /usr/bin/pcc
 </span><span class="line">/usr/bin/pcc:
 </span><span class="line">        libphp-runtime_u.so <span class="o">=</span>&gt; /usr/lib/libphp-runtime_u.so <span class="o">(</span>0x28083000<span class="o">)</span>
 </span><span class="line">        libprofiler_u.so <span class="o">=</span>&gt; /usr/lib/libprofiler_u.so <span class="o">(</span>0x280ee000<span class="o">)</span>
@@ -177,8 +181,9 @@ MathJax.Hub.Config({
 </span><span class="line">        libbigloogc-2.6f.so <span class="o">=</span>&gt; /usr/lib/libbigloogc-2.6f.so <span class="o">(</span>0x2833a000<span class="o">)</span>
 </span><span class="line">        libm.so.4 <span class="o">=</span>&gt; /lib/libm.so.4 <span class="o">(</span>0x2835c000<span class="o">)</span>
 </span><span class="line">        libc.so.6 <span class="o">=</span>&gt; /lib/libc.so.6 <span class="o">(</span>0x28372000<span class="o">)</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -206,8 +211,9 @@ MathJax.Hub.Config({
 </span><span class="line"><span class="nv">$ </span>sudo gmake install
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>安装完成返回来继续复制，要注意已经存在的不能去盖了
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>安装完成返回来继续复制，要注意已经存在的不能去盖了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -217,7 +223,7 @@ MathJax.Hub.Config({
 <span class="line-number">8</span>
 <span class="line-number">9</span>
 <span class="line-number">10</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>ldd /usr/bin/pcc
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>ldd /usr/bin/pcc
 </span><span class="line">/usr/bin/pcc:
 </span><span class="line">        libphp-runtime_u.so <span class="o">=</span>&gt; not found <span class="o">(</span>0x0<span class="o">)</span>
 </span><span class="line">        libprofiler_u.so <span class="o">=</span>&gt; not found <span class="o">(</span>0x0<span class="o">)</span>
@@ -227,42 +233,49 @@ MathJax.Hub.Config({
 </span><span class="line">        libbigloogc-2.6f.so <span class="o">=</span>&gt; /usr/local/lib/libbigloogc-2.6f.so <span class="o">(</span>0x2816d000<span class="o">)</span>
 </span><span class="line">        libm.so.4 <span class="o">=</span>&gt; /lib/libm.so.4 <span class="o">(</span>0x2818f000<span class="o">)</span>
 </span><span class="line">        libc.so.6 <span class="o">=</span>&gt; /lib/libc.so.6 <span class="o">(</span>0x281a5000<span class="o">)</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>好的，只要not found的我们从HostA复制过来
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>好的，只要not found的我们从HostA复制过来</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/
 </span><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/
 </span><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/
 </span><span class="line"><span class="nv">$ </span>sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。
 试试看，其实已经可以了：
 <img src="/images/evoup/pcc_result.png" alt="Alt text" /></p>
 
-<p>但是要真正能使用这个软件，还需要复制/opt过来
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>但是要真正能使用这个软件，还需要复制/opt过来</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">scp -dr user@hostA:/opt /
+</pre></td><td class="code"><pre><code class="sh"><span class="line">scp -dr user@hostA:/opt /
 </span><span class="line">sudo chown root -R /opt
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-然后写一个php测试脚本
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后写一个php测试脚本</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="php"><span class="line"><span class="o">&lt;?</span><span class="nx">php</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span><span class="nx">php</span>
 </span><span class="line"><span class="nb">phpinfo</span><span class="p">();</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-编译
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>编译</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
 </span><span class="line">&gt;./index
 </span><span class="line">Runtime error in file index.php on line 2: lookup-function - undefined <span class="k">function</span>: phpinfo
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>看来还有些库没有包含,进入/opt/roadsend/pcc/libs/果然发现很多库，要放在什么地方呢？一般是/usr/lib/
 再看一下/opt/roadsend/pcc/bin/roadsend-pcc-uninstall.sh</p>
@@ -500,8 +513,9 @@ MathJax.Hub.Config({
 </span><span class="line">    fi
 </span><span class="line">rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>看来还有一些项目要复制或者软连接到/usr/lib/去
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>看来还有一些项目要复制或者软连接到/usr/lib/去</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -531,7 +545,7 @@ MathJax.Hub.Config({
 <span class="line-number">28</span>
 <span class="line-number">29</span>
 <span class="line-number">30</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
+</pre></td><td class="code"><pre><code class="sh"><span class="line">sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libcgi_u.so /usr/lib/
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libfastcgi_u.so /usr/lib/
@@ -561,7 +575,7 @@ MathJax.Hub.Config({
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libprofiler_u.a /usr/lib/
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.a /usr/lib/
 </span><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>除此之外，还需要复制配置文件</p>
 
@@ -570,26 +584,32 @@ MathJax.Hub.Config({
 </pre></td><td class="code"><pre><code class="sh"><span class="line">sudo scp user@hostA:/etc/pcc.conf /etc/
 </span><span class="line">sudo scp user@hostA:/etc/pcc_conf.conf /etc/
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>再次运行
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+
+<p>再次运行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
 </span><span class="line">
 </span><span class="line">*** ERROR:bigloo:error-handler:
 </span><span class="line">Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn<span class="err">&#39;</span>t load because: Shared object <span class="s2">&quot;libpcre.so.0&quot;</span> not found, required by <span class="s2">&quot;libphp-pcre_u.so&quot;</span>, dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so
 </span><span class="line">You may wish to remove this extension from /etc/pcc.conf <span class="k">if </span>it exists. -- error-handler
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-又出现一个
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>又出现一个</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
+</pre></td><td class="code"><pre><code class="sh"><span class="line">sudo scp user@hostA:/usr/local/lib/libpcre.so.0 /usr/local/lib/
 </span><span class="line">sudo scp user@hostA:/usr/local/lib/libgcc_s.so.1 /usr/local/lib/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-再编译
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>再编译</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -598,7 +618,7 @@ MathJax.Hub.Config({
 <span class="line-number">7</span>
 <span class="line-number">8</span>
 <span class="line-number">9</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>pcc --static index.php -o index
 </span><span class="line">Error: problem running <span class="nb">command</span> <span class="s1">&#39;gcc&#39;</span>, <span class="nb">exit </span>status 1
 </span><span class="line">Rerunning with debug level 2 may provide more information.
 </span><span class="line"><span class="nv">$ </span>pcc --static index.php -o index -d 2
@@ -607,12 +627,15 @@ MathJax.Hub.Config({
 </span><span class="line">ERR:
 </span><span class="line">Error: problem running <span class="nb">command</span> <span class="s1">&#39;gcc&#39;</span>, <span class="nb">exit </span>status 1
 </span><span class="line">&gt;&gt;&gt;   cleaning up...
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">sudo cp /usr/local/lib/libcurl.a /lib/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-这样就肯定能找到了,再次编译运行终于出现php的信息了。
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">sudo cp /usr/local/lib/libcurl.a /lib/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这样就肯定能找到了,再次编译运行终于出现php的信息了。
 <img src="/images/evoup/pcc_result2.png" alt="Alt text" /></p>
 
 <p>这里提供整个系统下载，帐号root密码空，供自行研究：）
