@@ -17,9 +17,11 @@ http://www.gamefromscratch.com/post/2012/06/08/Cocos2D-HTML-Tutorial-3All-about-
 <!-- more -->
 
 其间有这么一段代码
+
 ```js
 s.src = c.engineDir + 'platform/jsloader.js';
 ```
+
 可以看到在cocos2d目录下没有这个文件，OMG! 淡定缓一缓神，让我们耐心点，这里教你一步一步来掌了解2.2.2版本的api来给原来的教程动手术,我们首先来讲解HelloWorld：
 
 首先看2.2.2的helloworld的代码分布情况：
@@ -182,11 +184,13 @@ screen-orientation这个meta参数代表移动端的屏幕朝向，有2个portra
 这整个就是一个匿名函数,然后调用的写法。
 
 首先创建一个局部变量d，赋值为document
+
 ```js
 var d = document;
 ```
 
 然后创建一个c对象，提供全部配置信息
+
 ```js
 var c = {
     COCOS2D_DEBUG:2, //0 to turn debug off, 1 for basic debug, and 2 for full debug
@@ -219,6 +223,7 @@ appFiles为一个列表，目前存2个文件的地址，src/resource.js和src/m
 
 
 下面这段为html5探测代码，如果探测失败，会出出现一个google的chrome浏览器的logo
+
 ```js
 if(!d.createElement('canvas').getContext){
     var s = d.createElement('div');
@@ -236,6 +241,7 @@ if(!d.createElement('canvas').getContext){
 ```
 
 再看下一段
+
 ```js
 window.addEventListener('DOMContentLoaded', function () {
     this.removeEventListener('DOMContentLoaded', arguments.callee, false);
@@ -325,28 +331,34 @@ if(cc.RenderDoesnotSupport()){
 ```
 
 初始化director
+
 ```javascript
 // initialize director
 var director = cc.Director.getInstance();
 ```
 
 重置浏览器大小
+
 ```javascript
 cc.EGLView.getInstance().resizeWithBrowserSize(true);
 cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
 ```
 打开显卡FPS
+
 ```javascript
 // turn on display FPS
 director.setDisplayStats(this.config['showFPS']);
 ```
+
 默认设置fps为1秒60帧
+
 ```javascript
 // set FPS. the default value is 1.0/60 if you don't call this
 director.setAnimationInterval(1.0 / this.config['frameRate']);
 ```
 
 导演类的replaceScene方法来替换场景为startScene
+
 ```javascript
 //load resources
 cc.LoaderScene.preload(g_resources, function () {
@@ -355,12 +367,15 @@ cc.LoaderScene.preload(g_resources, function () {
 ```
 
 最后实例化app
+
 ```javascript
 var myApp = new cocos2dApp(HelloWorldScene);
 ```
+
 -----------------
 
 在正式步入工程文件之前，别急，创建一个src文件夹，然后在该文件夹下创建一个resource.js
+
 ```javascript
 var s_HelloWorld = "res/HelloWorld.png";
 var s_CloseNormal = "res/CloseNormal.png";
@@ -383,6 +398,7 @@ var g_resources = [
     //effect
 ];
 ```
+
 然后在和src相同父目录下创建一个叫做res文件夹，把如下3个文件放入其中：
 
 HelloWorld.png
@@ -402,6 +418,7 @@ CloseSelected.png
 -----------------
 
 终于到工程主文件了，在src下创建一个叫做myApp.js的文件
+
 ```javascript
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
@@ -498,6 +515,7 @@ var HelloWorldScene = cc.Scene.extend({
 ```
 
 ####分析
+
 ```javascript
 isMouseDown:false,
 helloImg:null,
@@ -505,9 +523,11 @@ helloLabel:null,
 circle:null,
 sprite:null,
 ```
+
 这是对接下来用到的成员变量的定义
 
 再看接下来的代码
+
 ```javascript
     init:function () {
         //首先初始化超类
@@ -564,11 +584,13 @@ sprite:null,
         return true;
     },
 ```
+
 需要注意的是
 1) cc.Sequence代表依次运行动作，而cc.Spawn代表同时运行动作
 2) CCMoveTo是“移动到这里”；而CCMoveBy则是“相对于之前点再移动”，比如说说这里需要两个坐标pos1（x1，y1），pos2（x2，y2），用CCMoveTo的话，就是将对象由pos1移动到pos2，而CCMOveBy则是对象的终坐标是在pos1的基础上再加上（矢量相加）pos2，终坐标pos3=pos1+pos2。
 
 接下来是一些触碰事件的回调函数
+
 ```javascript
     //点击关闭按钮的回调函数，退出实例
     menuCloseCallback:function (sender) {
@@ -611,8 +633,5 @@ var HelloWorldScene = cc.Scene.extend({
 
 
 进入了之后就把这个layer再加载到场景上，初步分析终了，等完成一个项目之后再来接着写点东西。
-
-
-
 
 
