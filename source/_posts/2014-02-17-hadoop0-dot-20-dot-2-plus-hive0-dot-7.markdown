@@ -186,7 +186,7 @@ FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTa
 
 原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。
 
-``sql
+```sql
 > show tables;
 OK
 Time taken: 0.082 seconds
