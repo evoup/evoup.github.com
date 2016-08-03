@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T14:48:06+08:00</updated>
+  <updated>2016-08-03T14:51:12+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -117,33 +117,44 @@ hello world
     <link href="http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found/"/>
     <updated>2013-11-07T15:08:00+08:00</updated>
     <id>http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found</id>
-    <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告
-```erlang
-[evoup@host63i386 erlang]&gt;sudo rel/madmonitor2/bin/madmonitor2 start
-current node: madmonitor2@192.168.216.165
-release vm.args file empty,recopy
-escript: Failed to open file: /usr/home/evoup/project/madmonitor2/erlang/rel/madmonitor2/erts-</p>
+    <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
 
-<p>5.9.3.1/bin/nodetool
-```
-<!-- more --></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>evoup@host63i386 erlang<span class="o">]</span>&amp;gt;sudo rel/madmonitor2/bin/madmonitor2 start
+</span><span class='line'>current node: madmonitor2@192.168.216.165
+</span><span class='line'>release vm.args file empty,recopy
+</span><span class='line'>escript: Failed to open file: /usr/home/evoup/project/madmonitor2/erlang/rel/madmonitor2/erts-&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;5.9.3.1/bin/nodetool
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<!-- more -->
 
 <p>原来是少一个nodetool文件，进到目录一看发现有2个erts
 一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
-删除之前的剩余文件
-<code>erlang
-sudo rm -rf /usr/local/lib/erlang/erts-5.9.3.1/
-sudo rm -rf /usr/local/lib/erlang/lib/erts-5.9.3.1/
-</code></p>
+删除之前的剩余文件</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.9.3.1/
+</span><span class='line'>sudo rm -rf /usr/local/lib/erlang/lib/erts-5.9.3.1/
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
-都给删除了
-<code>erlang
-sudo rm -rf /usr/local/lib/erlang/erts-5.5.1/
-sudo rm -rf /usr/local/lib/erlang/erts-5.6.5/
-</code></p>
+都给删除了</p>
 
-<p>再次编译，问题解决,收工:)</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.5.1/
+</span><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.6.5/
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>再次编译，问题解决。</p>
 ]]></content>
   </entry>
   
