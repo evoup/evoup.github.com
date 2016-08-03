@@ -4,7 +4,7 @@
   <title><![CDATA[Category: zookeeper | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/zookeeper/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:25:40+08:00</updated>
+  <updated>2016-08-03T15:39:48+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -803,49 +803,29 @@ libzookeeper version =&gt; 3.4.3
 <h3 id="section-2">最终的获取</h3>
 <p>找一台非托管zk的hbase，这里假设是127.0.0.1，端口为2181</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">zookeeper_instance</span> <span class="k">extends</span> <span class="nx">Zookeeper</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">function</span> <span class="nf">connect_cb</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="nv">$event</span><span class="p">,</span> <span class="nv">$string</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span> <span class="o">==</span> <span class="nx">Zookeeper</span><span class="o">::</span><span class="na">CONNECTED_STATE</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nv">$acl</span><span class="o">=</span><span class="k">array</span><span class="p">(</span>
-</span><span class='line'>                <span class="err">“</span><span class="nx">perms</span><span class="err">”</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="mh">0x1f</span><span class="p">,</span>
-</span><span class='line'>                <span class="err">“</span><span class="nx">scheme</span><span class="err">”</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="err">”</span><span class="nx">world</span><span class="err">”</span><span class="p">,</span>
-</span><span class='line'>                <span class="err">“</span><span class="nx">id</span><span class="err">”</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="err">”</span><span class="nx">anyone</span><span class="err">”</span>
-</span><span class='line'>            <span class="p">);</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$zk</span><span class="o">=</span><span class="k">new</span> <span class="nx">zookeeper_instance</span><span class="p">();</span>
-</span><span class='line'><span class="k">echo</span> <span class="err">“</span><span class="nx">instance</span> <span class="nx">ok\n</span><span class="err">”</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$zk</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">connect</span><span class="p">(</span><span class="err">“</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="o">:</span><span class="mi">2181</span><span class="err">”</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$zk</span><span class="p">,</span> <span class="err">‘</span><span class="nx">connect_cb</span><span class="err">’</span><span class="p">),</span><span class="mi">200000</span><span class="p">);</span> <span class="c1">//连接超时200秒,比较夸张，测试用：）</span>
-</span><span class='line'><span class="k">echo</span> <span class="err">“</span><span class="nx">connect</span> <span class="nx">ok\n</span><span class="err">”</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$zkm</span><span class="o">=</span><span class="nv">$zk</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">get</span><span class="p">(</span><span class="err">“</span><span class="o">/</span><span class="nx">hbase</span><span class="o">/</span><span class="nx">master</span><span class="err">”</span><span class="p">);</span>
-</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$zkm</span><span class="p">);</span>
-</span><span class='line'><span class="o">?&amp;</span><span class="nx">gt</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:php %}
+&lt;?php
+class zookeeper_instance extends Zookeeper {
+    function connect_cb($type, $event, $string) {
+        if ($event == Zookeeper::CONNECTED_STATE) {
+            $acl=array(
+                “perms”=&gt;0x1f,
+                “scheme”=&gt;”world”,
+                “id”=&gt;”anyone”
+            );
+        }
+    }
+}</p>
+
+<p>$zk=new zookeeper_instance();
+echo “instance ok\n”;</p>
+
+<p>$zk-&gt;connect(“127.0.0.1:2181”, array($zk, ‘connect_cb’),200000); //连接超时200秒,比较夸张，测试用：）
+echo “connect ok\n”;
+$zkm=$zk-&gt;get(“/hbase/master”);
+print_r($zkm);
+?&gt;
+{% endcodeblock %}</p>
 
 <p>查看结果,已经获取到了master</p>
 

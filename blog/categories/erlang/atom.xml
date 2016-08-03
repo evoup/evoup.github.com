@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T15:25:40+08:00</updated>
+  <updated>2016-08-03T15:39:48+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -119,19 +119,14 @@ hello world
     <id>http://evoupsight.com/blog/2013/11/07/erlang-rebar-notool-not-found</id>
     <content type="html"><![CDATA[<p>今天用rebar编译出目标文件准备直接部署到目标服务器上，结果报告</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>evoup@host63i386 erlang<span class="o">]</span>&amp;gt;sudo rel/madmonitor2/bin/madmonitor2 start
-</span><span class='line'>current node: madmonitor2@192.168.216.165
-</span><span class='line'>release vm.args file empty,recopy
-</span><span class='line'>escript: Failed to open file: /usr/home/evoup/project/madmonitor2/erlang/rel/madmonitor2/erts-&lt;/p&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;p&gt;5.9.3.1/bin/nodetool
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:bash %}
+[evoup@host63i386 erlang]&gt;sudo rel/madmonitor2/bin/madmonitor2 start
+current node: madmonitor2@192.168.216.165
+release vm.args file empty,recopy
+escript: Failed to open file: /usr/home/evoup/project/madmonitor2/erlang/rel/madmonitor2/erts-</p>
+
+<p>5.9.3.1/bin/nodetool
+{% endcodeblock %}</p>
 
 <!-- more -->
 
@@ -139,20 +134,18 @@ hello world
 一个是5.9.1，一个是5.9.3.1，分别代表R15B01和R15B03，想起之前系统装过2个版本的erlang，R15B03的没有删除干净就装了R15B01,看来是rebar自作主张读取了2个erlang运行时库。
 删除之前的剩余文件</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.9.3.1/
-</span><span class='line'>sudo rm -rf /usr/local/lib/erlang/lib/erts-5.9.3.1/
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:bash %}
+sudo rm -rf /usr/local/lib/erlang/erts-5.9.3.1/
+sudo rm -rf /usr/local/lib/erlang/lib/erts-5.9.3.1/
+{% endcodeblock %}</p>
 
 <p>仔细一看还有其他版本的erlang，rebar还没有这么傻:)
 都给删除了</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.5.1/
-</span><span class='line'>sudo rm -rf /usr/local/lib/erlang/erts-5.6.5/
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock lang:bash %}
+sudo rm -rf /usr/local/lib/erlang/erts-5.5.1/
+sudo rm -rf /usr/local/lib/erlang/erts-5.6.5/
+{% endcodeblock %}</p>
 
 <p>再次编译，问题解决。</p>
 ]]></content>
@@ -209,25 +202,19 @@ http://hi.baidu.com/ah__fu/item/86c65e8b88ecf453e73d1962</p>
 
 <p>怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% @hidden</span>
-</span><span class='line'><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="err">”</span><span class="o">-</span><span class="err">“</span><span class="p">]}]),</span>
-</span><span class='line'>    <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock  rrdtool.erl lang:erlang start:81 %}
+%% @hidden
+init([RRDTool]) -&gt;
+    Port = open_port({spawn_executable, RRDTool}, [{line, 1024}, {args, [”-“]}]),
+    {ok, Port}.
+{% endcodeblock %}</p>
 
 <p>再定位到上层看gen_server的start函数</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nf">start</span><span class="p">()</span> <span class="o">-</span><span class="err">&amp;</span><span class="n">gt</span><span class="p">;</span>
-</span><span class='line'>    <span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="err">“</span><span class="n">rrdtool</span><span class="err">”</span><span class="p">)],</span> <span class="p">[]).</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock  rrdtool.erl lang:erlang start:55 %}
+start() -&gt;
+    gen_server:start(?MODULE, [os:find_executable(“rrdtool”)], []).
+{% endcodeblock %}</p>
 
 <p>os:find_executable(“rrdtool”),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回</p>
 
