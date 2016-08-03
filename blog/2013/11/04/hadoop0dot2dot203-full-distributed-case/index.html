@@ -176,32 +176,34 @@ MathJax.Hub.Config({
 <p><!-- more --></p>
 
 <p>Ps:
-为节省资源关闭点不必要的服务
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+为节省资源关闭点不必要的服务</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="c">#!/bin/bash</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/bash</span>
 </span><span class="line"><span class="k">for </span>SERVICES in abrtd acpid auditd avahi-daemon cpuspeed haldaemon mdmonitor messagebus udev-post;
 </span><span class="line"><span class="k">do</span> /sbin/chkconfig <span class="k">${</span><span class="nv">SERVICES</span><span class="k">}</span> off;
 </span><span class="line"><span class="k">done</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="section">准备工作</h3>
 
 <p>先安装JDK1.6
-linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="c">#rpm -qa | grep jdk</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#rpm -qa | grep jdk</span>
 </span><span class="line">java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
 </span><span class="line"><span class="c">#rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8</span>
 </span><span class="line"><span class="c">#sudo chmod +x jdk-6u35-linux-x64-rpm.bin</span>
 </span><span class="line"><span class="c">#./jdk-6u35-linux-x64-rpm.bin</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>freebsd:直接在/usr/ports/java/diablo-jdk16，不要装jdk16，打好几个补丁还编译通不过，浪费时间！）</p>
 
@@ -225,37 +227,41 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 </span><span class="line">all:# chown -R hadoop /u01/app
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>环境变量
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>环境变量</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">all:<span class="nv">$ </span>vi ~/.profile
+</pre></td><td class="code"><pre><code class="bash"><span class="line">all:<span class="nv">$ </span>vi ~/.profile
 </span><span class="line">all:export <span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
 </span><span class="line">all:export <span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-（补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>（补充2014-2-19，也可以放到~/.bashrc中，~/.profile有时不能加载比较奇怪）</p>
 
-<p>切换到hadoop帐号，进行免密码的ssh登录设置
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>切换到hadoop帐号，进行免密码的ssh登录设置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">su hadoop
+</pre></td><td class="code"><pre><code class="bash"><span class="line">su hadoop
 </span><span class="line">ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
 </span><span class="line">cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
 </span><span class="line">chmod 600 ~/.ssh/authorized_keys
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-此外，各台机器之间的信任也要做好，推荐用ssh-copy-id来做，很简单用“ssh-copy-id hadoop@机器名”就可以了。<br />
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>此外，各台机器之间的信任也要做好，推荐用ssh-copy-id来做，很简单用“ssh-copy-id hadoop@机器名”就可以了。<br />
 到此准备工作完成</p>
 
-<p>安装Hadoop
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>安装Hadoop</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">all:<span class="nv">$ </span><span class="nb">cd</span> /u01/app
+</pre></td><td class="code"><pre><code class="bash"><span class="line">all:<span class="nv">$ </span><span class="nb">cd</span> /u01/app
 </span><span class="line">all:<span class="nv">$ </span>tar zxf hadoop-0.20.203.0rc1.tar.gz
 </span><span class="line">all:<span class="nv">$ </span>ln -s hadoop-0.20.203.0 hadoop
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="section-1">正式开始</h3>
 
@@ -280,24 +286,27 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 </span><span class="line">192.168.174.136 mdn2datanode2.net
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码(以下的/usr/java/jdk1.6.0_37/为linux下java的可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>假定已经安装好了JAVA，编辑hadoop帐号的profile文件加入如下代码(以下的/usr/java/jdk1.6.0_37/为linux下java的可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span>/u01/app/hadoop
 </span><span class="line"><span class="nb">export </span><span class="nv">HBASE_HOME</span><span class="o">=</span>/u01/app/hbase
 </span><span class="line"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/bin/:$PATH&quot;</span>
 </span><span class="line"><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_37/&quot;</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录(以下的/usr/java/jdk1.6.0_37/为linux下java可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_37/
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+<p>下载hadoop解压之后，在hadoop-env.sh指定java的目录(以下的/usr/java/jdk1.6.0_37/为linux下java可能的路径，freebsd下如默认安装diablo-jdk16的话，应该是/usr/local/diablo-jdk1.6.0/)</p>
 
-<p>再编辑core-site.xml
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/java/jdk1.6.0_37/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>再编辑core-site.xml</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -312,7 +321,7 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 <span class="line-number">13</span>
 <span class="line-number">14</span>
 <span class="line-number">15</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 </span><span class="line"><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
 </span><span class="line">
 </span><span class="line"><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
@@ -327,13 +336,15 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 </span><span class="line">        <span class="nt">&lt;value&gt;</span>/u01/app/hadoopTmp<span class="nt">&lt;/value&gt;</span>
 </span><span class="line">    <span class="nt">&lt;/property&gt;</span>
 </span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-说明：<br />
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>说明：<br />
 1)fs.default.name为hdfs默认的namenode的地址<br />
 2)hadoop.tmp.dir是hadoop文件系统依赖的基础配置，很多路径都依赖它。它默认的位置是在/tmp/{$user}下面，在local和hdfs都会建有相同的目录，但是在/tmp路径下的存储是不安全的，因为linux一次重启，文件就可能被删除。导致namenode启动不起来。</p>
 
-<p>再编辑hdfs-site.xml
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>再编辑hdfs-site.xml</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -348,7 +359,7 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 <span class="line-number">13</span>
 <span class="line-number">14</span>
 <span class="line-number">15</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot;?&gt;</span>
 </span><span class="line"><span class="cp">&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;</span>
 </span><span class="line">
 </span><span class="line"><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
@@ -363,50 +374,64 @@ linux:先把已经安装的openjdk卸载,安装sun jdk1.6 （j2se就够了）
 </span><span class="line">        <span class="nt">&lt;value&gt;</span>/u01/app/hdfsdata<span class="nt">&lt;/value&gt;</span>
 </span><span class="line">    <span class="nt">&lt;/property&gt;</span>
 </span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>注意：dfs.data.dir为hdfs实际存放数据的路径，这个配置只对本地有效，中间可以用,连接多个目录,启动hdfs时该文件夹会自行创建，如果手动创建，请保证权限为755</p>
 
-<p>master里
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">mdn2.net
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+<p>master里</p>
 
-<p>slaves里
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mdn2.net
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>slaves里</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">mdn2datanode1.net
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mdn2datanode1.net
 </span><span class="line">mdn2datanode2.net
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>注意点：
-修改hadoop-0.20.203.0/bin下的hadoop.
-vi  hadoop
-查找 –jvm . vi 下的命令模式： :/-jvm
+修改hadoop-0.20.203.0/bin下的hadoop.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">vi  hadoop
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>查找 –jvm . vi 下的命令模式： :/-jvm
 将-jvm server改成 –server .
 因为JDK1.6已经废除了一个参数-jvm,如果不修改的话，无法启动数据节点。</p>
 
-<p>到namenode上格式化hdfs
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">bin/hadoop namenode -format
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>到namenode上格式化hdfs</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bin/hadoop namenode -format
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>注意9024为hdfs通讯端口，完全分布式环境下，可以直接将防火墙关闭</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">sudo /etc/init.d/iptables stop
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo /etc/init.d/iptables stop
 </span><span class="line">sudo /sbin/chkconfig iptables off
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-启动：
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">bin/start-all.sh
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-或者只启动dfs和mapreduce
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>启动：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bin/start-all.sh
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>或者只启动dfs和mapreduce</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">bin/start-dfs.sh
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bin/start-dfs.sh
 </span><span class="line">bin/start-mapred.sh
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-最后发一个jps的进程图</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后发一个jps的进程图</p>
 
 <p><img src="/images/evoup/hadoop_vmware01.png" alt="Alt text" /></p>
 

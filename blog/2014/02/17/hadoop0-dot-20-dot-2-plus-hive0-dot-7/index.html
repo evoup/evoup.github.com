@@ -377,43 +377,64 @@ MathJax.Hub.Config({
 
 <p>原来如果mysql用rpm安装，还需要一个jar包mysql-connector-java-5.15-bin.jar，然后拷贝到hive的lib目录下可以。</p>
 
-<p><code>sql
-&gt; show tables;
-OK
-Time taken: 0.082 seconds
-&lt;div class='bogus-wrapper'&gt;&lt;notextile&gt;&lt;figure class='code'&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;div class="highlight"&gt;&lt;table&gt;&lt;tr&gt;&lt;td class="gutter"&gt;&lt;pre class="line-numbers"&gt;&lt;span class='line-number'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code'&gt;&lt;pre&gt;&lt;code class='sql'&gt;&lt;span class='line'&gt;&lt;span class="err"&gt;一个表也没有，创建表吧&lt;/span&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;sql
-&gt; create table test (key string);
-FAILED: Error in metadata: MetaException(message:Got exception: org.apache.hadoop.ipc.RemoteException org.apache.hadoop.hdfs.server.namenode.SafeModeException: Cannot create directory /user/hive/warehouse/test. Name node is in safe mode.
-&lt;div class='bogus-wrapper'&gt;&lt;notextile&gt;&lt;figure class='code'&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;div class="highlight"&gt;&lt;table&gt;&lt;tr&gt;&lt;td class="gutter"&gt;&lt;pre class="line-numbers"&gt;&lt;span class='line-number'&gt;1&lt;/span&gt;
-&lt;span class='line-number'&gt;2&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code'&gt;&lt;pre&gt;&lt;code class='sql'&gt;&lt;span class='line'&gt;&lt;span class="n"&gt;namenode&lt;/span&gt;&lt;span class="err"&gt;为什么是安全模式？&lt;/span&gt;
-&lt;/span&gt;&lt;span class='line'&gt;&lt;span class="n"&gt;hadoop&lt;/span&gt;&lt;span class="err"&gt;启动的时候是在安全模式，查看一下现在的模式状态&lt;/span&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;sh
-bin/hadoop dfsadmin –safemode get
-ON
-&lt;div class='bogus-wrapper'&gt;&lt;notextile&gt;&lt;figure class='code'&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;div class="highlight"&gt;&lt;table&gt;&lt;tr&gt;&lt;td class="gutter"&gt;&lt;pre class="line-numbers"&gt;&lt;span class='line-number'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code'&gt;&lt;pre&gt;&lt;code class='sql'&gt;&lt;span class='line'&gt;&lt;span class="err"&gt;那就关了&lt;/span&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;sh
-bin/hadoop dfsadmin -safemode leave
-&lt;div class='bogus-wrapper'&gt;&lt;notextile&gt;&lt;figure class='code'&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;div class="highlight"&gt;&lt;table&gt;&lt;tr&gt;&lt;td class="gutter"&gt;&lt;pre class="line-numbers"&gt;&lt;span class='line-number'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code'&gt;&lt;pre&gt;&lt;code class='sql'&gt;&lt;span class='line'&gt;&lt;span class="err"&gt;再次查看&lt;/span&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;sh
-bin/hadoop dfsadmin –safemode get
-OFF
-&lt;div class='bogus-wrapper'&gt;&lt;notextile&gt;&lt;figure class='code'&gt;&lt;figcaption&gt;&lt;span&gt;&lt;/span&gt;&lt;/figcaption&gt;&lt;div class="highlight"&gt;&lt;table&gt;&lt;tr&gt;&lt;td class="gutter"&gt;&lt;pre class="line-numbers"&gt;&lt;span class='line-number'&gt;1&lt;/span&gt;
-&lt;/pre&gt;&lt;/td&gt;&lt;td class='code'&gt;&lt;pre&gt;&lt;code class='sql'&gt;&lt;span class='line'&gt;&lt;span class="err"&gt;已经关了，再次建表测试&lt;/span&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;&lt;/figure&gt;&lt;/notextile&gt;&lt;/div&gt;
-bin/hive
-hive&gt; create table test (key string);
-OK
-Time taken: 0.521 seconds
-hive&gt; show tables;
-OK
-test
-Time taken: 0.14 seconds
-</code>`</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="o">&gt;</span> <span class="k">show</span> <span class="n">tables</span><span class="p">;</span>
+</span><span class="line"><span class="n">OK</span>
+</span><span class="line"><span class="n">Time</span> <span class="n">taken</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">082</span> <span class="n">seconds</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>一个表也没有，创建表吧</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="o">&gt;</span> <span class="k">create</span> <span class="k">table</span> <span class="n">test</span> <span class="p">(</span><span class="k">key</span> <span class="n">string</span><span class="p">);</span>
+</span><span class="line"><span class="n">FAILED</span><span class="p">:</span> <span class="n">Error</span> <span class="k">in</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">MetaException</span><span class="p">(</span><span class="n">message</span><span class="p">:</span><span class="n">Got</span> <span class="n">exception</span><span class="p">:</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">hadoop</span><span class="p">.</span><span class="n">ipc</span><span class="p">.</span><span class="n">RemoteException</span> <span class="n">org</span><span class="p">.</span><span class="n">apache</span><span class="p">.</span><span class="n">hadoop</span><span class="p">.</span><span class="n">hdfs</span><span class="p">.</span><span class="n">server</span><span class="p">.</span><span class="n">namenode</span><span class="p">.</span><span class="n">SafeModeException</span><span class="p">:</span> <span class="n">Cannot</span> <span class="k">create</span> <span class="n">directory</span> <span class="o">/</span><span class="k">user</span><span class="o">/</span><span class="n">hive</span><span class="o">/</span><span class="n">warehouse</span><span class="o">/</span><span class="n">test</span><span class="p">.</span> <span class="n">Name</span> <span class="n">node</span> <span class="k">is</span> <span class="k">in</span> <span class="n">safe</span> <span class="k">mode</span><span class="p">.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>namenode为什么是安全模式？
+hadoop启动的时候是在安全模式，查看一下现在的模式状态</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">bin/hadoop dfsadmin –safemode get
+</span><span class="line">ON
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>那就关了</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">bin/hadoop dfsadmin -safemode leave
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>再次查看</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">bin/hadoop dfsadmin –safemode get
+</span><span class="line">OFF
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>已经关了，再次建表测试</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">bin/hive
+</span><span class="line">hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class="line">OK
+</span><span class="line">Time taken: 0.521 seconds
+</span><span class="line">hive&gt; show tables;
+</span><span class="line">OK
+</span><span class="line"><span class="nb">test</span>
+</span><span class="line">Time taken: 0.14 seconds
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="section-3">参考文章</h3>
 
