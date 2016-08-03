@@ -16,11 +16,13 @@ categories: [android]
 安装JDK，我这里的windows7平台，先下载jdk7，然后安装，我的安装路径为C:\Program Files\Java\jdk1.7.0_25\。
 安装完成后设置环境变量
 开始->搜索程序和文件输入环境变量->编辑系统环境变量->添加以下环境变量：
+
 ```sh
 JAVA_HOME值为：C:\Program Files\Java\jdk1.7.0_25\
 CLASSPATH值为：.;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\dt.jar;%JAVA_HOME%\bin;
 PATH值为：追加%JAVA_HOME%\bin;
 ```
+
 ###二、安装Eclipse
 可以直接去www.eclipse.org下载，64位Windows平台下的下载地址：
 
@@ -50,9 +52,11 @@ http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/ecl
 ###SDK配置
 接着把tools的路径C:\android\adt-bundle-windows-x86_64-20131030\sdk\tools追加到环境变量PATH中去。
 要测试安装sdk是否成功，只需要运行cmd，然后输入
+
 ```sh
 android -h
 ```
+
 观察是否有输出正常信息，见下图：
 ![Alt text](/images/evoup/adt_installed.png)
 
@@ -82,5 +86,4 @@ android -h
 ![Alt text](/images/evoup/eclipse_adt_config.png)
 
 这样 Android 开发环境就搭建好了。
-
 
