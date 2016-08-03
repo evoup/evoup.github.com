@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T12:36:36+08:00</updated>
+  <updated>2016-08-03T12:46:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -106,16 +106,19 @@
 
 <p><code>makefile
 gcc -Wall test.c -o test
-</code>
-测试：
-<code>sh
+</code></p>
+
+<p>测试：</p>
+
+<p><code>sh
 ./test -a1 -b1 -c -d
 option a:'1'
 option b:'1'
 option c:'(null)'
 option d:'(null)'
-</code>
-稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
+</code></p>
+
+<p>稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
 其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。</p>
 
 <p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。
@@ -188,8 +191,9 @@ option d:'(null)'
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></unistd.h></stdlib.h></stdio.h></p>
 
-<p>测试一下
-<code>makefile
+<p>测试一下</p>
+
+<p><code>makefile
 gcc -Wall plug.c -o plug
 ./plug
 option a:'1'
@@ -197,8 +201,9 @@ option b:'1'
 option c:'(null)'
 option d:'(null)'
 in dll
-</code>
-ok，没有问题，直接转换成动态库
+</code></p>
+
+<p>ok，没有问题，直接转换成动态库
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>plug.c </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -270,11 +275,13 @@ ok，没有问题，直接转换成动态库
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></unistd.h></stdlib.h></stdio.h></p>
 
-<p>编译动态连接库
-<code>makefile
+<p>编译动态连接库</p>
+
+<p><code>makefile
 gcc -shared -o plug.so plug.c -fpic
-</code>
-这样就得到了plug.so</p>
+</code></p>
+
+<p>这样就得到了plug.so</p>
 
 <p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
 <div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>main.c </span></figcaption>
@@ -301,8 +308,9 @@ gcc -shared -o plug.so plug.c -fpic
 </span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-编译执行看结果
-```makefile
+编译执行看结果</dlfcn.h></stdio.h></p>
+
+<p><code>makefile
 gcc main.c -lc -fpic -o main
 ./main
 option a:'1'
@@ -310,7 +318,7 @@ option b:'1'
 option c:'(null)'
 option d:'(null)'
 in dll
-```</dlfcn.h></stdio.h></p>
+</code></p>
 
 <h3 id="section">其他注意事项：</h3>
 <p>其实除了optarg，还存在全局变量optind、opterror和optopt。三者的作用</p>
