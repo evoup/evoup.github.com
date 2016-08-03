@@ -161,23 +161,25 @@ MathJax.Hub.Config({
 </span><span class="line"><span class="c1">//然后打印日志的时候可以调用对应的log level</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>或者使用shell调用的方式，理论上效率会低一点:
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>或者使用shell调用的方式，理论上效率会低一点:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="go"><span class="line"><span class="c1">/// using logger</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">/// using logger</span>
 </span><span class="line"><span class="nx">cmd</span> <span class="o">:=</span> <span class="nx">exec</span><span class="p">.</span><span class="nx">Command</span><span class="p">(</span><span class="s">&quot;logger&quot;</span><span class="p">,</span> <span class="s">&quot;-p&quot;</span><span class="p">,</span> <span class="s">&quot;local0.err&quot;</span><span class="p">,</span> <span class="s">&quot;-t&quot;</span><span class="p">,</span> <span class="s">&quot;bash&quot;</span><span class="p">,</span> <span class="s">&quot;hello bash&quot;</span><span class="p">)</span>
 </span><span class="line"><span class="nx">err</span> <span class="p">=</span> <span class="nx">cmd</span><span class="p">.</span><span class="nx">Run</span><span class="p">()</span>
 </span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span><span class="line">    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="s">&quot;error running cmd!&quot;</span><span class="p">)</span>
 </span><span class="line"><span class="p">}</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>然后是一个可以log serverity和log facility都可以用上的例子:
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<p>然后是一个可以log serverity和log facility都可以用上的例子:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -190,7 +192,7 @@ MathJax.Hub.Config({
 <span class="line-number">11</span>
 <span class="line-number">12</span>
 <span class="line-number">13</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="go"><span class="line"><span class="kn">package</span> <span class="nx">main</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kn">package</span> <span class="nx">main</span>
 </span><span class="line"><span class="kn">import</span><span class="p">(</span>
 </span><span class="line">    <span class="s">&quot;log/syslog&quot;</span>
 </span><span class="line">	<span class="s">&quot;fmt&quot;</span>
@@ -203,7 +205,7 @@ MathJax.Hub.Config({
 </span><span class="line">    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;logger ok&quot;</span><span class="p">)</span>
 </span><span class="line">	<span class="nx">test</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nx">Write</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;test go syslog&quot;</span><span class="p">))</span>
 </span><span class="line"><span class="p">}</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="log4go">log4go的安装</h3>
 <p>言归正传讲安装，不要被log4go的README搞晕了</p>
@@ -242,18 +244,20 @@ MathJax.Hub.Config({
 </pre></td><td class="code"><pre><code class="sh"><span class="line">go get code.google.com/p/log4go
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>安装完成后默认路径位于
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">/usr/local/go/src/pkg/code.google.com/p/log4go
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+<p>安装完成后默认路径位于</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">/usr/local/go/src/pkg/code.google.com/p/log4go
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h3 id="log4go-1">使用log4go</h3>
 <p>打开文档看怎么用，有2种方法：
 ####第一种
-在安装好log4go的机器上运行
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">godoc -http<span class="o">=</span>:6060
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+在安装好log4go的机器上运行</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">godoc -http<span class="o">=</span>:6060
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后用浏览器查看
 http://host:6060/src/pkg/code.google.com/p/log4go/examples/</p>
@@ -381,7 +385,6 @@ http://host:6060/src/pkg/code.google.com/p/log4go/examples/</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>代码就不多说了，唯一值得注意的是log4go貌似达到指定的日志数上限了之后就不会再去掉旧的文件，更新新的文件了，也就是再也无法记录日志，这个是需要程序考虑的，完。</p>
-
 </div>
 
 
