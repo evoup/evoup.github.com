@@ -5,7 +5,7 @@ date: 2009-09-23 23:09
 comments: true
 categories:     cplusplus
 ---
-##写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。
+` 写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。 `
 
 我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：
 
