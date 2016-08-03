@@ -4,7 +4,7 @@
   <title><![CDATA[Category: latex | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/latex/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-07-25T00:34:38+08:00</updated>
+  <updated>2016-08-03T12:34:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -15,100 +15,128 @@
   
   <entry>
     <title type="html"><![CDATA[linux下latex中文配置小记]]></title>
-    <link href="http://evoupsight.com/blog/2016/07/12/latex-vim-pratice/"/>
-    <updated>2016-07-12T13:02:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2016/07/12/latex-vim-pratice</id>
+    <link href="http://evoupsight.com/blog/2016/07/11/latex-vim-pratice/"/>
+    <updated>2016-07-11T13:02:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2016/07/11/latex-vim-pratice</id>
     <content type="html"><![CDATA[<p>好久没有更新blog了，又得开始啦，不然传不习乎都忘记了。这里主要记录下vim下配置latex的一些经过，整个过程还是比较快可以上手的。
-这里没有去手动下载安装texlive2015，而是采取直接apt安装。</p>
-
+这里没有去手动下载安装texlive2015，而是采取直接apt安装。
 <!-- more -->
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install texlive texlive-math-extra texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-pictures texlive-science latex-beamer texlive-base texlive-bibtex-extra
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
+<p>当然也可以下载完整的latexlive-full，但比较占用磁盘空间。
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install texlive-full latex-beamer
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p><code>
-sudo apt-get install texlive texlive-math-extra texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-pictures texlive-science latex-beamer texlive-base texlive-bibtex-extra
-</code>
-当然也可以下载完整的latexlive-full，但比较占用磁盘空间。
-<code>
-sudo apt-get install texlive-full latex-beamer
-</code>
-由于磁盘空间充裕，为避免可能出现的各种麻烦，我选择了后者的完整安装。
+<p>由于磁盘空间充裕，为避免可能出现的各种麻烦，我选择了后者的完整安装。
 安装完后，继续安装CJK的相关软件包（仅仅为了获取中文支持）：
-<code>
-sudo apt-get install latex-cjk-chinese ttf-arphic-* hbf-*
-</code>
-然后做测试，将下面的文件保存为helloworld.tex
-<code>
-\documentclass{article}
-\usepackage{CJKutf8}
-\begin{document}  
-\begin{CJK}{UTF8}{gkai}
-这是一个楷体中文测试，处理简体字。
-\end{CJK}
-\begin{CJK}{UTF8}{gbsn}
-这是一个宋体中文测试，处理简体字。
-\end{CJK}
-\begin{CJK}{UTF8}{bkai}
-這是一個big5編碼的楷體中文測試，處理繁體文字。  
-\end{CJK}
-\begin{CJK}{UTF8}{bsmi}
-這是一個个big5編碼的明體中文測試，處理繁體文字。  
-\end{CJK}  
-\end{document}  
-</code>
-然后运行pdflatex helloworld.tex，正常的话应该就可以看到生成的能正确显示中文的pdf格式文件了。
-安装evince，这是用来查看pdf文件的。
-<code>
-sudo apt-get install evince
-</code>
-查看pdf
-<code>
-evince helloworld.pdf
-</code>
-<img src="/images/evoup/evince_pdf_latex.png" alt="Alt text" /></p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install latex-cjk-chinese ttf-arphic-* hbf-*
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>然后做测试，将下面的文件保存为helloworld.tex</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="se">\d</span>ocumentclass<span class="o">{</span>article<span class="o">}</span>
+</span><span class='line'><span class="se">\u</span>sepackage<span class="o">{</span>CJKutf8<span class="o">}</span>
+</span><span class='line'><span class="se">\b</span>egin<span class="o">{</span>document<span class="o">}</span>&lt;br /&gt;
+</span><span class='line'><span class="se">\b</span>egin<span class="o">{</span>CJK<span class="o">}{</span>UTF8<span class="o">}{</span>gkai<span class="o">}</span>
+</span><span class='line'>这是一个楷体中文测试，处理简体字。
+</span><span class='line'><span class="se">\e</span>nd<span class="o">{</span>CJK<span class="o">}</span>
+</span><span class='line'><span class="se">\b</span>egin<span class="o">{</span>CJK<span class="o">}{</span>UTF8<span class="o">}{</span>gbsn<span class="o">}</span>
+</span><span class='line'>这是一个宋体中文测试，处理简体字。
+</span><span class='line'><span class="se">\e</span>nd<span class="o">{</span>CJK<span class="o">}</span>
+</span><span class='line'><span class="se">\b</span>egin<span class="o">{</span>CJK<span class="o">}{</span>UTF8<span class="o">}{</span>bkai<span class="o">}</span>
+</span><span class='line'>這是一個big5編碼的楷體中文測試，處理繁體文字。&lt;br /&gt;
+</span><span class='line'><span class="se">\e</span>nd<span class="o">{</span>CJK<span class="o">}</span>
+</span><span class='line'><span class="se">\b</span>egin<span class="o">{</span>CJK<span class="o">}{</span>UTF8<span class="o">}{</span>bsmi<span class="o">}</span>
+</span><span class='line'>這是一個个big5編碼的明體中文測試，處理繁體文字。&lt;br /&gt;
+</span><span class='line'><span class="se">\e</span>nd<span class="o">{</span>CJK<span class="o">}</span>&lt;br /&gt;
+</span><span class='line'><span class="se">\e</span>nd<span class="o">{</span>document<span class="o">}</span>&lt;br /&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>然后运行pdflatex helloworld.tex，正常的话应该就可以看到生成的能正确显示中文的pdf格式文件了。
+安装evince，这是用来查看pdf文件的。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install evince
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>查看pdf
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>evince helloworld.pdf
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><img src="/images/evoup/evince_pdf_latex.png" alt="Alt text" /></p>
 
 <p>接下来就可以装字体了
-<code>
-sudo apt-get install fontforge
-</code>
-这样是不够的，还需要一堆windows的字体，宋体、仿宋、黑体等,这里提供下载：</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install fontforge
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">SimSun.ttc</a></p>
+<p>这样是不够的，还需要一堆windows的字体，宋体、仿宋、黑体等,这里提供下载：</p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2MXRZdDBZc3V4c1Eudo">simhei.ttf</a></p>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">SimSun.ttc</a></p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2anEwakdfdnBCQzg">simkai.ttf</a></p>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2MXRZdDBZc3V4c1Eudo">simhei.ttf</a></p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2eW9lczVrQ18zUUU">TimesNewRoman.ttf</a></p>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2anEwakdfdnBCQzg">simkai.ttf</a></p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2UGVneTVFWkJ5dkE">STXingkai.ttf</a></p>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2eW9lczVrQ18zUUU">TimesNewRoman.ttf</a></p>
 
-<p><a target=_BLANK href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">simfang.ttf</a>
-<code>
-sudo cp simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf /usr/share/fonts
-cd /usr/share/fonts
-sudo chmod 644 simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf
-sudo mkfontscale &amp;&amp; sudo mkfontdir
-sudo fc-cache -fsv
-</code>
-然后还是找不到某些字体，需要hack一下latexlive的配置文件
-<code>
-locate ctex-xecjk-winfonts.def | xargs sudo vim
-修改其中的[SIMKAI.TTF]为KaiTi_GB2312
-修改其中的[SIMFANG.TTF]为FangSong_GB2312
-</code>
-接下来就可以开始latex中文写作之旅了!</p>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2UGVneTVFWkJ5dkE">STXingkai.ttf</a></p>
 
-<h3>后记</h3>
+<p><a href="https://drive.google.com/open?id=0B_yrhfwhC4h2LUlYcDZkVWswQzQ">simfang.ttf</a></p>
 
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf /usr/share/fonts
+</span><span class='line'><span class="nb">cd</span> /usr/share/fonts
+</span><span class='line'>sudo chmod 644 simsun.ttc simhei.ttf simkai.ttf TimesNewRoman.ttf STXingkai.ttf simfang.ttf
+</span><span class='line'>sudo mkfontscale &amp;amp;&amp;amp; sudo mkfontdir
+</span><span class='line'>sudo <span class="nb">fc</span>-cache -fsv
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>然后还是找不到某些字体，需要hack一下latexlive的配置文件</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>locate ctex-xecjk-winfonts.def | xargs sudo vim
+</span><span class='line'>修改其中的<span class="o">[</span>SIMKAI.TTF<span class="o">]</span>为KaiTi_GB2312
+</span><span class='line'>修改其中的<span class="o">[</span>SIMFANG.TTF<span class="o">]</span>为FangSong_GB2312
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>接下来就可以开始latex中文写作之旅了!</p>
+
+<h3 id="section">后记</h3>
 <p>这里还没有考虑繁体中文的配置，还有vim的preview pdf插件没有测试成功，以后补上。</p>
 
-<h3>参考文章</h3>
+<h3 id="section-1">参考文章</h3>
 
-<p>Linux下Texlive的ctex包中文字体问题
-<a href="https://huxuan.org/2012/07/14/chinese-font-problem-of-ctex-in-texlive-under-linux/">https://huxuan.org/2012/07/14/chinese-font-problem-of-ctex-in-texlive-under-linux/</a></p>
+<p><a href="https://huxuan.org/2012/07/14/chinese-font-problem-of-ctex-in-texlive-under-linux/">Linux下Texlive的ctex包中文字体问题</a></p>
 
-<p>Ubuntu 14.04/14.10 系统安装 Latex及配置中文字体[修订]
-<a href="http://blog.csdn.net/bensnake/article/details/43279329">http://blog.csdn.net/bensnake/article/details/43279329</a></p>
+<p><a href="http://blog.csdn.net/bensnake/article/details/43279329">Ubuntu 14.04/14.10 系统安装 Latex及配置中文字体</a></p>
 ]]></content>
   </entry>
   

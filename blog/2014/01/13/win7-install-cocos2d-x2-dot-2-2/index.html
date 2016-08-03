@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -119,42 +142,31 @@
 
 <!-- more -->
 
+<p>直接讲如何进行cocos2d-x的编译了。
+###1）下载
+首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
 
-<p>直接讲如何进行cocos2d-x的编译了。</p>
-
-<h3>1）下载</h3>
-
-<p>首先当然是要去下载，我这里是cocos2d-x2.2.2版本，下载cocos2d-x2.2.2.zip。这个版本和《cocos2d-x权威指南》有什么关联度的等等研究了就不得而知了。</p>
-
-<h3>2）解压和编译cocos2d-x</h3>
-
+<h3 id="cocos2d-x">2）解压和编译cocos2d-x</h3>
 <p>接下来是解压,注意不要解压到中文目录，否则接下来生成项目会报错。我解压到了D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2。随后进入cocos2d-x2.2.2文件夹下的cocos2d-x2.2.2文件夹。因为我们是使用vc2010，所以就双击cocos2d-win32.vc2010.sln。
 进到IDE之后，选择解决方案资源管理器下的cocos2d-win32.vc2010,右击选择配置属性-配置，确保每个项目都为debug，可以看到共有17个项目。然后按下F7开始生成解决方案。
 慢慢等，我是等来10来分钟。可以看到17个项目都生成成功了。</p>
 
-<h3>3）创建工程</h3>
+<h3 id="section">3）创建工程</h3>
+<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\t</span>ools<span class="se">\p</span>roject-creator<span class="se">\</span>
+</span><span class="line">create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
 
-<p>编译完了就可以创建工程了。当然需要先安装好python，我这里是python2.6.2，有人说要装python2.7，看来并不是必须。然后我们生成工程，运行</p>
+<h3 id="section-1">4）编译工程</h3>
+<p>最后进入刚刚取名为HelloWorld的项目中
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\p</span>rojects/HelloWorld
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\t</span>ools<span class="se">\p</span>roject-creator<span class="se">\</span>
-</span><span class='line'>create_project.py -project HelloWorld -package com.cocos2d-x.org -language cpp
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中com.cocos2d-x.org是为android项目分配的包名称。运行完毕后，会在D:\gamedev\cocos2d-x-2.2.2\cocos2d-x-2.2.2\project目录下生成ios、android、win32、mac、linux等各种平台的项目。</p>
-
-<h3>4）编译工程</h3>
-
-<p>最后进入刚刚取名为HelloWorld的项目中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>D:<span class="se">\g</span>amedev<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\c</span>ocos2d-x-2.2.2<span class="se">\p</span>rojects/HelloWorld
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>双击proj.win32下的HelloWorld.sln文件，即可进入工程，没有什么问题的话，就可以按ctrl+F5开始进行项目的调试了。</p>
 </div>
 
 
@@ -236,7 +248,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -252,7 +264,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,52 +137,46 @@
   </header>
 
 
-<div class="entry-content clearfix"><h2>Ganglia是什么?</h2>
-
+<div class="entry-content clearfix"><h2 id="ganglia">Ganglia是什么?</h2>
 <p>简单的说，这是一个开源的系统监控软件，本身通过rrdtool这个软件作为数据载体，以及SNMP协议采集监控数据，最终在管理界面上呈现出监控图表数据的系统。</p>
 
 <!-- more -->
 
-
-<h2>安装小记</h2>
-
+<h2 id="section">安装小记</h2>
 <p>首先是下载ganglia</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://downloads.sourceforge.net/project/ganglia/
-</span><span class='line'>wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget http://downloads.sourceforge.net/project/ganglia/
+</span><span class="line">wget http://oss.oetiker.ch/rrdtool/pub/rrdtool-1.4.7.tar.gz
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>先安装rrdtool</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --prefix<span class="o">=</span>/usr/lib32/rrdtool --disable-perl
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">./configure --prefix<span class="o">=</span>/usr/lib32/rrdtool --disable-perl
+</span><span class="line">make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>(Ps:安装过程有缺少包的解决，可以尝试先从port安装好rrdtool之后deinstall rrdtool，这样依赖的包就都有了，因为port直接安装rrdtool后ganglia不认，所以手动编译)</p>
 
 <p>再来是ganglia</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
+</span><span class="line">make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>报告</p>
 
 <p>Checking for apr</p>
 
-<p>checking for apr-1-config&hellip; no</p>
+<p>checking for apr-1-config… no</p>
 
 <p>configure: error: apr-1-config binary not found in path</p>
 
@@ -169,259 +186,246 @@
 
 <p>whereis mysql51-server</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz
-</span><span class='line'>sudo make <span class="nv">WITH_CHARSET</span><span class="o">=</span>utf8 <span class="nv">WITH_XCHARSET</span><span class="o">=</span>all install clean
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget ftp://ftp.fi.muni.cz/pub/mysql/Downloads/MySQL-5.1/mysql-5.1.60.tar.gz
+</span><span class="line">sudo make <span class="nv">WITH_CHARSET</span><span class="o">=</span>utf8 <span class="nv">WITH_XCHARSET</span><span class="o">=</span>all install clean
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>安装httpd</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz
-</span><span class='line'>./configure --prefix<span class="o">=</span>/usr/local/apache2 --enable-modules<span class="o">=</span>so --enable-rewrite
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget http://labs.renren.com/apache-mirror/httpd/httpd-2.2.23.tar.gz
+</span><span class="line">./configure --prefix<span class="o">=</span>/usr/local/apache2 --enable-modules<span class="o">=</span>so --enable-rewrite
+</span><span class="line">make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>安装php</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror
-</span><span class='line'>tar –zxvf php-5.3.6.tar.gz
-</span><span class='line'><span class="nb">cd </span>php-5.3.6
-</span><span class='line'>./configure --prefix<span class="o">=</span>/usr/local/php --with-apxs2<span class="o">=</span>/usr/local/apache2/bin/apxs --with-config-file-path<span class="o">=</span>/usr/local/lib --with-mysql<span class="o">=</span>/usr
-</span><span class='line'>make <span class="o">&amp;&amp;</span> make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget http://cn.php.net/get/php-5.3.6.tar.gz/from/this/mirror
+</span><span class="line">tar –zxvf php-5.3.6.tar.gz
+</span><span class="line"><span class="nb">cd </span>php-5.3.6
+</span><span class="line">./configure --prefix<span class="o">=</span>/usr/local/php --with-apxs2<span class="o">=</span>/usr/local/apache2/bin/apxs --with-config-file-path<span class="o">=</span>/usr/local/lib --with-mysql<span class="o">=</span>/usr
+</span><span class="line">make <span class="o">&amp;&amp;</span> make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>将php5的库复制到apache的modules里</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp –p .libs/libphp5.so /usr/local/apache2/modules
-</span><span class='line'>sudo chown cdh:cdh /usr/local/apache2/modules/libphp5.so
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo cp –p .libs/libphp5.so /usr/local/apache2/modules
+</span><span class="line">sudo chown cdh:cdh /usr/local/apache2/modules/libphp5.so
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>复制php5配置文件</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cp php.ini-development /usr/local/php/lib/php/php.ini
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo cp php.ini-development /usr/local/php/lib/php/php.ini
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>修改http.conf 兼容php5</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo vim /usr/local/apache2/conf/httpd.conf
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo vim /usr/local/apache2/conf/httpd.conf
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>加上</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>AddType application/x-httpd-php .php
-</span><span class='line'><span class="c">#LoadModule php5_module modules/libphp5.so</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">AddType application/x-httpd-php .php
+</span><span class="line"><span class="c">#LoadModule php5_module modules/libphp5.so</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>把上面的#号去掉  </p>
 
-<p>把上面的#号去掉</p>
-
-<p>DirectoryIndex index.html</p>
+<p>DirectoryIndex index.html </p>
 
 <p>在后面加 index.php</p>
 
-<p>DocumentRoot &ldquo;/usr/local/apache2/htdocs&rdquo;</p>
+<p>DocumentRoot “/usr/local/apache2/htdocs”  </p>
 
-<p>把/usr/local/apache2/htdocs改为你存放网页文件的路径</p>
+<p>把/usr/local/apache2/htdocs改为你存放网页文件的路径  </p>
 
-<p>AddDefaultCharset iso8859-1</p>
+<p>AddDefaultCharset iso8859-1  </p>
 
-<p>把后面的iso8859-1改为gb2312 或者是干脆off</p>
+<p>把后面的iso8859-1改为gb2312 或者是干脆off </p>
 
-<p>更详细的请参考<a href="http://article.21e.cn">http://article.21e.cn</a></p>
+<p>更详细的请参考http://article.21e.cn</p>
 
 <p>到这里看下访问一下浏览器，php应该工作ok</p>
 
 <p>继续编译ganglia</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>configure: error: apr-1-config binary not found in path</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>whereis apr1
-</span><span class='line'><span class="nb">cd</span> /usr/ports/devel/apr1
-</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">whereis apr1
+</span><span class="line"><span class="nb">cd</span> /usr/ports/devel/apr1
+</span><span class="line">sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>回来继续编译，报告缺少libconfuse not found</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/devel/libconfuse/
-</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /usr/ports/devel/libconfuse/
+</span><span class="line">sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>报告缺少expat.h</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /usr/ports/textproc/expat2
-</span><span class='line'>sudo make install clean <span class="o">&amp;&amp;</span> rehash
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /usr/ports/textproc/expat2
+</span><span class="line">sudo make install clean <span class="o">&amp;&amp;</span> rehash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>问题依旧修改配置</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool --with-libexpat<span class="o">=</span>/usr/local/
-</span><span class='line'>sudo make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo ./configure --with-gmetad --with-librrd<span class="o">=</span>/usr/lib32/rrdtool --with-libexpat<span class="o">=</span>/usr/local/
+</span><span class="line">sudo make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>安装完成！</p>
 
 <p>测试gmetad的运行</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /usr/local/sbin/gmetad -d 5
-</span><span class='line'>
-</span><span class='line'>Going to run as user nobody
-</span><span class='line'>
-</span><span class='line'>Please make sure that /var/db/ganglia/rrds exists: No such file or directory
-</span><span class='line'>
-</span><span class='line'>sudo mkdir -p /var/db/ganglia/rrds
-</span><span class='line'>
-</span><span class='line'>sudo /usr/local/sbin/gmetad -d 5
-</span><span class='line'>
-</span><span class='line'>Going to run as user nobody
-</span><span class='line'>
-</span><span class='line'>Please make sure that /var/db/ganglia/rrds is owned by nobody
-</span><span class='line'>
-</span><span class='line'>sudo chown -R nobody:nobody /var/db/ganglia/
-</span><span class='line'>
-</span><span class='line'>Going to run as user nobody
-</span><span class='line'>
-</span><span class='line'>Sources are ...
-</span><span class='line'>
-</span><span class='line'>Source: <span class="o">[</span>my cluster, step 15<span class="o">]</span> has 1 sources
-</span><span class='line'>
-</span><span class='line'>        127.0.0.1
-</span><span class='line'>
-</span><span class='line'>xml listening on port 8651
-</span><span class='line'>
-</span><span class='line'>interactive xml listening on port 8652
-</span><span class='line'>
-</span><span class='line'>cleanup thread has been started
-</span><span class='line'>
-</span><span class='line'>Data thread 34460440576 is monitoring <span class="o">[</span>my cluster<span class="o">]</span> data <span class="nb">source</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">        </span>127.0.0.1
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
-</span><span class='line'>
-</span><span class='line'>data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
-</span><span class='line'>
-</span><span class='line'>sudo /usr/local/sbin/gmond -d 5
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo /usr/local/sbin/gmetad -d 5
+</span><span class="line">
+</span><span class="line">Going to run as user nobody
+</span><span class="line">
+</span><span class="line">Please make sure that /var/db/ganglia/rrds exists: No such file or directory
+</span><span class="line">
+</span><span class="line">sudo mkdir -p /var/db/ganglia/rrds
+</span><span class="line">
+</span><span class="line">sudo /usr/local/sbin/gmetad -d 5
+</span><span class="line">
+</span><span class="line">Going to run as user nobody
+</span><span class="line">
+</span><span class="line">Please make sure that /var/db/ganglia/rrds is owned by nobody
+</span><span class="line">
+</span><span class="line">sudo chown -R nobody:nobody /var/db/ganglia/
+</span><span class="line">
+</span><span class="line">Going to run as user nobody
+</span><span class="line">
+</span><span class="line">Sources are ...
+</span><span class="line">
+</span><span class="line">Source: <span class="o">[</span>my cluster, step 15<span class="o">]</span> has 1 sources
+</span><span class="line">
+</span><span class="line">        127.0.0.1
+</span><span class="line">
+</span><span class="line">xml listening on port 8651
+</span><span class="line">
+</span><span class="line">interactive xml listening on port 8652
+</span><span class="line">
+</span><span class="line">cleanup thread has been started
+</span><span class="line">
+</span><span class="line">Data thread 34460440576 is monitoring <span class="o">[</span>my cluster<span class="o">]</span> data <span class="nb">source</span>
+</span><span class="line">
+</span><span class="line"><span class="nb">        </span>127.0.0.1
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> <span class="k">for</span> <span class="o">[</span>my cluster<span class="o">]</span> failed to contact node 127.0.0.1
+</span><span class="line">
+</span><span class="line">data_thread<span class="o">()</span> got no answer from any <span class="o">[</span>my cluster<span class="o">]</span> datasource
+</span><span class="line">
+</span><span class="line">sudo /usr/local/sbin/gmond -d 5
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>看上去运行正常了</p>
+<p>看上去运行正常了 </p>
 
 <p>基本可以。</p>
 
 <p>开始装界面。不要装3.5.3有些图开不了，3.5.2经过测试没有问题。</p>
 
-<p><a href="http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download">http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download</a></p>
+<p>http://sourceforge.net/projects/ganglia/files/ganglia-web/3.5.2/ganglia-web-3.5.2.tar.gz/download</p>
 
 <p>注意web要求rrd数据库的路径只能是/var/lib/ganglia/rrds</p>
 
@@ -429,17 +433,16 @@
 
 <p>则</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /var/lib
-</span><span class='line'>sudo ln -s /var/db/ganglia ganglia
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /var/lib
+</span><span class="line">sudo ln -s /var/db/ganglia ganglia
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后访问浏览器</p>
 
-<p><a href="http://192.168.174.133/ganglia/">http://192.168.174.133/ganglia/</a></p>
+<p>http://192.168.174.133/ganglia/</p>
 
 <p>此时</p>
 
@@ -449,13 +452,12 @@
 
 <p>怀疑是php没有安装rrdtool的扩展,继续安装php的rrdtool扩展</p>
 
-<p><a href="http://pecl.php.net/package/rrd">http://pecl.php.net/package/rrd</a></p>
+<p>http://pecl.php.net/package/rrd</p>
 
-<figure class='code'><figcaption><span>shell </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./configure --with-php-config<span class="o">=</span>/usr/local/php/bin/php-config --with-rrd-binary<span class="o">=</span>/usr/lib32/rrdtool/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>shell </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo ./configure --with-php-config<span class="o">=</span>/usr/local/php/bin/php-config --with-rrd-binary<span class="o">=</span>/usr/lib32/rrdtool/bin/rrdtool
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置报错找不到rrdtool的头文件，直接定位configure文件进行修改</p>
 
@@ -471,18 +473,17 @@
 
 <p>通过后还是报错</p>
 
-<p>error: too many arguments to function &lsquo;rrd_lastupdate&rsquo;</p>
+<p>error: too many arguments to function ‘rrd_lastupdate’</p>
 
-<p>参考这里<a href="https://bugs.php.net/bug.php?id=59558">https://bugs.php.net/bug.php?id=59558</a></p>
+<p>参考这里https://bugs.php.net/bug.php?id=59558</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="o">-</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate_r</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="c"><span class="line"><span class="o">-</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span><span class="line">
+</span><span class="line"><span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">rrd_lastupdate_r</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">last_update</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_cnt</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ds_namv</span><span class="p">,</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>装完看到phpinfo里有了。</p>
 
@@ -490,7 +491,7 @@
 
 <p>graphite_rrd_dir变量，指向ganglia存放rrd的目录，我的是/var/db/ganglia/rrds</p>
 
-<p>还有一个$conf[&lsquo;rrdtool&rsquo;]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
+<p>还有一个$conf[‘rrdtool’]变量，指向rrdtool的安装位置，我的是/usr/lib32/rrdtool/bin/rrdtool</p>
 
 <p>应该就差不多了！这样如果还不行，检查自身人品，然后看下/var/log/message</p>
 </div>
@@ -574,7 +575,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -590,7 +591,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

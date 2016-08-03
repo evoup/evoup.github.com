@@ -4,7 +4,7 @@
   <title><![CDATA[Category: linux | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-07-25T00:34:38+08:00</updated>
+  <updated>2016-08-03T12:34:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -22,14 +22,15 @@
 
 <!-- more -->
 
+<p>配置网卡</p>
 
-<p>配置网卡
-<code>
+<p><code>bash
 vim /etc/sysconfig/network-scripts/ifcfg-ens33
 </code></p>
 
-<p>原先的配置是这样的
-<code>
+<p>原先的配置是这样的</p>
+
+<p><code>bash
 HWADDR=00:0C:29:2C:E5:30
 TYPE=Ethernet
 BOOTPROTO=static
@@ -49,8 +50,9 @@ ONBOOT=no
 </code></p>
 
 <p>没想到在centos7里默认是不启动网卡的，奇怪的设定啊，所以网卡才没有激活
-改为yes，然后再加上以下几个参数的设置
-<code>
+改为yes，然后再加上以下几个参数的设置</p>
+
+<p><code>bash
 IPADDR=192.168.2.181
 GATEWAY=192.168.2.1
 DNS1=114.114.114.114
@@ -60,17 +62,20 @@ DNS2=8.8.8.8
 <p>其中IPADDR为网卡地址，GATEWAY为网关地址，我在vmware里采用的bridge，所以就是实际的路由器的地址。
 DNS1和DNS2这2个至少要填DNS1。
 编辑/etc/resolv.conf
-并且在下面加入了
-<code>
+并且在下面加入了</p>
+
+<p><code>bash
 nameserver 114.114.114.114
 nameserver 8.8.8.8
 </code></p>
 
-<p>如果按照上面把/etc/resolv.conf中的dns也配置好之后
-<code>
+<p>如果按照上面把/etc/resolv.conf中的dns也配置好之后</p>
+
+<p><code>bash
 sudo service network restart
-</code>
-这样应该就完成配置可以上网了。</p>
+</code></p>
+
+<p>这样应该就完成配置可以上网了。</p>
 
 <p>ps:也可以使用system-config-network-tui这个软件以GUI方式进行配置，用yum安装即可。</p>
 ]]></content>
@@ -81,34 +86,33 @@ sudo service network restart
     <link href="http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux/"/>
     <updated>2014-06-13T17:45:00+08:00</updated>
     <id>http://evoupsight.com/blog/2014/06/13/simplely-install-chinese-fonts-on-freebsd-and-linux</id>
-    <content type="html"><![CDATA[<h3>使用中文字体及其安装</h3>
+    <content type="html"><![CDATA[<h3 id="section">使用中文字体及其安装</h3>
+<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）
+<!-- more --></p>
 
-<p>首先说明，因为需要在不同的平台下让rrdtool显示的图片看起来舒服点，考虑安装中文字体。这里搜罗下方法。（这种方式仅仅是为了程序工作正常，需要使自己的KDE或者GNOME系统中文显示正常可以不用看本文了。）</p>
+<h3 id="freebsd">freebsd下</h3>
+<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存</p>
 
-<!-- more -->
-
-
-<h3>freebsd下</h3>
-
-<p>直接把字体文件放到/usr/local/share/fonts下，然后刷新字体缓存
-<code>sh
+<p><code>bash
 sudo cp ukai.ttf /usr/local/share/fonts/
 sudo fc-cache -f -v
 </code></p>
 
-<h3>centos下</h3>
+<h3 id="centos">centos下</h3>
+<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令</p>
 
-<p>把字体放到/usr/share/fonts/msfonts下，然后执行几个命令
-<code>sh
+<p><code>bash
 sudo mkdir /use/share/fonts/msfonts
 sudo cp ukai.ttf /usr/share/fonts/msfonts/
 cd /usr/share/fonts/msfonts/
 sudo mkfontscale
 sudo mkfontdir
 sudo fc-cache -fv
-</code>
-更EZ的方式有
-<code>
+</code></p>
+
+<p>更EZ的方式有</p>
+
+<p><code>bash
 sudo yum  –y  install  fonts-chinese
 </code></p>
 

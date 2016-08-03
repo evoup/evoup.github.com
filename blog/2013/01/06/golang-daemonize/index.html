@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,147 +141,143 @@
 
 <!-- more -->
 
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-</pre></td><td class='code'><pre><code class='go'><span class='line'><span class="kd">func</span> <span class="nx">Daemonize</span><span class="p">(</span><span class="nx">nochdir</span><span class="p">,</span> <span class="nx">noclose</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
-</span><span class='line'>   <span class="kd">var</span> <span class="nx">hLog</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
-</span><span class='line'>   <span class="nx">hLog</span><span class="p">=</span><span class="nx">LogInit</span><span class="p">();</span>
-</span><span class='line'>   <span class="kd">var</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">ret2</span> <span class="kt">uintptr</span>
-</span><span class='line'>   <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span> <span class="nx">hLog</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;common.Daemonize][current ppid:%d&quot;</span><span class="p">,</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Getppid</span><span class="p">())</span> <span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="c1">//already a daemon</span>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Getppid</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
-</span><span class='line'>       <span class="k">return</span> <span class="kc">nil</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][will daemonize&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="c1">//fork off the parent process</span>
-</span><span class='line'>   <span class="nx">ret</span><span class="p">,</span> <span class="nx">ret2</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">RawSyscall</span><span class="p">(</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SYS_FORK</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>       <span class="kd">var</span> <span class="nx">s</span> <span class="kt">string</span>
-</span><span class='line'>       <span class="nx">s</span><span class="p">=</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%T&quot;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
-</span><span class='line'>       <span class="k">if</span> <span class="nx">s</span> <span class="o">!=</span> <span class="s">&quot;syscall.Errno&quot;</span> <span class="p">{</span>
-</span><span class='line'>           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fork err:&quot;</span><span class="o">+</span><span class="nx">s</span><span class="p">)</span>
-</span><span class='line'>               <span class="k">return</span> <span class="nx">err</span>
-</span><span class='line'>       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span><span class='line'>           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fork no err:&quot;</span><span class="o">+</span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
-</span><span class='line'>           <span class="c1">//no problem see http://www.ibm.com/developerworks/aix/library/au-errnovariable/</span>
-</span><span class='line'>       <span class="p">}</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="c1">//failure</span>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">ret2</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
-</span><span class='line'>       <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="c1">//if we got a good PID, then we call exit the parent process.</span>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">ret</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
-</span><span class='line'>       <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][forked,we in forked process&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="cm">/* Change the file mode mask */</span>
-</span><span class='line'>   <span class="nx">_</span> <span class="p">=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Umask</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][umask zero&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="c1">//create a new SID for the child process</span>
-</span><span class='line'>   <span class="nx">s_ret</span><span class="p">,</span> <span class="nx">s_errno</span> <span class="o">:=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Setsid</span><span class="p">()</span>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">s_ret</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">s_errno</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>       <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;common.Daemonize][Error: syscall.Setsid errno: %d&quot;</span><span class="p">,</span> <span class="nx">s_errno</span><span class="p">)</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][sid seted&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">nochdir</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-</span><span class='line'>       <span class="nx">os</span><span class="p">.</span><span class="nx">Chdir</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
-</span><span class='line'>       <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][chdir to root&quot;</span><span class="p">)</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="k">if</span> <span class="nx">noclose</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
-</span><span class='line'>       <span class="nx">f</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_RDWR</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span class='line'>       <span class="k">if</span> <span class="nx">e</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class='line'>           <span class="nx">fd</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()</span>
-</span><span class='line'>           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdin</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
-</span><span class='line'>           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
-</span><span class='line'>           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
-</span><span class='line'>           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fs closed&quot;</span><span class="p">)</span>
-</span><span class='line'>       <span class="p">}</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][daemonize done&quot;</span><span class="p">)</span>
-</span><span class='line'>   <span class="k">return</span> <span class="kc">nil</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">Daemonize</span><span class="p">(</span><span class="nx">nochdir</span><span class="p">,</span> <span class="nx">noclose</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">hLog</span> <span class="o">*</span><span class="nx">log</span><span class="p">.</span><span class="nx">Logger</span>
+</span><span class="line">   <span class="nx">hLog</span><span class="p">=</span><span class="nx">LogInit</span><span class="p">();</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">ret</span><span class="p">,</span> <span class="nx">ret2</span> <span class="kt">uintptr</span>
+</span><span class="line">   <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span> <span class="nx">hLog</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;common.Daemonize][current ppid:%d&quot;</span><span class="p">,</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Getppid</span><span class="p">())</span> <span class="p">)</span>
+</span><span class="line">
+</span><span class="line">   <span class="c1">//already a daemon</span>
+</span><span class="line">   <span class="k">if</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Getppid</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">{</span>
+</span><span class="line">       <span class="k">return</span> <span class="kc">nil</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][will daemonize&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">   <span class="c1">//fork off the parent process</span>
+</span><span class="line">   <span class="nx">ret</span><span class="p">,</span> <span class="nx">ret2</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">RawSyscall</span><span class="p">(</span><span class="nx">syscall</span><span class="p">.</span><span class="nx">SYS_FORK</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line">   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">       <span class="kd">var</span> <span class="nx">s</span> <span class="kt">string</span>
+</span><span class="line">       <span class="nx">s</span><span class="p">=</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%T&quot;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span><span class="line">       <span class="k">if</span> <span class="nx">s</span> <span class="o">!=</span> <span class="s">&quot;syscall.Errno&quot;</span> <span class="p">{</span>
+</span><span class="line">           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fork err:&quot;</span><span class="o">+</span><span class="nx">s</span><span class="p">)</span>
+</span><span class="line">               <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line">       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class="line">           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fork no err:&quot;</span><span class="o">+</span><span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">           <span class="c1">//no problem see http://www.ibm.com/developerworks/aix/library/au-errnovariable/</span>
+</span><span class="line">       <span class="p">}</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="c1">//failure</span>
+</span><span class="line">   <span class="k">if</span> <span class="nx">ret2</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="line">       <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="c1">//if we got a good PID, then we call exit the parent process.</span>
+</span><span class="line">   <span class="k">if</span> <span class="nx">ret</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="line">       <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][forked,we in forked process&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">   <span class="cm">/* Change the file mode mask */</span>
+</span><span class="line">   <span class="nx">_</span> <span class="p">=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Umask</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][umask zero&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">   <span class="c1">//create a new SID for the child process</span>
+</span><span class="line">   <span class="nx">s_ret</span><span class="p">,</span> <span class="nx">s_errno</span> <span class="o">:=</span> <span class="nx">syscall</span><span class="p">.</span><span class="nx">Setsid</span><span class="p">()</span>
+</span><span class="line">   <span class="k">if</span> <span class="nx">s_ret</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">s_errno</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">       <span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;common.Daemonize][Error: syscall.Setsid errno: %d&quot;</span><span class="p">,</span> <span class="nx">s_errno</span><span class="p">)</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][sid seted&quot;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">   <span class="k">if</span> <span class="nx">nochdir</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="line">       <span class="nx">os</span><span class="p">.</span><span class="nx">Chdir</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+</span><span class="line">       <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][chdir to root&quot;</span><span class="p">)</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="k">if</span> <span class="nx">noclose</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="line">       <span class="nx">f</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">OpenFile</span><span class="p">(</span><span class="s">&quot;/dev/null&quot;</span><span class="p">,</span> <span class="nx">os</span><span class="p">.</span><span class="nx">O_RDWR</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class="line">       <span class="k">if</span> <span class="nx">e</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">           <span class="nx">fd</span> <span class="o">:=</span> <span class="nx">f</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()</span>
+</span><span class="line">           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdin</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
+</span><span class="line">           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
+</span><span class="line">           <span class="nx">syscall</span><span class="p">.</span><span class="nx">Dup2</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">.</span><span class="nx">Fd</span><span class="p">()))</span>
+</span><span class="line">           <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][fs closed&quot;</span><span class="p">)</span>
+</span><span class="line">       <span class="p">}</span>
+</span><span class="line">   <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">   <span class="nx">Log</span><span class="p">(</span><span class="nx">hLog</span><span class="p">,</span><span class="s">&quot;common.Daemonize][daemonize done&quot;</span><span class="p">)</span>
+</span><span class="line">   <span class="k">return</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </div>
 
 
@@ -340,7 +359,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -356,7 +375,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

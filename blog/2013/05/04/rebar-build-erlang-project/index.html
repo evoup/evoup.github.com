@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -120,17 +143,15 @@
 
 <!-- more -->
 
-
 <p>自己编译：
-<a href="https://github.com/rebar/rebar">https://github.com/rebar/rebar</a>
+https://github.com/rebar/rebar
 直接按照README.md的方法编译出一个rebar。</p>
 
 <p>直接下载：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这个就直接可用了。</p>
 
@@ -138,170 +159,145 @@
 
 <p>2）创建项目</p>
 
-<p>在项目的根目录</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/exemplar <span class="nv">$ </span>mkdir -p apps/exemplar
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span><span class="nb">cd </span>apps/exemplar
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span>rebar create-app <span class="nv">appid</span><span class="o">=</span>exemplar
-</span></code></pre></td></tr></table></div></figure>
-
+<p>在项目的根目录
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">~/exemplar <span class="nv">$ </span>mkdir -p apps/exemplar
+</span><span class="line">
+</span><span class="line">~/exemplar <span class="nv">$ </span><span class="nb">cd </span>apps/exemplar
+</span><span class="line">
+</span><span class="line">~/exemplar <span class="nv">$ </span>rebar create-app <span class="nv">appid</span><span class="o">=</span>exemplar
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>这样就在项目根目录下得到了app文件夹，该文件夹下的src文件夹中默认有三个项目源文件，一个src文件，一个主文件，一个监督者文件。接下来就像往常一样的编写erlang代码。（甚至我当初直接在该目录用Emakefile的方式进行调试也是可以的，只是路径稍有变化，这里只带过）</p>
 
-<p>3）生成发布版</p>
+<p>3）生成发布版
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">~/exemplar <span class="nv">$ </span>mkdir rel
+</span><span class="line">
+</span><span class="line">~/exemplar <span class="nv">$ </span><span class="nb">cd </span>rel
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/exemplar <span class="nv">$ </span>mkdir rel
-</span><span class='line'>
-</span><span class='line'>~/exemplar <span class="nv">$ </span><span class="nb">cd </span>rel
-</span></code></pre></td></tr></table></div></figure>
+<p>接下来非常怂的问题来了，编辑reltool.config时wiki上说把
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="erlang"><span class="line"><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
+</span><span class="line">
+</span><span class="line">       <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[]},</span>
+</span><span class="line">
+</span><span class="line"><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">]},</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-
-<p>接下来非常怂的问题来了，编辑reltool.config时wiki上说把</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[]},</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">{</span><span class="n">sys</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其实还需要加上依赖的路径</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p>其实还需要加上依赖的路径
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="erlang"><span class="line"><span class="p">{</span><span class="n">lib_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;../apps&quot;</span><span class="p">,</span> <span class="s">&quot;../deps&quot;</span><span class="p">]},</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>这样才对。</p>
 
-<p>然后还有在  {rel, &ldquo;exemplar&rdquo;, &ldquo;1&rdquo;,</p>
+<p>然后还有在  {rel, “exemplar”, “1”,</p>
 
 <p>后面一段，生成发布的时候还会提醒要求带上sasl、inet、crypto
-而在 {excl_app_filters, [&ldquo;.gitignore&rdquo;]},后面
-依次相应要带上</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span><span class='line'>   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>     <br/>
+而在 {excl_app_filters, [”.gitignore”]},后面
+依次相应要带上
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="erlang"><span class="line">   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">sasl</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class="line">   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">mochiweb</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class="line">   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">inets</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span><span class="line">   <span class="p">{</span><span class="n">app</span><span class="p">,</span> <span class="n">crypto</span><span class="p">,</span>   <span class="p">[{</span><span class="n">incl_cond</span><span class="p">,</span> <span class="n">include</span><span class="p">}]},</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;     <br />
 到这里reltool.config的麻烦才告一段落。
 最后回到根目录
-rebar.config的内容如下</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span>
-</span><span class='line'>    <span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
-</span><span class='line'>            <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}}},</span>
-</span><span class='line'>        <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
-</span><span class='line'>            <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s">&quot;master&quot;</span><span class="p">}}</span>
-</span><span class='line'><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;apps/exemplar&quot;</span><span class="p">,</span> <span class="s">&quot;rel&quot;</span><span class="p">]}.</span>
-</span></code></pre></td></tr></table></div></figure>
-
+rebar.config的内容如下
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="erlang"><span class="line"><span class="p">{</span><span class="n">deps</span><span class="p">,</span> <span class="p">[</span>
+</span><span class="line">    <span class="p">{</span><span class="n">mochiweb</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/mochi/mochiweb.git&quot;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">{</span><span class="n">tag</span><span class="p">,</span> <span class="s">&quot;1.5.1&quot;</span><span class="p">}}},</span>
+</span><span class="line">        <span class="p">{</span><span class="n">&#39;log4erl&#39;</span><span class="p">,</span> <span class="s">&quot;.*&quot;</span><span class="p">,</span>
+</span><span class="line">            <span class="p">{</span><span class="n">git</span><span class="p">,</span> <span class="s">&quot;git://github.com/ahmednawras/log4erl.git&quot;</span><span class="p">,</span>
+</span><span class="line">                <span class="s">&quot;master&quot;</span><span class="p">}}</span>
+</span><span class="line"><span class="p">{</span><span class="n">sub_dirs</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;apps/exemplar&quot;</span><span class="p">,</span> <span class="s">&quot;rel&quot;</span><span class="p">]}.</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>好了，rebar.config，我这里也不多说，反正我是试了各种版本，要么生成的so变成了exemplar_drv.so，要么干脆就无法生成。我最后放到Makefile里一并解决了。
-下面是这个Makefile的内容，其中make.sh是自行生成erlang的NIF外围C/C++程序扩展so的编译脚本，这个要注意一下(我没有创建apps/c_src这个文件夹，而是在apps文件夹下又放了个files文件，里面是c的源文件，这样make.sh的内容就大概是gcc -Wall -o $APP_PREFIX/priv/nif.so -fpic -shared -I $ERL_LIB/erts-$ERL_VER/include/ apps/files/nif.c 这样子，反正还是要生成到priv路径就对了)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='makefile'><span class='line'><span class="err">cat</span> <span class="err">Makefile</span>
-</span><span class='line'><span class="nf">all</span><span class="o">:</span> <span class="m">compile</span>
-</span><span class='line'><span class="nf">depends</span><span class="o">:</span>
-</span><span class='line'>        ./rebar get-deps
-</span><span class='line'>        ./rebar update-deps
-</span><span class='line'><span class="nf">compile</span><span class="o">:</span>
-</span><span class='line'>        ./rebar compile
-</span><span class='line'>        ./make.sh
-</span><span class='line'><span class="nf">clean</span><span class="o">:</span>
-</span><span class='line'>        ./rebar clean
-</span><span class='line'><span class="nf">release</span><span class="o">:</span>
-</span><span class='line'>        ./rebar generate
-</span><span class='line'>        mkdir ./rel/exemplar/priv
-</span><span class='line'>        cp -r ./apps/exemplar/priv/* ./rel/exemplar/priv/
-</span><span class='line'>        chmod +x ./rel/exemplar/bin/exemplar
-</span><span class='line'><span class="nf">.PHONY</span><span class="o">:</span> <span class="m">all depends compile</span>
-</span></code></pre></td></tr></table></div></figure>
-
+下面是这个Makefile的内容，其中make.sh是自行生成erlang的NIF外围C/C++程序扩展so的编译脚本，这个要注意一下(我没有创建apps/c_src这个文件夹，而是在apps文件夹下又放了个files文件，里面是c的源文件，这样make.sh的内容就大概是gcc -Wall -o $APP_PREFIX/priv/nif.so -fpic -shared -I $ERL_LIB/erts-$ERL_VER/include/ apps/files/nif.c 这样子，反正还是要生成到priv路径就对了)
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="makefile"><span class="line"><span class="err">cat</span> <span class="err">Makefile</span>
+</span><span class="line"><span class="nf">all</span><span class="o">:</span> <span class="m">compile</span>
+</span><span class="line"><span class="nf">depends</span><span class="o">:</span>
+</span><span class="line">        ./rebar get-deps
+</span><span class="line">        ./rebar update-deps
+</span><span class="line"><span class="nf">compile</span><span class="o">:</span>
+</span><span class="line">        ./rebar compile
+</span><span class="line">        ./make.sh
+</span><span class="line"><span class="nf">clean</span><span class="o">:</span>
+</span><span class="line">        ./rebar clean
+</span><span class="line"><span class="nf">release</span><span class="o">:</span>
+</span><span class="line">        ./rebar generate
+</span><span class="line">        mkdir ./rel/exemplar/priv
+</span><span class="line">        cp -r ./apps/exemplar/priv/* ./rel/exemplar/priv/
+</span><span class="line">        chmod +x ./rel/exemplar/bin/exemplar
+</span><span class="line"><span class="nf">.PHONY</span><span class="o">:</span> <span class="m">all depends compile</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>做Makefile的方法，也是我参考了github上一些开源erlang项目的想到的办法。
-所有这一切做完按照如下方式就可以生成发布了。</p>
+所有这一切做完按照如下方式就可以生成发布了。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">make clean
+</span><span class="line">make depends
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;  <br />
+    编辑./deps/log4erl/src/log4erl.app.src文件，把{vsn, “0.9.0”}修改为{vsn, “”}，新版本的没试过，可能版本号不一致，请自行修改！
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">make release
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+基本上要注意的就是这些，以下为参考链接：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>make clean
-</span><span class='line'>make depends
-</span></code></pre></td></tr></table></div></figure>
+<p>https://github.com/rebar/rebar/wiki</p>
 
+<p>https://github.com/rebar/rebar/wiki/Release-handling</p>
 
-<p></p>
+<p>http://cryolite.iteye.com/blog/1159448  (rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧)</p>
 
-<pre><code>编辑./deps/log4erl/src/log4erl.app.src文件，把{vsn, "0.9.0"}修改为{vsn, ""}，新版本的没试过，可能版本号不一致，请自行修改！
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>make release
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>基本上要注意的就是这些，以下为参考链接：</p>
-
-<p><a href="https://github.com/rebar/rebar/wiki">https://github.com/rebar/rebar/wiki</a></p>
-
-<p><a href="https://github.com/rebar/rebar/wiki/Release-handling">https://github.com/rebar/rebar/wiki/Release-handling</a></p>
-
-<p><a href="http://cryolite.iteye.com/blog/1159448">http://cryolite.iteye.com/blog/1159448</a>  (rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧)</p>
-
-<p><a href="http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7">http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7</a></p>
+<p>http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7</p>
 </div>
 
 
@@ -383,7 +379,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -399,7 +395,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

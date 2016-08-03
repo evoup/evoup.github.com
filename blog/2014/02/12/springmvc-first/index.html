@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -117,46 +140,40 @@
 <div class="entry-content clearfix"><p>最近有项目要求必须用java，于是想到了spring，前几天花了一天时间也算调通。这里简单记录下先(其实很详细，我自己要看，哈哈)，其实更喜欢idea，人家都是google官方android开发推荐ide，有专门插件。嗯，扯远了，下面是搭建的过程小记：</p>
 
 <!-- more -->
+<p>###Spring是什么？
+不废话了，自己去查–</p>
 
-
-<h3>Spring是什么？</h3>
-
-<p>不废话了，自己去查&mdash;</p>
-
-<h3>搭建的环境</h3>
-
+<h3 id="section">搭建的环境</h3>
 <p>windows7+eclipse kepler sr2+jdk1.7+tomcat7.0</p>
 
 <p>第一个spring程序的代码地址（我借鉴的，也可以自己改改呗:)）：
-<a href="https://github.com/evoup/javaweb.git">https://github.com/evoup/javaweb.git</a>
+https://github.com/evoup/javaweb.git
 签出后我把它放到了c:/code_template文件夹下。
 <img src="/images/evoup/springmvc_first/git_clone_helloworld.jpg" alt="Alt text" /></p>
 
-<h4>eclipse</h4>
-
+<h4 id="eclipse">eclipse</h4>
 <p>首先自然是下载eclipse了，注意版本4.3.2是优化过的版本，4.3.1（SR1）这个版本不是很建议，因为搭建的时候貌似不是很顺利？</p>
 
 <p>32位的下载地址：
-<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip</a></p>
+http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32.zip</p>
 
 <p>64位的下载地址：
-<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip">http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip</a></p>
+http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/kepler/SR2/eclipse-standard-kepler-SR2-win32-x86_64.zip</p>
 
 <p>下完放到任意目录，我的是C:\web，直接解压出来
 <img src="/images/evoup/springmvc_first/eclipse_version.jpg" alt="Alt text" /></p>
 
-<h4>jdk的安装</h4>
-
+<h4 id="jdk">jdk的安装</h4>
 <p>就用常用的1.7吧
-<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html">http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</a></p>
+http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html</p>
 
-<h4>导入项目</h4>
+<h4 id="section-1">导入项目</h4>
 
 <p>打开eclipse，首先选择工作区
 <img src="/images/evoup/springmvc_first/select_workspace.jpg" alt="Alt text" /></p>
 
 <p>接着选择菜单
-import->Existing Projects into Workspace
+import-&gt;Existing Projects into Workspace
 <img src="/images/evoup/springmvc_first/import.jpg" alt="Alt text" /></p>
 
 <p>选择之前的项目导入
@@ -165,20 +182,21 @@ import->Existing Projects into Workspace
 <p>右键项目属性，转为dynamic web module项目
 <img src="/images/evoup/springmvc_first/project_property.jpg" alt="Alt text" /></p>
 
-<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> folder &ndash;> 选择src/main/webapp
+<p>项目 —&gt; 属性 -&gt; Deployment Assembly -&gt; Add -&gt; folder -&gt; 选择src/main/webapp
 这一步就是配置webapp目录要发布到项目的根目录下</p>
 
-<p>项目 —> 属性 &ndash;> Deployment Assembly &ndash;> Add &ndash;> Java Build Path Entries &ndash;> 选择Maven Dependencies &ndash;> Finish &ndash;> OK
+<p>项目 —&gt; 属性 -&gt; Deployment Assembly -&gt; Add -&gt; Java Build Path Entries -&gt; 选择Maven Dependencies -&gt; Finish -&gt; OK
 完了貌似必须重启以下eclipse kepler sr2
 还有一点小问题</p>
 
 <p>把头上这段去掉
 &lt;!DOCTYPE web-app PUBLIC
- &ldquo;&ndash;//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&rdquo;
- &ldquo;<a href="http://java.sun.com/dtd/web-app_2_3.dtd">http://java.sun.com/dtd/web-app_2_3.dtd</a>&rdquo; ></p>
+ “-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN”
+ “http://java.sun.com/dtd/web-app<em>2</em>3.dtd” &gt;</p>
 
-<p> 好了吧？还木有！需要用tomcat8伪装成tomcat7
- <a href="http://blog.csdn.net/yuzhiyuxia/article/details/26282767">http://blog.csdn.net/yuzhiyuxia/article/details/26282767</a></p>
+<p>好了吧？还木有！需要用tomcat8伪装成tomcat7
+ http://blog.csdn.net/yuzhiyuxia/article/details/26282767</p>
+
 </div>
 
 
@@ -260,7 +278,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -276,7 +294,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

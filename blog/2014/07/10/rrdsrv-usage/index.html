@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,122 +141,120 @@
 
 <!--more-->
 
-
 <p>假设rrdtool的安装路径在/usr/local/bin/rrdtool，然后存放rrd数据库的路径为/services/rrds/</p>
 
 <p>首先编辑/etc/inetd.conf，加入</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">rrdsrv  stream  tcp nowait  root    /usr/local/bin/rrdtool  rrdtool - /services/rrds/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后再编辑/etc/services，加入</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rrdsrv 13900/tcp</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">rrdsrv 13900/tcp
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>在/etc/rc.conf中</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>inetd_enable="YES"</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">inetd_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo /etc/rc.d/inetd start
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo /etc/rc.d/inetd start
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这样13900端口就支持使用socket方式的rrdtool命令操作了</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yin@yin-arch rrds<span class="o">]</span>&gt;telnet 127.0.0.1 13900
-</span><span class='line'>Trying 127.0.0.1...
-</span><span class='line'>Connected to localhost.
-</span><span class='line'>Escape character is <span class="s1">&#39;^]&#39;</span>.
-</span><span class='line'>
-</span><span class='line'>info load.rrd
-</span><span class='line'><span class="nv">filename</span> <span class="o">=</span> <span class="s2">&quot;load.rrd&quot;</span>
-</span><span class='line'><span class="nv">rrd_version</span> <span class="o">=</span> <span class="s2">&quot;0003&quot;</span>
-</span><span class='line'><span class="nv">step</span> <span class="o">=</span> 15
-</span><span class='line'><span class="nv">last_update</span> <span class="o">=</span> 1404984273
-</span><span class='line'><span class="nv">header_size</span> <span class="o">=</span> 1000
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.index <span class="o">=</span> 0
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.type <span class="o">=</span> <span class="s2">&quot;GAUGE&quot;</span>
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.minimal_heartbeat <span class="o">=</span> 120
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.min <span class="o">=</span> NaN
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.max <span class="o">=</span> NaN
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.last_ds <span class="o">=</span> <span class="s2">&quot;5.73242000000000029303e-01&quot;</span>
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.value <span class="o">=</span> 2.0151107237e+00
-</span><span class='line'>ds<span class="o">[</span>load<span class="o">]</span>.unknown_sec <span class="o">=</span> 0
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.rows <span class="o">=</span> 5856
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cur_row <span class="o">=</span> 5072
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.pdp_per_row <span class="o">=</span> 1
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> NaN
-</span><span class='line'>rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.rows <span class="o">=</span> 20160
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cur_row <span class="o">=</span> 9119
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.pdp_per_row <span class="o">=</span> 4
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 1.1429347927e+00
-</span><span class='line'>rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.rows <span class="o">=</span> 52704
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cur_row <span class="o">=</span> 46249
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.pdp_per_row <span class="o">=</span> 40
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 9.7464362627e+00
-</span><span class='line'>rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
-</span><span class='line'>OK u:0.00 s:0.01 r:41.67
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yin@yin-arch rrds<span class="o">]</span>&gt;telnet 127.0.0.1 13900
+</span><span class="line">Trying 127.0.0.1...
+</span><span class="line">Connected to localhost.
+</span><span class="line">Escape character is <span class="s1">&#39;^]&#39;</span>.
+</span><span class="line">
+</span><span class="line">info load.rrd
+</span><span class="line"><span class="nv">filename</span> <span class="o">=</span> <span class="s2">&quot;load.rrd&quot;</span>
+</span><span class="line"><span class="nv">rrd_version</span> <span class="o">=</span> <span class="s2">&quot;0003&quot;</span>
+</span><span class="line"><span class="nv">step</span> <span class="o">=</span> 15
+</span><span class="line"><span class="nv">last_update</span> <span class="o">=</span> 1404984273
+</span><span class="line"><span class="nv">header_size</span> <span class="o">=</span> 1000
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.index <span class="o">=</span> 0
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.type <span class="o">=</span> <span class="s2">&quot;GAUGE&quot;</span>
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.minimal_heartbeat <span class="o">=</span> 120
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.min <span class="o">=</span> NaN
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.max <span class="o">=</span> NaN
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.last_ds <span class="o">=</span> <span class="s2">&quot;5.73242000000000029303e-01&quot;</span>
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.value <span class="o">=</span> 2.0151107237e+00
+</span><span class="line">ds<span class="o">[</span>load<span class="o">]</span>.unknown_sec <span class="o">=</span> 0
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.rows <span class="o">=</span> 5856
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.cur_row <span class="o">=</span> 5072
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.pdp_per_row <span class="o">=</span> 1
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> NaN
+</span><span class="line">rra<span class="o">[</span>0<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.rows <span class="o">=</span> 20160
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.cur_row <span class="o">=</span> 9119
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.pdp_per_row <span class="o">=</span> 4
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 1.1429347927e+00
+</span><span class="line">rra<span class="o">[</span>1<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.cf <span class="o">=</span> <span class="s2">&quot;AVERAGE&quot;</span>
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.rows <span class="o">=</span> 52704
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.cur_row <span class="o">=</span> 46249
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.pdp_per_row <span class="o">=</span> 40
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.xff <span class="o">=</span> 5.0000000000e-01
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.value <span class="o">=</span> 9.7464362627e+00
+</span><span class="line">rra<span class="o">[</span>2<span class="o">]</span>.cdp_prep<span class="o">[</span>0<span class="o">]</span>.unknown_datapoints <span class="o">=</span> 0
+</span><span class="line">OK u:0.00 s:0.01 r:41.67
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>值得一提的是，除了支持rrdtool的info、create、update等内置命令，更可以调用系统指令cd、mkdir、ls等指令，非常强大。可以看出作者的编程思路非常奇特，居然还可以这样用。于是我借助这个特性，实现了网络rrdtool指令的操作，like memcache：）</p>
+
 </div>
 
 
@@ -315,7 +336,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -331,7 +352,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

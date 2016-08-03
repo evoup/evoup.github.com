@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,116 +141,104 @@
 
 <!-- more -->
 
+<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd-&gt;cvs-&gt;配置帐号-&gt;配置xinetd下pcvsserver文件-&gt;启动cvs服务端</p>
 
-<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd->cvs->配置帐号->配置xinetd下pcvsserver文件->启动cvs服务端</p>
+<h4 id="xinetd">1.安装xinetd</h4>
 
-<h4>1.安装xinetd</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>rpm -q xinetd
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">rpm -q xinetd
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>没有安装的话</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>yum install xinetd
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">yum install xinetd
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<h4 id="cvs">2.安装cvs</h4>
 
-<h4>2.安装cvs</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>rpm -q cvs
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">rpm -q cvs
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>我的系统显示
 cvs-1.11.23-15.el6.x86_64
 如果没有安装的话可以</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>yum install cvs
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">yum install cvs
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h4>3.配置帐号</h4>
-
+<h4 id="section">3.配置帐号</h4>
 <p>切换到root，执行：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>groupadd cvs
-</span><span class='line'>useradd -g cvs cvsroot
-</span><span class='line'>passwd cvsroot
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">groupadd cvs
+</span><span class="line">useradd -g cvs cvsroot
+</span><span class="line">passwd cvsroot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这样帐号就配置好了。</p>
 
-<h4>4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</h4>
+<h4 id="cvsetcxinetddpcvsserver">4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</h4>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># default: off</span>
-</span><span class='line'><span class="c"># description: The CVS service can record the history of your source \</span>
-</span><span class='line'><span class="c">#              files. CVS stores all the versions of a file in a single \</span>
-</span><span class='line'><span class="c">#              file in a clever way that only stores the differences \</span>
-</span><span class='line'><span class="c">#              between versions.</span>
-</span><span class='line'>service cvspserver
-</span><span class='line'><span class="o">{</span>
-</span><span class='line'>        <span class="nv">disable</span>                 <span class="o">=</span> no
-</span><span class='line'>        <span class="nv">port</span>                    <span class="o">=</span> 2401
-</span><span class='line'>        <span class="nv">socket_type</span>             <span class="o">=</span> stream
-</span><span class='line'>        <span class="nv">protocol</span>                <span class="o">=</span> tcp
-</span><span class='line'>        <span class="nb">wait</span>                    <span class="o">=</span> no
-</span><span class='line'>        <span class="nv">user</span>                    <span class="o">=</span> root
-</span><span class='line'>        <span class="nv">passenv</span>                 <span class="o">=</span> PATH
-</span><span class='line'>        <span class="nv">server</span>                  <span class="o">=</span> /usr/bin/cvs
-</span><span class='line'>        <span class="nv">env</span>                     <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot
-</span><span class='line'>        <span class="nv">server_args</span>             <span class="o">=</span> -f --allow-root<span class="o">=</span>/home/cvsroot pserver
-</span><span class='line'><span class="c">#       bind                    = 127.0.0.1</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># default: off</span>
+</span><span class="line"><span class="c"># description: The CVS service can record the history of your source \</span>
+</span><span class="line"><span class="c">#              files. CVS stores all the versions of a file in a single \</span>
+</span><span class="line"><span class="c">#              file in a clever way that only stores the differences \</span>
+</span><span class="line"><span class="c">#              between versions.</span>
+</span><span class="line">service cvspserver
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">        <span class="nv">disable</span>                 <span class="o">=</span> no
+</span><span class="line">        <span class="nv">port</span>                    <span class="o">=</span> 2401
+</span><span class="line">        <span class="nv">socket_type</span>             <span class="o">=</span> stream
+</span><span class="line">        <span class="nv">protocol</span>                <span class="o">=</span> tcp
+</span><span class="line">        <span class="nb">wait</span>                    <span class="o">=</span> no
+</span><span class="line">        <span class="nv">user</span>                    <span class="o">=</span> root
+</span><span class="line">        <span class="nv">passenv</span>                 <span class="o">=</span> PATH
+</span><span class="line">        <span class="nv">server</span>                  <span class="o">=</span> /usr/bin/cvs
+</span><span class="line">        <span class="nv">env</span>                     <span class="o">=</span> <span class="nv">HOME</span><span class="o">=</span>/home/cvsroot
+</span><span class="line">        <span class="nv">server_args</span>             <span class="o">=</span> -f --allow-root<span class="o">=</span>/home/cvsroot pserver
+</span><span class="line"><span class="c">#       bind                    = 127.0.0.1</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。</p>
 
-<h4>5.初始化和启动</h4>
-
+<h4 id="section-1">5.初始化和启动</h4>
 <p>初始化项目仓库的命令为</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>cvs -d /home/cvsroot init
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">cvs -d /home/cvsroot init
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>就是在刚才配置的env = HOME=/home/cvsroot目录长噢乖创建代码仓库</p>
 
 <p>接下来重启xinetd</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>/etc/rc.d/init.d/xinetd restart
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/rc.d/init.d/xinetd restart
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>测试cvs是否存在
 lsof -p 2401
@@ -239,9 +250,10 @@ netstat -l | grep csv
 
 <p>接下来还要提一下客户端tortoise cvs使用的问题，需要把cvs.exe的路径加到环境变量PATH中方可使用或者把cvsnt这款软件的cvs.exe拷贝到tortoise cvs安装目录中，否则会报句柄错误。</p>
 
-<h4>参考链接：</h4>
+<h4 id="section-2">参考链接：</h4>
 
-<p><a href="http://blog.csdn.net/lidongtang/article/details/8165574">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
+<p>http://blog.csdn.net/lidongtang/article/details/8165574</p>
+
 </div>
 
 
@@ -323,7 +335,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -339,7 +351,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

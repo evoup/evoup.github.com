@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -115,20 +138,17 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h3>加载示例代码</h3>
-
+  <div class="entry-content clearfix"><h3 id="section">加载示例代码</h3>
 <p>官方示例代码
-<a href="https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo">https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo</a></p>
+https://code.google.com/p/apps-for-android/source/browse/#git%2FSamples%2FWebViewDemo</p>
 
-<p>运行Eclipse(本文提到的eclipse版本是Eclipse ide for java developer KEPLER)，选择File->Import&hellip;&ndash;>Android->Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。</p>
+<p>运行Eclipse(本文提到的eclipse版本是Eclipse ide for java developer KEPLER)，选择File-&gt;Import…-&gt;Android-&gt;Existing Android Code Into Workspace,Next，在Root Directory中选择解压的目录下的Samples文件夹下的WebViewDemo。</p>
 
-<p>如果直接run，会出现错误<code>Project has no project.properties file! Edit the project properties to set one.</code>。
-这时只要右键项目属性properties &ndash;> android &ndash;> Project Build Target 把里面的Androidx.x改为对应的google APIs版本。google APIs是android apis的超集，Android只是其中一个用于移动设备的OS，可以有限的调用一些google api。</p>
+<p>如果直接run，会出现错误<code> Project has no project.properties file! Edit the project properties to set one.</code>。
+这时只要右键项目属性properties -&gt; android -&gt; Project Build Target 把里面的Androidx.x改为对应的google APIs版本。google APIs是android apis的超集，Android只是其中一个用于移动设备的OS，可以有限的调用一些google api。</p>
 
-<h3>分析app部分代码</h3>
-
-<p>请看示例java代码</p>
-
+<h3 id="app">分析app部分代码</h3>
+<p>请看示例java代码
 </div>
   
   
@@ -211,8 +231,7 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h3>起因</h3>
-
+  <div class="entry-content clearfix"><h3 id="section">起因</h3>
 <p>今天在clone项目的时候发生了很奇怪的错误，而且居然是有的项目可以clone，有的不行，都是git协议。错误如下：</p>
 
 </div>
@@ -255,8 +274,7 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h3>序言</h3>
-
+  <div class="entry-content clearfix"><h3 id="section">序言</h3>
 <p>通过一个阶段的cocos2d-iphone的学习，对Objective-C（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocostudio这一套的东西，应该是时候投入该框架的学习。</p>
 
 </div>
@@ -386,8 +404,7 @@
 
   <div class="entry-content clearfix"><p>分享一个检查telnet瞬断的脚本，我用调用它来检测thrift的TCP9090端口一连上就断开连接的状态。</p>
 
-<p>直接上代码了</p>
-
+<p>直接上代码了
 </div>
   
   
@@ -470,12 +487,12 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h3>问题</h3>
+  <div class="entry-content clearfix"><h3 id="section">问题</h3>
 
 <p>今天修理hbase问题的时候发现，监控的60010端口的master.jsp就是无法显示，进入log查看发现zookeeper连上了之后马上就断开。</p>
 
-<p><code>[NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247]</code>
-<code>- Too many connections from /10.10.8.136 - max is 10</code></p>
+<p><code> [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn$Factory@247] </code> 
+` - Too many connections from /10.10.8.136 - max is 10 `</p>
 
 <p>这种情况在telnet测试中被证实，一连上也是瞬间脱离与服务器的连接。</p>
 
@@ -514,13 +531,12 @@
       </p>
     
     
-      <h1 class="entry-title"><a href="/blog/2013/12/30/git-use-https-protocol/">Git使用https协议</a></h1>
+      <h1 class="entry-title"><a href="/blog/2013/12/30/git-use-https-protocol/">Git免密码使用https协议</a></h1>
     
   </header>
 
 
-  <div class="entry-content clearfix"><p>git支持的协议主要有git、ssh、http、https这几种，国内防火墙对github的作用下，导致长期使用github服务的程序开发人员要忍受缓慢的push和pull速度。现在终于找到了一个比较不错的方法提升工作效率，那就是使用goagent+git/https的方式。</p>
-
+  <div class="entry-content clearfix"><p>git支持的协议主要有git、ssh、http、https这几种，国内防火墙对github的作用下，导致长期使用github服务的程序开发人员要忍受缓慢的push和pull速度。现在终于找到了一个比较不错的方法提升工作效率，那就是使用goagent+git/https的方式。
 </div>
   
   
@@ -555,7 +571,7 @@
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -571,7 +587,7 @@
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

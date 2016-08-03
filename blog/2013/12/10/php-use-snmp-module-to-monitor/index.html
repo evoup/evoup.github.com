@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,197 +137,178 @@
   </header>
 
 
-<div class="entry-content clearfix"><p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code>MIB</code>（管理信息数据库），<code>OID</code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
-通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，&mdash;enable或者&mdash;with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
-下面先论述如以&mdash;enable或者&mdash;with的方式来把snmp静态编译到php中去。
-首先下载php软件包。</p>
+<div class="entry-content clearfix"><p>简单地根据经验归纳，snmp被叫做简单网络管理协议(Simple Network Management Protocol)，是监控业界标准的设备间通讯接口会话层协议，位于OSI的第五层。各类开源软件广泛采用了此协议进行数据的获取，目前已经从明文传输的v1发展到了具有较高安全性的v3版本。与snmp相关的知识有很多，<code> MIB </code>（管理信息数据库），<code> OID </code>（对象标识符），就目前而言，只需要记得有这2个名字就可以了。
+通过源码安装php的snmp模块和安装一般php的模块没有本质区别。一共也就2种方式，–enable或者–with静态方式和phpize动态方式。共同点是都需要ext目录下面有snmp这个模块。
+下面先论述如以–enable或者–with的方式来把snmp静态编译到php中去。
+首先下载php软件包。
+<!-- more --></p>
 
-<!-- more -->
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
-</span><span class='line'><span class="nv">$ </span>tar xjf php-5.5.6.tar.bz2
-</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>php-5.5.6
-</span><span class='line'><span class="nv">$ </span>ls ext/snmp/
-</span><span class='line'>config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
-</span><span class='line'><span class="err">$</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>wget wget http://tw1.php.net/get/php-5.5.6.tar.bz2/from/this/mirror
+</span><span class="line"><span class="nv">$ </span>tar xjf php-5.5.6.tar.bz2
+</span><span class="line"><span class="nv">$ </span><span class="nb">cd </span>php-5.5.6
+</span><span class="line"><span class="nv">$ </span>ls ext/snmp/
+</span><span class="line">config.m4  config.w32  CREDITS  php_snmp.h  snmp.c  snmp.dsp  tests
+</span><span class="line"><span class="err">$</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>可见snmp已经自带了，不需要到pecl下载然后放到ext目录。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo yum install libxml2 libxml2-devel
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>sudo yum install libxml2 libxml2-devel
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code> configure: error: xml2-config not found. Please check your libxml2 installation. </code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code> configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation </code>的报错。 </p>
 
-<p>备注如果一意孤行，只装libxml2，呵呵，那么你将收到<code>configure: error: xml2-config not found. Please check your libxml2 installation.</code>的报错。同样，你要是不装net-snmp-devel，就可以收到<code>configure: error: Could not find net-snmp-config binary. Please check your net-snmp installation</code>的报错。</p>
-
-<h3>静态编译</h3>
-
+<h3 id="section">静态编译</h3>
 <p>查一下snmp的安装选项</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>./configure --help | grep snmp
-</span><span class='line'>  --with-snmp<span class="o">=</span>DIR         Include SNMP support
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>./configure --help | grep snmp
+</span><span class="line">  --with-snmp<span class="o">=</span>DIR         Include SNMP support
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>是–with，了解后继续操作，这里直接使用默认snmp路径</p>
 
-<p>是&mdash;with，了解后继续操作，这里直接使用默认snmp路径</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>./configure --prefix<span class="o">=</span>/usr/local/php55_static_snmp --with-snmp --ebable-sockets
-</span><span class='line'><span class="nv">$ </span>make
-</span><span class='line'><span class="nv">$ </span>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>./configure --prefix<span class="o">=</span>/usr/local/php55_static_snmp --with-snmp --ebable-sockets
+</span><span class="line"><span class="nv">$ </span>make
+</span><span class="line"><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这样静态编译就完成了。</p>
 
-<h3>动态编译</h3>
-
+<h3 id="section-1">动态编译</h3>
 <p>假设一开始把php安装在/usr/local/php55，现在要以编译出sockets.so和snmp.so</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd </span>ext/snmp
-</span><span class='line'><span class="nv">$ </span>/usr/local/php55/bin/phpize
-</span><span class='line'><span class="nv">$ </span>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
-</span><span class='line'><span class="nv">$ </span>make
-</span><span class='line'><span class="nv">$ </span>sudo make install
-</span><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ../../ext/sockets
-</span><span class='line'><span class="nv">$ </span>/usr/local/php55/bin/phpize
-</span><span class='line'><span class="nv">$ </span>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
-</span><span class='line'><span class="nv">$ </span>make
-</span><span class='line'><span class="nv">$ </span>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span><span class="nb">cd </span>ext/snmp
+</span><span class="line"><span class="nv">$ </span>/usr/local/php55/bin/phpize
+</span><span class="line"><span class="nv">$ </span>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
+</span><span class="line"><span class="nv">$ </span>make
+</span><span class="line"><span class="nv">$ </span>sudo make install
+</span><span class="line"><span class="nv">$ </span><span class="nb">cd</span> ../../ext/sockets
+</span><span class="line"><span class="nv">$ </span>/usr/local/php55/bin/phpize
+</span><span class="line"><span class="nv">$ </span>./configure --with-php-config<span class="o">=</span>/usr/local/php55/bin/php-config
+</span><span class="line"><span class="nv">$ </span>make
+</span><span class="line"><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后复制刚才的编译好的so文件到扩展目录到etc目录</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
-</span><span class='line'><span class="nv">$ </span>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/snmp.so /usr/local/php55/etc/
+</span><span class="line"><span class="nv">$ </span>cp /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/sockets.so /usr/local/php55/etc/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>编辑php的配置文件</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>vi /usr/local/php55/etc/php.ini
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>vi /usr/local/php55/etc/php.ini
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>加入2行</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">extension</span><span class="o">=</span>sockets.so
-</span><span class='line'><span class="nv">extension</span><span class="o">=</span>snmp.so
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">extension</span><span class="o">=</span>sockets.so
+</span><span class="line"><span class="nv">extension</span><span class="o">=</span>snmp.so
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>撰写php版的snmp客户端测试程序</h3>
-
+<h3 id="phpsnmp">撰写php版的snmp客户端测试程序</h3>
 <p>开始写点测试程序，确认snmp已经在本机支持</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$nc</span> -uvz 127.0.0.1 161
-</span><span class='line'>Connection to 127.0.0.1 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$nc</span> -uvz 127.0.0.1 161
+</span><span class="line">Connection to 127.0.0.1 161 port <span class="o">[</span>udp/snmp<span class="o">]</span> succeeded!
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>2014-07-16补充：
 以上udp端口的检测方法仅使用于linux，如果要在freebsd下检测，需要使用以下语句</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$nc</span> -u 127.0.0.1 161
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$nc</span> -u 127.0.0.1 161
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>输入以上命令然后回车，如果没有马上退出，证明udp服务已经起来</p>
 
 <p>已经支持，那么来写程序吧</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="sd">/**</span>
-</span><span class='line'><span class="sd"> * test.php</span>
-</span><span class='line'><span class="sd"> */</span>
-</span><span class='line'><span class="nv">$host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$oid</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.1&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$oid1</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.2&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$oid2</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.3&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$oid3</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.4.3.0&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="c1">// 1 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="c1">// 5 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid1</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="c1">// 15 minute Load</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid2</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="c1">// Total Swap Size</span>
-</span><span class='line'><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid3</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class="line"><span class="sd">/**</span>
+</span><span class="line"><span class="sd"> * test.php</span>
+</span><span class="line"><span class="sd"> */</span>
+</span><span class="line"><span class="nv">$host</span><span class="o">=</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$community</span><span class="o">=</span><span class="s2">&quot;public&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$oid</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.1&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$oid1</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.2&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$oid2</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.10.1.3.3&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$oid3</span><span class="o">=</span><span class="s2">&quot;.1.3.6.1.4.1.2021.4.3.0&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="c1">// 1 minute Load</span>
+</span><span class="line"><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="c1">// 5 minute Load</span>
+</span><span class="line"><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid1</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="c1">// 15 minute Load</span>
+</span><span class="line"><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid2</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="c1">// Total Swap Size</span>
+</span><span class="line"><span class="k">echo</span> <span class="p">(</span><span class="nb">snmpget</span><span class="p">(</span><span class="nv">$host</span><span class="p">,</span><span class="nv">$community</span><span class="p">,</span><span class="nv">$oid3</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>查看结果</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php55/bin/php test.php
-</span><span class='line'>STRING: 0.05
-</span><span class='line'>STRING: 0.03
-</span><span class='line'>STRING: 0.03
-</span><span class='line'>INTEGER: 2064376 kB
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>/usr/local/php55/bin/php test.php
+</span><span class="line">STRING: 0.05
+</span><span class="line">STRING: 0.03
+</span><span class="line">STRING: 0.03
+</span><span class="line">INTEGER: 2064376 kB
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>分析总结</h3>
-
+<h3 id="section-2">分析总结</h3>
 <p>可以看出php的snmp接口还是非常简明优雅的，由此推断你只要学会rrdtool、php和snmp，自行打造一款类cacti的监控软件不会有太大的困难。但是这么做其实还有一点要注意，得装snmpd，我自己写公司监控平台2.0的时候，上级要求使用C api直接获取数据，不走snmp，其实通过对分析ganglia源代码的粗读，也能马上发现其也是采用了原生api调用获取主要监控数据的方式，所以号称比snmpd快和非常节省系统开销。但为了完成任务和系统的拓展性，果然另外支持snmp吧。</p>
 
-<h3>扩展阅读</h3>
-
+<h3 id="section-3">扩展阅读</h3>
 <p>请需要OID对照资料的兄弟自行互联网查询《linux常用OID》</p>
 </div>
 
@@ -387,7 +391,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -403,7 +407,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

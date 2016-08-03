@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -85,54 +108,6 @@
   <div class="page-content col-md-9">
     <div class="blog-index">
       
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/19/ntpdate-step-system-error/">使用ntpdate同步时间报错: Step-systime: Operation Not Permitted</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>今天有台虚拟机进行时间的同步报错</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>ntpdate ntp.sjtu.edu.cn
-</span><span class='line'>
-</span><span class='line'>19 Nov 15:38:54 ntpdate<span class="o">[</span>93376<span class="o">]</span>: step-systime: Operation not permitted
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
-</div>
-  
-  
-
-
-        </article>
       
       
         <article class="post">
@@ -333,9 +308,8 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h3>写在前面</h3>
-
-<p>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br>
+  <div class="entry-content clearfix"><h3 id="section">写在前面</h3>
+<p>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br />
 单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把程序直接移植到另一台机器HostB上去？答案是肯定的。</p>
 
 </div>
@@ -378,10 +352,10 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code>Could not find bsd.port.options.mk</code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
+  <div class="entry-content clearfix"><p>一台老的freebsd6.2机器，port中没有subversion（注：千万不要portsnap更新，一更新后就毁了<code> Could not find bsd.port.options.mk </code>没救了，因为最新portsnap不向下兼容支持老系统了！）</p>
 
 <p>注意编译subversion的时候会出现
-<code>configure: error: C++ preprocessor "/lib/cpp" fails sanity check</code></p>
+` configure: error: C++ preprocessor “/lib/cpp” fails sanity check `</p>
 
 </div>
   
@@ -423,18 +397,15 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>今天在创建rrdtool的graph的时候遇到了报错Cannot parse vname from &lsquo;DEF</p>
+  <div class="entry-content clearfix"><p>今天在创建rrdtool的graph的时候遇到了报错Cannot parse vname from ‘DEF</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#/bin/sh</span>
-</span><span class='line'>/usr/local/bin/rrdtool graph result.png --lazy --start 1384320009 --end 1384323609 --title <span class="s2">&quot;Disk / usage&quot;</span> -v <span class="s2">&quot;bytes&quot;</span> --width 320 --height 240 <span class="se">\</span>
-</span><span class='line'>DEF:/<span class="o">=</span>/services/rrds/yin2-monitorbeta-arch_ac101eb4/diskused_.rrd:/:AVERAGE AREA:/#444444
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#/bin/sh</span>
+</span><span class="line">/usr/local/bin/rrdtool graph result.png --lazy --start 1384320009 --end 1384323609 --title <span class="s2">&quot;Disk / usage&quot;</span> -v <span class="s2">&quot;bytes&quot;</span> --width 320 --height 240 <span class="se">\</span>
+</span><span class="line">DEF:/<span class="o">=</span>/services/rrds/yin2-monitorbeta-arch_ac101eb4/diskused_.rrd:/:AVERAGE AREA:/#444444
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 </div>
   
@@ -476,8 +447,7 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>之前有个项目的svn通过svn manager设置了权限访问，采用了不同的密码，在windows端小海龟的密码是看不到的，但庆幸主要更新和提交svn的任务是在freebsd下进行的，经过一番折腾，找回了密码,方法见下：</p>
-
+  <div class="entry-content clearfix"><p>之前有个项目的svn通过svn manager设置了权限访问，采用了不同的密码，在windows端小海龟的密码是看不到的，但庆幸主要更新和提交svn的任务是在freebsd下进行的，经过一番折腾，找回了密码,方法见下：
 </div>
   
   
@@ -521,106 +491,371 @@
   <div class="entry-content clearfix"><p>nginx端的配置
 首先创建好web目录，假设在/services/www目录，在其下创建一个php测试脚本，php的脚本简单如下：</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;?php
-</span><span class='line'>phpinfo();</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class="line"><span class="nb">phpinfo</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>安装nginx
 安装简单的采用port，然后直接配置/usr/local/etc/nginx/nginx.conf</p>
 
-<p>添加一个前缀test，我们访问<a href="http://192.168.216.198/test/index.php">http://192.168.216.198/test/index.php</a>
+<p>添加一个前缀test，我们访问http://192.168.216.198/test/index.php
 或者
-<a href="http://192.168.216.198/test/">http://192.168.216.198/test/</a>
+http://192.168.216.198/test/
 即可看到php输出的信息。</p>
 
 <p>默认nginx的fastcgi脚本似乎不直接支持php，需要创建一个文件php_fcgi_params.conf，然后在此文件中加入类似如下的代码：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">#php_fcgi_params.conf                                                                                                                                              </span>
-</span><span class='line'>fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
-</span><span class='line'>fastcgi_param  SERVER_SOFTWARE    nginx;
-</span><span class='line'>fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
-</span><span class='line'>fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
-</span><span class='line'>fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
-</span><span class='line'>fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
-</span><span class='line'>fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
-</span><span class='line'>fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
-</span><span class='line'>fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
-</span><span class='line'>fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
-</span><span class='line'>fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
-</span><span class='line'>fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
-</span><span class='line'>fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
-</span><span class='line'>fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
-</span><span class='line'><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
-</span><span class='line'>fastcgi_param  REDIRECT_STATUS    200;
-</span><span class='line'>
-</span><span class='line'>fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#php_fcgi_params.conf                                                                                                                                              </span>
+</span><span class="line">fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+</span><span class="line">fastcgi_param  SERVER_SOFTWARE    nginx;
+</span><span class="line">fastcgi_param  QUERY_STRING       <span class="nv">$query_string</span>;
+</span><span class="line">fastcgi_param  REQUEST_METHOD     <span class="nv">$request_method</span>;
+</span><span class="line">fastcgi_param  CONTENT_TYPE       <span class="nv">$content_type</span>;
+</span><span class="line">fastcgi_param  CONTENT_LENGTH     <span class="nv">$content_length</span>;
+</span><span class="line">fastcgi_param  SCRIPT_FILENAME    <span class="nv">$document_root$fastcgi_script_name</span>;
+</span><span class="line">fastcgi_param  SCRIPT_NAME        <span class="nv">$fastcgi_script_name</span>;
+</span><span class="line"><span class="c">#fastcgi_param  SCRIPT_NAME        $request_uri;                                                                                                             </span>
+</span><span class="line">fastcgi_param  PATH_INFO          <span class="nv">$fastcgi_script_name</span>;
+</span><span class="line">fastcgi_param  REQUEST_URI        <span class="nv">$request_uri</span>;
+</span><span class="line">fastcgi_param  DOCUMENT_URI       <span class="nv">$document_uri</span>;
+</span><span class="line">fastcgi_param  DOCUMENT_ROOT      <span class="nv">$document_root</span>;
+</span><span class="line">fastcgi_param  SERVER_PROTOCOL    <span class="nv">$server_protocol</span>;
+</span><span class="line">fastcgi_param  REMOTE_ADDR        <span class="nv">$remote_addr</span>;
+</span><span class="line">fastcgi_param  REMOTE_PORT        <span class="nv">$remote_port</span>;
+</span><span class="line">fastcgi_param  SERVER_ADDR        <span class="nv">$server_addr</span>;
+</span><span class="line">fastcgi_param  SERVER_PORT        <span class="nv">$server_port</span>;
+</span><span class="line">fastcgi_param  SERVER_NAME        <span class="nv">$server_name</span>;
+</span><span class="line"><span class="c"># PHP only, required if PHP was built with --enable-force-cgi-redirect                                                                                       </span>
+</span><span class="line">fastcgi_param  REDIRECT_STATUS    200;
+</span><span class="line">
+</span><span class="line">fastcgi_param       HTTP_X_REQUESTED_WITH       <span class="nv">$http_x_requested_with</span>;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>在nginx.conf中的server上下文中添加</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>    location ~ ^/pma/.*<span class="nv">$ </span><span class="o">{</span>
-</span><span class='line'>        <span class="c">#access_log /var/log/access_beta.log access1;</span>
-</span><span class='line'>        index index.php index.html index.htm;
-</span><span class='line'>        root /services/www/;
-</span><span class='line'>        fastcgi_index   index.php;
-</span><span class='line'>        include /usr/local/etc/nginx/php_fcgi_params.conf;
-</span><span class='line'>        fastcgi_pass 127.0.0.1:9000;
-</span><span class='line'>    <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">    location ~ ^/pma/.*<span class="nv">$ </span><span class="o">{</span>
+</span><span class="line">        <span class="c">#access_log /var/log/access_beta.log access1;</span>
+</span><span class="line">        index index.php index.html index.htm;
+</span><span class="line">        root /services/www/;
+</span><span class="line">        fastcgi_index   index.php;
+</span><span class="line">        include /usr/local/etc/nginx/php_fcgi_params.conf;
+</span><span class="line">        fastcgi_pass 127.0.0.1:9000;
+</span><span class="line">    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>启动nignx</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/etc/rc.d/ngnix start
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>/usr/local/etc/rc.d/ngnix start
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>访问浏览器<a href="http://192.168.216.198/pma/">http://192.168.216.198/pma/</a></p>
+<p>访问浏览器http://192.168.216.198/pma/</p>
 
 <p><img src="/images/evoup/php-fpm-pma.png" alt="Alt text" /></p>
 
 <p>done!</p>
+</div>
+  
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-04-08T01:03:00+08:00" pubdate data-updated="true">Apr 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/">freebsd下nginx+Php5.3.8+php-fpm源码安装之一</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
+
+<h3 id="peclpeclphpext">pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3>
+<p>i.memcache-3.0.4-&gt;memcache<br />
+ii.APC-3.1.4-&gt;apc<br />
+iii.imagick-3.0.0-&gt;imagick<br />
+(已经把memcache,apc模块源码放到ext子目录中,名称如上)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /your/phpsrcdir
+</span><span class="line"><span class="nv">$ </span>rm configure
+</span><span class="line"><span class="nv">$ </span>./buildconf --force
+</span><span class="line"><span class="nv">$ </span>./configure --help   <span class="c">#(选项出现了!)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">预装软件：</h3>
+<p>ImageMagick</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>make <span class="nv">WITHOUT_X11</span><span class="o">=</span>yes install clean
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>(时间较长，干点别的去)
+libevent(php-fpm需要,ports)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>curl(ports)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>make install clean
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>libmcrypt(ports)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">make install clean
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="php533php-fpm">手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，</h4>
+<p>–enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="s1">$&#39;./configure&#39;</span> <span class="s1">&#39;--prefix=/usr/local/php5_admin&#39;</span> <span class="s1">&#39;--with-layout=GNU&#39;</span> <span class="s1">&#39;--with-config-file-scan-dir=/usr/local/php5_admin/etc/php&#39;</span> <span class="s1">&#39;--disable-all&#39;</span> <span class="s1">&#39;--enable-dom&#39;</span> <span class="s1">&#39;--enable-filter&#39;</span> <span class="s1">&#39;--enable-hash&#39;</span> <span class="s1">&#39;--enable-json&#39;</span> <span class="s1">&#39;--with-mcrypt&#39;</span> <span class="s1">&#39;--with-curl&#39;</span> <span class="s1">&#39;--with-pcre-regex&#39;</span> <span class="s1">&#39;--enable-mbstring&#39;</span> <span class="s1">&#39;--enable-ctype&#39;</span> <span class="s1">&#39;--enable-session&#39;</span> <span class="s1">&#39;--enable-libxml&#39;</span> <span class="s1">&#39;--enable-simplexml&#39;</span> <span class="s1">&#39;--enable-pdo&#39;</span> <span class="s1">&#39;--with-pdo-mysql=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysqli=mysqlnd&#39;</span> <span class="s1">&#39;--with-mysql&#39;</span> <span class="s1">&#39;--enable-sysvsem&#39;</span> <span class="s1">&#39;--enable-sysvshm&#39;</span> <span class="s1">&#39;--enable-apc&#39;</span> <span class="s1">&#39;--enable-memcache&#39;</span> <span class="s1">&#39;--with-imagick=/usr/local&#39;</span> <span class="s1">&#39;--enable-fpm&#39;</span> --with-zlib --with-bz2 --enable-zip
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>注意
+make时候会报错
+解决方法：
+修改fpm_sockets.c代码：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">info.tcpi_sacked <span class="o">=</span>&gt; info.__tcpi_sacked
+</span><span class="line">info.tcpi_unacked <span class="o">=</span>&gt; info.__tcpi_unacked
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="section-1">配置</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>cp /usr/local/php5_admin/etc/php-fpm.conf.default /usr/local/php5_admin/etc/php-fpm.conf
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>几个需要配置的参数</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">pm.max_children
+</span><span class="line">pm.start_servers
+</span><span class="line">pm.min_spare_servers
+</span><span class="line">pm.max_spare_servers
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>编辑启动脚本/usr/local/etc/rc.d/phpfpm</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#!/bin/sh</span>
+</span><span class="line"><span class="c"># PROVIDE: phpfpm</span>
+</span><span class="line"><span class="c"># REQUIRE: DAEMON</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class="line"><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># Last-Modified: 2010-09-14 23:30:20</span>
+</span><span class="line"><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class="line">. /etc/rc.subr
+</span><span class="line"><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class="line">load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class="line"><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class="line"><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class="line"><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class="line"><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class="line"><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class="line"><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class="line"><span class="c">#command_args=&quot;&quot; </span>
+</span><span class="line">run_rc_command <span class="s2">&quot;$1&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动创建</p>
+
+<p>在/etc/rc.conf中加入</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">phpfpm_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后启动</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>/usr/local/etc/rc.d/phpfpm start
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>备注，其实：上面的phpfpm配置文件是错误的，原因如下：
+&gt; php 5.3.3以上的php版本源码中已经内嵌了php-fpm，不用象以前的php版本一样专门打补丁了，只需要在
+configure的时候添加编译参数即可。
+&gt; 但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm 
+(start|stop|reload)等命令，需要使用信号控制：
+&gt; master进程可以理解以下信号：
+&gt; INT, TERM 立刻终止
+&gt; QUIT 平滑终止
+&gt; USR1 重新打开日志文件
+&gt; USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p>
+
+<p>示例：
+注意这边的单引号为“esc下面那个键（~）”
+php-fpm 关闭：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span><span class="nb">kill</span> -INT <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>php-fpm 重启：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span><span class="nb">kill</span> -USR2 <span class="sb">`</span>cat /usr/local/php/var/run/php-fpm.pid<span class="sb">`</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>查看php-fpm进程：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>ps aux | grep -c php-fpm
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>查看php-fpm进程数：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="nv">$ </span>ps aux | grep -c php-fpm | wc -l
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>正确的脚本应该是这样的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line"><span class="c">#!/bin/sh</span>
+</span><span class="line"><span class="c"># PROVIDE: phpfpm</span>
+</span><span class="line"><span class="c"># REQUIRE: DAEMON</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># Add the following lines to /etc/rc.conf to run phpfpm:</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># phpfpm_enable (bool):   Set it to &quot;YES&quot; to enable {phpfpm}.</span>
+</span><span class="line"><span class="c">#               Default is &quot;NO&quot;.</span>
+</span><span class="line"><span class="c">#</span>
+</span><span class="line"><span class="c"># Last-Modified: 2012-11-22 10:27:43</span>
+</span><span class="line"><span class="nv">name</span><span class="o">=</span><span class="s2">&quot;phpfpm&quot;</span>
+</span><span class="line">. /etc/rc.subr
+</span><span class="line"><span class="nv">rcvar</span><span class="o">=</span><span class="sb">`</span>set_rcvar<span class="sb">`</span>
+</span><span class="line">load_rc_config <span class="k">${</span><span class="nv">name</span><span class="k">}</span>
+</span><span class="line"><span class="nb">eval</span> <span class="k">${</span><span class="nv">name</span><span class="k">}</span><span class="nv">_enable</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_enable:-<span class="s2">&quot;NO&quot;</span><span class="o">}</span>
+</span><span class="line"><span class="nb">eval </span><span class="nv">server</span><span class="o">=</span><span class="se">\$</span><span class="o">{</span><span class="k">${</span><span class="nv">name</span><span class="k">}</span>_server:-<span class="s2">&quot;/usr/local/php5_admin/sbin/php-fpm&quot;</span><span class="o">}</span>
+</span><span class="line"><span class="nb">command</span><span class="o">=</span><span class="k">${</span><span class="nv">server</span><span class="k">}</span>
+</span><span class="line"><span class="nv">extra_commands</span><span class="o">=</span><span class="s2">&quot;reload&quot;</span>
+</span><span class="line"><span class="nv">sig_reload</span><span class="o">=</span><span class="s2">&quot;USR2&quot;</span>
+</span><span class="line"><span class="nv">sig_stop</span><span class="o">=</span><span class="s2">&quot;INT&quot;</span>
+</span><span class="line"><span class="nv">pidfile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/var/run/php-fpm.pid&quot;</span>
+</span><span class="line"><span class="nv">fpmconffile</span><span class="o">=</span><span class="s2">&quot;/usr/local/php5_admin/etc/php-fpm.conf&quot;</span>
+</span><span class="line"><span class="nv">command_args</span><span class="o">=</span><span class="s2">&quot;-g ${pidfile} -y ${fpmconffile}&quot;</span>
+</span><span class="line"><span class="c">#run_rc_command $1</span>
+</span><span class="line">run_rc_command <span class="nv">$*</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>下篇讲nginx的配置</p>
 </div>
   
   
@@ -651,7 +886,7 @@
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -667,7 +902,7 @@
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

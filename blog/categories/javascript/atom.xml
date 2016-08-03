@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-07-25T00:34:38+08:00</updated>
+  <updated>2016-08-03T12:34:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -18,128 +18,183 @@
     <link href="http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method/"/>
     <updated>2015-04-21T14:20:00+08:00</updated>
     <id>http://evoupsight.com/blog/2015/04/21/javascript-class-define-5-method</id>
-    <content type="html"><![CDATA[<p>自己写js的时候，总结了类的五种写法，可能还不止，以后增加。</p>
-
-<!--more-->
-
+    <content type="html"><![CDATA[<p>自己写js的时候，总结了类的五种写法，可能还不止，以后增加。
+<!--more--></p>
 
 <p>第一种，this的方式：
-```javascript</p>
-
-<pre><code>var Test1 = function(){
-    var name = "";
-    this.setName = function(username){
-        name = username;
-    }
-    this.getName = function(){
-        return name;
-    }
-    this.sayHello = function(){
-        return "Hello " + this.getName();
-    }
-    return this;
-}();
-Test1.setName("penngo");
-console.log("Test1======" + Test1.getName());
-console.log("Test1======" + Test1.sayHello());
-</code></pre>
-
-<p>```</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="kd">var</span> <span class="nx">Test1</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="err">“”</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">setName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">){</span>
+</span><span class='line'>            <span class="nx">name</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">getName</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">sayHello</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>            <span class="k">return</span> <span class="err">“</span><span class="nx">Hello</span> <span class="err">“</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}();</span>
+</span><span class='line'>    <span class="nx">Test1</span><span class="p">.</span><span class="nx">setName</span><span class="p">(</span><span class="err">“</span><span class="nx">penngo</span><span class="err">”</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">Test1</span><span class="o">======</span><span class="err">”</span> <span class="o">+</span> <span class="nx">Test1</span><span class="p">.</span><span class="nx">getName</span><span class="p">());</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">Test1</span><span class="o">======</span><span class="err">”</span> <span class="o">+</span> <span class="nx">Test1</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>第二种，return的方式：
-```javascript</p>
-
-<pre><code>var Test2 = function(){
-    var name = "";
-    return {
-        setName:function(username){
-            name = username;
-        },
-        getName:function(){
-            return name;
-        },
-        sayHello:function(){
-            return "Hello " + this.getName();
-        }
-    };
-}();
-Test2.setName("penngo");
-console.log("Test2======" + Test2.getName());
-    console.log("Test2======" + Test2.sayHello());
-</code></pre>
-
-<p>```</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>    <span class="kd">var</span> <span class="nx">Test2</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="err">“”</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">setName</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">username</span><span class="p">){</span>
+</span><span class='line'>                <span class="nx">name</span> <span class="o">=</span> <span class="nx">username</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">},</span>
+</span><span class='line'>            <span class="nx">getName</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>                <span class="k">return</span> <span class="nx">name</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">},</span>
+</span><span class='line'>            <span class="nx">sayHello</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>                <span class="k">return</span> <span class="err">“</span><span class="nx">Hello</span> <span class="err">“</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">getName</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">};</span>
+</span><span class='line'>    <span class="p">}();</span>
+</span><span class='line'>    <span class="nx">Test2</span><span class="p">.</span><span class="nx">setName</span><span class="p">(</span><span class="err">“</span><span class="nx">penngo</span><span class="err">”</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">Test2</span><span class="o">======</span><span class="err">”</span> <span class="o">+</span> <span class="nx">Test2</span><span class="p">.</span><span class="nx">getName</span><span class="p">());</span>
+</span><span class='line'>    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">Test2</span><span class="o">======</span><span class="err">”</span> <span class="o">+</span> <span class="nx">Test2</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>第三种,建立空的构造器函数，使其protoype到一个json结构的对象（这样结构会非常清晰）。最后对空的构造器函数new ， 创建实例：
-```javascript
-var pri={</p>
-
-<pre><code>name:"soso",
-init:function(name){
-    this.name=name
-},
-pri:function(){
-    alert(this.name)
-}
-</code></pre>
-
-<p>}
-function <em>temp(){}
-</em>temp.prototype= pri
-var s =new _temp()
-s.init(123)
-s.pri()</p>
-
-<p>var ss=new _temp()
-ss.init(1234)
-ss.pri()
-s.pri()</p>
-
-<p>var d=new _temp()
-d.pri()
-```</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">pri</span><span class="o">=</span><span class="p">{</span>
+</span><span class='line'>    <span class="nx">name</span><span class="o">:</span><span class="err">”</span><span class="nx">soso</span><span class="err">”</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">init</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">){</span>
+</span><span class='line'>        <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="o">=</span><span class="nx">name</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="nx">pri</span><span class="o">:</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>        <span class="nx">alert</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">_temp</span><span class="p">(){}</span>
+</span><span class='line'><span class="nx">_temp</span><span class="p">.</span><span class="nx">prototype</span><span class="o">=</span> <span class="nx">pri</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">ss</span><span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">ss</span><span class="p">.</span><span class="nx">init</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+</span><span class='line'><span class="nx">ss</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span><span class='line'><span class="nx">s</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">d</span><span class="o">=</span><span class="k">new</span> <span class="nx">_temp</span><span class="p">()</span>
+</span><span class='line'><span class="nx">d</span><span class="p">.</span><span class="nx">pri</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>第四种，jquery扩展类的方式：
-```javascript
-var Circle = function(x, y, r) {</p>
-
-<pre><code>  this.x = x;
-  this.y = y;
-  this.r = r;
-</code></pre>
-
-<p>}</p>
-
-<p>$.extend(Circle.prototype, {</p>
-
-<pre><code>  area: function() {
-        return Math.PI * this.r * this.r;
-  },
-  diameter: function() {
-        return 2 * this.r;
-  }
-</code></pre>
-
-<p>});</p>
-
-<p>var mycircle = new Circle(100, 200, 50);
-alert(mycircle.r + &lsquo; &ndash;> &rsquo; + mycircle.area());
-```</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Circle</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">x</span> <span class="o">=</span> <span class="nx">x</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">=</span> <span class="nx">r</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Circle</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">area</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">},</span>
+</span><span class='line'>      <span class="nx">diameter</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">r</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'><span class="p">});</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="kd">var</span> <span class="nx">mycircle</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Circle</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+</span><span class='line'><span class="nx">alert</span><span class="p">(</span><span class="nx">mycircle</span><span class="p">.</span><span class="nx">r</span> <span class="o">+</span> <span class="err">‘</span> <span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="err">‘</span> <span class="o">+</span> <span class="nx">mycircle</span><span class="p">.</span><span class="nx">area</span><span class="p">());</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>第五种
-```javascript
-var Link = function (){};</p>
-
-<p>Link.prototype = {</p>
-
-<pre><code>method1: function (){console.log(1);return this;},
-method2: function (){console.log(2);return this;},
-method3: function (){console.log(3);return this;},
-method4: function (){console.log(4);return this;}
-</code></pre>
-
-<p>}
-```</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">Link</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(){};</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">Link</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">method1</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method2</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method3</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;},</span>
+</span><span class='line'>    <span class="nx">method4</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(){</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="k">return</span> <span class="k">this</span><span class="p">;}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>注意第五种的方式，其实就是加了个return this，这样才可以链式调用。
 结论：目前先用第五种方式来写，如果需要动态扩展用jq的extend比较推荐。</p>
@@ -147,13 +202,14 @@ method4: function (){console.log(4);return this;}
 <p>题外话：不想写class还可以写嵌套function的:)</p>
 
 <p>参考连接：
-<a href="http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html">http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html</a></p>
+http://www.cnblogs.com/jikey/archive/2011/05/13/2045005.html</p>
 
-<p><a href="http://www.blogjava.net/pengo/archive/2013/01/08/393931.html">http://www.blogjava.net/pengo/archive/2013/01/08/393931.html</a></p>
+<p>http://www.blogjava.net/pengo/archive/2013/01/08/393931.html</p>
 
-<p><a href="http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html">http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html</a></p>
+<p>http://www.cnblogs.com/breakdown/archive/2012/07/18/2557157.html</p>
 
-<p><a href="https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808">https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808</a></p>
+<p>https://forum.jquery.com/topic/creating-a-class-object-with-jquery#14737000000964808</p>
+
 ]]></content>
   </entry>
   
@@ -162,9 +218,9 @@ method4: function (){console.log(4);return this;}
     <link href="http://evoupsight.com/blog/2008/05/23/parent-frame-location/"/>
     <updated>2008-05-23T21:15:00+08:00</updated>
     <id>http://evoupsight.com/blog/2008/05/23/parent-frame-location</id>
-    <content type="html"><![CDATA[<p><code>javascript
-parent.window.frames[i].location.href="http://www.baidu.com"
-</code></p>
+    <content type="html"><![CDATA[<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">parent</span><span class="p">.</span><span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="o">=</span><span class="err">”</span><span class="nx">http</span><span class="o">:</span><span class="c1">//www.baidu.com”</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
@@ -174,31 +230,38 @@ parent.window.frames[i].location.href="http://www.baidu.com"
     <updated>2008-05-22T16:31:00+08:00</updated>
     <id>http://evoupsight.com/blog/2008/05/22/js-get-cookie</id>
     <content type="html"><![CDATA[<p>直接参考网易的函数
-```javascript
-function getCookie(name) {
-   var search = name + &ldquo;=&rdquo;
-   if(document.cookie.length > 0) {</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">getCookie</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>   <span class="kd">var</span> <span class="nx">search</span> <span class="o">=</span> <span class="nx">name</span> <span class="o">+</span> <span class="err">“</span><span class="o">=</span><span class="err">”</span>
+</span><span class='line'>   <span class="k">if</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">offset</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span><span class="nx">offset</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="nx">offset</span> <span class="o">+=</span> <span class="nx">search</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="err">“</span><span class="p">;</span><span class="err">”</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>
+</span><span class='line'>         <span class="k">if</span><span class="p">(</span><span class="nx">end</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="nx">end</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">length</span>
+</span><span class='line'>         <span class="k">return</span> <span class="nx">unescape</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">cookie</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">end</span><span class="p">))</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span> <span class="k">return</span> <span class="err">“”</span>
+</span><span class='line'>   <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<pre><code>  offset = document.cookie.indexOf(search)
-  if(offset != -1) {
-     offset += search.length
-     end = document.cookie.indexOf(";", offset)
-     if(end == -1) end = document.cookie.length
-     return unescape(document.cookie.substring(offset, end))
-  }
-  else return ""
-</code></pre>
-
-<p>   }
-```</p>
-
-<hr>
-
+<hr />
 
 <p>后计，直接使用jquery的cookie插件更方便，取一个cookie(name)赋值给foo
-<code>javascript
-var foo= $.cookie('name');
-</code></p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span><span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">cookie</span><span class="p">(</span><span class="err">‘</span><span class="nx">name</span><span class="err">’</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
@@ -207,17 +270,14 @@ var foo= $.cookie('name');
     <link href="http://evoupsight.com/blog/2008/05/19/js-exit-frame/"/>
     <updated>2008-05-19T22:39:00+08:00</updated>
     <id>http://evoupsight.com/blog/2008/05/19/js-exit-frame</id>
-    <content type="html"><![CDATA[<p>```javascript</p>
-
-<script language= "JavaScript">
-  <!--Break out of frames
-    if (top.frames.length > 0)
+    <content type="html"><![CDATA[<p><code>javascript
+&lt;script language= "JavaScript"&gt;
+  &lt;!--Break out of frames
+    if (top.frames.length &gt; 0)
     top.location=self.document.location;
-  //-->
-</script>
-
-
-<p>```</p>
+  //--&gt;
+&lt;/script&gt;
+</code></p>
 ]]></content>
   </entry>
   

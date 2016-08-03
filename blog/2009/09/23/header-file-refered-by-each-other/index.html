@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,144 +137,126 @@
   </header>
 
 
-<div class="entry-content clearfix"><h2>写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
+<div class="entry-content clearfix"><h2 id="section">写在前面，如果你这么写了，基本上不是很好的写法，以下是我的惨痛经验教训。</h2>
 
 <p>我的游戏项目中有2个文件，其中cls_player.h包含cls_enemy.h,而且cls_enemy.h也要cls_player.h，这样子一来就成了重复包含了，虽然用防止重复包含头文件的宏#ifndef #define #endif，还是会报错。解决的方法初步看起来如下：</p>
 
 <!-- more -->
 
-
-
-
-<hr>
-
+<hr />
 
 <p>不要在.h里互相包含头文件.</p>
 
 <p>可以在另一个A的.h里声明一下class B,然后用B的指针就可以.包头文件放在A的cpp里包含就可以了.
-</hr>
+&lt;/hr&gt;
 声明的时候只要在cls_enemy.h里面加上一句class class_player;就可以了。这样cls_enemy.h里就不要去包含cls_player.h了，而cls_player.h则照旧包含cls_enemy.h。但是在设计的时候发现还不行。</p>
 
 <p>总结，如果2个类是差不多的类，最好放在一个文件里。</p>
 
 <p>java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
-这样子大概会这么写</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='java'><span class='line'><span class="err">#</span><span class="n">cls_player</span><span class="o">.</span><span class="na">java</span>
-</span><span class='line'><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">...</span>
-</span><span class='line'><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
-</span><span class='line'>   <span class="o">...</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+这样子大概会这么写
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="java"><span class="line"><span class="err">#</span><span class="n">cls_player</span><span class="o">.</span><span class="na">java</span>
+</span><span class="line"><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">evoup</span><span class="o">.</span><span class="na">player_enemy</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">...</span>
+</span><span class="line"><span class="kd">class</span> <span class="nc">cls_player</span><span class="o">{</span>
+</span><span class="line">   <span class="o">...</span>
+</span><span class="line"><span class="o">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>然后看搜到了这篇文章
-<a href="http://topic.csdn.net/t/20051106/18/4375160.html">http://topic.csdn.net/t/20051106/18/4375160.html</a></p>
+http://topic.csdn.net/t/20051106/18/4375160.html</p>
 
-<p><a href="http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4">http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4</a></p>
+<p>http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/11994e2a68a059315243c1b4</p>
 
-<hr>
+<hr />
 
-
-<h2>正解</h2>
-
+<h2 id="section-1">正解</h2>
 <p>现在我总结一下问题的解决过程和方法：</p>
 
 <p>方法一：利用友元类</p>
 
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="c"><span class="line"><span class="cp">#include &quot;B.h&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class="line"><span class="p">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在另一个类中可以这样声明:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;A.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p>在另一个类中可以这样声明:
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="c"><span class="line"><span class="cp">#include &quot;A.h&quot;</span>
+</span><span class="line"><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="n">friend</span> <span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class="line"><span class="p">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
 
 <p>方法二：</p>
 
-<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：</p>
+<p>我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="c"><span class="line"><span class="cp">#include &quot;B.h&quot;</span>
+</span><span class="line"><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class="line"><span class="p">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;B.h&quot;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="n">friend</span> <span class="n">class</span> <span class="n">CB</span><span class="p">;</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CB</span><span class="o">*</span> <span class="n">m_b</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>在另一个类中可以这样声明:
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="c"><span class="line"><span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
+</span><span class="line"><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="nl">public:</span>
+</span><span class="line">    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
+</span><span class="line"><span class="p">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-
-<p>在另一个类中可以这样声明:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">class</span> <span class="n">CA</span><span class="p">;</span>
-</span><span class='line'><span class="n">class</span> <span class="n">CB</span><span class="o">:</span> <span class="n">public</span> <span class="n">CDialog</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nl">public:</span>
-</span><span class='line'>    <span class="n">CA</span> <span class="o">*</span> <span class="n">m_a</span><span class="p">;</span> <span class="c1">//注意一定要是指针类型</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在cb.cpp文件中包含头文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &quot;ca.h&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<p>在cb.cpp文件中包含头文件
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="c"><span class="line"><span class="cp">#include &quot;ca.h&quot;</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！</p>
 </div>
@@ -335,7 +340,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -351,7 +356,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

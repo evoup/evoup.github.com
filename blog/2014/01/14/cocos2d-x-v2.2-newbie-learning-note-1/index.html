@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,71 +137,63 @@
   </header>
 
 
-<div class="entry-content clearfix"><h3>序言</h3>
-
+<div class="entry-content clearfix"><h3 id="section">序言</h3>
 <p>通过一个阶段的cocos2d-iphone的学习，对Objective-C（以下简称oc）做到基本了解，也有一个游戏小demo。但在摸索的过程中，发现这门语言稍让人感觉不爽的是oc里实例变量的绑定，除此之外oc基本上是一门比较优雅的语言。试水已经告捷，考虑到市面上大多采用cocos2d-x，还有cocostudio这一套的东西，应该是时候投入该框架的学习。</p>
 
 <!-- more -->
 
-
-<h5>本文参考</h5>
-
-<p><a href="http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game">http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</a></p>
+<h5 id="section-1">本文参考</h5>
+<p>http://www.raywenderlich.com/33752/cocos2d-x-tutorial-for-ios-and-android-space-game</p>
 
 <p>我这里不同的是在windows环境下编译win32项目，使用vc2010+cocos2d-x2.2.2开发，然后动手术加载一个飞船。</p>
 
-<h3>加载精灵</h3>
+<h3 id="section-2">加载精灵</h3>
 
-<h4>准备工作</h4>
-
+<h4 id="section-3">准备工作</h4>
 <p>首先需要把精灵对应的资源文件，也就是图片ccz和plist文件，这里是Sprites.plist和Sprites.pvr.ccz
 然后创建出一个HelloWorld项目，然后进入vc2010后，双击HelloWorldScene.h进入加一个精灵。
 可以看到有pvr.ccz文件，这是texturepacker产生的文件，这个先了解一下，就目前来说，只要知道是pvr.ccz是打包后的图片资源就可以了。
 然后把资源拷贝到Resources文件夹里去，如果项目里没有，可以右键，新建筛选器，然后制定其名字为Resources。
 （但是在项目管理器里无法看到，如何添加？TODO）</p>
 
-<h4>添加代码</h4>
-
+<h4 id="section-4">添加代码</h4>
 <p>在头文件中添加</p>
 
-<figure class='code'><figcaption><span>HelloWorldScene.h </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="k">private</span><span class="o">:</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
-</span><span class='line'>  <span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>HelloWorldScene.h </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="k">private</span><span class="o">:</span>
+</span><span class="line">	<span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSpriteBatchNode</span> <span class="o">*</span> <span class="n">_batchNode</span><span class="p">;</span>
+</span><span class="line">	<span class="n">cocos2d</span><span class="o">::</span><span class="n">CCSprite</span> <span class="o">*</span> <span class="n">_ship</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>为什么需要2行代码？因为一个是批渲染对象，用来涵盖全部用到的资源，以及对应的区块坐标关系（补一句：具体的坐标可以通过用vim等文本编辑器查看plist文件得知，当然更专业的方式是采用接下来会提到的texturepacker这个工具直接查看和编辑）；另外一个是实际我们需要的精灵。</p>
 
 <p>然后切换到源文件HelloWorldScene.cpp在init方法中添加如下代码：</p>
 
-<figure class='code'><figcaption><span>HelloWorldScene.cpp </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="n">_batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Sprites.pvr.ccz&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_batchNode</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;Sprites.plist&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">_ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;SpaceFlier_sm_1.png&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
-</span><span class='line'><span class="n">_ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
-</span><span class='line'><span class="n">_batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-</span><span class='line'><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>HelloWorldScene.cpp </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="cpp"><span class="line"><span class="n">_batchNode</span> <span class="o">=</span> <span class="n">CCSpriteBatchNode</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">&quot;Sprites.pvr.ccz&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="k">this</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_batchNode</span><span class="p">);</span>
+</span><span class="line"><span class="n">CCSpriteFrameCache</span><span class="o">::</span><span class="n">sharedSpriteFrameCache</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">addSpriteFramesWithFile</span><span class="p">(</span><span class="s">&quot;Sprites.plist&quot;</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="n">_ship</span> <span class="o">=</span> <span class="n">CCSprite</span><span class="o">::</span><span class="n">createWithSpriteFrameName</span><span class="p">(</span><span class="s">&quot;SpaceFlier_sm_1.png&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="n">CCSize</span> <span class="n">winSize</span> <span class="o">=</span> <span class="n">CCDirector</span><span class="o">::</span><span class="n">sharedDirector</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getWinSize</span><span class="p">();</span>
+</span><span class="line"><span class="n">_ship</span><span class="o">-&gt;</span><span class="n">setPosition</span><span class="p">(</span><span class="n">ccp</span><span class="p">(</span><span class="n">winSize</span><span class="p">.</span><span class="n">width</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">winSize</span><span class="p">.</span><span class="n">height</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">));</span>
+</span><span class="line"><span class="n">_batchNode</span><span class="o">-&gt;</span><span class="n">addChild</span><span class="p">(</span><span class="n">_ship</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class="line"><span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h4>简单的分析</h4>
-
+<h4 id="section-5">简单的分析</h4>
 <p>按流程分析下吧，内存稍微提一下。
 首先是获得一个CCSpriteBatchNode的批节点的指针，这一步其实已经把资源加载到了内存中了。
 addChild把批节点加载到了类所指代的CCLayer层，需要注意this指针，在oc里就是self，指向的类是HelloWorld,继承自CCLayer。
@@ -186,15 +201,14 @@ addChild把批节点加载到了类所指代的CCLayer层，需要注意this指�
 然后调用CCSprite::createWithSpriteFrameName方法，通过阅读其方法的源代码，其实是在CCSpriteFrameCache中寻找FrameName，如果找到了就返回那个CCSprite，而在实际上精灵已经加载到了内存中了，方法的最后返回CCSprite指针，就是飞船精灵了。
 只差一步，就可以显示飞船了，使用getWinSize获取屏幕分辨率。然后用setPosition设置飞船精灵的位置，最后用批节点的addChild把它显示出来，后面的参数1代表的是Z深度,数字越大显示在遮挡关系的越上部分。</p>
 
-<h4>编译看结果</h4>
-
+<h4 id="section-6">编译看结果</h4>
 <p>可以看到，除了cocos2d-x默认GUI一个椰子头背景和右下角的关闭按钮之外，画面上还多了一艘太空飞船，目的达成。下篇学习如何移动和发射子弹。</p>
 
 <p><img src="/images/evoup/cocos2d-x_addsprite.png" alt="Alt text" /></p>
 
-<h4>参考阅读</h4>
+<h4 id="section-7">参考阅读</h4>
+<p>http://www.cocos2d-x.org/wiki/Chapter<em>2</em>-_How_to_Add_a_sprite</p>
 
-<p><a href="http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite">http://www.cocos2d-x.org/wiki/Chapter_2_-_How_to_Add_a_sprite</a></p>
 </div>
 
 
@@ -276,7 +290,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -292,7 +306,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

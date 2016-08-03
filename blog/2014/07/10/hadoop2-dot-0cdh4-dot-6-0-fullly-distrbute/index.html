@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,692 +141,655 @@
 
 <!-- more -->
 
-
 <p>vmware版本8.0.4 build-744019</p>
 
 <p>首先规划3台虚拟机</p>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'> ,'''''''''''''''''''''':'''''''''''''''''':''''''''''''''''''''''''''''''''''''''''''''|
-</span><span class='line'> |        usage         |        IP        |                  Hostname                  |
-</span><span class='line'> |                      |                  |                                            |
-</span><span class='line'> |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | namenode1,datanode1  | 192.168.216.183  |    mdn3namenode1.net,mdn3datanode1.net     |
-</span><span class='line'> |                      |                  |                                            |
-</span><span class='line'> |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | namenode2,datanode2  | 192.168.216.184  |    mdn3namenode2.net,mdn3datanode2.net     |
-</span><span class='line'> |                      |                  |                                            |
-</span><span class='line'> |''''''''''''''''''''''|''''''''''''''''''|''''''''''''''''''''''''''''''''''''''''''''|
-</span><span class='line'> | datanode2,nfs server | 192.168.216.185  |    mdn3datanode3.net,mdn3nfsserver.net     |
-</span><span class='line'> |                      |                  |                                            |
-</span><span class='line'>  '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"> ,<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>:<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>:<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|
+</span><span class="line"> |        usage         |        IP        |                  Hostname                  |
+</span><span class="line"> |                      |                  |                                            |
+</span><span class="line"> |<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|
+</span><span class="line"> | namenode1,datanode1  | 192.168.216.183  |    mdn3namenode1.net,mdn3datanode1.net     |
+</span><span class="line"> |                      |                  |                                            |
+</span><span class="line"> |<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|
+</span><span class="line"> | namenode2,datanode2  | 192.168.216.184  |    mdn3namenode2.net,mdn3datanode2.net     |
+</span><span class="line"> |                      |                  |                                            |
+</span><span class="line"> |<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|<span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span>|
+</span><span class="line"> | datanode2,nfs server | 192.168.216.185  |    mdn3datanode3.net,mdn3nfsserver.net     |
+</span><span class="line"> |                      |                  |                                            |
+</span><span class="line">  <span class="s1">&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;&#39;</span><span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>准备工作</h3>
+<h3 id="section">准备工作</h3>
 
 <p>先安装JDK1.6 linux:先把已经安装的openjdk卸载,安装sun jdk1.6,去oracle下载 （j2se就够了）</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rpm -qa | grep jdk
-</span><span class='line'>java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
-</span><span class='line'><span class="nv">$ </span>sudo rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
-</span><span class='line'><span class="nv">$ </span>sudo chmod +x jdk-6u45-linux-x64-rpm.bin
-</span><span class='line'><span class="nv">$ </span>sudo ./jdk-6u45-linux-x64-rpm.bin
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>rpm -qa | grep jdk
+</span><span class="line">java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+</span><span class="line"><span class="nv">$ </span>sudo rpm -e java-1.6.0-openjdk-1.6.0.0-1.28.1.10.9.el5_8
+</span><span class="line"><span class="nv">$ </span>sudo chmod +x jdk-6u45-linux-x64-rpm.bin
+</span><span class="line"><span class="nv">$ </span>sudo ./jdk-6u45-linux-x64-rpm.bin
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>hadoop所有操作都是用hadoop帐号，下面添加（如果已经创建了帐号无须添加）</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>groupadd hadoop
-</span><span class='line'><span class="nv">$ </span>useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
-</span><span class='line'>
-</span><span class='line'><span class="nv">$ </span>mkdir -p /home/hadoop
-</span><span class='line'><span class="nv">$ </span>chgrp -R hadoop /home/hadoop
-</span><span class='line'><span class="nv">$ </span>chown -R hadoop /home/hadoop
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>groupadd hadoop
+</span><span class="line"><span class="nv">$ </span>useradd -r -g hadoop -d /home/hadoop -m -s /bin/bash hadoop
+</span><span class="line">
+</span><span class="line"><span class="nv">$ </span>mkdir -p /home/hadoop
+</span><span class="line"><span class="nv">$ </span>chgrp -R hadoop /home/hadoop
+</span><span class="line"><span class="nv">$ </span>chown -R hadoop /home/hadoop
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>环境变量(在centos里不管编辑~/.profile还是~/.bash_profile都不能加载环境变量，正确的应该是在~/.bashrc中，而如果是root用户，应该可以直接在/etc/profile中编辑)</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>vi ~/.bashrc
-</span><span class='line'><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/local/hadoop&quot;</span>
-</span><span class='line'><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_45&quot;</span>
-</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$JAVA_HOME</span>/bin
-</span><span class='line'><span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span>.:<span class="nv">$JAVA_HOME</span>/lib/dt.jar:<span class="nv">$JAVA_HOME</span>/lib/tools.jar
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>vi ~/.bashrc
+</span><span class="line"><span class="nb">export </span><span class="nv">HADOOP_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/local/hadoop&quot;</span>
+</span><span class="line"><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;/usr/java/jdk1.6.0_45&quot;</span>
+</span><span class="line"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$JAVA_HOME</span>/bin
+</span><span class="line"><span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span>.:<span class="nv">$JAVA_HOME</span>/lib/dt.jar:<span class="nv">$JAVA_HOME</span>/lib/tools.jar
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>切换到hadoop帐号，进行免密码的ssh登录设置</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>su hadoop
-</span><span class='line'><span class="nv">$ </span>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
-</span><span class='line'><span class="nv">$ </span>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
-</span><span class='line'><span class="nv">$ </span>chmod 600 ~/.ssh/authorized_keys
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>su hadoop
+</span><span class="line"><span class="nv">$ </span>ssh-keygen -t dsa -P <span class="s1">&#39;&#39;</span> -f ~/.ssh/id_dsa
+</span><span class="line"><span class="nv">$ </span>cat ~/.ssh/id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys
+</span><span class="line"><span class="nv">$ </span>chmod 600 ~/.ssh/authorized_keys
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>给出我的hadoop/hbase版本</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>Name        : hadoop-hdfs-namenode
-</span><span class='line'>Arch        : x86_64
-</span><span class='line'>Version     : 2.0.0+1554
-</span><span class='line'>Release     : 1.cdh4.6.0.p0.16.el6
-</span><span class='line'>
-</span><span class='line'>Name        : hbase-master
-</span><span class='line'>Arch        : x86_64
-</span><span class='line'>Version     : 0.94.15+86
-</span><span class='line'>Release     : 1.cdh4.6.0.p0.14.el6
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Name        : hadoop-hdfs-namenode
+</span><span class="line">Arch        : x86_64
+</span><span class="line">Version     : 2.0.0+1554
+</span><span class="line">Release     : 1.cdh4.6.0.p0.16.el6
+</span><span class="line">
+</span><span class="line">Name        : hbase-master
+</span><span class="line">Arch        : x86_64
+</span><span class="line">Version     : 0.94.15+86
+</span><span class="line">Release     : 1.cdh4.6.0.p0.14.el6
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后是cdh的软件下载url
-<a href="http://archive.cloudera.com/cdh4">http://archive.cloudera.com/cdh4</a>
+http://archive.cloudera.com/cdh4
 这个路径下有很多的软件。</p>
 
 <p>下载cdh4.6的几个包安装</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /home/software/
-</span><span class='line'><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>sudo mkdir /usr/local/hadoop/
-</span><span class='line'><span class="nv">$ </span>tar xzf hadoop-2.0.0-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>sudo mv hadoop-2.0.0-cdh4.6.0 /usr/local/
-</span><span class='line'><span class="nv">$ </span>sudo mv /usr/local/hadoop-2.0.0-cdh4.6.0 /usr/local/hadoop
-</span><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hadoop
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /home/software/
+</span><span class="line"><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>sudo mkdir /usr/local/hadoop/
+</span><span class="line"><span class="nv">$ </span>tar xzf hadoop-2.0.0-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>sudo mv hadoop-2.0.0-cdh4.6.0 /usr/local/
+</span><span class="line"><span class="nv">$ </span>sudo mv /usr/local/hadoop-2.0.0-cdh4.6.0 /usr/local/hadoop
+</span><span class="line"><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hadoop
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>创建存储临时文件temp、data和name节点数据的目录</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/
-</span><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hadoop
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo mkdir /usr/local/hadoop/temp/ /usr/local/hadoop/data/ /usr/local/hadoop/name/
+</span><span class="line"><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hadoop
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>好了，准备工作终了</p>
 
 <p>开始配置
 配置/usr/local/hadoop/etc/hadoop/core-site.xml</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>fs.defaultFS<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>hdfs://mdn3namenode1.net:9000<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>io.file.buffer.size<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>131072<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/temp<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;description&gt;</span>Abase for other temporary directories.<span class="nt">&lt;/description&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.hduser.hosts<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.hduser.groups<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>fs.defaultFS<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>hdfs://mdn3namenode1.net:9000<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>io.file.buffer.size<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>131072<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/temp<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">                <span class="nt">&lt;description&gt;</span>Abase for other temporary directories.<span class="nt">&lt;/description&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.hduser.hosts<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.hduser.groups<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置/usr/local/hadoop/etc/hadoop/hdfs-site.xml</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>dfs.namenode.secondary.http-address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:9001<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>dfs.namenode.name.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/dfs/name<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>dfs.datanode.data.dir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/dfs/data<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>3<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>dfs.webhdfs.enabled<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>dfs.namenode.secondary.http-address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:9001<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>dfs.namenode.name.dir<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">        <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/dfs/name<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>dfs.datanode.data.dir<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>file:/usr/local/hadoop/dfs/data<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>3<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>dfs.webhdfs.enabled<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置/usr/local/hadoop/etc/hadoop/madpred-site.xml</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp mapred-site.xml.template mapred-site.xml
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">cp mapred-site.xml.template mapred-site.xml
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>mapreduce.framework.name<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>yarn<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:10020<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.webapp.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:19888<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>mapreduce.framework.name<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>yarn<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:10020<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.webapp.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:19888<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置/usr/local/hadoop/etc/hadoop/yarn-site.xml</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mapreduce.shuffle<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services.mapreduce.shuffle.class<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>org.apache.hadoop.mapred.ShuffleHandler<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8032<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.scheduler.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8030<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.resource-tracker.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8031<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.admin.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8033<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.webapp.address<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8088<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mapreduce.shuffle<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services.mapreduce.shuffle.class<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>org.apache.hadoop.mapred.ShuffleHandler<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8032<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.scheduler.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8030<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.resource-tracker.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8031<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.admin.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8033<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;property&gt;</span>
+</span><span class="line">                <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.webapp.address<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">                <span class="nt">&lt;value&gt;</span>mdn3namenode1.net:8088<span class="nt">&lt;/value&gt;</span> <span class="c">&lt;!-- master域名或者master的ip --&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>编辑slave的名字
 直接讲slave的域名或者slave的ip按照一行一个的规则写进去</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>mdn3datanode2.net
-</span><span class='line'>mdn3datanode3.net
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mdn3datanode2.net
+</span><span class="line">mdn3datanode3.net
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>复制到各台机器上</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /usr/local/
-</span><span class='line'><span class="nv">$ </span>sudo scp -dr hadoop@192.168.216.183:/usr/local/hadoop .
-</span><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop hadoop/
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /usr/local/
+</span><span class="line"><span class="nv">$ </span>sudo scp -dr hadoop@192.168.216.183:/usr/local/hadoop .
+</span><span class="line"><span class="nv">$ </span>sudo chown -R hadoop:hadoop hadoop/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>格式化hdfs
 在namenode上执行</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>/usr/local/hadoop/bin/hadoop namenode -format
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/usr/local/hadoop/bin/hadoop namenode -format
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>hbase的安装配置</h3>
-
+<h3 id="hbase">hbase的安装配置</h3>
 <p>hbase依赖zookeeper，需要先去下载</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /home/software/
-</span><span class='line'><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>tar xzf zookeeper-3.4.5-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>sudo mv zookeeper-3.4.5-cdh4.6.0 /usr/local/
-</span><span class='line'><span class="nv">$ </span>sudo mv /usr/local/zookeeper-3.4.5-cdh4.6.0 /usr/local/zookeeper
-</span><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/zookeeper
-</span><span class='line'><span class="nv">$ </span>sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /home/software/
+</span><span class="line"><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>tar xzf zookeeper-3.4.5-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>sudo mv zookeeper-3.4.5-cdh4.6.0 /usr/local/
+</span><span class="line"><span class="nv">$ </span>sudo mv /usr/local/zookeeper-3.4.5-cdh4.6.0 /usr/local/zookeeper
+</span><span class="line"><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/zookeeper
+</span><span class="line"><span class="nv">$ </span>sudo cp /usr/local/zookeeper/conf/zoo_sample.cfg /usr/local/zookeeper/conf/zoo.cfg
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>zookeeper准备完毕，可以继续安装hbase</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /home/software/
-</span><span class='line'><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.15-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>sudo mkdir /usr/local/hbase/
-</span><span class='line'><span class="nv">$ </span>tar xzf hbase-0.94.15-cdh4.6.0.tar.gz
-</span><span class='line'><span class="nv">$ </span>sudo mv hbase-0.94.15-cdh4.6.0 /usr/local/
-</span><span class='line'><span class="nv">$ </span>sudo mv /usr/local/hbase-0.94.15-cdh4.6.0 /usr/local/hbase
-</span><span class='line'><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hbase
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /home/software/
+</span><span class="line"><span class="nv">$ </span>wget http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.15-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>sudo mkdir /usr/local/hbase/
+</span><span class="line"><span class="nv">$ </span>tar xzf hbase-0.94.15-cdh4.6.0.tar.gz
+</span><span class="line"><span class="nv">$ </span>sudo mv hbase-0.94.15-cdh4.6.0 /usr/local/
+</span><span class="line"><span class="nv">$ </span>sudo mv /usr/local/hbase-0.94.15-cdh4.6.0 /usr/local/hbase
+</span><span class="line"><span class="nv">$ </span>sudo chown -R hadoop:hadoop /usr/local/hbase
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>若干配置步骤
 配置hbase-site.xml</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="nt">&lt;configuration&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.rootdir<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>hdfs://mdn3namenode1.net:9000/hbase<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.cluster.distributed<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.master<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn3datanode1.net:60000<span class="nt">&lt;/value&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;property&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;name&gt;</span>hbase.zookeeper.quorum<span class="nt">&lt;/name&gt;</span>
-</span><span class='line'>        <span class="nt">&lt;value&gt;</span>mdn3datanode1.net<span class="nt">&lt;/value&gt;</span>    <span class="c">&lt;!-- 这里配置若干个zookeeper的服务器地址，需要是奇数个 --&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;/property&gt;</span>
-</span><span class='line'><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">    <span class="nt">&lt;property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;name&gt;</span>hbase.rootdir<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">        <span class="nt">&lt;value&gt;</span>hdfs://mdn3namenode1.net:9000/hbase<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">    <span class="nt">&lt;property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;name&gt;</span>hbase.cluster.distributed<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">    <span class="nt">&lt;property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;name&gt;</span>hbase.master<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">        <span class="nt">&lt;value&gt;</span>mdn3datanode1.net:60000<span class="nt">&lt;/value&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/property&gt;</span>
+</span><span class="line">    <span class="nt">&lt;property&gt;</span>
+</span><span class="line">        <span class="nt">&lt;name&gt;</span>hbase.zookeeper.quorum<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">        <span class="nt">&lt;value&gt;</span>mdn3datanode1.net<span class="nt">&lt;/value&gt;</span>    <span class="c">&lt;!-- 这里配置若干个zookeeper的服务器地址，需要是奇数个 --&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>配置hbase-env.sh</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>export HBASE_MANAGES_ZK=false
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">export </span><span class="nv">HBASE_MANAGES_ZK</span><span class="o">=</span><span class="nb">false</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>不要hbase托管zookeeper</p>
 
 <p>配置regionservers</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='xml'><span class='line'>mdn3datanode2.net
-</span><span class='line'>mdn3datanode3.net
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mdn3datanode2.net
+</span><span class="line">mdn3datanode3.net
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>启动hbase</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>/usr/local/hbase/bin/start-hbase.sh
-</span><span class='line'>/usr/local/hbase/bin/hbase-daemons.sh start thrift
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/usr/local/hbase/bin/start-hbase.sh
+</span><span class="line">/usr/local/hbase/bin/hbase-daemons.sh start thrift
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>hbase启动完成.</p>
 
-<h3>配置hbase可能碰到几个问题的说明：</h3>
-
+<h3 id="hbase-1">配置hbase可能碰到几个问题的说明：</h3>
 <p>1) 报错
-<code>ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in 'zookeeper.znode.parent'</code></p>
+` ERROR client.HConnectionManager$HConnectionImplementation: Check the value configured in ‘zookeeper.znode.parent’ `</p>
 
 <p>是需要把/etc/hosts中的127.0.0.1注释掉，否则zookeeper还会出现
 最后的hosts我这里是这样</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@localhost conf<span class="o">]</span><span class="nv">$ </span>more /etc/hosts
-</span><span class='line'><span class="c">#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span>
-</span><span class='line'>::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-</span><span class='line'>192.168.216.183 mdn3namenode1.net mdn3datanode1.net
-</span><span class='line'>192.168.216.184 mdn3namenode2.net mdn3datanode2.net
-</span><span class='line'>192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>hadoop@localhost conf<span class="o">]</span><span class="nv">$ </span>more /etc/hosts
+</span><span class="line"><span class="c">#127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span>
+</span><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+</span><span class="line">192.168.216.183 mdn3namenode1.net mdn3datanode1.net
+</span><span class="line">192.168.216.184 mdn3namenode2.net mdn3datanode2.net
+</span><span class="line">192.168.216.185 mdn3datanode3.net mdn3nfsserver.net
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>2) 在运行/usr/local/hbase/bin/hbase shell的时候出现了
-<code>WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available</code></p>
+` WARN conf.Configuration: hadoop.native.lib is deprecated. Instead, use io.native.lib.available `</p>
 
-<p>3) <code>java.net.ConnectException: Connection refused</code>
+<p>3) ` java.net.ConnectException: Connection refused `
 这是要求hadoop中的slaves配置和hbase的regionservers要一致。</p>
 
-<h3>hive的安装</h3>
+<h3 id="hive">hive的安装</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /home/software
-</span><span class='line'>wget http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.6.0.tar.gz
-</span><span class='line'>tar xzf hive-0.10.0-cdh4.6.0.tar.gz
-</span><span class='line'>sudo mv hive-0.10.0-cdh4.6.0 /usr/local/
-</span><span class='line'>sudo mv /usr/local/hive-0.10.0-cdh4.6.0 /usr/local/hive
-</span><span class='line'>chown -R hadoop:hadoop /usr/local/hive
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /home/software
+</span><span class="line">wget http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.6.0.tar.gz
+</span><span class="line">tar xzf hive-0.10.0-cdh4.6.0.tar.gz
+</span><span class="line">sudo mv hive-0.10.0-cdh4.6.0 /usr/local/
+</span><span class="line">sudo mv /usr/local/hive-0.10.0-cdh4.6.0 /usr/local/hive
+</span><span class="line">chown -R hadoop:hadoop /usr/local/hive
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<h3>hive的配置</h3>
-
+<h3 id="hive-1">hive的配置</h3>
 <p>在~/.bashrc中加入</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/usr/local/hive
-</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/conf
-</span><span class='line'><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
-</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$ZOOKEEPER_HOME</span>:<span class="nv">$HIVE_HOME</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">export </span><span class="nv">HIVE_HOME</span><span class="o">=</span>/usr/local/hive
+</span><span class="line"><span class="nb">export </span><span class="nv">HIVE_CONF_DIR</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/conf
+</span><span class="line"><span class="nb">export </span><span class="nv">HIVE_LIB</span><span class="o">=</span><span class="nv">$HIVE_HOME</span>/lib
+</span><span class="line"><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$ZOOKEEPER_HOME</span>:<span class="nv">$HIVE_HOME</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>在conf/hive-site.xml中</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;configuration&gt;
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;hive.metastore.local&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;true&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;jdbc:mysql://localhost:3306/hive&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionDriverName&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;com.mysql.jdbc.Driver&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionUserName&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;hive&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionPassword&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;hive&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;datanucleus.fixedDatastore&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;false&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>
-</span><span class='line'>&lt;/configuration&gt;
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>hive.metastore.local<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>jdbc:mysql://localhost:3306/hive<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionDriverName<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>com.mysql.jdbc.Driver<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionUserName<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>hive<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionPassword<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>hive<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>datanucleus.fixedDatastore<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>这里要安装mysql作为元数据服务器，参考这篇 <a href="http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/">http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/</a></p>
+<p>这里要安装mysql作为元数据服务器，参考这篇 http://evoupsight.com/blog/2014/02/17/hadoop0-dot-20-dot-2-plus-hive0-dot-7/</p>
 
 <p>然后/bin/hive后，成功进入shell</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>如果遇到下面的报错
-<code>FAILED: Error in metadata: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.metastore.HiveMetaStoreClient</code></p>
+` FAILED: Error in metadata: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.metastore.HiveMetaStoreClient `</p>
 
-<p><code>FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask</code>
+<p><code> FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask </code>
 建表错误
 开始以为hive没有访问mysql的权限,以root用户登录mysql然后赋予hive用户权限：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>grant all privileges on *.* to hive@localhost identified by <span class="s1">&#39;hive&#39;</span>;
-</span><span class='line'>grant all privileges on *.* to hive@192.168.216.183 identified by <span class="s1">&#39;hive&#39;</span>;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">grant</span> <span class="k">all</span> <span class="k">privileges</span> <span class="k">on</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">to</span> <span class="n">hive</span><span class="o">@</span><span class="n">localhost</span> <span class="n">identified</span> <span class="k">by</span> <span class="s1">&#39;hive&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="k">grant</span> <span class="k">all</span> <span class="k">privileges</span> <span class="k">on</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">to</span> <span class="n">hive</span><span class="o">@</span><span class="mi">192</span><span class="p">.</span><span class="mi">168</span><span class="p">.</span><span class="mi">216</span><span class="p">.</span><span class="mi">183</span> <span class="n">identified</span> <span class="k">by</span> <span class="s1">&#39;hive&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>发现问题依旧</p>
 
 <p>其实是要在hive-site.xml中把</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;jdbc:mysql://localhost:3306/hive&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>jdbc:mysql://localhost:3306/hive<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>改成</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>  &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
-</span><span class='line'>  &lt;value&gt;jdbc:mysql://192.168.216.183:3306/hive&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;property&gt;</span>
+</span><span class="line">  <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span class="nt">&lt;/name&gt;</span>
+</span><span class="line">  <span class="nt">&lt;value&gt;</span>jdbc:mysql://192.168.216.183:3306/hive<span class="nt">&lt;/value&gt;</span>
+</span><span class="line"><span class="nt">&lt;/property&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>问题依旧，打开hive的调试模式</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/hive -hiveconf hive.root.logger<span class="o">=</span>DEBUG,console
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">bin/hive -hiveconf hive.root.logger<span class="o">=</span>DEBUG,console
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p><code>14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect.</code>
-<code>Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore</code></p>
+<p><code> 14/05/08 17:35:53 WARN conf.HiveConf: DEPRECATED: Configuration property hive.metastore.local no longer has any effect. </code>
+` Make sure to provide a valid value for hive.metastore.uris if you are connecting to a remote metastore `</p>
 
 <p>在配置文件里删除hive.metastore.local属性。</p>
 
@@ -811,25 +797,23 @@
 
 <p>然后</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
-</span><span class='line'>OK
-</span><span class='line'>Time taken: 42.259 seconds
-</span><span class='line'>
-</span><span class='line'>hive&gt; show tables;
-</span><span class='line'>OK
-</span><span class='line'><span class="nb">test</span>
-</span><span class='line'>Time taken: 0.279 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">hive&gt; create table <span class="nb">test</span> <span class="o">(</span>key string<span class="o">)</span>;
+</span><span class="line">OK
+</span><span class="line">Time taken: 42.259 seconds
+</span><span class="line">
+</span><span class="line">hive&gt; show tables;
+</span><span class="line">OK
+</span><span class="line"><span class="nb">test</span>
+</span><span class="line">Time taken: 0.279 seconds
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 </div>
 
@@ -912,7 +896,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -928,7 +912,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

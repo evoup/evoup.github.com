@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,41 +141,34 @@
 
 <!-- more -->
 
-
 <p>（2014-09-24 嫌adt配置麻烦的可以直接到android开发者官网下载android-bundle <a href="http://developer.android.com/sdk/index.html#download">点击下载</a>）</p>
 
-<h3>一、安装JDK</h3>
-
+<h3 id="jdk">一、安装JDK</h3>
 <p>安装JDK，我这里的windows7平台，先下载jdk7，然后安装，我的安装路径为C:\Program Files\Java\jdk1.7.0_25\。
 安装完成后设置环境变量
-开始->搜索程序和文件输入环境变量->编辑系统环境变量->添加以下环境变量：</p>
+开始-&gt;搜索程序和文件输入环境变量-&gt;编辑系统环境变量-&gt;添加以下环境变量：
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">JAVA_HOME值为：C:<span class="se">\P</span>rogram Files<span class="se">\J</span>ava<span class="se">\j</span>dk1.7.0_25<span class="se">\</span>
+</span><span class="line">CLASSPATH值为：.;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\t</span>ools.jar;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\d</span>t.jar;%JAVA_HOME%<span class="se">\b</span>in;
+</span><span class="line">PATH值为：追加%JAVA_HOME%<span class="se">\b</span>in;
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+###二、安装Eclipse
+可以直接去www.eclipse.org下载，64位Windows平台下的下载地址：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>JAVA_HOME值为：C:<span class="se">\P</span>rogram Files<span class="se">\J</span>ava<span class="se">\j</span>dk1.7.0_25<span class="se">\</span>
-</span><span class='line'>CLASSPATH值为：.;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\t</span>ools.jar;%JAVA_HOME%<span class="se">\l</span>ib<span class="se">\d</span>t.jar;%JAVA_HOME%<span class="se">\b</span>in;
-</span><span class='line'>PATH值为：追加%JAVA_HOME%<span class="se">\b</span>in;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>二、安装Eclipse</h3>
-
-<p>可以直接去www.eclipse.org下载，64位Windows平台下的下载地址：</p>
-
-<p><a href="http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/eclipse-cpp-kepler-SR1-win32-x86_64.zip">http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/eclipse-cpp-kepler-SR1-win32-x86_64.zip</a></p>
+<p>http://mirror.bit.edu.cn/eclipse/technology/epp/downloads/release/kepler/SR1/eclipse-cpp-kepler-SR1-win32-x86_64.zip</p>
 
 <p>下载完成解压即可使用。见下图：
 <img src="/images/evoup/eclipse_dir.png" alt="Alt text" /></p>
 
-<h3>三、安装SDK</h3>
-
+<h3 id="sdk">三、安装SDK</h3>
 <p>首先去下载SDK,这个是等等用来和eclipse的adt插件关联的。</p>
 
-<p>  下载地址如下：
-  <a href="http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20131030.zip">http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20131030.zip</a></p>
+<p>下载地址如下：
+  http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20131030.zip</p>
 
-<p>下载完成后我把它解压到C:\android\adt-bundle-windows-x86_64-20131030,运行adt-bundle-windows-x86_64-20131030下的SDK Manager.exe，勾选几个必要的API版本，Android4.2.2(API17)还有Android2.2(API8)，然后点击Install 11 package开始安装</p>
+<p>下载完成后我把它解压到C:\android\adt-bundle-windows-x86<em>64-20131030,运行adt-bundle-windows-x86</em>64-20131030下的SDK Manager.exe，勾选几个必要的API版本，Android4.2.2(API17)还有Android2.2(API8)，然后点击Install 11 package开始安装</p>
 
 <p><img src="/images/evoup/adt_wait.png" alt="Alt text" /></p>
 
@@ -164,28 +180,23 @@
 
 <p><img src="/images/evoup/adt_done.png" alt="Alt text" /></p>
 
-<h3>SDK配置</h3>
-
+<h3 id="sdk-1">SDK配置</h3>
 <p>接着把tools的路径C:\android\adt-bundle-windows-x86_64-20131030\sdk\tools追加到环境变量PATH中去。
-要测试安装sdk是否成功，只需要运行cmd，然后输入</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>android -h
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>观察是否有输出正常信息，见下图：
+要测试安装sdk是否成功，只需要运行cmd，然后输入
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">android -h
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+观察是否有输出正常信息，见下图：
 <img src="/images/evoup/adt_installed.png" alt="Alt text" /></p>
 
 <p>有其他教程说要设置SDK Location变量，我配置时发现其实不需要，估计是老版本了。</p>
 
-<h3>Eclipse的ADT Package安装</h3>
-
+<h3 id="eclipseadt-package">Eclipse的ADT Package安装</h3>
 <p>打开Eclipse，指定好工程的位置</p>
 
 <p><img src="/images/evoup/adt_project_dir.png" alt="Alt text" /></p>
 
-<p>选择 Help &lt; Install New Software 菜单。点击右上角的 Add 按钮，弹出 Add Repository 对话框，在 Name 一栏填写：“ADT Plugin”，在 Location 一栏填写：<a href="https://dl-ssl.google.com/android/eclipse/">https://dl-ssl.google.com/android/eclipse/</a></p>
+<p>选择 Help &lt; Install New Software 菜单。点击右上角的 Add 按钮，弹出 Add Repository 对话框，在 Name 一栏填写：“ADT Plugin”，在 Location 一栏填写：https://dl-ssl.google.com/android/eclipse/</p>
 
 <p>点击 OK。如果不能获取插件信息，就把 https 换成 http 试试。</p>
 
@@ -195,13 +206,13 @@
 
 <p>之后重启Eclipse。</p>
 
-<h3>Eclipse的ADT插件的配置</h3>
-
-<p>安装完ADT插件并重启好Eclipse后，点击 Window &lt; Preferences 菜单，点击左侧菜单中的 Android，再点击右侧 Browse&hellip;，选择第3步中Android SDK的安装目录，设置完成后，点击 OK。</p>
+<h3 id="eclipseadt">Eclipse的ADT插件的配置</h3>
+<p>安装完ADT插件并重启好Eclipse后，点击 Window &lt; Preferences 菜单，点击左侧菜单中的 Android，再点击右侧 Browse…，选择第3步中Android SDK的安装目录，设置完成后，点击 OK。</p>
 
 <p><img src="/images/evoup/eclipse_adt_config.png" alt="Alt text" /></p>
 
 <p>这样 Android 开发环境就搭建好了。</p>
+
 </div>
 
 
@@ -283,7 +294,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -299,7 +310,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

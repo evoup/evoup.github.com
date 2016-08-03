@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -118,154 +141,145 @@
 
 <!--more-->
 
+<h3 id="section">恢复主主的工具</h3>
 
-<h3>恢复主主的工具</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&gt; wget http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz
-</span><span class='line'>&gt; tar xzf percona-toolkit-2.2.6.tar.gz
-</span><span class='line'>&gt; <span class="nb">cd </span>percona-toolkit-2.2.6
-</span><span class='line'>&gt; perl Makefile.PL
-</span><span class='line'>Warning: prerequisite DBD::mysql 3 not found.
-</span><span class='line'>Warning: prerequisite DBI 1.46 not found.
-</span><span class='line'>Writing Makefile <span class="k">for </span>percona-toolkit
-</span><span class='line'>
-</span><span class='line'>&gt; sudo cpan YAML
-</span><span class='line'>&gt; sudo cpan DBD::mysql
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; wget http://www.percona.com/redir/downloads/percona-toolkit/LATEST/tarball/percona-toolkit-2.2.10.tar.gz
+</span><span class="line">&gt; tar xzf percona-toolkit-2.2.6.tar.gz
+</span><span class="line">&gt; <span class="nb">cd </span>percona-toolkit-2.2.6
+</span><span class="line">&gt; perl Makefile.PL
+</span><span class="line">Warning: prerequisite DBD::mysql 3 not found.
+</span><span class="line">Warning: prerequisite DBI 1.46 not found.
+</span><span class="line">Writing Makefile <span class="k">for </span>percona-toolkit
+</span><span class="line">
+</span><span class="line">&gt; sudo cpan YAML
+</span><span class="line">&gt; sudo cpan DBD::mysql
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>出现询问是否yes，一路选择yes</p>
 
 <p>遇到测试的时候出现
-<code>FAILED--Further testing stopped: ERROR: Access denied for user 'root'@'localhost' (using password: NO)</code></p>
+` FAILED–Further testing stopped: ERROR: Access denied for user ‘root’@’localhost’ (using password: NO) `</p>
 
 <p>进入mysql修改一下默认密码为空</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>GRANT ALL PRIVILEGES ON *.* TO root@<span class="s1">&#39;localhost&#39;</span> IDENTIFIED BY <span class="s1">&#39;&#39;</span>;
-</span><span class='line'>flush privileges;
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="mysql"><span class="line"><span class="k">GRANT</span> <span class="k">ALL</span> <span class="n">PRIVILEGES</span> <span class="k">ON</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="n">root</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="n">flush</span> <span class="n">privileges</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>回来继续</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo cpan DBD::mysql
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo cpan DBD::mysql
+</span><span class="line">make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<h3 id="section-1">检查完整性</h3>
 
-<h3>检查完整性</h3>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;sudo pt-table-checksum  --recursion-method<span class="o">=</span>processlist
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;sudo pt-table-checksum  --recursion-method<span class="o">=</span>processlist
-</span></code></pre></td></tr></table></div></figure>
+<p><code> Cannot connect to h=10.10.8.45 </code></p>
 
-
-<p><code>Cannot connect to h=10.10.8.45</code>
-<code>Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information.</code></p>
+<p><code> Diffs cannot be detected because no slaves were found.  Please read the --recursion-method documentation for information. </code></p>
 
 <p>报错，在主上运行</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mysql&gt; show slave hosts;
-</span><span class='line'>+-----------+------+------+-----------+
-</span><span class='line'>| Server_id | Host | Port | Master_id |
-</span><span class='line'>+-----------+------+------+-----------+
-</span><span class='line'>|         2 |      | 3306 |         1 |
-</span><span class='line'>+-----------+------+------+-----------+
-</span><span class='line'>1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mysql&gt; show slave hosts;
+</span><span class="line">+-----------+------+------+-----------+
+</span><span class="line">| Server_id | Host | Port | Master_id |
+</span><span class="line">+-----------+------+------+-----------+
+</span><span class="line">|         2 |      | 3306 |         1 |
+</span><span class="line">+-----------+------+------+-----------+
+</span><span class="line">1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>发现是host没有所以导致脚本会报错</p>
 
 <p>到slave上，my.cnf中添加report_host=10.10.8.45 #设置成本机IP，然后重启slave
 回到主上</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>mysql&gt; show slave hosts;
-</span><span class='line'>+-----------+------------+------+-----------+
-</span><span class='line'>| Server_id | Host       | Port | Master_id |
-</span><span class='line'>+-----------+------------+------+-----------+
-</span><span class='line'>|         2 | 10.10.8.45 | 3306 |         1 |
-</span><span class='line'>+-----------+------------+------+-----------+
-</span><span class='line'>1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>&gt;sudo pt-table-checksum --recursion-method<span class="o">=</span>processlist
-</span><span class='line'>Password:
-</span><span class='line'>Cannot connect to <span class="nv">h</span><span class="o">=</span>10.10.8.45
-</span><span class='line'>Diffs cannot be detected because no slaves were found.  Please <span class="nb">read </span>the --recursion-method documentation <span class="k">for </span>information.
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">mysql&gt; show slave hosts;
+</span><span class="line">+-----------+------------+------+-----------+
+</span><span class="line">| Server_id | Host       | Port | Master_id |
+</span><span class="line">+-----------+------------+------+-----------+
+</span><span class="line">|         2 | 10.10.8.45 | 3306 |         1 |
+</span><span class="line">+-----------+------------+------+-----------+
+</span><span class="line">1 row in <span class="nb">set</span> <span class="o">(</span>0.00 sec<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">&gt;sudo pt-table-checksum --recursion-method<span class="o">=</span>processlist
+</span><span class="line">Password:
+</span><span class="line">Cannot connect to <span class="nv">h</span><span class="o">=</span>10.10.8.45
+</span><span class="line">Diffs cannot be detected because no slaves were found.  Please <span class="nb">read </span>the --recursion-method documentation <span class="k">for </span>information.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>问题依旧,修改shell</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
-</span><span class='line'>            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
-</span><span class='line'>06-30T13:33:50      0      1     5415       4       0   0.377 monitor1_db.httplog_status
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yinjia@hm15hadoop01 percona-toolkit-2.2.6<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
+</span><span class="line">            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</span><span class="line">06-30T13:33:50      0      1     5415       4       0   0.377 monitor1_db.httplog_status
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>看到DIFFS1，即为有1行差异</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yinjia@hm15hadoop02 ~/software<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
-</span><span class='line'>            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
-</span><span class='line'>06-30T13:34:58      0      1     5395       4       0   0.371 monitor1_db.httplog_status
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yinjia@hm15hadoop02 ~/software<span class="o">]</span>&gt;pt-table-checksum --recursion-method<span class="o">=</span>hosts --no-check-binlog-format --nocheck-replication-filters --replicate<span class="o">=</span>monitor1_db.checksums --databases<span class="o">=</span>monitor1_db --tables<span class="o">=</span>httplog_status <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore,P<span class="o">=</span>3306
+</span><span class="line">            TS ERRORS  DIFFS     ROWS  CHUNKS SKIPPED    TIME TABLE
+</span><span class="line">06-30T13:34:58      0      1     5395       4       0   0.371 monitor1_db.httplog_status
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>可以看到现在DIFF是1，证明有差异。所以要同步，怎么同步，使用pt-table-sync进行修复</p>
 
-<h3>修复同步</h3>
+<h3 id="section-2">修复同步</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>pt-table-sync --replicate<span class="o">=</span>monitor1_db.checksums <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore --print --execute
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">pt-table-sync --replicate<span class="o">=</span>monitor1_db.checksums <span class="nv">h</span><span class="o">=</span>10.10.8.44,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore <span class="nv">h</span><span class="o">=</span>10.10.8.45,u<span class="o">=</span>madcore,p<span class="o">=</span>madcore --print --execute
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>分别是主的IP，从的IP。针对两边分别修复，最后再看一下pt-table-checksum 发现DIFF为0证明数据同步成功。</p>
 
-<h3>注意事项</h3>
-
+<h3 id="section-3">注意事项</h3>
 <p>同步修复后，记录可能发生乱序，比较好的做法是加timestamp字段，把写入的时间戳记载下来，然后select的时候采用ORDER BY进行排序，这样就不会乱序了。</p>
+
 </div>
 
 
@@ -347,7 +361,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -363,7 +377,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

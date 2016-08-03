@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,143 +137,129 @@
   </header>
 
 
-<div class="entry-content clearfix"><h3>为什么要使用zookeeper扩展</h3>
+<div class="entry-content clearfix"><h3 id="zookeeper">为什么要使用zookeeper扩展</h3>
+<p>公司用了HHVM这玩意来编译php，其实我要给它NO，因为连zookeeper都没支持，如果要支持，要自己写扩展，这是一个奇葩的节奏。所以我们还是采用php脚本方式来调用pecl扩展来实现php和zookeeper通讯。
+<!-- more --></p>
 
-<p>公司用了HHVM这玩意来编译php，其实我要给它NO，因为连zookeeper都没支持，如果要支持，要自己写扩展，这是一个奇葩的节奏。所以我们还是采用php脚本方式来调用pecl扩展来实现php和zookeeper通讯。</p>
+<h3 id="section">扩展</h3>
+<p>以下是php的pecl版zookeeper扩展的下载地址http://pecl.php.net/get/zookeeper-0.2.2.tgz<br />
+可以看到php版本的要求是&gt;5.2.0</p>
 
-<!-- more -->
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /home/software
+</span><span class="line">wget http://pecl.php.net/get/zookeeper-0.2.2.tgz
+</span><span class="line">tar xzf zookeeper-0.2.2.tgz
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<h3 id="section-1">依赖库</h3>
+<p>很可惜，该扩展的安装还需要你先去在本地下好zookeeper依赖库，那么我们开始吧。首先是zookeeper的安装，去apache下载好并解压<br /></p>
 
-<h3>扩展</h3>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /home/software
+</span><span class="line">wget http://apache.fayea.com/apache-mirror/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+</span><span class="line">tar xzf zookeeper-3.4.6.tar.gz
+</span><span class="line"><span class="nb">cd </span>zookeeper-3.4.6/src/c
+</span><span class="line">./configure --prefix<span class="o">=</span>/home/software/zookeeper-3.4.6/prefix
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>以下是php的pecl版zookeeper扩展的下载地址<a href="http://pecl.php.net/get/zookeeper-0.2.2.tgz">http://pecl.php.net/get/zookeeper-0.2.2.tgz</a><br>
-可以看到php版本的要求是>5.2.0</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /home/software
-</span><span class='line'>wget http://pecl.php.net/get/zookeeper-0.2.2.tgz
-</span><span class='line'>tar xzf zookeeper-0.2.2.tgz
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>依赖库</h3>
-
-<p>很可惜，该扩展的安装还需要你先去在本地下好zookeeper依赖库，那么我们开始吧。首先是zookeeper的安装，去apache下载好并解压<br></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd</span> /home/software
-</span><span class='line'>wget http://apache.fayea.com/apache-mirror/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
-</span><span class='line'>tar xzf zookeeper-3.4.6.tar.gz
-</span><span class='line'><span class="nb">cd </span>zookeeper-3.4.6/src/c
-</span><span class='line'>./configure --prefix<span class="o">=</span>/home/software/zookeeper-3.4.6/prefix
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>php端编译</h3>
-
+<h3 id="php">php端编译</h3>
 <p>这里就给一个静态编译的例子好了,以最新版本的php5.3.8为例，进入源码文件夹后</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /home/software/php-5.3.8/
-</span><span class='line'><span class="nv">$ </span>cp -r /home/software/zookeeper-0.2.2 ext/zookeeper
-</span><span class='line'><span class="nv">$ </span>ls ext/zookeeper/
-</span><span class='line'>CREDITS                 LICENSE                 config.m4               php_zookeeper.c         php_zookeeper_private.h php_zookeeper_session.h zoo_lock.h
-</span><span class='line'>ChangeLog               README.markdown         examples                php_zookeeper.h         php_zookeeper_session.c zoo_lock.c              zookeeper-api.php
-</span><span class='line'><span class="nv">$ </span>./buildconf -force
-</span><span class='line'><span class="nv">$ </span><span class="s1">&#39;./configure&#39;</span>  <span class="s1">&#39;--prefix=/usr/local/php5.3.8_zookeeper&#39;</span> <span class="s1">&#39;--enable-zookeeper&#39;</span> <span class="s1">&#39;--with-libzookeeper-dir=/home/software/zookeeper-3.4.3/prefix&#39;</span> <span class="s1">&#39;--enable-sockets&#39;</span>
-</span><span class='line'><span class="nv">$ </span>make
-</span><span class='line'><span class="nv">$ </span>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /home/software/php-5.3.8/
+</span><span class="line"><span class="nv">$ </span>cp -r /home/software/zookeeper-0.2.2 ext/zookeeper
+</span><span class="line"><span class="nv">$ </span>ls ext/zookeeper/
+</span><span class="line">CREDITS                 LICENSE                 config.m4               php_zookeeper.c         php_zookeeper_private.h php_zookeeper_session.h zoo_lock.h
+</span><span class="line">ChangeLog               README.markdown         examples                php_zookeeper.h         php_zookeeper_session.c zoo_lock.c              zookeeper-api.php
+</span><span class="line"><span class="nv">$ </span>./buildconf -force
+</span><span class="line"><span class="nv">$ </span><span class="s1">&#39;./configure&#39;</span>  <span class="s1">&#39;--prefix=/usr/local/php5.3.8_zookeeper&#39;</span> <span class="s1">&#39;--enable-zookeeper&#39;</span> <span class="s1">&#39;--with-libzookeeper-dir=/home/software/zookeeper-3.4.3/prefix&#39;</span> <span class="s1">&#39;--enable-sockets&#39;</span>
+</span><span class="line"><span class="nv">$ </span>make
+</span><span class="line"><span class="nv">$ </span>sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>安装完成后查看是否支持</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>/usr/local/php5.3.8._zookeeper/bin/php -i | grep <span class="s1">&#39;libzookeeper version&#39;</span>
-</span><span class='line'>libzookeeper <span class="nv">version</span> <span class="o">=</span>&gt; 3.4.3
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>/usr/local/php5.3.8._zookeeper/bin/php -i | grep <span class="s1">&#39;libzookeeper version&#39;</span>
+</span><span class="line">libzookeeper <span class="nv">version</span> <span class="o">=</span>&gt; 3.4.3
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>看到已经支持了</p>
 
-<h3>最终的获取</h3>
-
+<h3 id="section-2">最终的获取</h3>
 <p>找一台非托管zk的hbase，这里假设是127.0.0.1，端口为2181</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">zookeeper_instance</span> <span class="k">extends</span> <span class="nx">Zookeeper</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">function</span> <span class="nf">connect_cb</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="nv">$event</span><span class="p">,</span> <span class="nv">$string</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span> <span class="o">==</span> <span class="nx">Zookeeper</span><span class="o">::</span><span class="na">CONNECTED_STATE</span><span class="p">)</span> <span class="p">{</span>
-</span><span class='line'>            <span class="nv">$acl</span><span class="o">=</span><span class="k">array</span><span class="p">(</span>
-</span><span class='line'>                <span class="s2">&quot;perms&quot;</span><span class="o">=&gt;</span><span class="mh">0x1f</span><span class="p">,</span>
-</span><span class='line'>                <span class="s2">&quot;scheme&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;world&quot;</span><span class="p">,</span>
-</span><span class='line'>                <span class="s2">&quot;id&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;anyone&quot;</span>
-</span><span class='line'>            <span class="p">);</span>
-</span><span class='line'>        <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$zk</span><span class="o">=</span><span class="k">new</span> <span class="nx">zookeeper_instance</span><span class="p">();</span>
-</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;instance ok</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$zk</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">&quot;127.0.0.1:2181&quot;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$zk</span><span class="p">,</span> <span class="s1">&#39;connect_cb&#39;</span><span class="p">),</span><span class="mi">200000</span><span class="p">);</span> <span class="c1">//连接超时200秒,比较夸张，测试用：）</span>
-</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;connect ok</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class='line'><span class="nv">$zkm</span><span class="o">=</span><span class="nv">$zk</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s2">&quot;/hbase/master&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nb">print_r</span><span class="p">(</span><span class="nv">$zkm</span><span class="p">);</span>
-</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">zookeeper_instance</span> <span class="k">extends</span> <span class="nx">Zookeeper</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">function</span> <span class="nf">connect_cb</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="nv">$event</span><span class="p">,</span> <span class="nv">$string</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">if</span> <span class="p">(</span><span class="nv">$event</span> <span class="o">==</span> <span class="nx">Zookeeper</span><span class="o">::</span><span class="na">CONNECTED_STATE</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">            <span class="nv">$acl</span><span class="o">=</span><span class="k">array</span><span class="p">(</span>
+</span><span class="line">                <span class="s2">&quot;perms&quot;</span><span class="o">=&gt;</span><span class="mh">0x1f</span><span class="p">,</span>
+</span><span class="line">                <span class="s2">&quot;scheme&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;world&quot;</span><span class="p">,</span>
+</span><span class="line">                <span class="s2">&quot;id&quot;</span><span class="o">=&gt;</span><span class="s2">&quot;anyone&quot;</span>
+</span><span class="line">            <span class="p">);</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$zk</span><span class="o">=</span><span class="k">new</span> <span class="nx">zookeeper_instance</span><span class="p">();</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;instance ok</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$zk</span><span class="o">-&gt;</span><span class="na">connect</span><span class="p">(</span><span class="s2">&quot;127.0.0.1:2181&quot;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nv">$zk</span><span class="p">,</span> <span class="s1">&#39;connect_cb&#39;</span><span class="p">),</span><span class="mi">200000</span><span class="p">);</span> <span class="c1">//连接超时200秒,比较夸张，测试用：）</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;connect ok</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$zkm</span><span class="o">=</span><span class="nv">$zk</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s2">&quot;/hbase/master&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="nb">print_r</span><span class="p">(</span><span class="nv">$zkm</span><span class="p">);</span>
+</span><span class="line"><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>查看结果,已经获取到了master</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="p">[</span><span class="nx">yin</span><span class="o">@</span><span class="nx">yin</span><span class="o">-</span><span class="nx">arch</span> <span class="nx">php_zookeeper_sample</span><span class="p">]</span><span class="o">&gt;/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">home</span><span class="o">/</span><span class="nx">yin</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">php5_new</span><span class="o">/</span><span class="nx">bin</span><span class="o">/</span><span class="nx">php</span> <span class="nx">test_zk_gethbasemaster</span><span class="o">.</span><span class="nx">php</span>
-</span><span class='line'><span class="nx">instance</span> <span class="nx">ok</span>
-</span><span class='line'><span class="nx">connect</span> <span class="nx">ok</span>
-</span><span class='line'><span class="err">▒</span><span class="mi">25469</span><span class="o">@</span><span class="nx">namenode1namenode1</span><span class="p">,</span><span class="mi">60000</span><span class="p">,</span><span class="mi">1395387861310</span><span class="p">[</span><span class="nx">yin</span><span class="o">@</span><span class="nx">yin</span><span class="o">-</span><span class="nx">arch</span> <span class="nx">php_zookeeper_sample</span><span class="p">]</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yin@yin-arch php_zookeeper_sample<span class="o">]</span>&gt;/usr/home/yin/local/bin/php5_new/bin/php test_zk_gethbasemaster.php
+</span><span class="line">instance ok
+</span><span class="line">connect ok
+</span><span class="line">▒25469@namenode1namenode1,60000,1395387861310<span class="o">[</span>yin@yin-arch php_zookeeper_sample<span class="o">]</span>&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>收工!</p>
 </div>
@@ -294,7 +303,7 @@
         
           <ul class="meta text-muted pager">
             
-            <li class="previous"><a href="/blog/2013/03/01/erlang-c-nif/" title="Previous Post: erlang调用C库函数(NIF 方式)">&laquo; erlang调用C库函数(NIF 方式)</a></li>
+            <li class="previous"><a href="/blog/2013/03/07/ssh-copy-id/" title="Previous Post: 非常便捷的ssh信任制作脚本ssh-copy-id">&laquo; 非常便捷的ssh信任制作脚本ssh-copy-id</a></li>
             
             
             <li class="next"><a href="/blog/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/" title="Next Post: freebsd下nginx+Php5.3.8+php-fpm源码安装之一">freebsd下nginx+Php5.3.8+php-fpm源码安装之一 &raquo;</a></li>
@@ -334,7 +343,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -350,7 +359,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

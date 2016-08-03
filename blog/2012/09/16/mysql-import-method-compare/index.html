@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -117,68 +140,56 @@
 <div class="entry-content clearfix"><p>mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。</p>
 
 <!-- more -->
+<p>####1）mysql加管道符导入
+这是最基本的方法,语法见下：</p>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">mysql -uuser -p dbname &lt; import.sql
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h4>1）mysql加管道符导入</h4>
+<p>这种方案导入的时候要注意编码的问题，通过加入–default-character-set = utf8来解决，此外好像对csv和纯文本文件的导入支持比较差。要强制导入成功可以用–force参数。</p>
 
-<p>这是最基本的方法,语法见下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uuser -p dbname &lt; import.sql
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这种方案导入的时候要注意编码的问题，通过加入–default-character-set = utf8来解决，此外好像对csv和纯文本文件的导入支持比较差。要强制导入成功可以用&mdash;force参数。</p>
-
-<h4>2）load data infile</h4>
-
+<h4 id="load-data-infile">2）load data infile</h4>
 <p>这个需要在mysql的shell中跑，语法见下：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql&gt; use dbname;set names utf8;load data infile <span class="s2">&quot;/path/to/import.csv&quot;</span> into table tbname<span class="o">(</span>field1,field2<span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">mysql&gt; use dbname;set names utf8;load data infile <span class="s2">&quot;/path/to/import.csv&quot;</span> into table tbname<span class="o">(</span>field1,field2<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这种方案默认的列分隔符为\t而行分隔符为\n，也就是说文本导入默认是unix换行格式的。而空数据的导入默认是认为\N导入之后就是NULL了。除此之外必须指定表名字，也就是说你有多个分表要导入就要写很多语句或者写一个shell遍历这么多的表，效率是可想而知的慢。</p>
 
-<h4>3）source</h4>
-
+<h4 id="source">3）source</h4>
 <p>这个同样是需要在mysql的shell中跑，语法见下：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql&gt; use dbname;set names utf8;source import.sql
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">mysql&gt; use dbname;set names utf8;source import.sql
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这种方案我没怎么试过，据说会出现导入过程中卡死，退出表损坏的状况，不推荐大胆尝试。</p>
 
-<h4>4）mysql -e</h4>
-
+<h4 id="mysql--e">4）mysql -e</h4>
 <p>这个方法其实就是执行若干sql，语法见下：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysql -uuser -p -e <span class="s2">&quot;use dbname;set names utf8;insert into tbname(field1,field2) values(&#39;foo&#39;,&#39;bar&#39;);&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">mysql -uuser -p -e <span class="s2">&quot;use dbname;set names utf8;insert into tbname(field1,field2) values(&#39;foo&#39;,&#39;bar&#39;);&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>所以这其实称不上是什么方法，前面的方法2和方法3都可以偷梁换柱啦：）</p>
 
-<h4>5）mysqlimport</h4>
-
+<h4 id="mysqlimport">5）mysqlimport</h4>
 <p>这是mysql官方安装包提供的工具了，使用方法：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>mysqlimport -uuser -p -h127.0.0.1 dbname importdir/* --field-terminated-by<span class="o">=</span><span class="s1">&#39;,&#39;</span> --filelds-optionally-enclosed-by<span class="o">=</span><span class="s1">&#39;&quot;&#39;</span> --local --compress --use-thread<span class="o">=</span>12
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">mysqlimport -uuser -p -h127.0.0.1 dbname importdir/* --field-terminated-by<span class="o">=</span><span class="s1">&#39;,&#39;</span> --filelds-optionally-enclosed-by<span class="o">=</span><span class="s1">&#39;&quot;&#39;</span> --local --compress --use-thread<span class="o">=</span>12
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>以上这条语句代表把本地文件夹importdir下的所有准备导入的文本，按照以逗号为字段分割符，双引号为行分隔符，以压缩的方式，开12个线程同时导入到位于127.0.0.1上mysql服务器的dbname库中。
 可见这种方案可以多表并发导入，不需要写多条语句就可以完成任务，推荐使用,另外提一句，上面的语句只需要用php的fputcsv函数并指定文件资源和写入行字符串这2个参数就可以了。
 最后，如果使用mysqldump最好不要用-T的方式导出，因为据说无法使用set unique_checks、set autocommit等实现加速导入。</p>
 
-<h4>参考文章</h4>
+<h4 id="section">参考文章</h4>
 
-<p><a href="http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/">http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/</a></p>
+<p>http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/</p>
 </div>
 
 
@@ -260,7 +271,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -276,7 +287,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

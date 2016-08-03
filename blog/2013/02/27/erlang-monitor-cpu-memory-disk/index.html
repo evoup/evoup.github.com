@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,10 +137,10 @@
   </header>
 
 
-<div class="entry-content clearfix"><p>os_mon
+<div class="entry-content clearfix"><p>os_mon 
 Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 
-<p><font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font></p>
+<font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font>
 
 <p>cpu_sup：监测CPU负载和使用率（Unix）</p>
 
@@ -128,7 +151,6 @@ Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
 <p>os_sup：监测系统日志（Solaris、Windows）</p>
 
 <!-- more -->
-
 
 <p>使用os_mon进行监测先必须启动监测服务application:start(os_mon) ，因为os_mon服务依赖于sasl服务，先必须启
 动sasl服务，application:start(sasl) ，否则会返回{ error,{not_started,sasl} } 错误。os_mon提供的四种监测服
@@ -155,27 +177,69 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 <p>模块中的函数列表</p>
 
-<p>nprocs() &ndash;> UnixProcesses | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>nprocs() -&gt; UnixProcesses</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回UNIX进程数</p>
 
-<p>avg1() &ndash;> SystemLoad | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>avg1() -&gt; SystemLoad</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回最后1分钟系统的负载</p>
 
-<p>avg5() &ndash;> SystemLoad | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>avg5() -&gt; SystemLoad</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回最后5分钟系统的负载</p>
 
-<p>avg15() &ndash;> SystemLoad | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>avg15() -&gt; SystemLoad</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回最后15分钟系统的负载</p>
 
-<p>util() &ndash;> CpuUtil | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>util() -&gt; CpuUtil</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回CPU使用率</p>
 
-<p>util(Opts) &ndash;> UtilSpec | {error, Reason}</p>
+<table>
+  <tbody>
+    <tr>
+      <td>util(Opts) -&gt; UtilSpec</td>
+      <td>{error, Reason}</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>返回CPU使用率的详细信息</p>
 
@@ -188,7 +252,7 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 本地磁盘都会被监测，包括存在的交换分区。在WIN32下所有类型为“FIXED_DISK”逻辑驱动器都会被检查。
 配置监控间隔时间和阀值</p>
 
-<p>disk_space_check_interval = int()>0</p>
+<p>disk_space_check_interval = int()&gt;0</p>
 
 <p>监测间隔时间，单位为分钟，默认为30分钟。</p>
 
@@ -198,23 +262,23 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 <p>模块中的函数列表</p>
 
-<p>get_disk_data() &ndash;> [DiskData]</p>
+<p>get_disk_data() -&gt; [DiskData]</p>
 
 <p>返回最后一次磁盘检查结果</p>
 
-<p>get_check_interval() &ndash;> MS</p>
+<p>get_check_interval() -&gt; MS</p>
 
 <p>获取监测间隔时间，单位是毫秒</p>
 
-<p>set_check_interval(Minutes) &ndash;> ok</p>
+<p>set_check_interval(Minutes) -&gt; ok</p>
 
 <p>设置监测间隔时间，这个设置在下一次监测时生效，服务退出后，这个值会失效，重启服务后使用默认值</p>
 
-<p>get_almost_full_threshold() &ndash;> Percent</p>
+<p>get_almost_full_threshold() -&gt; Percent</p>
 
 <p>获取监测阀值，为磁盘使用率</p>
 
-<p>set_almost_full_threshold(Float) &ndash;> ok</p>
+<p>set_almost_full_threshold(Float) -&gt; ok</p>
 
 <p>设置监测阀值，服务重启后，设置失效，使用默认值</p>
 
@@ -226,7 +290,7 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 <p>配置监测间隔时间和阀值</p>
 
-<p>memory_check_interval = int()>0</p>
+<p>memory_check_interval = int()&gt;0</p>
 
 <p>以分钟为刻度，默认为1分钟</p>
 
@@ -238,7 +302,7 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 <p>单个Erlang进程使用阀值，默认为5，单位是百分比</p>
 
-<p>memsup_helper_timeout = int()>0</p>
+<p>memsup_helper_timeout = int()&gt;0</p>
 
 <p>等待监测结果的超时时间，默认为30秒</p>
 
@@ -248,91 +312,89 @@ util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/pro
 
 <p>模块中的函数列表</p>
 
-<p>get_memory_data() &ndash;> {Total,Allocated,Worst}</p>
+<p>get_memory_data() -&gt; {Total,Allocated,Worst}</p>
 
 <p>获取系统总内存，使用内存，每个Erlang进程的使用内存</p>
 
-<p>get_system_memory_data() &ndash;> MemDataList</p>
+<p>get_system_memory_data() -&gt; MemDataList</p>
 
 <p>获取系统内存使用的详细信息</p>
 
-<p>get_os_wordsize() &ndash;> Wordsize</p>
+<p>get_os_wordsize() -&gt; Wordsize</p>
 
 <p>获取操作系统的位数</p>
 
-<p>get_check_interval() &ndash;> MS</p>
+<p>get_check_interval() -&gt; MS</p>
 
 <p>获取监测间隔时间，单位毫秒</p>
 
-<p>set_check_interval(Minutes) &ndash;> ok</p>
+<p>set_check_interval(Minutes) -&gt; ok</p>
 
 <p>设置监测间隔时间，单位分钟</p>
 
-<p>get_procmem_high_watermark() &ndash;> int()</p>
+<p>get_procmem_high_watermark() -&gt; int()</p>
 
 <p>获取每一进程内存使用告警阀值</p>
 
-<p>set_procmem_high_watermark(Float) &ndash;> ok</p>
+<p>set_procmem_high_watermark(Float) -&gt; ok</p>
 
 <p>设置每一进程内存告警阀值</p>
 
-<p>get_sysmem_high_watermark() &ndash;> int()</p>
+<p>get_sysmem_high_watermark() -&gt; int()</p>
 
 <p>获取系统内存使用阀值</p>
 
-<p>set_sysmem_high_watermark(Float) &ndash;> ok</p>
+<p>set_sysmem_high_watermark(Float) -&gt; ok</p>
 
 <p>设置系统内存使用阀值</p>
 
-<p>get_helper_timeout() &ndash;> Seconds</p>
+<p>get_helper_timeout() -&gt; Seconds</p>
 
 <p>获取监测数据返回等待时间</p>
 
-<p>set_helper_timeout(Seconds) &ndash;> ok</p>
+<p>set_helper_timeout(Seconds) -&gt; ok</p>
 
 <p>设置监测数据返回等待时间</p>
 
 <p>从lib/megaco/src/tcp/megaco_tcp_connection.erl摘抄的代码, 挺详细的关于系统的信息:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nv">SchedId</span>      <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">scheduler_id</span><span class="p">),</span>
-</span><span class='line'><span class="nv">SchedNum</span>     <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">schedulers</span><span class="p">),</span>
-</span><span class='line'><span class="nv">ProcCount</span>    <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">process_count</span><span class="p">),</span>
-</span><span class='line'><span class="nv">ProcLimit</span>    <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">process_limit</span><span class="p">),</span>
-</span><span class='line'><span class="nv">ProcMemUsed</span>  <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">processes_used</span><span class="p">),</span>
-</span><span class='line'><span class="nv">ProcMemAlloc</span> <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">processes</span><span class="p">),</span>
-</span><span class='line'><span class="nv">MemTot</span>       <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">total</span><span class="p">),</span>
-</span><span class='line'><span class="nf">error_msg</span><span class="p">(</span><span class="s">&quot;abormal termination: &quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Scheduler id:                         </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Num scheduler:                        </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Process count:                        </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Process limit:                        </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Memory used by erlang processes:      </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Memory allocated by erlang processes: </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   The total amount of memory allocated: </span><span class="si">~p</span><span class="s">&quot;</span>
-</span><span class='line'>          <span class="s">&quot;</span><span class="si">~n~p</span><span class="s">&quot;</span><span class="p">,</span>
-</span><span class='line'>          <span class="p">[</span><span class="nv">SchedId</span><span class="p">,</span> <span class="nv">SchedNum</span><span class="p">,</span> <span class="nv">ProcCount</span><span class="p">,</span> <span class="nv">ProcLimit</span><span class="p">,</span>
-</span><span class='line'>           <span class="nv">ProcMemUsed</span><span class="p">,</span> <span class="nv">ProcMemAlloc</span><span class="p">,</span> <span class="nv">MemTot</span><span class="p">,</span> <span class="nv">Reason</span><span class="p">]),</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="nv">SchedId</span>      <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">scheduler_id</span><span class="p">),</span>
+</span><span class="line"><span class="nv">SchedNum</span>     <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">schedulers</span><span class="p">),</span>
+</span><span class="line"><span class="nv">ProcCount</span>    <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">process_count</span><span class="p">),</span>
+</span><span class="line"><span class="nv">ProcLimit</span>    <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">system_info</span><span class="p">(</span><span class="n">process_limit</span><span class="p">),</span>
+</span><span class="line"><span class="nv">ProcMemUsed</span>  <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">processes_used</span><span class="p">),</span>
+</span><span class="line"><span class="nv">ProcMemAlloc</span> <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">processes</span><span class="p">),</span>
+</span><span class="line"><span class="nv">MemTot</span>       <span class="o">=</span> <span class="nn">erlang</span><span class="p">:</span><span class="nb">memory</span><span class="p">(</span><span class="n">total</span><span class="p">),</span>
+</span><span class="line"><span class="nf">error_msg</span><span class="p">(</span><span class="s">&quot;abormal termination: &quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Scheduler id:                         </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Num scheduler:                        </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Process count:                        </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Process limit:                        </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Memory used by erlang processes:      </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   Memory allocated by erlang processes: </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n</span><span class="s">   The total amount of memory allocated: </span><span class="si">~p</span><span class="s">&quot;</span>
+</span><span class="line">          <span class="s">&quot;</span><span class="si">~n~p</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class="line">          <span class="p">[</span><span class="nv">SchedId</span><span class="p">,</span> <span class="nv">SchedNum</span><span class="p">,</span> <span class="nv">ProcCount</span><span class="p">,</span> <span class="nv">ProcLimit</span><span class="p">,</span>
+</span><span class="line">           <span class="nv">ProcMemUsed</span><span class="p">,</span> <span class="nv">ProcMemAlloc</span><span class="p">,</span> <span class="nv">MemTot</span><span class="p">,</span> <span class="nv">Reason</span><span class="p">]),</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 </div>
 
@@ -415,7 +477,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -431,7 +493,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

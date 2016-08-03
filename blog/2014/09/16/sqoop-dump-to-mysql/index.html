@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,99 +137,85 @@
   </header>
 
 
-<div class="entry-content clearfix"><p>现为apache项目的sqoop是原来是一款hadoop第三方开源模块，通过使用sqoop可以使进行hadoop(hive)的数据与传统关系型数据库（mysql、pgsql）交互。可以把关系型数据库导入hdfs，也可以把hdfs的数据导入关系型数据库。这里我用实例记录的方式讲一下怎么通过它把hive中的数据导入到mysql结果表中。</p>
-
+<div class="entry-content clearfix"><p>现为apache项目的sqoop是原来是一款hadoop第三方开源模块，通过使用sqoop可以使进行hadoop(hive)的数据与传统关系型数据库（mysql、pgsql）交互。可以把关系型数据库导入hdfs，也可以把hdfs的数据导入关系型数据库。这里我用实例记录的方式讲一下怎么通过它把hive中的数据导入到mysql结果表中。
 <!-- more -->
+###安装</p>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">yum install sqoop-noarch sqoop-metastore.noarch
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3>安装</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>yum install sqoop-noarch sqoop-metastore.noarch
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>建表</h3>
-
+<h3 id="section">建表</h3>
 <p>首先是hive的表结构</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">use</span> <span class="n">db_work</span><span class="p">;</span>
-</span><span class='line'><span class="k">CREATE</span>  <span class="k">TABLE</span> <span class="n">table_work</span><span class="p">(</span>
-</span><span class='line'>  <span class="n">item</span> <span class="n">string</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">value</span> <span class="n">string</span><span class="p">)</span>
-</span><span class='line'><span class="n">PARTITIONED</span> <span class="k">BY</span> <span class="p">(</span>
-</span><span class='line'>  <span class="n">dt</span> <span class="nb">int</span><span class="p">,</span>
-</span><span class='line'>  <span class="n">tm</span> <span class="nb">int</span><span class="p">)</span>
-</span><span class='line'><span class="k">ROW</span> <span class="n">FORMAT</span> <span class="n">DELIMITED</span>
-</span><span class='line'>  <span class="n">FIELDS</span> <span class="n">TERMINATED</span> <span class="k">BY</span> <span class="s1">&#39;\t&#39;</span>
-</span><span class='line'><span class="n">STORED</span> <span class="k">AS</span> <span class="n">INPUTFORMAT</span>
-</span><span class='line'>  <span class="s1">&#39;org.apache.hadoop.mapred.TextInputFormat&#39;</span>
-</span><span class='line'><span class="n">OUTPUTFORMAT</span>
-</span><span class='line'>  <span class="s1">&#39;org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat&#39;</span>
-</span><span class='line'><span class="k">LOCATION</span>
-</span><span class='line'>  <span class="s1">&#39;hdfs://db_work/hive/warehouse/db_work.db/table_work&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="n">use</span> <span class="n">db_work</span><span class="p">;</span>
+</span><span class="line"><span class="k">CREATE</span>  <span class="k">TABLE</span> <span class="n">table_work</span><span class="p">(</span>
+</span><span class="line">  <span class="n">item</span> <span class="n">string</span><span class="p">,</span>
+</span><span class="line">  <span class="n">value</span> <span class="n">string</span><span class="p">)</span>
+</span><span class="line"><span class="n">PARTITIONED</span> <span class="k">BY</span> <span class="p">(</span>
+</span><span class="line">  <span class="n">dt</span> <span class="nb">int</span><span class="p">,</span>
+</span><span class="line">  <span class="n">tm</span> <span class="nb">int</span><span class="p">)</span>
+</span><span class="line"><span class="k">ROW</span> <span class="n">FORMAT</span> <span class="n">DELIMITED</span>
+</span><span class="line">  <span class="n">FIELDS</span> <span class="n">TERMINATED</span> <span class="k">BY</span> <span class="s1">&#39;\t&#39;</span>
+</span><span class="line"><span class="n">STORED</span> <span class="k">AS</span> <span class="n">INPUTFORMAT</span>
+</span><span class="line">  <span class="s1">&#39;org.apache.hadoop.mapred.TextInputFormat&#39;</span>
+</span><span class="line"><span class="n">OUTPUTFORMAT</span>
+</span><span class="line">  <span class="s1">&#39;org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat&#39;</span>
+</span><span class="line"><span class="k">LOCATION</span>
+</span><span class="line">  <span class="s1">&#39;hdfs://db_work/hive/warehouse/db_work.db/table_work&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>注意这里使用\t作为字段分隔符，与之后的sqoop保持一致。</p>
 
 <p>mysql表的格式</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">use</span> <span class="n">testdb</span><span class="p">;</span>
-</span><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="k">result</span><span class="o">`</span> <span class="p">(</span>
-</span><span class='line'>  <span class="o">`</span><span class="n">item</span><span class="o">`</span> <span class="n">mediumtext</span><span class="p">,</span>
-</span><span class='line'>  <span class="o">`</span><span class="n">value</span><span class="o">`</span> <span class="n">mediumtext</span>
-</span><span class='line'><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">MyISAM</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="n">use</span> <span class="n">testdb</span><span class="p">;</span>
+</span><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="k">result</span><span class="o">`</span> <span class="p">(</span>
+</span><span class="line">  <span class="o">`</span><span class="n">item</span><span class="o">`</span> <span class="n">mediumtext</span><span class="p">,</span>
+</span><span class="line">  <span class="o">`</span><span class="n">value</span><span class="o">`</span> <span class="n">mediumtext</span>
+</span><span class="line"><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">MyISAM</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>注意sqoop导入的字段如果过长，会报错&lt;p&gt;<code> com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column </code>&lt;p&gt;，这里使用mediumtext解决这个问题。</p>
 
-<p>注意sqoop导入的字段如果过长，会报错<p><code>com.mysql.jdbc.MysqlDataTruncation: Data truncation: Data too long for column</code><p>，这里使用mediumtext解决这个问题。</p>
-
-<h3>导入</h3>
-
+<h3 id="section-1">导入</h3>
 <p>导入语句</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sqoop <span class="nb">export</span> -m8 --connect <span class="s1">&#39;jdbc:mysql://&#39;</span><span class="s2">&quot;${mysql_host}&quot;</span><span class="s1">&#39;:3306/testdb?useUnicode=true&amp;characterEncoding=utf8&#39;</span> --username <span class="k">${</span><span class="nv">mysql_user</span><span class="k">}</span> --password <span class="k">${</span><span class="nv">mysqlpass</span><span class="k">}</span> --table result --export-dir /hive/warehouse/db_work.db/table_work/dt<span class="o">=</span>20140916/tm<span class="o">=</span>1213 --input-fields-terminated-by <span class="s1">&#39;\t&#39;</span> --input-null-string <span class="s1">&#39;\\N&#39;</span> --input-null-non-string <span class="s1">&#39;\\N&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sqoop <span class="nb">export</span> -m8 --connect <span class="s1">&#39;jdbc:mysql://&#39;</span><span class="s2">&quot;${mysql_host}&quot;</span><span class="s1">&#39;:3306/testdb?useUnicode=true&amp;characterEncoding=utf8&#39;</span> --username <span class="k">${</span><span class="nv">mysql_user</span><span class="k">}</span> --password <span class="k">${</span><span class="nv">mysqlpass</span><span class="k">}</span> --table result --export-dir /hive/warehouse/db_work.db/table_work/dt<span class="o">=</span>20140916/tm<span class="o">=</span>1213 --input-fields-terminated-by <span class="s1">&#39;\t&#39;</span> --input-null-string <span class="s1">&#39;\\N&#39;</span> --input-null-non-string <span class="s1">&#39;\\N&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>以上语句可以正确地把名为table_work的hive表，以\t为列分隔符，\N为空数据，导入到名为result的mysql表</p>
 
-<h3>其他说明</h3>
+<h3 id="section-2">其他说明</h3>
+<p>其实sqoop每次导出都会生成一个java文件，如果产生了导入错误，是可以人工通过程序干预解决错误的。这需要在sqoop命令后加2个参数–class-name和–jar-file来完成，详情参见sqoop文档。</p>
 
-<p>其实sqoop每次导出都会生成一个java文件，如果产生了导入错误，是可以人工通过程序干预解决错误的。这需要在sqoop命令后加2个参数&mdash;class-name和&mdash;jar-file来完成，详情参见sqoop文档。</p>
+<h3 id="section-3">参考文章</h3>
+<p><a href="http://ju.outofmemory.cn/entry/44398">《sqoop 从 hive 导到mysql遇到的问题》</a></p>
 
-<h3>参考文章</h3>
+<p><a href="http://www.haogongju.net/art/2639227">《Sqoop1:exportdatatomysql》</a></p>
 
-<p>《sqoop 从 hive 导到mysql遇到的问题》
-<a href="http://ju.outofmemory.cn/entry/44398">http://ju.outofmemory.cn/entry/44398</a></p>
-
-<p>《Sqoop1:exportdatatomysql》
-<a href="http://www.haogongju.net/art/2639227">http://www.haogongju.net/art/2639227</a></p>
-
-<p>《sqoop 使用心得(sqoop增量倒入)》
-<a href="http://www.xuebuyuan.com/1938334.html">http://www.xuebuyuan.com/1938334.html</a></p>
+<p><a href="http://www.xuebuyuan.com/1938334.html">《sqoop 使用心得(sqoop增量倒入)》</a></p>
 </div>
 
 
@@ -288,7 +297,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -304,7 +313,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,323 +137,263 @@
   </header>
 
 
-<div class="entry-content clearfix"><h3>首先安装lzo库</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
-</span><span class='line'>tar xzf lzo-2.04.tar.gz
-</span><span class='line'><span class="nb">cd </span>lzo-2.04
-</span><span class='line'>./configure --enable-shared
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="entry-content clearfix"><h3 id="lzo">首先安装lzo库</h3>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
+</span><span class="line">tar xzf lzo-2.04.tar.gz
+</span><span class="line"><span class="nb">cd </span>lzo-2.04
+</span><span class="line">./configure --enable-shared
+</span><span class="line">make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>安装完成后拷贝/usr/local/lib目录下的lzo库文件到/usr/lib(32位平台)或者/usr/lib64(64位平台)</p>
 
 <!-- more -->
 
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">sudo cp /usr/local/lib/liblzo2* /usr/lib
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>ps：应该是这些文件
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">liblzo2.a
+</span><span class="line">liblzo2.la
+</span><span class="line">liblzo2.so
+</span><span class="line">liblzo2.so.2
+</span><span class="line">liblzo2.so.2.0.0
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+在/etc/ld.so.conf.d/目录下新建lzo.conf文件，写入lzo库文件的路径/usr/local/lib，然后运行/sbin/ldconfig -v，使配置生效。</p>
 
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo cp /usr/local/lib/liblzo2* /usr/lib
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>ps：应该是这些文件</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>liblzo2.a
-</span><span class='line'>liblzo2.la
-</span><span class='line'>liblzo2.so
-</span><span class='line'>liblzo2.so.2
-</span><span class='line'>liblzo2.so.2.0.0
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在/etc/ld.so.conf.d/目录下新建lzo.conf文件，写入lzo库文件的路径/usr/local/lib，然后运行/sbin/ldconfig -v，使配置生效。</p>
-
-<h3>然后安装hadoop-LZO</h3>
-
+<h3 id="hadoop-lzo">然后安装hadoop-LZO</h3>
 <p>我这里是hadoop0.20版本，就下kevinweil的版本
-git clone <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a></p>
+git clone https://github.com/kevinweil/hadoop-lzo</p>
 
 <p>然后安装ant
-/etc/profile中</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">ANT_HOME</span><span class="o">=</span>/home/hadoop/apache-ant-1.9.3
-</span><span class='line'><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ANT_HOME</span>/bin:<span class="nv">$PATH</span>
-</span><span class='line'><span class="nb">export </span>PATH
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后source /etc/profile</p>
+/etc/profile中
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="nb">export </span><span class="nv">ANT_HOME</span><span class="o">=</span>/home/hadoop/apache-ant-1.9.3
+</span><span class="line"><span class="nv">PATH</span><span class="o">=</span><span class="nv">$ANT_HOME</span>/bin:<span class="nv">$PATH</span>
+</span><span class="line"><span class="nb">export </span>PATH
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+然后source /etc/profile</p>
 
 <p>然后指定好CFLAGS和CXXFLAGS开始编译</p>
 
-<h4>32位os</h4>
+<h4 id="os">32位os</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m32
+</span><span class="line"><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m32
+</span><span class="line">ant compile-native tar
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>####64位os
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m64
+</span><span class="line"><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m64
+</span><span class="line">ant compile-native tar
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+等待编译完成
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">tar:
+</span><span class="line">      <span class="o">[</span>tar<span class="o">]</span> Building tar: /home/hadoop/project/hadoop-lzo/build/hadoop-lzo-0.4.15.tar.gz
+</span><span class="line">
+</span><span class="line">BUILD SUCCESSFUL
+</span><span class="line">Total <span class="nb">time</span>: 23 seconds
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+然后把本地库和jar包拷贝到hadoop的目录下，并分发到各节点
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="nb">cd </span>build
+</span><span class="line">cp hadoop-lzo-0.4.15.jar /u01/app/hadoop/lib
+</span><span class="line">cp -r native/Linux-i386-32/* /u01/app/hadoop/lib/native/Linux-i386-32/
+</span><span class="line"><span class="c">#如果是64位应该是Linux-amd64-64</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m32
-</span><span class='line'><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m32
-</span><span class='line'>ant compile-native tar
-</span></code></pre></td></tr></table></div></figure>
+<h3 id="shelllzop">安装shell工具lzop</h3>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">wget http://www.lzop.org/download/lzop-1.03.tar.gz
+</span><span class="line">./configure
+</span><span class="line">make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>使用
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line"><span class="c">#压缩</span>
+</span><span class="line">lzop test.log
+</span><span class="line"><span class="c">#查看解压内容</span>
+</span><span class="line">lzop -cd test.log.lzo | less
+</span><span class="line"><span class="c">#解压</span>
+</span><span class="line">lzop -x test.log.lzo
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
+<h3 id="hadoopcore-sitexmlmapred-sitexml">配置hadoop的core-site.xml和mapred-site.xml</h3>
+<p>core-site.xml
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">&lt;property&gt;
+</span><span class="line">        &lt;name&gt;io.compression.codecs&lt;/name&gt; &lt;value&gt;org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.BZip2Codec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec&lt;/value&gt;
+</span><span class="line">        &lt;!-- 配置 Hadoop 压缩包 --&gt;
+</span><span class="line">&lt;/property&gt;
+</span><span class="line">&lt;property&gt;
+</span><span class="line">        &lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
+</span><span class="line">        &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
+</span><span class="line">&lt;/property&gt;
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+mapred-site.xml
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">&lt;property&gt;
+</span><span class="line">      &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
+</span><span class="line">      &lt;value&gt;true&lt;/value&gt;
+</span><span class="line">      &lt;!-- map 和 reduce 输出中间文件默认开启压缩 --&gt;
+</span><span class="line">  &lt;/property&gt;
+</span><span class="line">  &lt;property&gt;
+</span><span class="line">         &lt;name&gt;mapred.map.output.compression.codec&lt;/name&gt;
+</span><span class="line">         &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
+</span><span class="line">  &lt;/property&gt;
+</span><span class="line">  &lt;property&gt;
+</span><span class="line">         &lt;name&gt;mapred.child.env&lt;/name&gt;
+</span><span class="line">         &lt;value&gt;LD_LIBRARY_PATH<span class="o">=</span>/u01/app/hadoop/lib/native/Linux-i386-32&lt;/value&gt;
+</span><span class="line"> &lt;/property&gt;
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<h4>64位os</h4>
+<h3 id="hadooplzo">启动hadoop并测试lzo</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">export </span><span class="nv">CFLAGS</span><span class="o">=</span>-m64
-</span><span class='line'><span class="nb">export </span><span class="nv">CXXFLAGS</span><span class="o">=</span>-m64
-</span><span class='line'>ant compile-native tar
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>等待编译完成</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar:
-</span><span class='line'>      <span class="o">[</span>tar<span class="o">]</span> Building tar: /home/hadoop/project/hadoop-lzo/build/hadoop-lzo-0.4.15.tar.gz
-</span><span class='line'>
-</span><span class='line'>BUILD SUCCESSFUL
-</span><span class='line'>Total <span class="nb">time</span>: 23 seconds
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后把本地库和jar包拷贝到hadoop的目录下，并分发到各节点</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>build
-</span><span class='line'>cp hadoop-lzo-0.4.15.jar /u01/app/hadoop/lib
-</span><span class='line'>cp -r native/Linux-i386-32/* /u01/app/hadoop/lib/native/Linux-i386-32/
-</span><span class='line'><span class="c">#如果是64位应该是Linux-amd64-64</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>安装shell工具lzop</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://www.lzop.org/download/lzop-1.03.tar.gz
-</span><span class='line'>./configure
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#压缩</span>
-</span><span class='line'>lzop test.log
-</span><span class='line'><span class="c">#查看解压内容</span>
-</span><span class='line'>lzop -cd test.log.lzo | less
-</span><span class='line'><span class="c">#解压</span>
-</span><span class='line'>lzop -x test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>配置hadoop的core-site.xml和mapred-site.xml</h3>
-
-<p>core-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>        &lt;name&gt;io.compression.codecs&lt;/name&gt; &lt;value&gt;org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.BZip2Codec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec&lt;/value&gt;
-</span><span class='line'>        &lt;!-- 配置 Hadoop 压缩包 --&gt;
-</span><span class='line'>&lt;/property&gt;
-</span><span class='line'>&lt;property&gt;
-</span><span class='line'>        &lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
-</span><span class='line'>        &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
-</span><span class='line'>&lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>mapred-site.xml</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;property&gt;
-</span><span class='line'>      &lt;name&gt;mapred.compress.map.output&lt;/name&gt;
-</span><span class='line'>      &lt;value&gt;true&lt;/value&gt;
-</span><span class='line'>      &lt;!-- map 和 reduce 输出中间文件默认开启压缩 --&gt;
-</span><span class='line'>  &lt;/property&gt;
-</span><span class='line'>  &lt;property&gt;
-</span><span class='line'>         &lt;name&gt;mapred.map.output.compression.codec&lt;/name&gt;
-</span><span class='line'>         &lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
-</span><span class='line'>  &lt;/property&gt;
-</span><span class='line'>  &lt;property&gt;
-</span><span class='line'>         &lt;name&gt;mapred.child.env&lt;/name&gt;
-</span><span class='line'>         &lt;value&gt;LD_LIBRARY_PATH<span class="o">=</span>/u01/app/hadoop/lib/native/Linux-i386-32&lt;/value&gt;
-</span><span class='line'> &lt;/property&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h3>启动hadoop并测试lzo</h3>
-
-<p>用lzop压缩一个文件，然后上传到hdfs</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>bin/start-all.sh
-</span><span class='line'>lzop test.txt
-</span><span class='line'>/u01/app/hadoop/bin/hadoop -put test.txt.lzo /testlzo/test.txt.lzo
-</span></code></pre></td></tr></table></div></figure>
-
+<p>用lzop压缩一个文件，然后上传到hdfs
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">bin/start-all.sh
+</span><span class="line">lzop test.txt
+</span><span class="line">/u01/app/hadoop/bin/hadoop -put test.txt.lzo /testlzo/test.txt.lzo
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
 <p>然后通过创建lzo索引来测试lzo是否已经支持</p>
 
-<p>在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再</p>
+<p>在hadoop的conf的hadoop-env.sh中指定好HADOOP_CLASSPATH,然后就不用再
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">bin/hadoop jar lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /testlzo/test.txt.lzo
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+而直接使用
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">bin/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/test.log.lzo
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop jar lib/hadoop-lzo-0.4.15.jar com.hadoop.compression.lzo.LzoIndexer /testlzo/test.txt.lzo
-</span></code></pre></td></tr></table></div></figure>
+<p>也可以使用分布式版本
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">bin/hadoop com.hadoop.compression.lzo.DistributedLzoIndexer /testlzo/test.log.lzo
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
+<p>报错
+&gt; 14/03/06 18:37:14 ERROR lzo.GPLNativeCodeLoader: Could not load native gpl library
+&gt; java.lang.UnsatisfiedLinkError: no gplcompression in java.library.path
+&gt;        at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1738)
+&gt;        at java.lang.Runtime.loadLibrary0(Runtime.java:823)
+&gt;        at java.lang.System.loadLibrary(System.java:1028)
+&gt;        at com.hadoop.compression.lzo.GPLNativeCodeLoader.<clinit>(GPLNativeCodeLoader.java:32)
+&gt;        at com.hadoop.compression.lzo.LzoCodec.<clinit>(LzoCodec.java:71)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.<init>(LzoIndexer.java:36)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:134)
+&gt; 14/03/06 18:37:14 ERROR lzo.LzoCodec: Cannot load native-lzo without native-hadoop
+&gt; 14/03/06 18:37:14 INFO lzo.LzoIndexer: [INDEX] LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB&#8230;
+&gt; Exception in thread &#8220;main&#8221; java.lang.RuntimeException: native-lzo library not available
+&gt;        at com.hadoop.compression.lzo.LzopCodec.createDecompressor(LzopCodec.java:104)
+&gt;        at com.hadoop.compression.lzo.LzoIndex.createIndex(LzoIndex.java:229)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.indexSingleFile(LzoIndexer.java:117)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.indexInternal(LzoIndexer.java:98)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.index(LzoIndexer.java:52)
+&gt;        at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:137)</init></clinit></clinit></p>
 
-<p>而直接使用</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>也可以使用分布式版本</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bin/hadoop com.hadoop.compression.lzo.DistributedLzoIndexer /testlzo/test.log.lzo
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>报错</p>
-
-<blockquote><p>14/03/06 18:37:14 ERROR lzo.GPLNativeCodeLoader: Could not load native gpl library
-java.lang.UnsatisfiedLinkError: no gplcompression in java.library.path</p>
-
-<pre><code>   at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1738)
-   at java.lang.Runtime.loadLibrary0(Runtime.java:823)
-   at java.lang.System.loadLibrary(System.java:1028)
-   at com.hadoop.compression.lzo.GPLNativeCodeLoader.&lt;clinit&gt;(GPLNativeCodeLoader.java:32)
-   at com.hadoop.compression.lzo.LzoCodec.&lt;clinit&gt;(LzoCodec.java:71)
-   at com.hadoop.compression.lzo.LzoIndexer.&lt;init&gt;(LzoIndexer.java:36)
-   at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:134)
-</code></pre>
-
-<p>14/03/06 18:37:14 ERROR lzo.LzoCodec: Cannot load native-lzo without native-hadoop
-14/03/06 18:37:14 INFO lzo.LzoIndexer: [INDEX] LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB&hellip;
-Exception in thread &ldquo;main&rdquo; java.lang.RuntimeException: native-lzo library not available</p>
-
-<pre><code>   at com.hadoop.compression.lzo.LzopCodec.createDecompressor(LzopCodec.java:104)
-   at com.hadoop.compression.lzo.LzoIndex.createIndex(LzoIndex.java:229)
-   at com.hadoop.compression.lzo.LzoIndexer.indexSingleFile(LzoIndexer.java:117)
-   at com.hadoop.compression.lzo.LzoIndexer.indexInternal(LzoIndexer.java:98)
-   at com.hadoop.compression.lzo.LzoIndexer.index(LzoIndexer.java:52)
-   at com.hadoop.compression.lzo.LzoIndexer.main(LzoIndexer.java:137)
-</code></pre></blockquote>
-
-<p>看似是GPLNativeCodeLoader没有装，其实是路径不对</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 lib<span class="o">]</span><span class="nv">$ls</span> -la /u01/app/hadoop/lib/native/Linux-i386-32/lib
-</span><span class='line'>total 184
-</span><span class='line'>drwxrwxr-x 2 hadoop hadoop  4096 Mar  6 14:10 .
-</span><span class='line'>drwxrwxrwx 5 hadoop hadoop  4096 Mar  7 10:52 ..
-</span><span class='line'>-rw-r--r-- 1 hadoop hadoop 76502 Mar  6 14:10 libgplcompression.a
-</span><span class='line'>-rw-rw-r-- 1 hadoop hadoop  1128 Mar  6 14:10 libgplcompression.la
-</span><span class='line'>lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so -&gt; libgplcompression.so.0.0.0
-</span><span class='line'>lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so.0 -&gt; libgplcompression.so.0.0.0
-</span><span class='line'>-rwxrwxr-x 1 hadoop hadoop 59281 Mar  6 14:10 libgplcompression.so.0.0.0
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其实只要把这几个库复制到上级目录即可</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp /u01/app/hadoop/lib/native/Linux-i386-32/lib/* /u01/app/hadoop/lib/native/Linux-i386-32/
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="o">[</span>hadoop@mdn2 hadoop<span class="o">]</span><span class="nv">$bin</span>/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/x.log.lzo
-</span><span class='line'>14/03/07 10:52:33 INFO lzo.GPLNativeCodeLoader: Loaded native gpl library
-</span><span class='line'>14/03/07 10:52:33 INFO lzo.LzoCodec: Successfully loaded &amp; initialized native-lzo library <span class="o">[</span>hadoop-lzo rev 6bb1b7f8b9044d8df9b4d2b6641db7658aab3cf8<span class="o">]</span>
-</span><span class='line'>14/03/07 10:52:34 INFO lzo.LzoIndexer: <span class="o">[</span>INDEX<span class="o">]</span> LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB...
-</span><span class='line'>14/03/07 10:52:34 INFO lzo.LzoIndexer: Completed LZO Indexing in 0.15 seconds <span class="o">(</span>0.00 MB/s<span class="o">)</span>.  Index size is 0.01 KB.
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>终于成功。</p>
+<p>看似是GPLNativeCodeLoader没有装，其实是路径不对
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="o">[</span>hadoop@mdn2 lib<span class="o">]</span><span class="nv">$ls</span> -la /u01/app/hadoop/lib/native/Linux-i386-32/lib
+</span><span class="line">total 184
+</span><span class="line">drwxrwxr-x 2 hadoop hadoop  4096 Mar  6 14:10 .
+</span><span class="line">drwxrwxrwx 5 hadoop hadoop  4096 Mar  7 10:52 ..
+</span><span class="line">-rw-r--r-- 1 hadoop hadoop 76502 Mar  6 14:10 libgplcompression.a
+</span><span class="line">-rw-rw-r-- 1 hadoop hadoop  1128 Mar  6 14:10 libgplcompression.la
+</span><span class="line">lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so -&gt; libgplcompression.so.0.0.0
+</span><span class="line">lrwxrwxrwx 1 hadoop hadoop    26 Mar  6 14:10 libgplcompression.so.0 -&gt; libgplcompression.so.0.0.0
+</span><span class="line">-rwxrwxr-x 1 hadoop hadoop 59281 Mar  6 14:10 libgplcompression.so.0.0.0
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+其实只要把这几个库复制到上级目录即可
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">cp /u01/app/hadoop/lib/native/Linux-i386-32/lib/* /u01/app/hadoop/lib/native/Linux-i386-32/
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+然后
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line"><span class="o">[</span>hadoop@mdn2 hadoop<span class="o">]</span><span class="nv">$bin</span>/hadoop com.hadoop.compression.lzo.LzoIndexer /testlzo/x.log.lzo
+</span><span class="line">14/03/07 10:52:33 INFO lzo.GPLNativeCodeLoader: Loaded native gpl library
+</span><span class="line">14/03/07 10:52:33 INFO lzo.LzoCodec: Successfully loaded &amp; initialized native-lzo library <span class="o">[</span>hadoop-lzo rev 6bb1b7f8b9044d8df9b4d2b6641db7658aab3cf8<span class="o">]</span>
+</span><span class="line">14/03/07 10:52:34 INFO lzo.LzoIndexer: <span class="o">[</span>INDEX<span class="o">]</span> LZO Indexing file /testlzo/x.log.lzo, size 0.00 GB...
+</span><span class="line">14/03/07 10:52:34 INFO lzo.LzoIndexer: Completed LZO Indexing in 0.15 seconds <span class="o">(</span>0.00 MB/s<span class="o">)</span>.  Index size is 0.01 KB.
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+终于成功。</p>
 
 <p>参考：</p>
 
 <p>《hadoop安装lzo》
-<a href="http://blog.csdn.net/wanglinzi/article/details/12318743">http://blog.csdn.net/wanglinzi/article/details/12318743</a></p>
+http://blog.csdn.net/wanglinzi/article/details/12318743</p>
 
 <p>《lzo安装说明(2)》
-<a href="http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html">http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html</a></p>
+http://www.350351.com/jiagoucunchu/Hadoop/83863_2.html</p>
+
 </div>
 
 
@@ -505,7 +468,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -521,7 +484,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

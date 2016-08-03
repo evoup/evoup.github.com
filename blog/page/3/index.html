@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -115,8 +138,11 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>hive查询报错<code>c
-ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation</code></p>
+  <div class="entry-content clearfix"><p>hive查询报错</p>
+
+<p><code> could only be replicated to 0 nodes instead of minReplication (=1). </code></p>
+
+<p><code> There are 0 datanode(s) running and no node(s) are excluded in this operation </code></p>
 
 </div>
   
@@ -158,10 +184,8 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
   </header>
 
 
-  <div class="entry-content clearfix"><h3>使用syslog</h3>
-
-<p>首先介绍下golang的syslog的用法，因为这个其实也很好用，只不过比log4go缺点在于要用syslog那一套（如newsyslog）来手工设置syslog.conf来轮询日志。接下来是一个基本的用法，只有serverity的场景:</p>
-
+  <div class="entry-content clearfix"><h3 id="syslog">使用syslog</h3>
+<p>首先介绍下golang的syslog的用法，因为这个其实也很好用，只不过比log4go缺点在于要用syslog那一套（如newsyslog）来手工设置syslog.conf来轮询日志。接下来是一个基本的用法，只有serverity的场景:
 </div>
   
   
@@ -246,7 +270,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 
   <div class="entry-content clearfix"><p>上次的《使用CocoStudio创建骨骼动画》讨论到了如何创建骨骼和绑定骨骼关系，这节开始谈怎么创建帧动画。</p>
 
-<p>我把上次的每个图层命名成每个骨骼后，更新后的：<a href="http://pan.baidu.com/s/1mg0UXJi" target=_blank>工作cocostudio源文件下载</a></p>
+<p>我把上次的每个图层命名成每个骨骼后，更新后的：&lt;a href=”http://pan.baidu.com/s/1mg0UXJi” target=_blank&gt;工作cocostudio源文件下载&lt;/a&gt;</p>
 
 </div>
   
@@ -372,8 +396,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
   </header>
 
 
-  <div class="entry-content clearfix"><p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：</p>
-
+  <div class="entry-content clearfix"><p>maven打包默认不加入依赖的jar包，需要改动pom.xml，加入以下内容：
 </div>
   
   
@@ -414,7 +437,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
   </header>
 
 
-  <div class="entry-content clearfix"><p>目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。<br>
+  <div class="entry-content clearfix"><p>目的，为cocos2d-x的编辑器制作好一个角色，为以后的demo做准备。<br />
 最终稿（完成时间2小时+修正1小时，初次尝试，PS）</p>
 
 </div>
@@ -459,8 +482,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 
   <div class="entry-content clearfix"><p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
 
-<p>下面描述一下过程</p>
-
+<p>下面描述一下过程
 </div>
   
   
@@ -501,23 +523,20 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
   </header>
 
 
-  <div class="entry-content clearfix"><h3>首先安装lzo库</h3>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
-</span><span class='line'>tar xzf lzo-2.04.tar.gz
-</span><span class='line'><span class="nb">cd </span>lzo-2.04
-</span><span class='line'>./configure --enable-shared
-</span><span class='line'>make
-</span><span class='line'>sudo make install
-</span></code></pre></td></tr></table></div></figure>
-
-
+  <div class="entry-content clearfix"><h3 id="lzo">首先安装lzo库</h3>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sh"><span class="line">wget http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
+</span><span class="line">tar xzf lzo-2.04.tar.gz
+</span><span class="line"><span class="nb">cd </span>lzo-2.04
+</span><span class="line">./configure --enable-shared
+</span><span class="line">make
+</span><span class="line">sudo make install
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>安装完成后拷贝/usr/local/lib目录下的lzo库文件到/usr/lib(32位平台)或者/usr/lib64(64位平台)</p>
 
 </div>
@@ -554,7 +573,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -570,7 +589,7 @@ ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

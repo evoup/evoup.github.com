@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -114,68 +137,68 @@
   </header>
 
 
-<div class="entry-content clearfix"><p>hive查询报错<code>c
-ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation</code></p>
+<div class="entry-content clearfix"><p>hive查询报错</p>
+
+<p><code> could only be replicated to 0 nodes instead of minReplication (=1). </code></p>
+
+<p><code> There are 0 datanode(s) running and no node(s) are excluded in this operation </code></p>
 
 <!-- more -->
 
-
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>hive&gt; select count(*) from httplog_2014_05_26_2017;
-</span><span class='line'>Total MapReduce jobs = 1
-</span><span class='line'>Launching Job 1 out of 1
-</span><span class='line'>Number of reduce tasks determined at compile time: 1
-</span><span class='line'>In order to change the average load for a reducer (in bytes):
-</span><span class='line'>  set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
-</span><span class='line'>In order to limit the maximum number of reducers:
-</span><span class='line'>  set hive.exec.reducers.max=&lt;number&gt;
-</span><span class='line'>In order to set a constant number of reducers:
-</span><span class='line'>  set mapred.reduce.tasks=&lt;number&gt;
-</span><span class='line'>org.apache.hadoop.ipc.RemoteException(java.io.IOException): File /tmp/hive-hadoop/hive_2014-07-15_10-27-16_252_580204120341469236-1/-mr-10003/7a56500c-c6e3-4f8c-a32b-053e9fe8eec2 c
-</span><span class='line'>ould only be replicated to 0 nodes instead of minReplication (=1).  There are 0 datanode(s) running and no node(s) are excluded in this operation.
-</span><span class='line'>        at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget(BlockManager.java:1340)
-</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock(FSNamesystem.java:2296)
-</span><span class='line'>        at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock(NameNodeRpcServer.java:501)
-</span><span class='line'>        at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock(ClientNamenodeProtocolServerSideTranslatorPB.java:299)
-</span><span class='line'>        at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos$ClientNamenodeProtocol$2.callBlockingMethod(ClientNamenodeProtocolProtos.java:44954)
-</span><span class='line'>        at org.apache.hadoop.ipc.ProtobufRpcEngine$Server$ProtoBufRpcInvoker.call(ProtobufRpcEngine.java:453)
-</span><span class='line'>        at org.apache.hadoop.ipc.RPC$Server.call(RPC.java:1002)
-</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1752)
-</span><span class='line'>        at org.apache.hadoop.ipc.Server$Handler$1.run(Server.java:1748)</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">hive&gt; <span class="k">select </span>count<span class="o">(</span>*<span class="o">)</span> from httplog_2014_05_26_2017;
+</span><span class="line">Total MapReduce <span class="nb">jobs</span> <span class="o">=</span> 1
+</span><span class="line">Launching Job 1 out of 1
+</span><span class="line">Number of reduce tasks determined at compile <span class="nb">time</span>: 1
+</span><span class="line">In order to change the average load <span class="k">for </span>a reducer <span class="o">(</span>in bytes<span class="o">)</span>:
+</span><span class="line">  <span class="nb">set </span>hive.exec.reducers.bytes.per.reducer<span class="o">=</span>&lt;number&gt;
+</span><span class="line">In order to limit the maximum number of reducers:
+</span><span class="line">  <span class="nb">set </span>hive.exec.reducers.max<span class="o">=</span>&lt;number&gt;
+</span><span class="line">In order to <span class="nb">set </span>a constant number of reducers:
+</span><span class="line">  <span class="nb">set </span>mapred.reduce.tasks<span class="o">=</span>&lt;number&gt;
+</span><span class="line">org.apache.hadoop.ipc.RemoteException<span class="o">(</span>java.io.IOException<span class="o">)</span>: File /tmp/hive-hadoop/hive_2014-07-15_10-27-16_252_580204120341469236-1/-mr-10003/7a56500c-c6e3-4f8c-a32b-053e9fe8eec2 c
+</span><span class="line">ould only be replicated to 0 nodes instead of minReplication <span class="o">(=</span>1<span class="o">)</span>.  There are 0 datanode<span class="o">(</span>s<span class="o">)</span> running and no node<span class="o">(</span>s<span class="o">)</span> are excluded in this operation.
+</span><span class="line">        at org.apache.hadoop.hdfs.server.blockmanagement.BlockManager.chooseTarget<span class="o">(</span>BlockManager.java:1340<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.hdfs.server.namenode.FSNamesystem.getAdditionalBlock<span class="o">(</span>FSNamesystem.java:2296<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.hdfs.server.namenode.NameNodeRpcServer.addBlock<span class="o">(</span>NameNodeRpcServer.java:501<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.hdfs.protocolPB.ClientNamenodeProtocolServerSideTranslatorPB.addBlock<span class="o">(</span>ClientNamenodeProtocolServerSideTranslatorPB.java:299<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.hdfs.protocol.proto.ClientNamenodeProtocolProtos<span class="nv">$ClientNamenodeProtocol$2</span>.callBlockingMethod<span class="o">(</span>ClientNamenodeProtocolProtos.java:44954<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.ipc.ProtobufRpcEngine<span class="nv">$Server$ProtoBufRpcInvoker</span>.call<span class="o">(</span>ProtobufRpcEngine.java:453<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.ipc.RPC<span class="nv">$Server</span>.call<span class="o">(</span>RPC.java:1002<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.ipc.Server<span class="nv">$Handler$1</span>.run<span class="o">(</span>Server.java:1752<span class="o">)</span>
+</span><span class="line">        at org.apache.hadoop.ipc.Server<span class="nv">$Handler$1</span>.run<span class="o">(</span>Server.java:1748<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>需要清理目录，其中hadoop为当前用户的名字</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> /tmp/hadoop
-</span><span class='line'>rm -rf *
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> /tmp/hadoop
+</span><span class="line">rm -rf *
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>然后重启hadoop和hive，恢复正常，原因是hadoop的namespaceIDs有异常。</p>
+
 </div>
 
 
@@ -257,7 +280,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -273,7 +296,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -115,8 +138,7 @@
   </header>
 
 
-  <div class="entry-content clearfix"><p>本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。</p>
-
+  <div class="entry-content clearfix"><p>本人用rebar写程序总免不了rebar complie和rebar generate一番，项目关联比较多整个过程非常慢，这是很令人沮丧的。有没有什么方法能像C语言的makefile一样，只编译需要的文件呢？答案是没有现成的，就我所知rebar没有这么高端的功能去判断哪些文件是变化过的。那就通过其他方式提高生产效率，想到了erlc，单个文件编译是没有什么问题。
 </div>
   
   
@@ -157,18 +179,16 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h2>概述</h2>
+  <div class="entry-content clearfix"><h2 id="section">概述</h2>
 
 <p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
 
 <p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
 
-<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+<p>关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html</p>
 
-<h2>准备工作</h2>
-
-<p>在freebsd上安装rrdtool1.2以上的版本</p>
-
+<h2 id="section-1">准备工作</h2>
+<p>在freebsd上安装rrdtool1.2以上的版本
 </div>
   
   
@@ -209,57 +229,13 @@
   </header>
 
 
-  <div class="entry-content clearfix"><h2>情景描述</h2>
-
-<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。</p>
-
+  <div class="entry-content clearfix"><h2 id="section">情景描述</h2>
+<p>在公司的WIN7电脑上装了vmware进行服务端的开发，通过socket和client端进行通信。现在局域网中有若干台服务器安装了客户端要与vmware虚拟机上的server端进行通讯。由于不是处于一个网段，无法互相ping得地址，进而不能交互，以下为解决问题的过程笔录。
 </div>
   
   
     <footer>
       <a class="btn btn-default" rel="full-article" href="/blog/2013/10/22/vmware-ping-in-lan/">Read on &rarr;</a>
-    </footer>
-  
-
-
-        </article>
-      
-      
-        <article class="post">
-          
-  <header class="page-header">
-    
-      <p class="meta text-muted text-uppercase">
-        
-
-
-
-
-
-
-
-
-
-
-
-
-<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-10-17T17:29:00+08:00" pubdate data-updated="true">Oct 17<span>th</span>, 2013</time>
-        
-      </p>
-    
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/17/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a></h1>
-    
-  </header>
-
-
-  <div class="entry-content clearfix"><p>ssh-copy-id在版本比较高的freebsd的port中提供了，安装即可。手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
-
-</div>
-  
-  
-    <footer>
-      <a class="btn btn-default" rel="full-article" href="/blog/2013/10/17/ssh-copy-id/">Read on &rarr;</a>
     </footer>
   
 
@@ -339,19 +315,18 @@
 
   <div class="entry-content clearfix"><p>工作中参考网络文章整理了一个整形转IP地址的函数。直接看代码了。</p>
 
-<figure class='code'><figcaption><span>erlang代码片段 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%%从整形转换为IP地址元组</span>
-</span><span class='line'><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
-</span><span class='line'>    <span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>erlang代码片段 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="c">%%从整形转换为IP地址元组</span>
+</span><span class="line"><span class="nf">long2ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">)</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="nv">Integer_to_ip</span><span class="o">=</span><span class="k">fun</span><span class="p">(</span><span class="nv">Ip</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">{</span><span class="nv">Ip</span> <span class="ow">bsr</span> <span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">16711680</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">16</span><span class="p">,</span>
+</span><span class="line">        <span class="p">(</span><span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">65280</span><span class="p">)</span> <span class="ow">bsr</span> <span class="mi">8</span><span class="p">,</span> <span class="nv">Ip</span> <span class="ow">band</span> <span class="mi">255</span><span class="p">}</span> <span class="k">end</span><span class="p">,</span>
+</span><span class="line">    <span class="nv">Integer_to_ip</span><span class="p">(</span><span class="nv">IpInteger</span><span class="p">).</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这样子使用
 long2ip（3232290954).
@@ -392,49 +367,45 @@ long2ip（3232290954).
   </header>
 
 
-  <div class="entry-content clearfix"><h3>社会化分享</h3>
-
+  <div class="entry-content clearfix"><h3 id="section">社会化分享</h3>
 <p>社会化分享主要采用的是bshare</p>
 
-<p>在_config.yml中增加bshare:true,在&#8221;source/_includes/post&#8221;下的share.html中添加如下代码</p>
+<p>在_config.yml中增加bshare:true,在”source/_includes/post”下的share.html中添加如下代码</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-custom&quot;</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;分享到QQ空间&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-qzone&quot;</span><span class="o">&gt;&lt;</span><span class="err">/a&gt;&lt;a title=&quot;分享到新浪微博&quot; class=&quot;bshare-sinaminiblog&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到人人网&quot; class=&quot;bshare-renren&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到腾讯微博&quot; class=&quot;bshare-qqmb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到网易微博&quot; class=&quot;bshare-neteasemb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;更多平台&quot; class=&quot;bshare-more bshare-more-icon more-style-addthis&quot;&gt;&lt;/a&gt;&lt;span class=&quot;BSHARE_COUNT bshare-share-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/buttonLite.js#style=-1&amp;amp;uuid=&amp;amp;pophcol=2&amp;amp;lang=zh&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/bshareC0.js&quot;&gt;&lt;/script&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="javascript"><span class="line"><span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-custom&quot;</span><span class="o">&gt;&lt;</span><span class="nx">a</span> <span class="nx">title</span><span class="o">=</span><span class="s2">&quot;分享到QQ空间&quot;</span> <span class="kr">class</span><span class="o">=</span><span class="s2">&quot;bshare-qzone&quot;</span><span class="o">&gt;&lt;</span><span class="err">/a&gt;&lt;a title=&quot;分享到新浪微博&quot; class=&quot;bshare-sinaminiblog&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到人人网&quot; class=&quot;bshare-renren&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到腾讯微博&quot; class=&quot;bshare-qqmb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;分享到网易微博&quot; class=&quot;bshare-neteasemb&quot;&gt;&lt;/a&gt;&lt;a title=&quot;更多平台&quot; class=&quot;bshare-more bshare-more-icon more-style-addthis&quot;&gt;&lt;/a&gt;&lt;span class=&quot;BSHARE_COUNT bshare-share-count&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/buttonLite.js#style=-1&amp;amp;uuid=&amp;amp;pophcol=2&amp;amp;lang=zh&quot;&gt;&lt;/script&gt;&lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot; src=&quot;http://static.bshare.cn/b/bshareC0.js&quot;&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>这样就完成了一键分享的功能。</p>
 
-<h3>社会化评论</h3>
-
+<h3 id="section-1">社会化评论</h3>
 <p>octopress默认采用第三方评论系统disqus，但是国内用户普遍都不使用，可以采用duoshuo。
 首先在 source/post/ 下创建duoshuo.html
 然后登录duoshuo的网站，进去获得代码后复制到刚刚创建好的html中。
 在source/_layouts/post.html中，将对应的disqus代码改为：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="nx">site</span><span class="p">.</span><span class="nx">duoshuo_name</span> <span class="nx">and</span> <span class="nx">page</span><span class="p">.</span><span class="nx">comments</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">%</span><span class="p">}</span>
-</span><span class='line'>  <span class="o">&lt;</span><span class="nx">section</span> <span class="nx">id</span><span class="o">=</span><span class="s2">&quot;comment&quot;</span><span class="o">&gt;</span>
-</span><span class='line'>    <span class="o">&lt;</span><span class="nx">h1</span><span class="o">&gt;</span><span class="err">发表评论</span><span class="o">&lt;</span><span class="err">/h1&gt;</span>
-</span><span class='line'>    <span class="p">{</span><span class="o">%</span> <span class="nx">include</span> <span class="nx">post</span><span class="o">/</span><span class="nx">duoshuo</span><span class="p">.</span><span class="nx">html</span> <span class="o">%</span><span class="p">}</span>
-</span><span class='line'>  <span class="o">&lt;</span><span class="err">/section&gt;</span>
-</span><span class='line'><span class="p">{</span><span class="o">%</span> <span class="nx">endif</span> <span class="o">%</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">{</span>% <span class="k">if </span>site.duoshuo_name and page.comments <span class="o">==</span> <span class="nb">true</span> %<span class="o">}</span>
+</span><span class="line">  &lt;section <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;comment&quot;</span>&gt;
+</span><span class="line">    &lt;h1&gt;发表评论&lt;/h1&gt;
+</span><span class="line">    <span class="o">{</span>% include post/duoshuo.html %<span class="o">}</span>
+</span><span class="line">  &lt;/section&gt;
+</span><span class="line"><span class="o">{</span>% endif %<span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>在source/_config/yml中，添加：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>duoshuo_name: 你在多说创建的站点名称
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">duoshuo_name: 你在多说创建的站点名称
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>不出意外，分享和评论就添加完成了，最后不要忘记生成就可以了。</p>
+
 </div>
   
   
@@ -508,8 +479,7 @@ long2ip（3232290954).
   </header>
 
 
-  <div class="entry-content clearfix"><h3>简介和横向对比</h3>
-
+  <div class="entry-content clearfix"><h3 id="section">简介和横向对比</h3>
 <p>Tokyo Tyrant（ttserver）是一款分布式nosql数据库，内部主要是用Tokyo Cabinet数据库实现。与memcache相比，其具有持久化存储的特性；与redis相比，这个数据库在记录数上亿时性能会急剧下降，没有redis业界口碑好，当然也可能是因为这是比较早起的nosql产品了，以及没有进行正确的配置导致的。除此之外ttserver还支持memcache兼容协议，仅仅需要注意INCR的操作中，memcache是不返回值，ttserver是返回自增ID的。</p>
 
 </div>
@@ -552,35 +522,32 @@ long2ip（3232290954).
   </header>
 
 
-  <div class="entry-content clearfix"><h2>问题症状：</h2>
-
+  <div class="entry-content clearfix"><h2 id="section">问题症状：</h2>
 <p>项目遇到编译后运行的一个问题，logerl报错之</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="o">**</span> <span class="p">{</span><span class="n">appender_died</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>       <span class="p">{</span><span class="n">&#39;EXIT&#39;</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>           <span class="p">{</span><span class="n">badarg</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>               <span class="p">[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">localtime_to_universaltime</span><span class="p">,</span>
-</span><span class='line'>
-</span><span class='line'>                    <span class="p">[{</span> <span class="p">{</span><span class="mi">2013</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">},{</span><span class="mi">15</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">35</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">],</span>
-</span><span class='line'>
-</span><span class='line'>                    <span class="p">[]},</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="o">**</span> <span class="p">{</span><span class="n">appender_died</span><span class="p">,</span>
+</span><span class="line">
+</span><span class="line">       <span class="p">{</span><span class="n">&#39;EXIT&#39;</span><span class="p">,</span>
+</span><span class="line">
+</span><span class="line">           <span class="p">{</span><span class="n">badarg</span><span class="p">,</span>
+</span><span class="line">
+</span><span class="line">               <span class="p">[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">localtime_to_universaltime</span><span class="p">,</span>
+</span><span class="line">
+</span><span class="line">                    <span class="p">[{</span> <span class="p">{</span><span class="mi">2013</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">19</span><span class="p">},{</span><span class="mi">15</span><span class="p">,</span><span class="mi">52</span><span class="p">,</span><span class="mi">35</span><span class="p">}</span> <span class="p">},</span><span class="n">true</span><span class="p">],</span>
+</span><span class="line">
+</span><span class="line">                    <span class="p">[]},</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>看来是无法进行本地时间和UTC的转换，继续尝试一下这个localtime_to_universaltime函数</p>
 
 </div>
@@ -589,6 +556,53 @@ long2ip（3232290954).
     <footer>
       <a class="btn btn-default" rel="full-article" href="/blog/2013/07/29/log4erl-locatime-to-universaltime-exit-timezone/">Read on &rarr;</a>
     </footer>
+  
+
+
+        </article>
+      
+      
+        <article class="post">
+          
+  <header class="page-header">
+    
+      <p class="meta text-muted text-uppercase">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="glyphicon glyphicon-calendar"></span> <time datetime="2013-07-19T15:35:00+08:00" pubdate data-updated="true">Jul 19<span>th</span>, 2013</time>
+        
+      </p>
+    
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/19/ntpdate-step-system-error/">使用ntpdate同步时间报错: Step-systime: Operation Not Permitted</a></h1>
+    
+  </header>
+
+
+  <div class="entry-content clearfix"><p>今天有台虚拟机进行时间的同步报错
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="sh"><span class="line">ntpdate ntp.sjtu.edu.cn
+</span><span class="line">
+</span><span class="line">19 Nov 15:38:54 ntpdate<span class="o">[</span>93376<span class="o">]</span>: step-systime: Operation not permitted
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>搜索一把，许多VPS分给用户的虚拟机也存在类似症状，原来是宿主机不允许修改时间，最后通知系统管理员修改搞定。</p>
+
+</div>
+  
   
 
 
@@ -617,7 +631,7 @@ long2ip（3232290954).
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -633,7 +647,7 @@ long2ip（3232290954).
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>

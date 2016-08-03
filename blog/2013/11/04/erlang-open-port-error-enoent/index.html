@@ -30,6 +30,29 @@
 
 </head>
 
+
+
+
+
+<!-- mathjax config similar to math.stackexchange -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  jax: ["input/TeX", "output/HTML-CSS"],
+  tex2jax: {
+    inlineMath: [ ['$', '$'] ],
+    displayMath: [ ['$$', '$$']],
+    processEscapes: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  messageStyle: "none",
+  "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+});
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script>
+
+
+
+
   <body   >
     <div id="wrap">
       <header role="banner">
@@ -116,113 +139,101 @@
 
 <div class="entry-content clearfix"><p>今天在另外一台机器上部署新写的服务端，运行后程序崩溃，最后发现erlang的find_executable的没有找到程序。</p>
 
-<h3>问题重现：</h3>
-
+<h3 id="section">问题重现：</h3>
 <!-- more -->
-
-
 <p>在open_port处，查看日志报错如下：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="p">[</span><span class="n">rrddir</span> <span class="n">ok</span><span class="p">]</span><span class="err">^</span>
-</span><span class='line'><span class="p">[</span><span class="nv">ResRrd</span><span class="p">:{</span><span class="n">error</span><span class="p">,{</span><span class="n">enoent</span><span class="p">,[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">open_port</span><span class="p">,</span>
-</span><span class='line'>                                <span class="p">[{</span><span class="n">spawn_executable</span><span class="p">,</span><span class="s">&quot;/usr/local/bin/rrdtool&quot;</span><span class="p">},</span><span class="err">^</span>
-</span><span class='line'>                                 <span class="p">[{</span><span class="n">line</span><span class="p">,</span><span class="mi">1024</span><span class="p">},{</span><span class="n">args</span><span class="p">,[</span><span class="s">&quot;-&quot;</span><span class="p">]}]],</span><span class="err">^</span>
-</span><span class='line'>                                <span class="p">[]},</span><span class="err">^</span><span class="nv">M</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">rrdtool</span><span class="p">,</span><span class="n">init</span><span class="p">,</span><span class="mi">1</span><span class="p">,[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;src/rrdtool.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">83</span><span class="p">}]},</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">gen_server</span><span class="p">,</span><span class="n">init_it</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="err">^</span><span class="nv">M</span>
-</span><span class='line'>                                    <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;gen_server.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">304</span><span class="p">}]},</span>
-</span><span class='line'>                        <span class="p">{</span><span class="n">proc_lib</span><span class="p">,</span><span class="n">init_p_do_apply</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span>
-</span><span class='line'>                                  <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;proc_lib.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">227</span><span class="p">}]}]}}]</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="p">[</span><span class="n">rrddir</span> <span class="n">ok</span><span class="p">]</span><span class="err">^</span>
+</span><span class="line"><span class="p">[</span><span class="nv">ResRrd</span><span class="p">:{</span><span class="n">error</span><span class="p">,{</span><span class="n">enoent</span><span class="p">,[{</span><span class="n">erlang</span><span class="p">,</span><span class="nb">open_port</span><span class="p">,</span>
+</span><span class="line">                                <span class="p">[{</span><span class="n">spawn_executable</span><span class="p">,</span><span class="s">&quot;/usr/local/bin/rrdtool&quot;</span><span class="p">},</span><span class="err">^</span>
+</span><span class="line">                                 <span class="p">[{</span><span class="n">line</span><span class="p">,</span><span class="mi">1024</span><span class="p">},{</span><span class="n">args</span><span class="p">,[</span><span class="s">&quot;-&quot;</span><span class="p">]}]],</span><span class="err">^</span>
+</span><span class="line">                                <span class="p">[]},</span><span class="err">^</span><span class="nv">M</span>
+</span><span class="line">                        <span class="p">{</span><span class="n">rrdtool</span><span class="p">,</span><span class="n">init</span><span class="p">,</span><span class="mi">1</span><span class="p">,[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;src/rrdtool.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">83</span><span class="p">}]},</span>
+</span><span class="line">                        <span class="p">{</span><span class="n">gen_server</span><span class="p">,</span><span class="n">init_it</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="err">^</span><span class="nv">M</span>
+</span><span class="line">                                    <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;gen_server.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">304</span><span class="p">}]},</span>
+</span><span class="line">                        <span class="p">{</span><span class="n">proc_lib</span><span class="p">,</span><span class="n">init_p_do_apply</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span>
+</span><span class="line">                                  <span class="p">[{</span><span class="n">file</span><span class="p">,</span><span class="s">&quot;proc_lib.erl&quot;</span><span class="p">},{</span><span class="n">line</span><span class="p">,</span><span class="mi">227</span><span class="p">}]}]}}]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>怀疑rrdtool-erlang这个库存在bug，移到rrdtool.erl代码处调查问题</p>
 
-<figure class='code'><figcaption><span>rrdtool.erl start:81 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="c">%% @hidden</span>
-</span><span class='line'><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]}]),</span>
-</span><span class='line'>    <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>rrdtool.erl start:81 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="c">%% @hidden</span>
+</span><span class="line"><span class="nf">init</span><span class="p">([</span><span class="nv">RRDTool</span><span class="p">])</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="nv">Port</span> <span class="o">=</span> <span class="nb">open_port</span><span class="p">({</span><span class="n">spawn_executable</span><span class="p">,</span> <span class="nv">RRDTool</span><span class="p">},</span> <span class="p">[{</span><span class="n">line</span><span class="p">,</span> <span class="mi">1024</span><span class="p">},</span> <span class="p">{</span><span class="n">args</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;-&quot;</span><span class="p">]}]),</span>
+</span><span class="line">    <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Port</span><span class="p">}.</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>再定位到上层看gen_server的start函数</p>
 
-<figure class='code'><figcaption><span>rrdtool.erl start:55 </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='erlang'><span class='line'><span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="s">&quot;rrdtool&quot;</span><span class="p">)],</span> <span class="p">[]).</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>rrdtool.erl start:55 </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="erlang"><span class="line"><span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="nn">gen_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="p">[</span><span class="nn">os</span><span class="p">:</span><span class="nf">find_executable</span><span class="p">(</span><span class="s">&quot;rrdtool&quot;</span><span class="p">)],</span> <span class="p">[]).</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<p>os:find_executable(“rrdtool”),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回</p>
 
-<p>os:find_executable(&ldquo;rrdtool&rdquo;),这个是用直接找到rrdtool可执行程序的调用，回到系统了输入rrdtool返回</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker &lt;tobi@oetiker.ch&gt;
-</span><span class='line'>               Compiled Oct 22 2012 11:33:26
-</span><span class='line'>
-</span><span class='line'>Usage: rrdtool <span class="o">[</span>options<span class="o">]</span> <span class="nb">command </span>command_options
-</span><span class='line'>Valid commands: create, update, updatev, graph, graphv,  dump, restore,
-</span><span class='line'>                last, lastupdate, first, info, fetch, tune,
-</span><span class='line'>                resize, xport, flushcached
-</span><span class='line'>
-</span><span class='line'>RRDtool is distributed under the Terms of the GNU General
-</span><span class='line'>Public License Version 2. <span class="o">(</span>www.gnu.org/copyleft/gpl.html<span class="o">)</span>
-</span><span class='line'>
-</span><span class='line'>For more information <span class="nb">read </span>the RRD manpages
-</span></code></pre></td></tr></table></div></figure>
-
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">RRDtool 1.4.7  Copyright 1997-2012 by Tobias Oetiker &lt;tobi@oetiker.ch&gt;
+</span><span class="line">               Compiled Oct 22 2012 11:33:26
+</span><span class="line">
+</span><span class="line">Usage: rrdtool <span class="o">[</span>options<span class="o">]</span> <span class="nb">command </span>command_options
+</span><span class="line">Valid commands: create, update, updatev, graph, graphv,  dump, restore,
+</span><span class="line">                last, lastupdate, first, info, fetch, tune,
+</span><span class="line">                resize, xport, flushcached
+</span><span class="line">
+</span><span class="line">RRDtool is distributed under the Terms of the GNU General
+</span><span class="line">Public License Version 2. <span class="o">(</span>www.gnu.org/copyleft/gpl.html<span class="o">)</span>
+</span><span class="line">
+</span><span class="line">For more information <span class="nb">read </span>the RRD manpages
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>已经装好了啊？那为什么还要报错，难道是做了alias</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="o">[</span>yin@yin-arch monitorserver2<span class="o">]</span>&gt;alias rrdtool
-</span><span class='line'>/usr/lib64/rrdtool/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>yin@yin-arch monitorserver2<span class="o">]</span>&gt;alias rrdtool
+</span><span class="line">/usr/lib64/rrdtool/bin/rrdtool
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>果不其然</p>
 
-<h3>解决方法</h3>
-
+<h3 id="section-1">解决方法</h3>
 <p>在/usr/local/bin/目录下做一个软连接</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo ln -s /usr/lib64/rrdtool/bin/rrdtool /usr/local/bin/rrdtool
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>再次运行，enoent问题解决。</p>
 
-<h3>继续深入</h3>
-
+<h3 id="section-2">继续深入</h3>
 <p>gen_server:start如何捕捉错误？下回专门讨论。</p>
 </div>
 
@@ -305,7 +316,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
   
   <div id="recent_posts" class="list-group">
     
-    <a class="list-group-item " href="/blog/2016/07/12/latex-vim-pratice/">Linux下latex中文配置小记</a>
+    <a class="list-group-item " href="/blog/2016/07/11/latex-vim-pratice/">Linux下latex中文配置小记</a>
     
     <a class="list-group-item " href="/blog/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
     
@@ -321,7 +332,7 @@ var duoshuoQuery = {short_name:"evoupsight"};
 
 <section>
 <h1>分类</h1>
-<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
+<span class='categories_tag'> <a href='/blog/categories/android' style='font-size: 118.75%'>Android(5)</a>  <a href='/blog/categories/c-language' style='font-size: 137.5%'>C-language(10)</a>  <a href='/blog/categories/centos' style='font-size: 103.75%'>Centos(1)</a>  <a href='/blog/categories/cocos2d-html5' style='font-size: 107.5%'>Cocos2d-html5(2)</a>  <a href='/blog/categories/cocos2d-iphone' style='font-size: 103.75%'>Cocos2d-iphone(1)</a>  <a href='/blog/categories/cocos2d-js' style='font-size: 107.5%'>Cocos2d-js(2)</a>  <a href='/blog/categories/cocos2d-x' style='font-size: 111.25%'>Cocos2d-x(3)</a>  <a href='/blog/categories/cplusplus' style='font-size: 122.5%'>Cplusplus(6)</a>  <a href='/blog/categories/ctags' style='font-size: 103.75%'>Ctags(1)</a>  <a href='/blog/categories/devops' style='font-size: 103.75%'>Devops(1)</a>  <a href='/blog/categories/erlang' style='font-size: 160.0%'>Erlang(16)</a>  <a href='/blog/categories/freebsd' style='font-size: 133.75%'>Freebsd(9)</a>  <a href='/blog/categories/gamedev-cg' style='font-size: 111.25%'>Gamedev-cg(3)</a>  <a href='/blog/categories/gcc' style='font-size: 103.75%'>Gcc(1)</a>  <a href='/blog/categories/golang' style='font-size: 107.5%'>Golang(2)</a>  <a href='/blog/categories/hadoop' style='font-size: 152.5%'>Hadoop(14)</a>  <a href='/blog/categories/haproxy' style='font-size: 103.75%'>Haproxy(1)</a>  <a href='/blog/categories/hbase' style='font-size: 115.0%'>Hbase(4)</a>  <a href='/blog/categories/hive' style='font-size: 118.75%'>Hive(5)</a>  <a href='/blog/categories/java' style='font-size: 126.25%'>Java(7)</a>  <a href='/blog/categories/javascript' style='font-size: 115.0%'>Javascript(4)</a>  <a href='/blog/categories/latex' style='font-size: 103.75%'>Latex(1)</a>  <a href='/blog/categories/linux' style='font-size: 107.5%'>Linux(2)</a>  <a href='/blog/categories/maven' style='font-size: 107.5%'>Maven(2)</a>  <a href='/blog/categories/mongodb' style='font-size: 103.75%'>Mongodb(1)</a>  <a href='/blog/categories/monitor' style='font-size: 137.5%'>Monitor(10)</a>  <a href='/blog/categories/mysql' style='font-size: 118.75%'>Mysql(5)</a>  <a href='/blog/categories/nginx' style='font-size: 130.0%'>Nginx(8)</a>  <a href='/blog/categories/nosql' style='font-size: 103.75%'>Nosql(1)</a>  <a href='/blog/categories/octopress' style='font-size: 115.0%'>Octopress(4)</a>  <a href='/blog/categories/php' style='font-size: 148.75%'>Php(13)</a>  <a href='/blog/categories/python' style='font-size: 103.75%'>Python(1)</a>  <a href='/blog/categories/rrdtool' style='font-size: 126.25%'>Rrdtool(7)</a>  <a href='/blog/categories/shell' style='font-size: 130.0%'>Shell(8)</a>  <a href='/blog/categories/socket-server' style='font-size: 111.25%'>Socket server(3)</a>  <a href='/blog/categories/version-control' style='font-size: 126.25%'>Version_control(7)</a>  <a href='/blog/categories/vim' style='font-size: 122.5%'>Vim(6)</a>  <a href='/blog/categories/vmware' style='font-size: 103.75%'>Vmware(1)</a>  <a href='/blog/categories/zookeeper' style='font-size: 115.0%'>Zookeeper(4)</a> </span>
 </section>
 
 <section>
