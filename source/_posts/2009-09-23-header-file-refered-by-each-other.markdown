@@ -22,14 +22,15 @@ categories:     cplusplus
 
 java倒是没有什么问题，所以java的话会这样子cls_player.java和cls_enemy.java
 这样子大概会这么写
-```java
-#cls_player.java
+
+{% codeblock lang:java cls_player.java %}
+#
 package com.evoup.player_enemy
 import ...
 class cls_player{
    ...
 }
-```
+{% endcodeblock %}
 
 然后看搜到了这篇文章
 http://topic.csdn.net/t/20051106/18/4375160.html
@@ -45,6 +46,7 @@ http://hi.baidu.com/030502505/blog/item/4a7eaba2e9cd12aacaefd06f.html/cmtid/1199
 方法一：利用友元类
  
 我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
+
 ```c
 #include "B.h"
  
@@ -57,6 +59,7 @@ class CA: public CDialog
 ```
  
 在另一个类中可以这样声明:
+
 ```c
 #include "A.h"
 class CB: public CDialog
@@ -72,6 +75,7 @@ class CB: public CDialog
 方法二：
  
 我一共有两个类，由于要在两个类的头文件里互相应用对方，所以，在每一个类的头文件里面现包含另一个类的头文件，然后在该类的定义中声明另一个类为友元类。如下：
+
 ```c
 #include "B.h"
 class CA: public CDialog
@@ -83,6 +87,7 @@ class CA: public CDialog
 ```
  
 在另一个类中可以这样声明:
+
 ```c
 class CA;
 class CB: public CDialog
@@ -93,8 +98,9 @@ class CB: public CDialog
 ```
  
 在cb.cpp文件中包含头文件
+
 ```c
 #include "ca.h"
 ```
  
-最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了！
+最后关键的是在每一个类的构造函数里 new 一个对方的类出来就ok了
