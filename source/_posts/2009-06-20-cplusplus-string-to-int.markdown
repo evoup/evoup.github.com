@@ -9,11 +9,13 @@ categories:                cplusplus
 
 STL的string转int的正确方法不是.data()
 应该是
+
 ```cpp
 aoti(obj.c_str());
 ```
 
 或者用个别人的string2int函数
+
 ```cpp
 int string2int(const string &s)
 {
@@ -29,10 +31,12 @@ int string2int(const string &s)
 ```cpp
 vector<int > v;
 ```
+
 v[]一样可以的用的。
  
 
 下面有个类似的
+
 ```cpp
 int integer(string &s)
 {
