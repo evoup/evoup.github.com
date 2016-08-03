@@ -28,7 +28,8 @@ hadoop0.20.203+hive0.7
 (vim党注意：如果你已经把tab键映射为4个空格，那么请进入插入模式后在数字后ctrl+v,然后按下<tab>键，再输入单词，否则无法完成制表符的键入，数据导入失败。)
 
 启动hive建表:
-```sh
+
+```sql
 hive>  CREATE EXTERNAL TABLE MYTEST(id INT, name STRING) 
 > COMMENT 'this is a test'
 > ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
@@ -36,16 +37,19 @@ hive>  CREATE EXTERNAL TABLE MYTEST(id INT, name STRING)
 >LOCATION '/data/test';
 OK
 ```
+
 注意这一步要求原本的hdfs目录下没有/data/test文件夹，如果有的话，hive是要报错的。
 还有存储格式有三种textfile、rcfile和sequencefile。其中多数情况用textfile就可以了，如果要压缩，可以考虑后两者。
 
 进入hadoop，开始导入
+
 ```sh
 /bin/hadoop fs -put test.txt /data/test
 ```
 
 回到hive，用简单的HQL查询语句查询id为4的记录
-```sh
+
+```sql
 hive> select * from mytest where id = 4;
 Total MapReduce jobs = 1
 Launching Job 1 out of 1
@@ -61,4 +65,4 @@ OK
 Time taken: 21.36 seconds
 ```
 
-hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是<1秒的。好啦，收工。
+hive查询一次需要21秒?没错，这就是MapReduce查询的特点了，换做mysql的话这样查询一次应该是<1秒的。
