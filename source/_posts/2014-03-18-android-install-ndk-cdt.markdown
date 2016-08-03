@@ -57,9 +57,11 @@ gcc -v
 ![Alt text](/images/evoup/android_cdt_ndk/06.png)
 
 编辑完成后，进入cygwin.bat输入<br>
+
 ```
 cd $ndk
 ```
+
 可以看到如下结果<br>
 ![Alt text](/images/evoup/android_cdt_ndk/07.png)
 
