@@ -25,6 +25,7 @@ new cls_enemy()
 <!-- more -->
 
 在VC里可以用CStringArray和CStringList或者CPtrArray或者CPtrList来做，那么STL里是一样的。正确做法可以是push_back的元素用new XX()做参数,但是效果好像也差不多，放在容器里看起来好像容易管理一些。
+
 ```cpp
 vector<cls_enemy*> ev;
 for (i=0;i<7;i++) {
