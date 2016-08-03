@@ -47,19 +47,22 @@ python setup.py
 
 ###产生项目
 比如说要在c:/projects下创建一个有native编译支持的，名为projectFirst的项目，需要在控制台输入
+
 ```sh
 %COCOS_CONSOLE_ROOT%/cocos new projectFirst -l js -d c:/projects
-
 ```
+
 等一会儿就创建完毕<br>
 ![Alt text](/images/evoup/cocos2d-js_android/07.png)
 
 ###编译项目
 如果要编译成android项目，只要执行如下指令即可：<br>
+
 ```sh
 > cd c:\projects\projectFirst
 > %COCOS_CONSOLE_ROOT%/cocos compile -p android
 ```
+
 之后要耐心等待项目编译完成，顺便说一句，没有vc2012是不能够编译cocos2d-js3.0的，因为现在引擎支持C++11了。<br>
 ![Alt text](/images/evoup/cocos2d-js_android/08.png)
 
@@ -73,11 +76,12 @@ python setup.py
 ![Alt text](/images/evoup/cocos2d-js_android/10.png)
 
 启动模拟器后，用adb安装软件进去<br>
+
 ```sh
 %ANDROID_SDK_ROOT%/platform-tools/adb install c:\projects\projectFirst\runtime\android\projectFirst-debug-unaligned.apk
 ```
+
 安装完成后运行程序<br>
 ![Alt text](/images/evoup/cocos2d-js_android/10.png)
 
 告一段落。
-
