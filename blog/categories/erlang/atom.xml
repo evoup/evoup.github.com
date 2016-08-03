@@ -4,7 +4,7 @@
   <title><![CDATA[Category: erlang | Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/blog/categories/erlang/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-08-03T14:45:00+08:00</updated>
+  <updated>2016-08-03T14:48:06+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -24,6 +24,7 @@
 <!-- more -->
 
 <h3 id="section-1">首先安装必要的依赖</h3>
+
 <p><code>sh
 $ sudo yum groupinstall Base "Development Tools" "Perl Support"  
 $ sudo yum install gcc glibc-devel make ncurses-devel openssl-devel autoconf
@@ -32,17 +33,20 @@ $ wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
 </code></p>
 
 <h3 id="section-2">源码下载</h3>
-<p>并且下载erlang的源码，我这里选择的是最新的R16B03
-<code>sh
+<p>并且下载erlang的源码，我这里选择的是最新的R16B03</p>
+
+<p><code>sh
 $ tar xzf otp_src_R16B03.tar.gz
 </code></p>
 
 <h3 id="section-3">安装</h3>
-<p>注意,如果没有先
-<code>sh
+<p>注意,如果没有先</p>
+
+<p><code>sh
 $ sudo ln -s /usr/bin/gcc /usr/local/bin/gcc44
-</code>
-会收到` checking for C compiler default output file name… configure: error: C compiler cannot create</p>
+</code></p>
+
+<p>会收到` checking for C compiler default output file name… configure: error: C compiler cannot create</p>
 
 <p>的错误</p>
 
@@ -51,48 +55,60 @@ $ cd otp_src_R16B03
 $ ./configure --prefix=/home/erlang --without-javac //不用装java
 make
 $ sudo make install
-</code>
-等待安装完成。</p>
+</code></p>
+
+<p>等待安装完成。</p>
 
 <h3 id="section-4">设置环境变量</h3>
+
 <p><code>sh
 $ vim ~/.profile
-</code>
-或者
-<code>sh
+</code></p>
+
+<p>或者</p>
+
+<p><code>sh
 $ sudo vim /etc/profiles
-</code>
-加入
-<code>bash
+</code></p>
+
+<p>加入</p>
+
+<p><code>bash
 export PATH=$PATH:/home/erlang/bin
-</code>
-加完如果要立即生效忘记去source /etc/profile和source ~/.bash_profile，否则要等到下次登录再可以。</p>
+</code></p>
+
+<p>加完如果要立即生效忘记去source /etc/profile和source ~/.bash_profile，否则要等到下次登录再可以。</p>
 
 <p>(ps: bash是根据/etc/profile、~/.bash_profile、~/.bash_login或~/.profile的顺序进行读取的。)</p>
 
 <p>(ADDED IN 2013-12-16,今日发现以上代码必须加到~/.bashrc中才行，否则重启后还是不予加载原因未明)</p>
 
 <h3 id="section-5">测试</h3>
-<p>接下来输入erl,应该就可以看见erlang的提示符了。
-<code>sh
+<p>接下来输入erl,应该就可以看见erlang的提示符了。</p>
+
+<p><code>sh
 Eshell V5.10.4  (abort with ^G)
 1&gt; 
-</code>
-写一个test.erl测试
-<code>erlang
+</code></p>
+
+<p>写一个test.erl测试</p>
+
+<p><code>erlang
 -module(test).
 -export([sayhello/0]).
 sayhello()-&gt;
   io:format("hello world~n").
-</code>
-编译运行
-<code>sh
+</code></p>
+
+<p>编译运行</p>
+
+<p><code>sh
 erlc test.erl
 erl -noshell -s test sayhello -s init stop
 hello world
 </code></p>
 
-<p>ok，完成收工，还不算太复杂，比freebsd上安装顺利点:)</p>
+<p>完成，还不算太复杂，感觉比freebsd上安装顺利点。</p>
 ]]></content>
   </entry>
   
