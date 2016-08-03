@@ -125,10 +125,10 @@ release:
 
 基本上要注意的就是这些，以下为参考链接：
 
-https://github.com/rebar/rebar/wiki
+[https://github.com/rebar/rebar/wiki](rebar wiki)
 
-https://github.com/rebar/rebar/wiki/Release-handling
+[https://github.com/rebar/rebar/wiki/Release-handling](rebar wiki release-handling)
 
-http://cryolite.iteye.com/blog/1159448  (rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧)
+[rebar工具使用备忘录 (1)](http://cryolite.iteye.com/blog/1159448)  rebar工具使用备忘录，这个比较早期so_specs已经被port_specs取代了，有需要的联系起来看看吧
 
-http://blog.linezing.com/2011/04/rebar%EF%BC%9Aerlang%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7
+[Rebar：Erlang构建工具](http://www.cnblogs.com/panfeng412/archive/2011/08/14/2137990.html)
