@@ -18,9 +18,9 @@ https://github.com/rebar/rebar
 
 直接下载：
 
-```bash
+{% codeblock lang:bash %}
 curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
-```
+{% endcodeblock %}
 
 这个就直接可用了。
 
@@ -29,25 +29,25 @@ curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
 2）创建项目
 
 在项目的根目录
-```bash
+{% codeblock lang:bash %}
 ~/exemplar $ mkdir -p apps/exemplar
 
 ~/exemplar $ cd apps/exemplar
 
 ~/exemplar $ rebar create-app appid=exemplar
-```
+{% endcodeblock %}
 
 这样就在项目根目录下得到了app文件夹，该文件夹下的src文件夹中默认有三个项目源文件，一个src文件，一个主文件，一个监督者文件。接下来就像往常一样的编写erlang代码。（甚至我当初直接在该目录用Emakefile的方式进行调试也是可以的，只是路径稍有变化，这里只带过）
 
 3）生成发布版
-```bash
+{% codeblock lang:bash %}
 ~/exemplar $ mkdir rel
 
 ~/exemplar $ cd rel
-```
+{% endcodeblock %}
 
 接下来非常怂的问题来了，编辑reltool.config时wiki上说把
-```erlang
+{% codeblock lang:erlang %}
 {sys, [
 
        {lib_dirs, []},
@@ -55,12 +55,12 @@ curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
 {sys, [
 
     {lib_dirs, ["../apps"]},
-```
+{% endcodeblock %}
 
 其实还需要加上依赖的路径
-```erlang
+{% codeblock lang:erlang %}
     {lib_dirs, ["../apps", "../deps"]},
-```
+{% endcodeblock %}
 
 这样才对。
 
@@ -69,16 +69,17 @@ curl -o rebar http://cloud.github.com/downloads/basho/rebar/rebar
 后面一段，生成发布的时候还会提醒要求带上sasl、inet、crypto
 而在 {excl_app_filters, ["\.gitignore"]},后面
 依次相应要带上
-```erlang
+{% codeblock lang:erlang %}
        {app, sasl,   [{incl_cond, include}]},
        {app, mochiweb,   [{incl_cond, include}]},
        {app, inets,   [{incl_cond, include}]},
        {app, crypto,   [{incl_cond, include}]},
-```       
+{% endcodeblock %}
+
 到这里reltool.config的麻烦才告一段落。
 最后回到根目录
 rebar.config的内容如下
-```erlang
+{% codeblock lang:erlang %}
 {deps, [
     {mochiweb, "1.5.1",
         {git, "git://github.com/mochi/mochiweb.git",
@@ -87,11 +88,11 @@ rebar.config的内容如下
             {git, "git://github.com/ahmednawras/log4erl.git",
                 "master"}}
 {sub_dirs, ["apps/exemplar", "rel"]}.
-```
+{% endcodeblock %}
 
 好了，rebar.config，我这里也不多说，反正我是试了各种版本，要么生成的so变成了exemplar_drv.so，要么干脆就无法生成。我最后放到Makefile里一并解决了。
 下面是这个Makefile的内容，其中make.sh是自行生成erlang的NIF外围C/C++程序扩展so的编译脚本，这个要注意一下(我没有创建apps/c_src这个文件夹，而是在apps文件夹下又放了个files文件，里面是c的源文件，这样make.sh的内容就大概是gcc -Wall -o $APP_PREFIX/priv/nif.so -fpic -shared -I $ERL_LIB/erts-$ERL_VER/include/ apps/files/nif.c 这样子，反正还是要生成到priv路径就对了)
-```makefile
+{% codeblock lang:makefile %}
 cat Makefile
 all: compile
 depends:
@@ -108,18 +109,20 @@ release:
         cp -r ./apps/exemplar/priv/* ./rel/exemplar/priv/
         chmod +x ./rel/exemplar/bin/exemplar
 .PHONY: all depends compile
-```
+{% endcodeblock %}
 
 做Makefile的方法，也是我参考了github上一些开源erlang项目的想到的办法。
 所有这一切做完按照如下方式就可以生成发布了。
-```bash
+{% codeblock lang:makefile %}
     make clean
     make depends
-```    
+{% endcodeblock %}
+
     编辑./deps/log4erl/src/log4erl.app.src文件，把{vsn, "0.9.0"}修改为{vsn, ""}，新版本的没试过，可能版本号不一致，请自行修改！
-```bash
+{% codeblock lang:makefile %}
     make release
-```
+{% endcodeblock %}
+
 基本上要注意的就是这些，以下为参考链接：
 
 https://github.com/rebar/rebar/wiki
