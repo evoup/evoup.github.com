@@ -69,15 +69,12 @@ getloadavg_ex() ->
    "NIF library not loaded".
 {% endcodeblock %}
 
-```bash
+
+```
 Eshell V5.9.1  (abort with ^G)
-
 1> c(getloadtest).
-
 {ok,getloadtest}
-
 2> getloadtest:getloadavg_ex().
-
 "2.263184"
 ```
 
