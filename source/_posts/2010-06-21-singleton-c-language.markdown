@@ -7,6 +7,7 @@ categories:           c-language
 ---
 
 Tokyo Cabinet的源码看到的
+
 ```c
 /* Get the global memory pool object. */
 TCMPOOL *tcmpoolglobal(void){
@@ -18,6 +19,7 @@ TCMPOOL *tcmpoolglobal(void){
 ```
 
 而这个tcglobalmemorypool，其实是写在全局的，有
+
 ```c
 /* Global memory pool object. */
 TCMPOOL *tcglobalmemorypool = NULL;
