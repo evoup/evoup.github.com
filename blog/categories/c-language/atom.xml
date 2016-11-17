@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: c-language | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/c-language/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-11-17T21:57:53+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[VS2010 LINK:fatal error LNK1123]]></title>
+    <link href="http://evoupsight.com/blog/2014/02/10/vs2010-link-fatal-error-lnk1123/"/>
+    <updated>2014-02-10T15:22:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/02/10/vs2010-link-fatal-error-lnk1123</id>
+    <content type="html"><![CDATA[<p>因为要看cocostudio的实例代码，在原有vs2010的基础上又安装了vs2012，出现了项目不能编译的问题OMG
+` LINK : fatal error LNK1123: 转换到 COFF 期间失败: 文件无效或损坏 `
+以下为解决方法：</p>
+
+<!-- more -->
+
+<blockquote>
+  <p>VS2010在经历一些更新后，建立Win32 Console Project时会出“error LNK1123” 错误，解决方案为将 项目|项目属性|配置属性|清单工具|输入和输出|嵌入清单 “是”改为“否”即可，但是没新建一个项目都要这样设置一次。
+在建立VS2010 Win32 Project项目时，按照上面解决方案依然发生了“error LNK1123”错误，经过上网查资料，解决方案为：
+第一步：与上相同。
+第二步：将 项目|项目属性|配置属性|连接器|清单文件|嵌入清单 “是”改为“否”。
+第三步：一般计算机经过上两步设置就能解决问题了，但是如果还有问题，那就按一下方法解决：
+计算机是否为64bit操作系统，如是，继续2。
+查找是否有两个cvtres.exe。一个是C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\cvtres.exe， 另一个是C:\Windows\Microsoft.NET\Framework\v4.0.30319\cvtres.exe。右键属性|详细信息 查看两者版本号，删除/重命名较旧的版本，或者重新设置Path变量。
+删除或者重命名比较旧的版本的cvtres.exe即可。</p>
+</blockquote>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[如何正确地把带参数的C语言main程序改成so]]></title>
+    <link href="http://evoupsight.com/blog/2013/11/19/change-c-program-to-so/"/>
+    <updated>2013-11-19T18:17:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/11/19/change-c-program-to-so</id>
+    <content type="html"><![CDATA[<p>首先有些标题党吧，不过个人体会修改程序的过程中遇到未知的坑还是比较阴险的，所以整理一下写个博客。</p>
+
+<p>之前尝试把C语言的带参数执行的main程序改成动态链接库，发生了一个问题，主程序调用动态链接库最后获取的结果保持不变，跑了一会儿之后还是和第一次调用的一样。把几乎可能导致问题的static变量全部给改为非静态变量和重置后居然还是无效。最后在痛苦的查询资料之后，终于找到了问题所在。</p>
+
+<p>话说回来，先看怎么把带参main程序改成动态链接库。</p>
+
+<!-- more -->
+
+<p>先看准备被改成动态库的原代码
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>test.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></unistd.h></stdlib.h></stdio.h></p>
+
+<p><code>makefile
+gcc -Wall test.c -o test
+</code></p>
+
+<p>测试：</p>
+
+<p><code>sh
+./test -a1 -b1 -c -d
+option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
+</code></p>
+
+<p>稍微讲下getopt的用法，这个命令是提供命令行执行可执行程序带不同参数的功能实现。以上程序根据所数入的参数，执行相应的操作。
+其中opts的a:b::cd，“:”表示必须该选项带有额外的参数，全局变量optarg会指向此额外参数，“::”标识该额外的参数可选(有些Uinx可能不支持“::”）。</p>
+
+<p>接下来把它给改成SO，然后再主调程序中直接指定参数进行调用。
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'>    <span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></unistd.h></stdlib.h></stdio.h></p>
+
+<p>测试一下</p>
+
+<p><code>makefile
+gcc -Wall plug.c -o plug
+./plug
+option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
+in dll
+</code></p>
+
+<p>ok，没有问题，直接转换成动态库
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>plug.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">d_plug</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">d_plug</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">char</span> <span class="o">*</span><span class="n">cmdStr</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="s">&quot;-a1&quot;</span><span class="p">,</span><span class="s">&quot;-b1&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&quot;-d</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">};</span>
+</span><span class='line'>    <span class="n">dlmain</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="n">cmdStr</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">dlmain</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">opts</span><span class="o">=</span><span class="s">&quot;a:b::cd&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">opts</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;a&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option a:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option b:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;c&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option c:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">case</span> <span class="sc">&#39;d&#39;</span>:
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;option d:&#39;%s&#39;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">optarg</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="nl">default:</span>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;other option:%c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ch</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;in dll</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></unistd.h></stdlib.h></stdio.h></p>
+
+<p>编译动态连接库</p>
+
+<p><code>makefile
+gcc -shared -o plug.so plug.c -fpic
+</code></p>
+
+<p>这样就得到了plug.so</p>
+
+<p>接下来写主调程序，用它直接调用已经封装好的plug.so动态库。
+<div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>main.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;dlfcn.h&gt;</span>
+</span><span class='line'><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">d_plug</span><span class="p">)</span> <span class="p">();</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span><span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kt">void</span> <span class="o">*</span><span class="n">dp</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">dp</span><span class="o">=</span><span class="n">dlopen</span><span class="p">(</span><span class="s">&quot;./plug.so&quot;</span><span class="p">,</span><span class="n">RTLD_LAZY</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">d_plug</span><span class="o">=</span><span class="n">dlsym</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span><span class="s">&quot;d_plug&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">d_plug</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">dlclose</span><span class="p">(</span><span class="n">dp</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+编译执行看结果</dlfcn.h></stdio.h></p>
+
+<p><code>makefile
+gcc main.c -lc -fpic -o main
+./main
+option a:'1'
+option b:'1'
+option c:'(null)'
+option d:'(null)'
+in dll
+</code></p>
+
+<h3 id="section">其他注意事项：</h3>
+<p>其实除了optarg，还存在全局变量optind、opterror和optopt。三者的作用</p>
+
+<p>optarg：非常明了，就是指程序的参数，是个字符串指针</p>
+
+<p>optind：是下一次调用getopt的时，从optind存储的位置处重新开始检查选项</p>
+
+<p>opterr：当opterr=0时，getopt不向stderr输出错误信息</p>
+
+<p>optopt: 当命令行选项字符不包括在optstring中或者选项缺少必要的参数时，该选项存储在optopt 中，getopt返回’？’</p>
+
+<h3 id="section-1">问题解决:</h3>
+<p>写erlang的NIF扩展时optind需要重置为0，否则就导致了每次结果不变，因为就我所知erlang目前版本的NIF是没有unload功能的。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Freebsd版linux下free指令实现]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c/"/>
+    <updated>2013-10-30T16:41:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/30/freebsd-memory-free-c</id>
+    <content type="html"><![CDATA[<p>监控客户端开发时候用到的代码，github上一个哥么的，发现有处bug我给贡献了，呵呵。
+<!-- more -->
+直接贴代码了，除了mem_total之外基本都正确。total的部分，先用sysctl -a | grep realmem解决</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>free.c </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="cm">/*</span>
+</span><span class='line'><span class="cm"> * free.c - Display FreeBSD memory information</span>
+</span><span class='line'><span class="cm"> * Wed Nov 26 19:34:54 IST 2008 vinod &lt;a href=&quot;&amp;#109;&amp;#097;&amp;#105;&amp;#108;&amp;#116;&amp;#111;:&amp;#118;&amp;#105;&amp;#110;&amp;#111;&amp;#100;&amp;#064;&amp;#115;&amp;#101;&amp;#103;&amp;#102;&amp;#097;&amp;#117;&amp;#108;&amp;#116;&amp;#046;&amp;#105;&amp;#110;&quot;&gt;&amp;#118;&amp;#105;&amp;#110;&amp;#111;&amp;#100;&amp;#064;&amp;#115;&amp;#101;&amp;#103;&amp;#102;&amp;#097;&amp;#117;&amp;#108;&amp;#116;&amp;#046;&amp;#105;&amp;#110;&lt;/a&gt;</span>
+</span><span class='line'><span class="cm"> * License: http://opensource.org/licenses/BSD-2-Clause</span>
+</span><span class='line'><span class="cm"> */</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="n">id</span><span class="o">=</span><span class="s">&quot;include-systypesh&quot;</span><span class="o">&gt;</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">types</span><span class="p">.</span><span class="n">h</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="err">#</span><span class="n">include</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="n">sys</span><span class="o">/</span><span class="n">sysctl</span><span class="p">.</span><span class="n">h</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span>
+</span><span class='line'><span class="cp">#include &lt;stdio.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;stdlib.h&gt;</span>
+</span><span class='line'><span class="cp">#include &lt;unistd.h /&gt;&lt;/stdlib.h&gt;&lt;/stdio.h&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">version</span> <span class="o">=</span> <span class="err">“$</span><span class="n">Id</span><span class="o">:</span> <span class="n">free</span><span class="p">,</span><span class="n">v</span> <span class="mf">0.1.3</span> <span class="mi">2008</span><span class="o">/</span><span class="mi">11</span><span class="o">/</span><span class="mi">26</span> <span class="mi">19</span><span class="o">:</span><span class="mi">34</span><span class="o">:</span><span class="mi">54</span> <span class="n">IST</span> <span class="n">vinod</span> <span class="err">$”</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span>
+</span><span class='line'><span class="n">get_sysctl</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">mib</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">value</span><span class="p">,</span> <span class="n">i</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">size_t</span> <span class="n">len</span><span class="p">,</span> <span class="n">miblen</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">&#39;\0&#39;</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span><span class="n">name</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;.&#39;</span><span class="p">)</span>
+</span><span class='line'>                    <span class="n">miblen</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">len</span> <span class="o">=</span> <span class="n">miblen</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">sysctlnametomib</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">mib</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">len</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">len</span> <span class="o">=</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">sysctl</span><span class="p">(</span><span class="n">mib</span><span class="p">,</span> <span class="n">miblen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">value</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">len</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">void</span>
+</span><span class='line'><span class="n">usage</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="err">“</span><span class="n">usage</span><span class="o">:</span> <span class="n">free</span> <span class="p">[</span><span class="o">-</span><span class="n">b</span><span class="o">|-</span><span class="n">k</span><span class="o">|-</span><span class="n">m</span><span class="o">|-</span><span class="n">g</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span><span class="err">\</span><span class="n">n</span><span class="err">”</span> \
+</span><span class='line'>        <span class="err">“</span>  <span class="o">-</span><span class="n">b</span><span class="p">,</span><span class="o">-</span><span class="n">k</span><span class="p">,</span><span class="o">-</span><span class="n">m</span><span class="p">,</span><span class="o">-</span><span class="n">g</span> <span class="n">show</span> <span class="n">output</span> <span class="n">in</span> <span class="n">bytes</span><span class="p">,</span> <span class="n">KB</span><span class="p">,</span> <span class="n">MB</span><span class="p">,</span> <span class="n">or</span> <span class="n">GB</span><span class="err">\</span><span class="n">n</span><span class="err">”</span> \
+</span><span class='line'>        <span class="err">“</span>  <span class="o">-</span><span class="n">t</span> <span class="n">display</span> <span class="n">logical</span> <span class="n">summary</span> <span class="k">for</span> <span class="n">RAM</span><span class="err">\</span><span class="n">n</span><span class="err">”</span> \
+</span><span class='line'>        <span class="err">“</span>  <span class="o">-</span><span class="n">v</span> <span class="n">display</span> <span class="n">version</span> <span class="n">information</span> <span class="n">and</span> <span class="n">exit</span><span class="err">\</span><span class="n">n</span><span class="err">”</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span>
+</span><span class='line'><span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">c</span><span class="p">,</span> <span class="n">vflag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tflag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">int</span> <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">long</span> <span class="kt">int</span> <span class="n">physmem</span><span class="p">,</span> <span class="n">realmem</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">long</span> <span class="kt">int</span> <span class="n">vmactive</span><span class="p">,</span> <span class="n">vminactive</span><span class="p">,</span> <span class="n">vmfree</span><span class="p">,</span> <span class="n">vmcache</span><span class="p">,</span> <span class="n">vmpage</span><span class="p">,</span> <span class="n">vmwire</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">long</span> <span class="kt">int</span> <span class="n">memfree</span><span class="p">,</span> <span class="n">memused</span><span class="p">;</span>
+</span><span class='line'>        <span class="kt">long</span> <span class="kt">int</span> <span class="n">pagesize</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span>    <span class="n">opterr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">while</span> <span class="p">((</span><span class="n">c</span> <span class="o">=</span> <span class="n">getopt</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="s">&quot;bghkmtv&quot;</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">switch</span> <span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;b&#39;</span>:
+</span><span class='line'>                            <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;g&#39;</span>:
+</span><span class='line'>                            <span class="n">factor</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;h&#39;</span>:
+</span><span class='line'>                            <span class="n">usage</span><span class="p">();</span>
+</span><span class='line'>                            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;k&#39;</span>:
+</span><span class='line'>                            <span class="n">factor</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;m&#39;</span>:
+</span><span class='line'>                            <span class="n">factor</span> <span class="o">=</span> <span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;t&#39;</span>:
+</span><span class='line'>                            <span class="n">tflag</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;v&#39;</span>:
+</span><span class='line'>                            <span class="n">vflag</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                    <span class="k">case</span> <span class="sc">&#39;?&#39;</span>:
+</span><span class='line'>                    <span class="nl">default:</span>
+</span><span class='line'>                            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s: invalid option -- %c</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">optopt</span><span class="p">);</span>
+</span><span class='line'>                            <span class="n">usage</span><span class="p">();</span>
+</span><span class='line'>                            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">argc</span> <span class="o">-=</span> <span class="n">optind</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">argv</span> <span class="o">+=</span> <span class="n">optind</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">vflag</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;%s</span><span class="se">\n</span><span class="s">built %s %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span>
+</span><span class='line'>                            <span class="n">__DATE__</span><span class="p">,</span> <span class="n">__TIME__</span><span class="p">);</span>
+</span><span class='line'>            <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">physmem</span>    <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;hw.physmem&quot;</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">realmem</span>    <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;hw.realmem&quot;</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">pagesize</span>   <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;hw.pagesize&quot;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">vmpage</span>     <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_page_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">vmwire</span>     <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_wire_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">vmactive</span>   <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_active_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">vminactive</span> <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_inactive_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">vmcache</span>    <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_cache_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">vmfree</span>     <span class="o">=</span> <span class="n">labs</span><span class="p">(</span><span class="n">get_sysctl</span><span class="p">(</span><span class="s">&quot;vm.stats.vm.v_free_count&quot;</span><span class="p">)</span> <span class="o">*</span> <span class="n">pagesize</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;         %15s %15s %15s %15s %15s %15s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;total&quot;</span><span class="p">,</span> <span class="s">&quot;active&quot;</span><span class="p">,</span> <span class="s">&quot;free&quot;</span><span class="p">,</span> <span class="s">&quot;inactive&quot;</span><span class="p">,</span> <span class="s">&quot;wire&quot;</span><span class="p">,</span> <span class="s">&quot;cached&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Memory:  %15ld %15ld %15ld %15ld %15ld %15ld</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">realmem</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">vmactive</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">vmfree</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">vminactive</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">vmwire</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                    <span class="n">vmcache</span><span class="o">/</span><span class="n">factor</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="cm">/*</span>
+</span><span class='line'><span class="cm">     * logical summary</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="n">tflag</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="n">memfree</span> <span class="o">=</span> <span class="n">vminactive</span> <span class="o">+</span> <span class="n">vmfree</span> <span class="o">+</span> <span class="n">vmcache</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">memused</span>        <span class="o">=</span> <span class="n">realmem</span> <span class="o">-</span> <span class="n">memfree</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Summary: %15ld %15ld %15ld</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+</span><span class='line'>                            <span class="n">realmem</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                            <span class="n">memused</span><span class="o">/</span><span class="n">factor</span><span class="p">,</span>
+</span><span class='line'>                            <span class="n">memfree</span><span class="o">/</span><span class="n">factor</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">(</span><span class="n">EXIT_SUCCESS</span><span class="p">);</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</code></pre>
+
+<h3 id="section">项目位置</h3>
+
+<p>https://github.com/evoup/free</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linux下模拟df.c源码]]></title>
+    <link href="http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code/"/>
+    <updated>2013-10-16T18:09:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/10/16/linux-df-source-c-code</id>
+    <content type="html"><![CDATA[<p>主要实现df的基本不带参数的功能，连界面都不一样，凑活用，见代码：</p>
+
+<!-- more -->
+
+<p>```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <mntent.h>
+#include &lt;sys/vfs.h&gt;</mntent.h></stdlib.h></stdio.h></p>
+
+<p>int main(void)
+{
+ struct mntent *ent;
+ FILE *aFile;</p>
+
+<p>aFile = setmntent(“/etc/mtab”, “r”);
+ if (aFile == NULL) {
+   perror(“setmntent”);
+   exit(1);
+ }
+ struct statfs diskInfo;
+ unsigned long long blocksize;
+ unsigned long long totalsize;
+ unsigned long long freeDisk;
+ unsigned long long availsize;
+ unsigned long long used;
+ while (NULL != (ent = getmntent(aFile))) { //获取各挂载点的信息
+   printf(“=========================================================================\
+==================================================\n”);
+   //根据挂载点，确认磁盘空间
+   statfs(ent-&gt;mnt_dir,&amp;diskInfo);
+   blocksize = diskInfo.f_bsize; //每个block里面包含的字节数
+   totalsize = blocksize * diskInfo.f_blocks; //总的字节数
+   freeDisk = diskInfo.f_bfree<em>blocksize; //再计算下剩余的空间大小
+   availsize = diskInfo.f_bavail</em>blocksize;
+   //&gt;10换算成KB
+   used=totalsize-freeDisk;
+   printf(“FS == %s MOUNTPOINT == %s TOTAL_SIZE == %lu KB DISK_FREE == %ld KB USED ==\
+%ld KB avail == %ld KB\n”, ent-&gt;mnt_fsname, ent-&gt;mnt_dir,(int)(totalsize»10),
+(int)(freeDisk»10),(int)(used»10),(int)(availsize»10));
+ }
+ endmntent(aFile);
+   printf(“=========================================================================\
+==================================================\n”);
+}
+```</p>
+
+<p>附一张运行截图
+<img src="/images/evoup/df.png" alt="Alt text" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[C语言变参宏]]></title>
+    <link href="http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define/"/>
+    <updated>2011-06-05T23:29:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2011/06/05/lighttpd-change-parameter-define</id>
+    <content type="html"><![CDATA[<p>研究lighttpd1.4.28代码的时候，到缓存调用部分，有这么一句：</p>
+
+<p><code>c
+buffer_copy_string_len(modules-&gt;key, CONST_STR_LEN("server.modules"));
+</code>
+而此参数声明的时候是这样的</p>
+
+<p><code>c
+int buffer_copy_string_len(buffer *b, const char *s, size_t s_len);
+</code>
+怎么是三个参？从CONST_STR_LEN入手，这是一个宏</p>
+
+<p><code>c
+#define CONST_STR_LEN(x) x, x ? sizeof(x) - 1 : 0
+</code>
+这不就成了三个参了？记一笔…</p>
+]]></content>
+  </entry>
+  
+</feed>

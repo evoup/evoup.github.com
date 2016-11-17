@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: golang | Evoup`s Blog]]></title>
+  <link href="http://evoupsight.com/blog/categories/golang/atom.xml" rel="self"/>
+  <link href="http://evoupsight.com/"/>
+  <updated>2016-11-17T21:57:53+08:00</updated>
+  <id>http://evoupsight.com/</id>
+  <author>
+    <name><![CDATA[Evoup`s Blog]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[golang使用syslog日志系统和安装使用第三方包log4go]]></title>
+    <link href="http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go/"/>
+    <updated>2014-04-22T11:25:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2014/04/22/golang-with-syslog-and-log4go</id>
+    <content type="html"><![CDATA[<h3 id="syslog">使用syslog</h3>
+<p>首先介绍下golang的syslog的用法，因为这个其实也很好用，只不过比log4go缺点在于要用syslog那一套（如newsyslog）来手工设置syslog.conf来轮询日志。接下来是一个基本的用法，只有serverity的场景:
+<!-- more --></p>
+
+<p><code>go
+// syslog init
+func LogInit() *log.Logger {
+    Log, err := syslog.NewLogger(syslog.LOG_DEBUG, log.Lmicroseconds) //设置log facility为LOG_DEBUG
+    if err != nil {
+        log.Fatal(err)
+    }
+    return Log
+}
+//然后打印日志的时候可以调用对应的log level
+</code></p>
+
+<p>或者使用shell调用的方式，理论上效率会低一点:</p>
+
+<p><code>go
+/// using logger
+cmd := exec.Command("logger", "-p", "local0.err", "-t", "bash", "hello bash")
+err = cmd.Run()
+if err != nil {  
+    log.Fatal("error running cmd!")  
+}
+</code></p>
+
+<p>然后是一个可以log serverity和log facility都可以用上的例子:</p>
+
+<p><code>go
+package main
+import(
+    "log/syslog"
+	"fmt"
+)
+testLogger, err := syslog.New(syslog.LOG_WARNING|syslog.LOG_LOCAL0, "mytag")
+defer testLogger.Close()
+if err!=nil {
+    fmt.Printf("New() failed: %v\n",err)
+} else {
+    fmt.Println("logger ok")
+	test.Logger.Write([]byte("test go syslog"))
+}
+</code></p>
+
+<h3 id="log4go">log4go的安装</h3>
+<p>言归正传讲安装，不要被log4go的README搞晕了</p>
+
+<!-- more -->
+
+<p>```
+Please see http://log4go.googlecode.com/</p>
+
+<p>Installation:
+- Run <code>goinstall log4go.googlecode.com/hg</code></p>
+
+<p>Usage:
+- Add the following import:
+import l4g “log4go.googlecode.com/hg”</p>
+
+<p>Acknowledgements:
+- pomack
+  For providing awesome patches to bring log4go up to the latest Go spec</p>
+
+<p>```</p>
+
+<p>其实正确的安装方法如下：</p>
+
+<p><code>sh
+go get code.google.com/p/log4go
+</code></p>
+
+<p>安装完成后默认路径位于</p>
+
+<p><code>sh
+/usr/local/go/src/pkg/code.google.com/p/log4go
+</code></p>
+
+<h3 id="log4go-1">使用log4go</h3>
+<p>打开文档看怎么用，有2种方法：
+####第一种
+在安装好log4go的机器上运行</p>
+
+<p><code>sh
+godoc -http=:6060
+</code></p>
+
+<p>然后用浏览器查看
+http://host:6060/src/pkg/code.google.com/p/log4go/examples/</p>
+
+<h4 id="section">第二种</h4>
+<p>直接查看该目录下的例子
+/usr/local/go/src/pkg/code.google.com/p/log4go/examples</p>
+
+<p>主要来看一个日志轮询的怎么做</p>
+
+<p>```go
+package main</p>
+
+<p>import (
+	“bufio”
+	“fmt”
+	“io”
+	“os”
+	“time”
+)</p>
+
+<p>import l4g “code.google.com/p/log4go”</p>
+
+<p>const (
+	filename = “flw.log”
+)</p>
+
+<p>func main() {
+	// Get a new logger instance
+	log := l4g.NewLogger() //实例化日志对象</p>
+
+<pre><code>// Create a default logger that is logging messages of FINE or higher
+log.AddFilter("file", l4g.FINE, l4g.NewFileLogWriter(filename, false))
+log.Close()
+
+/* Can also specify manually via the following: (these are the defaults) */
+flw := l4g.NewFileLogWriter(filename, false)
+flw.SetFormat("[%D %T] [%L] (%S) %M")
+flw.SetRotate(false)
+flw.SetRotateSize(0)
+flw.SetRotateLines(0)
+flw.SetRotateDaily(false)
+log.AddFilter("file", l4g.FINE, flw)
+
+// Log some experimental messages
+log.Finest("Everything is created now (notice that I will not be printing to the file)")
+log.Info("The time is now: %s", time.Now().Format("15:04:05 MST 2006/01/02"))
+log.Critical("Time to close out!")
+
+// Close the log
+log.Close()
+
+// Print what was logged to the file (yes, I know I'm skipping error checking)
+fd, _ := os.Open(filename)
+in := bufio.NewReader(fd)
+fmt.Print("Messages logged to file were: (line numbers not included)\n")
+for lineno := 1; ; lineno++ {
+	line, err := in.ReadString('\n')
+	if err == io.EOF {
+		break
+	}
+	fmt.Printf("%3d:\t%s", lineno, line)
+}
+fd.Close()
+
+// Remove the file so it's not lying around
+os.Remove(filename) } ```
+</code></pre>
+
+<p>代码就不多说了，唯一值得注意的是log4go貌似达到指定的日志数上限了之后就不会再去掉旧的文件，更新新的文件了，也就是再也无法记录日志，这个是需要程序考虑的，完。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[golang的守护进程化]]></title>
+    <link href="http://evoupsight.com/blog/2013/01/06/golang-daemonize/"/>
+    <updated>2013-01-06T17:37:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2013/01/06/golang-daemonize</id>
+    <content type="html"><![CDATA[<p>golang的守护进程化代码，参考了网上的代码，结合自己的项目，去掉了一些没用的代码，增加了fork时候的判断处理，我的机器是freebsd，fork会报errno:0,忽略，原因见代码注释。</p>
+
+<!-- more -->
+
+<p>```go
+func Daemonize(nochdir, noclose int) error {
+   var hLog *log.Logger
+   hLog=LogInit();
+   var ret, ret2 uintptr
+   var err error
+   Log( hLog, fmt.Sprintf(“common.Daemonize][current ppid:%d”, syscall.Getppid()) )</p>
+
+<p>//already a daemon
+   if syscall.Getppid() == 1 {
+       return nil
+   }
+   Log(hLog,”common.Daemonize][will daemonize”)</p>
+
+<p>//fork off the parent process
+   ret, ret2, err = syscall.RawSyscall(syscall.SYS_FORK, 0, 0, 0)
+   if err != nil {
+       var s string
+       s=fmt.Sprintf(“%T”,err)
+       if s != “syscall.Errno” {
+           Log(hLog,”common.Daemonize][fork err:”+s)
+               return err
+       } else {
+           Log(hLog,”common.Daemonize][fork no err:”+err.Error())
+           //no problem see http://www.ibm.com/developerworks/aix/library/au-errnovariable/
+       }
+   }</p>
+
+<p>//failure
+   if ret2 &lt; 0 {
+       os.Exit(-1)
+   }</p>
+
+<p>//if we got a good PID, then we call exit the parent process.
+   if ret &gt; 0 {
+       os.Exit(0)
+   }
+   Log(hLog,”common.Daemonize][forked,we in forked process”)</p>
+
+<p>/* Change the file mode mask */
+   _ = syscall.Umask(0)
+   Log(hLog,”common.Daemonize][umask zero”)</p>
+
+<p>//create a new SID for the child process
+   s_ret, s_errno := syscall.Setsid()
+   if s_ret &lt; 0 || s_errno != nil {
+       log.Printf(“common.Daemonize][Error: syscall.Setsid errno: %d”, s_errno)
+   }
+   Log(hLog,”common.Daemonize][sid seted”)</p>
+
+<p>if nochdir == 0 {
+       os.Chdir(“/”)
+       Log(hLog,”common.Daemonize][chdir to root”)
+   }</p>
+
+<p>if noclose == 0 {
+       f, e := os.OpenFile(“/dev/null”, os.O_RDWR, 0)
+       if e == nil {
+           fd := f.Fd()
+           syscall.Dup2(int(fd), int(os.Stdin.Fd()))
+           syscall.Dup2(int(fd), int(os.Stdout.Fd()))
+           syscall.Dup2(int(fd), int(os.Stderr.Fd()))
+           Log(hLog,”common.Daemonize][fs closed”)
+       }
+   }</p>
+
+<p>Log(hLog,”common.Daemonize][daemonize done”)
+   return nil
+}
+```</p>
+]]></content>
+  </entry>
+  
+</feed>
