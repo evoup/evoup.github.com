@@ -50,3 +50,23 @@ git branch branchname
 git checkout branchname
 git push origin branchname
 ```
+
+在master分支创建一个分支，直接切换到该分支(假设已经在在master分支)
+
+```bash
+git checkout -b branchname
+```
+
+删除分支
+
+```bash
+git branch -d branchname
+```
+
+推送分支
+
+```bash
+git push origin branchname
+```
+
+
