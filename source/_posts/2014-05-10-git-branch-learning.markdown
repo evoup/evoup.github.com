@@ -57,6 +57,12 @@ git push origin branchname
 git checkout -b branchname
 ```
 
+修改分支名
+
+```bash
+git branch -m oldbranchname newbranchname
+```
+
 删除分支
 
 ```bash
