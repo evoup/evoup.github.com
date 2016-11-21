@@ -4,7 +4,7 @@
   <title><![CDATA[Evoup`s Blog]]></title>
   <link href="http://evoupsight.com/atom.xml" rel="self"/>
   <link href="http://evoupsight.com/"/>
-  <updated>2016-11-21T17:56:04+08:00</updated>
+  <updated>2016-11-21T18:48:33+08:00</updated>
   <id>http://evoupsight.com/</id>
   <author>
     <name><![CDATA[Evoup`s Blog]]></name>
@@ -12,6 +12,320 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[mybatis生成器生成代码]]></title>
+    <link href="http://evoupsight.com/blog/2016/08/15/idea-mybatis-codes-generator/"/>
+    <updated>2016-08-15T13:45:00+08:00</updated>
+    <id>http://evoupsight.com/blog/2016/08/15/idea-mybatis-codes-generator</id>
+    <content type="html"><![CDATA[<p>这里记录官方的控制台生成方法。 </p>
+
+<!-- more -->
+
+<p>插件的下载</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> ~/software
+</span><span class="line">mkdir mybatisGenerator
+</span><span class="line"><span class="nb">cd</span> !<span class="err">$</span>
+</span><span class="line">git clone git@github.com:mybatis/generator.git
+</span><span class="line"><span class="nb">cd </span>generator/core/mybatis-generator-core
+</span><span class="line">mvn clean package
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>编译后在target目录生成了mybatis-generator-core-1.3.4-SNAPSHOT.jar </p>
+
+<p>接着还需要准备好mysql的java驱动包</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nb">cd</span> ~/software
+</span><span class="line">wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.39.tar.gz
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>然后创建generatorConfig.xml（注：不一定非得像其他教程说的那样非得放到项目的resources目录下）,内容如下：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+</span><span class="line"><span class="cp">&lt;!DOCTYPE generatorConfiguration</span>
+</span><span class="line"><span class="cp">  PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot;</span>
+</span><span class="line"><span class="cp">  &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot;&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;generatorConfiguration&gt;</span>
+</span><span class="line">  <span class="nt">&lt;classPathEntry</span> <span class="na">location=</span><span class="s">&quot;/Program Files/IBM/SQLLIB/java/db2java.zip&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">&lt;context</span> <span class="na">id=</span><span class="s">&quot;DB2Tables&quot;</span> <span class="na">targetRuntime=</span><span class="s">&quot;MyBatis3&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">    <span class="nt">&lt;jdbcConnection</span> <span class="na">driverClass=</span><span class="s">&quot;COM.ibm.db2.jdbc.app.DB2Driver&quot;</span>
+</span><span class="line">        <span class="na">connectionURL=</span><span class="s">&quot;jdbc:db2:TEST&quot;</span>
+</span><span class="line">        <span class="na">userId=</span><span class="s">&quot;db2admin&quot;</span>
+</span><span class="line">        <span class="na">password=</span><span class="s">&quot;db2admin&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/jdbcConnection&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;javaTypeResolver</span> <span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;forceBigDecimals&quot;</span> <span class="na">value=</span><span class="s">&quot;false&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/javaTypeResolver&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;javaModelGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;test.model&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;trimStrings&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/javaModelGenerator&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;sqlMapGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;test.xml&quot;</span>  <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/sqlMapGenerator&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;javaClientGenerator</span> <span class="na">type=</span><span class="s">&quot;XMLMAPPER&quot;</span> <span class="na">targetPackage=</span><span class="s">&quot;test.dao&quot;</span>  <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/javaClientGenerator&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;table</span> <span class="na">schema=</span><span class="s">&quot;DB2ADMIN&quot;</span> <span class="na">tableName=</span><span class="s">&quot;ALLTYPES&quot;</span> <span class="na">domainObjectName=</span><span class="s">&quot;Customer&quot;</span> <span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;useActualColumnNames&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+</span><span class="line">      <span class="nt">&lt;generatedKey</span> <span class="na">column=</span><span class="s">&quot;ID&quot;</span> <span class="na">sqlStatement=</span><span class="s">&quot;DB2&quot;</span> <span class="na">identity=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">      <span class="nt">&lt;columnOverride</span> <span class="na">column=</span><span class="s">&quot;DATE_FIELD&quot;</span> <span class="na">property=</span><span class="s">&quot;startDate&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">      <span class="nt">&lt;ignoreColumn</span> <span class="na">column=</span><span class="s">&quot;FRED&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">      <span class="nt">&lt;columnOverride</span> <span class="na">column=</span><span class="s">&quot;LONG_VARCHAR_FIELD&quot;</span> <span class="na">jdbcType=</span><span class="s">&quot;VARCHAR&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/table&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="nt">&lt;/context&gt;</span>
+</span><span class="line"><span class="nt">&lt;/generatorConfiguration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>接下来就是修改配置文件了
+第一步先修改classPathEntry的值，把原来的/Program Files/IBM/SQLLIB/java/db2java.zip换成，现在mysql驱动:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;classPathEntry</span> <span class="na">location=</span><span class="s">&quot;/home/evoup/software/mysql-connector-java-5.1.39.tar.gz&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>然后注意到context id=”DB2Tables”,这个如果是单个表的话不改也没什么问题，但是根据文档 </p>
+
+<blockquote>
+  <p>A unique identifier for this context. This value will be used in some error messages.</p>
+</blockquote>
+
+<p>只是一个上下文的标识，所以可以忽略按照默认就可以了，但是我还是把它改成了context id=”context1” 
+targetRuntime=”Mybatis3”这也是一个默认的可选选项，所以可以直接去掉，所以这一段看起来是这样：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line">  <span class="nt">&lt;classPathEntry</span> <span class="na">location=</span><span class="s">&quot;/home/evoup/software/mysql-connector-java-5.1.39.tar.gz&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;context</span> <span class="na">id=</span><span class="s">&quot;context1&quot;</span> <span class="nt">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>之后要替换掉jdbc驱动类</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;jdbcConnection</span> <span class="na">driverClass=</span><span class="s">&quot;COM.ibm.db2.jdbc.app.DB2Driver&quot;</span>
+</span><span class="line">    <span class="na">connectionURL=</span><span class="s">&quot;jdbc:db2:TEST&quot;</span>
+</span><span class="line">    <span class="na">userId=</span><span class="s">&quot;db2admin&quot;</span>
+</span><span class="line">    <span class="na">password=</span><span class="s">&quot;db2admin&quot;</span><span class="nt">&gt;</span>
+</span><span class="line"><span class="nt">&lt;/jdbcConnection&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>改成</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;jdbcConnection</span> <span class="na">driverClass=</span><span class="s">&quot;com.mysql.jdbc.Driver&quot;</span> <span class="na">connectionURL=</span><span class="s">&quot;jdbc:mysql://localhost:3306/myDb&quot;</span> <span class="na">userId=</span><span class="s">&quot;root&quot;</span> <span class="na">password=</span><span class="s">&quot;&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>再接下来的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;javaTypeResolver</span> <span class="nt">&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;forceBigDecimals&quot;</span> <span class="na">value=</span><span class="s">&quot;false&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/javaTypeResolver&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>官方是说</p>
+
+<blockquote>
+  <p>This element specifies that we always want to use the java.math.BigDecimal type for DECIMAL and NUMERIC columns: </p>
+</blockquote>
+
+<p>是和数据库列映射到java的pojo的属性对应，可以指定成想要的类型，这里的DECIMAL和NUMERIC列想必是DB2数据库的字段类型了，这样就会强制映射成java.math.BigDecimal，我们用mysql，这个选项不得而知，应该也是同样会转换的。但我直接把这段给去了。</p>
+
+<p>再下来的三段</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;javaModelGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;test.model&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;trimStrings&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/javaModelGenerator&gt;</span>
+</span><span class="line"><span class="nt">&lt;sqlMapGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;test.xml&quot;</span>  <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/sqlMapGenerator&gt;</span>
+</span><span class="line"><span class="nt">&lt;javaClientGenerator</span> <span class="na">type=</span><span class="s">&quot;XMLMAPPER&quot;</span> <span class="na">targetPackage=</span><span class="s">&quot;test.dao&quot;</span>  <span class="na">targetProject=</span><span class="s">&quot;\MBGTestProject\src&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;enableSubPackages&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/javaClientGenerator&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>其中</p>
+
+<blockquote>
+  <p>The <javamodelgenerator> element is used to define properties of the Java model generator. The Java Model Generator builds primary key classes, record classes, and Query by Example classes that match the introspected table. This element is a required child element of the <context> element.</context></javamodelgenerator></p>
+</blockquote>
+
+<p>Model模型生成器,用来生成含有主键key的类，记录类 以及查询Example类。targetPackage是指定生成的model生成所在的包名，targetProject是指定在该项目下所在的路径。</p>
+
+<blockquote>
+  <p>The <sqlmapgenerator> element is used to define properties of the SQL map generator. The SQL Map Generator builds a MyBatis/iBATIS formatted SQL map XML file for each introspected table.</sqlmapgenerator></p>
+</blockquote>
+
+<p>sqlMapGenerator指Mapper映射文件生成所在的目录，为每一个数据库的表生成对应的SqlMap文件。</p>
+
+<blockquote>
+  <p>The <javaclientgenerator> element is used to define properties of the Java client generator. The Java client Generator builds Java interfaces and classes that allow easy use of the generated Java model and XML map files </javaclientgenerator></p>
+</blockquote>
+
+<p>javaClientGenerator客户端代码，生成易于使用的针对Model对象和XML配置文件 的代码。</p>
+
+<p>根据需要我把以上3个配置项改成了如下</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;javaModelGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.company.project.dao.model&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;16-adsapi-facebook&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;sqlMapGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.company.project.dao.mapper&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;16-adsapi-facebook&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;javaClientGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.company.project.dao.client&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;16-adsapi-facebook&quot;</span> <span class="na">type=</span><span class="s">&quot;XMLMAPPER&quot;</span> <span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后一个配置</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;table</span> <span class="na">schema=</span><span class="s">&quot;DB2ADMIN&quot;</span> <span class="na">tableName=</span><span class="s">&quot;ALLTYPES&quot;</span> <span class="na">domainObjectName=</span><span class="s">&quot;Customer&quot;</span> <span class="nt">&gt;</span>
+</span><span class="line">  <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;useActualColumnNames&quot;</span> <span class="na">value=</span><span class="s">&quot;true&quot;</span><span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;generatedKey</span> <span class="na">column=</span><span class="s">&quot;ID&quot;</span> <span class="na">sqlStatement=</span><span class="s">&quot;DB2&quot;</span> <span class="na">identity=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;columnOverride</span> <span class="na">column=</span><span class="s">&quot;DATE_FIELD&quot;</span> <span class="na">property=</span><span class="s">&quot;startDate&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;ignoreColumn</span> <span class="na">column=</span><span class="s">&quot;FRED&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;columnOverride</span> <span class="na">column=</span><span class="s">&quot;LONG_VARCHAR_FIELD&quot;</span> <span class="na">jdbcType=</span><span class="s">&quot;VARCHAR&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/table&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>参数比较多，我直接改成了,很清楚就是表映射为domain对象，对于mysql，schema这个参数可以省略的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;table</span> <span class="na">tableName=</span><span class="s">&quot;myTable&quot;</span> <span class="na">domainObjectName=</span><span class="s">&quot;DomainObjectName&quot;</span><span class="nt">/&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>于是最终的测试生成文件是这样的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span>
+</span><span class="line"><span class="cp">&lt;!DOCTYPE generatorConfiguration PUBLIC &quot;-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN&quot; &quot;http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd&quot; &gt;</span>
+</span><span class="line"><span class="nt">&lt;generatorConfiguration</span> <span class="nt">&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;classPathEntry</span> <span class="na">location=</span><span class="s">&quot;/home/evoup/project/mybatisGen/mysql-connector-java-5.1.39/mysql-connector-java-5.1.39-bin.jar&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">    <span class="nt">&lt;context</span> <span class="na">id=</span><span class="s">&quot;context1&quot;</span> <span class="nt">&gt;</span>
+</span><span class="line">
+</span><span class="line">        <span class="nt">&lt;jdbcConnection</span> <span class="na">driverClass=</span><span class="s">&quot;com.mysql.jdbc.Driver&quot;</span> <span class="na">connectionURL=</span><span class="s">&quot;jdbc:mysql://172.16.26.177:3306/adsapi&quot;</span> <span class="na">userId=</span><span class="s">&quot;dba&quot;</span> <span class="na">password=</span><span class="s">&quot;madsolution&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">        <span class="nt">&lt;javaModelGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.madhouse.performad.adsapi.facebook.dao.model&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;16-adsapi-facebook&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">        <span class="nt">&lt;sqlMapGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.madhouse.performad.adsapi.facebook.dao.mapper&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;16-adsapi-facebook&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">        <span class="nt">&lt;javaClientGenerator</span> <span class="na">targetPackage=</span><span class="s">&quot;com.madhouse.performad.adsapi.facebook.dao.client&quot;</span> <span class="na">targetProject=</span><span class="s">&quot;/home/evoup/project/16-adsapi-facebook&quot;</span> <span class="na">type=</span><span class="s">&quot;XMLMAPPER&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">        <span class="nt">&lt;table</span> <span class="na">schema=</span><span class="s">&quot;&quot;</span> <span class="na">tableName=</span><span class="s">&quot;facebook_ad&quot;</span> <span class="na">domainObjectName=</span><span class="s">&quot;FacebookAdModel&quot;</span><span class="nt">/&gt;</span>
+</span><span class="line">
+</span><span class="line">    <span class="nt">&lt;/context&gt;</span>
+</span><span class="line"><span class="nt">&lt;/generatorConfiguration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>生成
+做了一个脚本</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/sh</span>
+</span><span class="line"><span class="nv">MYBATIS_HOME</span><span class="o">=</span>/home/evoup/project/mybatisGen/generator/core/mybatis-generator-core/target
+</span><span class="line"><span class="c">#XML_HOME=/home/evoup/project/adsapi_3.0.19/adsapi-facebook/src/main/resources</span>
+</span><span class="line"><span class="nv">XML_HOME</span><span class="o">=</span>/home/evoup/project/adsapi_trunk/adsapi-facebook/src/main/resources
+</span><span class="line">java -jar <span class="k">${</span><span class="nv">MYBATIS_HOME</span><span class="k">}</span>/mybatis-generator-core-1.3.5-SNAPSHOT.jar -configfile <span class="k">${</span><span class="nv">XML_HOME</span><span class="k">}</span>/generatorConfigFB.xml -overwrite
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>运行脚本就可以生成了，最后将生成以下文件，见下图：
+<img src="http://evoupsight.com/images/evoup/mbGenerateFiles.jpg" alt="Alt text" /></p>
+
+<p>最后补一个，xml文件还要放到spring项目的src/main/resource对应目录下，如果单单放在src/main/java对应目录下还是不行的</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[linux下latex中文配置小记]]></title>
@@ -5277,83 +5591,6 @@ http://archive.cloudera.com/cdh4
 
 <p>参考：
 《Maven实战》</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[git分支学习]]></title>
-    <link href="http://evoupsight.com/blog/2014/05/10/git-branch-learning/"/>
-    <updated>2014-05-10T14:17:00+08:00</updated>
-    <id>http://evoupsight.com/blog/2014/05/10/git-branch-learning</id>
-    <content type="html"><![CDATA[<p>主要学习的内容：git默认分支是什么，如何创建分支，如何查看所有分支，如何查看当前分支，如何提交分支，如何切换到分支,以下简单给出答案：
-<!-- more --></p>
-
-<p>git的默认分支是master</p>
-
-<p>创建分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git branch branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>显示所有分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git show-branch
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>查看当前分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git status
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>提交分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git push origin branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>切换到名字为branchname的分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git checkout branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>创建一个分支，然后把这个分支同步到远程仓库</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git branch branchname
-</span><span class="line">git checkout branchname
-</span><span class="line">git push origin branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>在master分支创建一个分支，直接切换到该分支(假设已经在在master分支)</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git checkout -b branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>修改分支名</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git branch -m oldbranchname newbranchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>删除分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git branch -d branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>推送分支</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git push origin branchname
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
 ]]></content>
   </entry>
   
