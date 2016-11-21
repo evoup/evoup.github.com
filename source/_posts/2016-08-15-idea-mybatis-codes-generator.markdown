@@ -7,6 +7,9 @@ categories: [java,mybatis]
 ---
 
 这里记录官方的控制台生成方法。 
+
+<!-- more -->
+
 插件的下载
 
 ```bash
