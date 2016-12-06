@@ -111,7 +111,7 @@ sudo vim -E
 调用vim来把文件转换为utf-8格式，注意要和find连用，需加载vimrc不然乱码
 
 ```sh
-vim -c "set fileencoding=utf-8 | wq!" main.cpp
+vim -c 'set fileencoding=utf-8 | wq!' main.cpp
 ```
 
 find查找c/c++的源文件和头文件
