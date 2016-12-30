@@ -77,6 +77,8 @@ wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.39.
 </generatorConfiguration>
 {% endcodeblock %}
 
+columnOverride中的jdbcType是指数据库对应jdbc的字段类型，如果有特殊需求如mysql中的字段为text类型，而text字段默认用mybatis会再生成一个以该字段为成员变量的withBLOBs类，若想生成的java代码不要生成出withBLOBs的话，可以手动指定jdbcType="VARCHAR"来规避。
+
 接下来就是修改配置文件了
 第一步先修改classPathEntry的值，把原来的/Program Files/IBM/SQLLIB/java/db2java.zip换成，现在mysql驱动:
 
