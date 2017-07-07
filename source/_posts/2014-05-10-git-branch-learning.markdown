@@ -56,7 +56,7 @@ git checkout branchname
 git push origin branchname
 ```
 
-在master分支创建一个分支，直接切换到该分支(假设已经在在master分支)
+在当前分支创建一个分支，直接切换到该分支
 
 ```bash
 git checkout -b branchname
