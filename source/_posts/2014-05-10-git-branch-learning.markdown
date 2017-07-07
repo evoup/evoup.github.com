@@ -24,6 +24,11 @@ git branch branchname
 git show-branch
 ```
 
+显示远程分支，origin为前缀的
+```bash
+git remote show origin
+```
+
 查看当前分支
 
 ```bash
