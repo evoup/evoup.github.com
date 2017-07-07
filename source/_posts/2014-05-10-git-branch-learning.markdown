@@ -68,10 +68,15 @@ git checkout -b branchname
 git branch -m oldbranchname newbranchname
 ```
 
-删除分支
+删除本地分支
 
 ```bash
 git branch -d branchname
+```
+
+删除远程分支(git版本>1.7)
+```bash
+git push origin --delete the_remote_branch
 ```
 
 推送分支
