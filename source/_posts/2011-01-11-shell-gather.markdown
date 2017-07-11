@@ -44,6 +44,12 @@ mysql -uusername -p*** dbname < table_backup.sql
 ifconfig lo0 | grep '[0-9a-f]\{8\}' | awk '{print $4}'
 ```
 
+递归转换文件格式为unix
+
+```sh
+find . -type f -print0 | xargs -0 -n 1 -P 4 dos2unix 
+```
+
 grep过滤空行
 
 ```sh
