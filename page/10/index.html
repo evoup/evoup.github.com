@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="evoup`s Blog">
+<meta property="og:url" content="http://blog.evoupsight.com/page/10/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="evoup`s Blog">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-freebsd-nginx-php5-dot-3-8-plus-php-fpm-1" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/" class="article-date">
+  <time datetime="2013-04-08T01:03:00.000Z" itemprop="datePublished">2013-04-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>►<a class="article-category-link" href="/categories/php/nginx/">nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/">freebsd下nginx+Php5.3.8+php-fpm源码安装之一</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文在freebsd9.2 i386下进行。选择php5.3.8才能正常编译</p>
+<h3 id="pecl扩展-以下的pecl源码改名后放到php源码的ext目录下"><a href="#pecl扩展-以下的pecl源码改名后放到php源码的ext目录下" class="headerlink" title="pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)"></a>pecl扩展(以下的pecl源码改名后放到php源码的ext目录下)</h3><p>i.memcache-3.0.4-&gt;memcache<br><br>ii.APC-3.1.4-&gt;apc<br><br>iii.imagick-3.0.0-&gt;imagick<br><br>(已经把memcache,apc模块源码放到ext子目录中,名称如上)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /your/phpsrcdir</span><br><span class="line">$ rm configure</span><br><span class="line">$ ./buildconf --force</span><br><span class="line">$ ./configure --<span class="built_in">help</span>   <span class="comment">#(选项出现了!)</span></span><br></pre></td></tr></table></figure>
+<h3 id="预装软件："><a href="#预装软件：" class="headerlink" title="预装软件："></a>预装软件：</h3><p>ImageMagick</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make WITHOUT_X11=yes install clean</span><br></pre></td></tr></table></figure>
+<p>(时间较长，干点别的去)<br>libevent(php-fpm需要,ports)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make install clean</span><br></pre></td></tr></table></figure>
+<p>curl(ports)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ make install clean</span><br></pre></td></tr></table></figure>
+<p>libmcrypt(ports)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make install clean</span><br></pre></td></tr></table></figure>
+<p>####手动编译php,每个参数都要知道具体是干嘛的,5.3.3之后，有了php-fpm，<br>–enable-fastcgi就不再需要了，mysqli以及pdo-mysql都用mysqlnd</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$<span class="string">'./configure'</span> <span class="string">'--prefix=/usr/local/php5_admin'</span> <span class="string">'--with-layout=GNU'</span> <span class="string">'--with-config-file-scan-dir=/usr/local/php5_admin/etc/php'</span> <span class="string">'--disable-all'</span> <span class="string">'--enable-dom'</span> <span class="string">'--enable-filter'</span> <span class="string">'--enable-hash'</span> <span class="string">'--enable-json'</span> <span class="string">'--with-mcrypt'</span> <span class="string">'--with-curl'</span> <span class="string">'--with-pcre-regex'</span> <span class="string">'--enable-mbstring'</span> <span class="string">'--enable-ctype'</span> <span class="string">'--enable-session'</span> <span class="string">'--enable-libxml'</span> <span class="string">'--enable-simplexml'</span> <span class="string">'--enable-pdo'</span> <span class="string">'--with-pdo-mysql=mysqlnd'</span> <span class="string">'--with-mysqli=mysqlnd'</span> <span class="string">'--with-mysql'</span> <span class="string">'--enable-sysvsem'</span> <span class="string">'--enable-sysvshm'</span> <span class="string">'--enable-apc'</span> <span class="string">'--enable-memcache'</span> <span class="string">'--with-imagick=/usr/local'</span> <span class="string">'--enable-fpm'</span> --with-zlib --with-bz2 --<span class="built_in">enable</span>-zip</span><br></pre></td></tr></table></figure>
+<p>注意<br>make时候会报错<br>解决方法：<br>修改fpm_sockets.c代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">info.tcpi_sacked =&gt; info.__tcpi_sacked  </span><br><span class="line">info.tcpi_unacked =&gt; info.__tcpi_unacked</span><br></pre></td></tr></table></figure>
+<p>####配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp /usr/<span class="built_in">local</span>/php5_admin/etc/php-fpm.conf.default /usr/<span class="built_in">local</span>/php5_admin/etc/php-fpm.conf</span><br></pre></td></tr></table></figure>
+<p>几个需要配置的参数</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pm.max_children</span><br><span class="line">pm.start_servers</span><br><span class="line">pm.min_spare_servers</span><br><span class="line">pm.max_spare_servers</span><br></pre></td></tr></table></figure>
+<p>编辑启动脚本/usr/local/etc/rc.d/phpfpm</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment"># PROVIDE: phpfpm</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Add the following lines to /etc/rc.conf to run phpfpm:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># phpfpm_enable (bool):   Set it to "YES" to enable &#123;phpfpm&#125;.</span></span><br><span class="line"><span class="comment">#               Default is "NO".</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Last-Modified: 2010-09-14 23:30:20</span></span><br><span class="line">name=<span class="string">"phpfpm"</span> </span><br><span class="line">. /etc/rc.subr</span><br><span class="line">rcvar=`set_rcvar`</span><br><span class="line">load_rc_config <span class="variable">$&#123;name&#125;</span></span><br><span class="line"><span class="built_in">eval</span> <span class="variable">$&#123;name&#125;</span>_enable=\<span class="variable">$&#123;$&#123;name&#125;</span>_enable:-<span class="string">"NO"</span>&#125;</span><br><span class="line"><span class="built_in">eval</span> server=\<span class="variable">$&#123;$&#123;name&#125;</span>_server:-<span class="string">"/usr/local/php5_admin/sbin/php-fpm"</span>&#125;</span><br><span class="line"><span class="built_in">command</span>=<span class="variable">$&#123;server&#125;</span></span><br><span class="line">extra_commands=<span class="string">"reload"</span> </span><br><span class="line">sig_reload=<span class="string">"USR2"</span> </span><br><span class="line">pidfile=<span class="string">"/usr/local/php5_admin/var/run/php-fpm.pid"</span> </span><br><span class="line"><span class="comment">#command_args="" </span></span><br><span class="line">run_rc_command <span class="string">"<span class="variable">$1</span>"</span></span><br></pre></td></tr></table></figure>
+<p>   注意：启动脚本的权限555，还有/usr/local/php5_admin/var/run/php-fpm.pid可能需要手动创建</p>
+<p>在/etc/rc.conf中加入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phpfpm_enable=&quot;YES&quot;</span><br></pre></td></tr></table></figure>
+<p>然后启动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ /usr/<span class="built_in">local</span>/etc/rc.d/phpfpm start</span><br></pre></td></tr></table></figure>
+<p>备注，其实：上面的phpfpm配置文件是错误的，原因如下：</p>
+<blockquote>
+<p>php 5.3.3以上的php版本源码中已经内嵌了php-fpm，不用象以前的php版本一样专门打补丁了，只需要在<br>configure的时候添加编译参数即可。<br>但是，php 5.3.3以上版本的php-fpm 不再支持 php-fpm 以前具有的 /usr/local/php/sbin/php-fpm<br>(start|stop|reload)等命令，需要使用信号控制：<br>master进程可以理解以下信号：<br>INT, TERM 立刻终止<br>QUIT 平滑终止<br>USR1 重新打开日志文件<br>USR2 平滑重载所有worker进程并重新载入配置和二进制模块</p>
+</blockquote>
+<p>示例：<br>注意这边的单引号为“esc下面那个键（~）”<br>php-fpm 关闭：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">kill</span> -INT `cat /usr/<span class="built_in">local</span>/php/var/run/php-fpm.pid`</span><br></pre></td></tr></table></figure>
+<p>php-fpm 重启：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">kill</span> -USR2 `cat /usr/<span class="built_in">local</span>/php/var/run/php-fpm.pid`</span><br></pre></td></tr></table></figure>
+<p>查看php-fpm进程：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps aux | grep -c php-fpm</span><br></pre></td></tr></table></figure>
+<p>查看php-fpm进程数：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps aux | grep -c php-fpm | wc -l</span><br></pre></td></tr></table></figure>
+<p>正确的脚本应该是这样的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment"># PROVIDE: phpfpm</span></span><br><span class="line"><span class="comment"># REQUIRE: DAEMON</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Add the following lines to /etc/rc.conf to run phpfpm:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># phpfpm_enable (bool):   Set it to "YES" to enable &#123;phpfpm&#125;.</span></span><br><span class="line"><span class="comment">#               Default is "NO".</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Last-Modified: 2012-11-22 10:27:43</span></span><br><span class="line">name=<span class="string">"phpfpm"</span></span><br><span class="line">. /etc/rc.subr</span><br><span class="line">rcvar=`set_rcvar`</span><br><span class="line">load_rc_config <span class="variable">$&#123;name&#125;</span></span><br><span class="line"><span class="built_in">eval</span> <span class="variable">$&#123;name&#125;</span>_enable=\<span class="variable">$&#123;$&#123;name&#125;</span>_enable:-<span class="string">"NO"</span>&#125;</span><br><span class="line"><span class="built_in">eval</span> server=\<span class="variable">$&#123;$&#123;name&#125;</span>_server:-<span class="string">"/usr/local/php5_admin/sbin/php-fpm"</span>&#125;</span><br><span class="line"><span class="built_in">command</span>=<span class="variable">$&#123;server&#125;</span></span><br><span class="line">extra_commands=<span class="string">"reload"</span></span><br><span class="line">sig_reload=<span class="string">"USR2"</span></span><br><span class="line">sig_stop=<span class="string">"INT"</span></span><br><span class="line">pidfile=<span class="string">"/usr/local/php5_admin/var/run/php-fpm.pid"</span></span><br><span class="line">fpmconffile=<span class="string">"/usr/local/php5_admin/etc/php-fpm.conf"</span></span><br><span class="line">command_args=<span class="string">"-g <span class="variable">$&#123;pidfile&#125;</span> -y <span class="variable">$&#123;fpmconffile&#125;</span>"</span></span><br><span class="line"><span class="comment">#run_rc_command $1</span></span><br><span class="line">run_rc_command $*</span><br></pre></td></tr></table></figure>
+<p>下篇讲nginx的配置</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/04/08/freebsd-nginx-php5-dot-3-8-plus-php-fpm-1/" data-id="cjtcp5sna002scrsxo2xbj6wv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-php-zookeeper" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/03/25/php-zookeeper/" class="article-date">
+  <time datetime="2013-03-25T10:54:00.000Z" itemprop="datePublished">2013-03-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/php/">php</a>►<a class="article-category-link" href="/categories/php/hadoop/">hadoop</a>►<a class="article-category-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/03/25/php-zookeeper/">php和zookeeper交互获取hbase的master状态</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###为什么要使用zookeeper扩展<br>公司用了HHVM这玩意来编译php，其实我要给它NO，因为连zookeeper都没支持，如果要支持，要自己写扩展，这是一个奇葩的节奏。所以我们还是采用php脚本方式来调用pecl扩展来实现php和zookeeper通讯。<br>
+        
+          </p><p class="article-more-link">
+            <a href="/2013/03/25/php-zookeeper/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/03/25/php-zookeeper/" data-id="cjtcp5sn9002rcrsxzbbtz1mm" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ssh-copy-id" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/03/07/ssh-copy-id/" class="article-date">
+  <time datetime="2013-03-07T17:29:00.000Z" itemprop="datePublished">2013-03-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/shell/">shell</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/03/07/ssh-copy-id/">非常便捷的ssh信任制作脚本ssh-copy-id</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ssh-copy-id在版本比较高的freebsd的port中提供了，安装即可。手册一把原来这个工具就是shell脚本，ssh-copy-id这个工具可以方便的把公钥直接拷贝到对方服务器信任列表。比起来回切换服务器拷贝公钥方便多了。</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/03/07/ssh-copy-id/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/03/07/ssh-copy-id/" data-id="cjtcp5sn8002ocrsxacn97ykw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-erlang-c-nif" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/03/01/erlang-c-nif/" class="article-date">
+  <time datetime="2013-03-01T13:39:00.000Z" itemprop="datePublished">2013-03-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/03/01/erlang-c-nif/">erlang调用C库函数(NIF 方式)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/03/01/erlang-c-nif/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/03/01/erlang-c-nif/" data-id="cjtcp5sn5002kcrsxfak98ojh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-erlang-monitor-cpu-memory-disk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/02/27/erlang-monitor-cpu-memory-disk/" class="article-date">
+  <time datetime="2013-02-27T13:59:00.000Z" itemprop="datePublished">2013-02-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/02/27/erlang-monitor-cpu-memory-disk/">[转]Erlang监测系统CPU、内存和磁盘</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>os_mon<br>Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
+<font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font>
+
+<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
+<p>disksup：监测磁盘（Unix、Windows）</p>
+<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
+<p>os_sup：监测系统日志（Solaris、Windows）</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/02/27/erlang-monitor-cpu-memory-disk/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/02/27/erlang-monitor-cpu-memory-disk/" data-id="cjtcp5sn4002icrsx5scg15cv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-erlang-self-log-to-file" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/02/04/erlang-self-log-to-file/" class="article-date">
+  <time datetime="2013-02-04T18:19:00.000Z" itemprop="datePublished">2013-02-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/02/04/erlang-self-log-to-file/">erlang自带日志写文件的方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近读erlang/OTP并发编程介绍第七章的日志，发现居然没有记录到日志的方法。这种方式打印的日志，仅仅是输出到了控制台。自带SASL日志有很多局限，比如没有内置记录到文件的功能。其实还可以考虑一下log4erl，这里先介绍下自带日志的写文件的方法。</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(x)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-define</span><span class="params">(LogsLoaction,<span class="string">"/tmp/"</span>)</span>.</span><br><span class="line"></span><br><span class="line"><span class="keyword">-export</span><span class="params">([start/<span class="number">0</span>])</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">start</span><span class="params">()</span>-&gt;</span></span><br><span class="line"></span><br><span class="line">   FileName = ?LogsLoaction++<span class="string">"log.txt"</span>,</span><br><span class="line"></span><br><span class="line">   file:write_file(FileName, &lt;&lt;<span class="string">"start to record"</span>&gt;&gt;),</span><br><span class="line"></span><br><span class="line">   error_logger:logfile(&#123;open,FileName&#125;),</span><br><span class="line"></span><br><span class="line">   info(<span class="string">"[init] log start ~n"</span>).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">info</span><span class="params">(String)</span>-&gt;</span> error_logger:info_msg(String).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">info</span><span class="params">(String,Value)</span>-&gt;</span> error_logger:info_msg(String,Value).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">error</span><span class="params">(String)</span>-&gt;</span> error_logger:error_msg(String).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">error</span><span class="params">(String,Value)</span>-&gt;</span> error_logger:error_msg(String,Value).</span><br></pre></td></tr></table></figure>
+<p>对于日志文件的轮询还要使用newsyslog等软件进行轮询。本文相对开源的erl日志系统log4erl还是属于比较山寨的解决方案，没有进行系统的测试，仅能使用。:)。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/02/04/erlang-self-log-to-file/" data-id="cjtcp5sn1002dcrsxckhq7hrw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-log4erl-install-using" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/02/04/log4erl-install-using/" class="article-date">
+  <time datetime="2013-02-04T00:00:00.000Z" itemprop="datePublished">2013-02-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <hr>
+<p>layout: post<br>title: “log4erl 安装使用”<br>date: 2013-02-04 16:57<br>comments: true</p>
+<h2 id="categories-erlang"><a href="#categories-erlang" class="headerlink" title="categories:   erlang "></a>categories:   erlang </h2><p>目前项目急需一套可记录到文件并能自动轮询的机制的日志系统，考虑良久，最后置自带gen_event和标准日志函数于不顾，决定用log4erl。</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/02/04/log4erl-install-using/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/02/04/log4erl-install-using/" data-id="cjtcp5sn2002fcrsxai0a08db" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-apache-mina-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/01/14/apache-mina-hello-world/" class="article-date">
+  <time datetime="2013-01-14T14:14:00.000Z" itemprop="datePublished">2013-01-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/01/14/apache-mina-hello-world/">apache Mina 使用小记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>apache mina使用小记 简介     Apache MINA是一个网络应用程序框架，用来帮助用户简单地开发高性能和高可靠性的网络应用程序。它提供了一个通过Java NIO在不同的传输例如TCP/IP和UDP/IP上抽象的事件驱动的异步API。 环境为jdk1.6+freebsd9（64bit）+apache-mina-2.0.7+vim 首先是环境变量的配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setenv JAVA_HOME <span class="string">"/usr/local/diablo-jdk1.6.0/"</span></span><br><span class="line">setenv JAVA_BIN <span class="string">"/usr/local/bin/"</span></span><br></pre></td></tr></table></figure>
+<p>下载mina</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/home/evoup/monsrvd-2.1/<span class="built_in">test</span>/</span><br><span class="line">fetch http://mirror.bjtu.edu.cn/apache/mina/mina/2.0.7/dist/apache-mina-2.0.7-bin.tar.gz</span><br><span class="line">tar xzf apache-mina-2.0.7-bin.tar.gz</span><br><span class="line">cp apache-mina-2.0.7/dist/mina-core-2.0.7.jar .</span><br><span class="line">cp apache-mina-2.0.7/lib/slf4j-api-1.6.6.jar .</span><br></pre></td></tr></table></figure>
+<p>除此之外还需要slf4j这个是mina需要使用的日志库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fetch http://www.slf4j.org/dist/slf4j-1.7.2.tar.gz</span><br><span class="line">tar xzf slf4j-1.7.2.tar.gz</span><br><span class="line">cp slf4j-1.7.2/slf4j-api-1.7.2.jar .</span><br><span class="line">cp slf4j-1.7.2/slf4j-nop-1.7.2.jar .</span><br></pre></td></tr></table></figure>
+<p>设置好JAVA的CLASSPATH</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv CLASSPATH <span class="string">"/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-api-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/slf4j-nop-1.7.2.jar:/usr/home/evoup/project/management/monsrvd-2.1/test/mina-core-2.0.7.jar:/usr/local/diablo-jdk1.6.0/lib:."</span></span><br></pre></td></tr></table></figure>
+<p>找到mina的TimeServer的例子 <a href="http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html" target="_blank" rel="noopener">http://mina.apache.org/mina-project/userguide/ch2-basics/sample-tcp-server.html</a> 代码最后是这个样子，先不用管细节</p>
+<figure class="highlight java"><figcaption><span>MinaTimeServer.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.net.InetSocketAddress;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.Charset;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.core.service.IoAcceptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.core.session.IdleStatus;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.filter.codec.ProtocolCodecFilter;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.filter.codec.textline.TextLineCodecFactory;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.filter.logging.LoggingFilter;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.transport.socket.nio.NioSocketAcceptor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.mina.core.service.IoHandlerAdapter;</span><br><span class="line"><span class="keyword">import</span> org.apache.mina.core.session.IoSession;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.LoggerFactory;</span><br><span class="line"><span class="keyword">import</span> org.slf4j.Logger;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MinaTimeServer</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> PORT = <span class="number">9123</span>;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">( String[] args )</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function">   </span>&#123;</span><br><span class="line">       IoAcceptor acceptor = <span class="keyword">new</span> NioSocketAcceptor();</span><br><span class="line"></span><br><span class="line">       acceptor.getFilterChain().addLast( <span class="string">"logger"</span>, <span class="keyword">new</span> LoggingFilter() );</span><br><span class="line">       acceptor.getFilterChain().addLast( <span class="string">"codec"</span>, <span class="keyword">new</span> ProtocolCodecFilter( <span class="keyword">new</span> TextLineCodecFactory( Charset.forName( <span class="string">"UTF-8"</span> ))));</span><br><span class="line"></span><br><span class="line">       acceptor.setHandler( <span class="keyword">new</span> TimeServerHandler() );</span><br><span class="line">       acceptor.getSessionConfig().setReadBufferSize( <span class="number">2048</span> );</span><br><span class="line">       acceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, <span class="number">10</span> );</span><br><span class="line">       acceptor.bind( <span class="keyword">new</span> InetSocketAddress(PORT) );</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TimeServerHandler</span> <span class="keyword">extends</span> <span class="title">IoHandlerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Logger logger = LoggerFactory.getLogger(TimeServerHandler.class);</span><br><span class="line">   <span class="comment">//static Logger logger = Logger.getLogger(TimeServerHandler.class);</span></span><br><span class="line">   <span class="comment">//异常处理</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">exceptionCaught</span><span class="params">(IoSession session, Throwable cause)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">       cause.printStackTrace();</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//对接收到的数据进行业务处理，在这里我们不管收到什么信息都返回一个当前的日期</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">messageReceived</span><span class="params">(IoSession session, Object message)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">       String str = message.toString();</span><br><span class="line">       <span class="keyword">if</span> (str.trim().equalsIgnoreCase(<span class="string">"quit"</span>)) &#123;</span><br><span class="line">           session.close(<span class="keyword">true</span>);</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       logger.debug(<span class="string">"Rec:"</span> + str);</span><br><span class="line">       Date date = <span class="keyword">new</span> Date();</span><br><span class="line">       session.write(date.toString());</span><br><span class="line">       logger.debug(<span class="string">"Message written..."</span>);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//当连接空闲时的处理</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionIdle</span><span class="params">(IoSession session, IdleStatus status)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">       logger.debug(<span class="string">"IDLE "</span> + session.getIdleCount(status));</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[evoup@myhost]&gt;telnet 127.0.0.1 9123</span><br><span class="line">Trying 127.0.0.1...</span><br><span class="line">Connected to localhost.</span><br><span class="line"></span><br><span class="line">Escape character is <span class="string">'^]'</span>.</span><br><span class="line">Mon Jan 14 17:34:04 CST 2013</span><br><span class="line">Mon Jan 14 17:34:04 CST 2013</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/01/14/apache-mina-hello-world/" data-id="cjtcp5sn0002acrsxcovdglxz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-socket-server-recv-send-read-write-with-block-and-unblock" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/" class="article-date">
+  <time datetime="2013-01-09T11:42:00.000Z" itemprop="datePublished">2013-01-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/socket-server/">socket server</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/">关于socket阻塞与非阻塞情况下的recv、send、read、write返回值</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>####recv：</p>
+<p>阻塞与非阻塞recv返回值没有区分，都是 &lt;0：出错，=0：连接关闭，&gt;0接收到数据大小，</p>
+<p>特别：非阻塞模式下返回 值 &lt;0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况 下认为连接是正常的，继续接收。</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/01/09/socket-server-recv-send-read-write-with-block-and-unblock/" data-id="cjtcp5smy0028crsxie7dhrhn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-golang-daemonize" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/01/06/golang-daemonize/" class="article-date">
+  <time datetime="2013-01-06T17:37:00.000Z" itemprop="datePublished">2013-01-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/golang/">golang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2013/01/06/golang-daemonize/">golang的守护进程化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>golang的守护进程化代码，参考了网上的代码，结合自己的项目，去掉了一些没用的代码，增加了fork时候的判断处理，我的机器是freebsd，fork会报errno:0,忽略，原因见代码注释。</p>
+        
+          <p class="article-more-link">
+            <a href="/2013/01/06/golang-daemonize/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/01/06/golang-daemonize/" data-id="cjtcp5smw0025crsxkl9w2mli" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

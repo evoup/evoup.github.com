@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>centos下CVS服务器的配置 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="centos下CVS服务器的配置">
+<meta property="og:url" content="http://blog.evoupsight.com/2013/11/08/centos-install-cvs/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="centos下CVS服务器的配置">
+<meta name="twitter:description" content="由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-centos-install-cvs" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/11/08/centos-install-cvs/" class="article-date">
+  <time datetime="2013-11-08T13:20:00.000Z" itemprop="datePublished">2013-11-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/version-control/">version_control</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      centos下CVS服务器的配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于需要回顾以前在自己的cvs上建设的一些项目,把其中有用的项目直接放到github上方便调用，现在需要重拾cvs这个历史悠久的版本管理工具了。</p>
+<a id="more"></a>
+<p>在centos6上建设cvs服务器是比较方便的。大体分为几个步骤，xinetd-&gt;cvs-&gt;配置帐号-&gt;配置xinetd下pcvsserver文件-&gt;启动cvs服务端</p>
+<p>####1.安装xinetd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -q xinetd</span><br></pre></td></tr></table></figure>
+<p>没有安装的话</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install xinetd</span><br></pre></td></tr></table></figure>
+<p>####2.安装cvs</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -q cvs</span><br></pre></td></tr></table></figure>
+<p>我的系统显示<br>cvs-1.11.23-15.el6.x86_64<br>如果没有安装的话可以</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install cvs</span><br></pre></td></tr></table></figure>
+<p>####3.配置帐号<br>切换到root，执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">groupadd cvs</span><br><span class="line">useradd -g cvs cvsroot</span><br><span class="line">passwd cvsroot</span><br></pre></td></tr></table></figure>
+<p>这样帐号就配置好了。</p>
+<p>####4.修改cvs的配置文件/etc/xinetd.d/pcvsserver</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># default: off</span></span><br><span class="line"><span class="comment"># description: The CVS service can record the history of your source \</span></span><br><span class="line"><span class="comment">#              files. CVS stores all the versions of a file in a single \</span></span><br><span class="line"><span class="comment">#              file in a clever way that only stores the differences \</span></span><br><span class="line"><span class="comment">#              between versions.</span></span><br><span class="line">service cvspserver</span><br><span class="line">&#123;</span><br><span class="line">        <span class="built_in">disable</span>                 = no</span><br><span class="line">        port                    = 2401</span><br><span class="line">        socket_type             = stream</span><br><span class="line">        protocol                = tcp</span><br><span class="line">        <span class="built_in">wait</span>                    = no</span><br><span class="line">        user                    = root</span><br><span class="line">        passenv                 = PATH</span><br><span class="line">        server                  = /usr/bin/cvs</span><br><span class="line">        env                     = HOME=/home/cvsroot</span><br><span class="line">        server_args             = -f --allow-root=/home/cvsroot pserver</span><br><span class="line"><span class="comment">#       bind                    = 127.0.0.1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中env为cvs的环境变量地址，server_args指定你项目的源代码的保存路径和认证方式，这里pserver为基于密码的认证方式。</p>
+<p>####5.初始化和启动<br>初始化项目仓库的命令为</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cvs -d /home/cvsroot init</span><br></pre></td></tr></table></figure>
+<p>就是在刚才配置的env = HOME=/home/cvsroot目录长噢乖创建代码仓库</p>
+<p>接下来重启xinetd</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.d/init.d/xinetd restart</span><br></pre></td></tr></table></figure>
+<p>测试cvs是否存在<br>lsof -p 2401<br>或者<br>netstat -l | grep csv<br>不能使用ps aux | grep cvs，因为这是在xinetd下！</p>
+<p>安装就完成了。</p>
+<p>接下来还要提一下客户端tortoise cvs使用的问题，需要把cvs.exe的路径加到环境变量PATH中方可使用或者把cvsnt这款软件的cvs.exe拷贝到tortoise cvs安装目录中，否则会报句柄错误。</p>
+<p>####参考链接：</p>
+<p><a href="http://blog.csdn.net/lidongtang/article/details/8165574" target="_blank" rel="noopener">http://blog.csdn.net/lidongtang/article/details/8165574</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/11/08/centos-install-cvs/" data-id="cjtcp5sp1004dcrsxw440tnvc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/11/12/gvim-unable-to-open-swap-file/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          gvim无法打开交换文件
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/11/07/erlang-rebar-notool-not-found/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">rebar生成发布包后找不到noodtool</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

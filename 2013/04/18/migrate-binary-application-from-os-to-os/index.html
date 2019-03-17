@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>在操作系统之间迁移二进制程序之一 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="###写在前面乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在操作系统之间迁移二进制程序之一">
+<meta property="og:url" content="http://blog.evoupsight.com/2013/04/18/migrate-binary-application-from-os-to-os/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="###写在前面乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.evoupsight.com/images/evoup/pcc_result.png">
+<meta property="og:image" content="http://blog.evoupsight.com/images/evoup/pcc_result2.png">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在操作系统之间迁移二进制程序之一">
+<meta name="twitter:description" content="###写在前面乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把">
+<meta name="twitter:image" content="http://blog.evoupsight.com/images/evoup/pcc_result.png">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-migrate-binary-application-from-os-to-os" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/04/18/migrate-binary-application-from-os-to-os/" class="article-date">
+  <time datetime="2013-04-18T17:52:00.000Z" itemprop="datePublished">2013-04-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/freebsd/">freebsd</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      在操作系统之间迁移二进制程序之一
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>###写在前面<br>乍一看又标题党了，但以下文章虽然提到了一个过时的软件pcc2.0，实际我们只是用通过研究程序内部的工作机制，进行举一反三，以再今后的工作中能够起到触类旁通、抛砖引玉的功效。<br><br>单位有台机器HostA上安装了鲜为人知的软件叫做pcc2.0，这是一个php的编译器，虽然有许多bug，仍旧采用人工hack的方式使用它。但是目前已经找不到安装包了，怎么办？难道要叫运维帮忙克隆系统吗，有没有办法把程序直接移植到另一台机器HostB上去？答案是肯定的。</p>
+<a id="more"></a>
+<p>###程序定位和复制</p>
+<p>####主程序的复制<br>这个程序就是pcc，首先找一下pcc的路径。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ whereis pcc</span><br><span class="line">pcc: /usr/bin/pcc /usr/ports/lang/pcc</span><br></pre></td></tr></table></figure>
+<p>可见pcc所在/usr/bin/目录下，先把这个复制过去</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo scp user@hostA:/usr/bin/pcc /usr/bin/</span><br></pre></td></tr></table></figure>
+<p>####程序依赖库的复制<br>如果这个程序是静态方式编译的，就这样完成了，而如果是动态编译的话，就需要拷贝其他动态库使它能够运行了。怎么确定是否是静态编译还是动态编译？很简单:使用ldd(在HostA上)，我们看一下吧：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ ldd /usr/bin/pcc</span><br><span class="line">/usr/bin/pcc:</span><br><span class="line">        libphp-runtime_u.so =&gt; /usr/lib/libphp-runtime_u.so (0x28083000)</span><br><span class="line">        libprofiler_u.so =&gt; /usr/lib/libprofiler_u.so (0x280ee000)</span><br><span class="line">        libwebconnect_u.so =&gt; /usr/lib/libwebconnect_u.so (0x280f2000)</span><br><span class="line">        libphpeval_u.so =&gt; /usr/lib/libphpeval_u.so (0x28108000)</span><br><span class="line">        libbigloo_u-2.6f.so =&gt; /usr/lib/libbigloo_u-2.6f.so (0x28250000)</span><br><span class="line">        libbigloogc-2.6f.so =&gt; /usr/lib/libbigloogc-2.6f.so (0x2833a000)</span><br><span class="line">        libm.so.4 =&gt; /lib/libm.so.4 (0x2835c000)</span><br><span class="line">        libc.so.6 =&gt; /lib/libc.so.6 (0x28372000)</span><br></pre></td></tr></table></figure>
+<p>好的，我们登进HostB，可以看到小小一个pcc软件依赖了这么多的so文件，所以这些文件以及这些文件的依赖库都是要复制过去的。值得一提的是，pcc使用了libbigloo库，而它的版本是2.6f，所以我们要先安装好。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /home/software</span><br><span class="line">$ fetch https://pkgs.fedoraproject.org/repo/pkgs/bigloo/bigloo2.6f.tar.gz/bc99b1919adee864dd371aeebc36862c/bigloo2.6f.tar.gz</span><br><span class="line">$ tar xzf bigloo2.6f.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> bigloo2.6f</span><br><span class="line">$ ./configure --jvm=no</span><br><span class="line">*** ERROR:configure:the C compiler (/usr/<span class="built_in">local</span>/bin/gcc44) does not seem to work. Aborting</span><br><span class="line">$ whereis gcc</span><br><span class="line">gcc: /usr/bin/gcc /usr/share/man/man1/gcc.1.gz /usr/src/contrib/gcc</span><br><span class="line">$ sudo ln -s /usr/bin/gcc /usr/<span class="built_in">local</span>/bin/gcc44</span><br><span class="line">$ ./configure --jvm=no</span><br><span class="line">$ gmake</span><br><span class="line">$ sudo gmake install</span><br></pre></td></tr></table></figure>
+<p>安装完成返回来继续复制，要注意已经存在的不能去盖了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ ldd /usr/bin/pcc</span><br><span class="line">/usr/bin/pcc:</span><br><span class="line">        libphp-runtime_u.so =&gt; not found (0x0)</span><br><span class="line">        libprofiler_u.so =&gt; not found (0x0)</span><br><span class="line">        libwebconnect_u.so =&gt; not found (0x0)</span><br><span class="line">        libphpeval_u.so =&gt; not found (0x0)</span><br><span class="line">        libbigloo_u-2.6f.so =&gt; /usr/<span class="built_in">local</span>/lib/libbigloo_u-2.6f.so (0x28083000)</span><br><span class="line">        libbigloogc-2.6f.so =&gt; /usr/<span class="built_in">local</span>/lib/libbigloogc-2.6f.so (0x2816d000)</span><br><span class="line">        libm.so.4 =&gt; /lib/libm.so.4 (0x2818f000)</span><br><span class="line">        libc.so.6 =&gt; /lib/libc.so.6 (0x281a5000)</span><br></pre></td></tr></table></figure>
+<p>好的，只要not found的我们从HostA复制过来</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo scp user@hostA:/usr/lib/libphp-runtime_u.so /usr/lib/</span><br><span class="line">$ sudo scp user@hostA:/usr/lib/libprofiler_u.so /usr/lib/</span><br><span class="line">$ sudo scp user@hostA:/usr/lib/libwebconnect_u.so /usr/lib/</span><br><span class="line">$ sudo scp user@hostA:/usr/lib/libphpeval_u.so /usr/lib/</span><br></pre></td></tr></table></figure>
+<p>然后对于每个新的so，需要再进一步用ldd检查依赖，如果没有的也要复制过来。<br>试试看，其实已经可以了：<br><img src="/images/evoup/pcc_result.png" alt="Alt text"></p>
+<p>但是要真正能使用这个软件，还需要复制/opt过来</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp -dr user@hostA:/opt /</span><br><span class="line">sudo chown root -R /opt</span><br></pre></td></tr></table></figure>
+<p>然后写一个php测试脚本</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">phpinfo();</span><br></pre></td></tr></table></figure>
+<p>编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ pcc --static index.php -o index</span><br><span class="line">&gt;./index</span><br><span class="line">Runtime error <span class="keyword">in</span> file index.php on line 2: lookup-function - undefined <span class="keyword">function</span>: phpinfo</span><br></pre></td></tr></table></figure>
+<p>看来还有些库没有包含,进入/opt/roadsend/pcc/libs/果然发现很多库，要放在什么地方呢？一般是/usr/lib/<br>再看一下/opt/roadsend/pcc/bin/roadsend-pcc-uninstall.sh</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">#</span><br><span class="line"># This is an automatically generated uninstaller script for the</span><br><span class="line"># Roadsend PHP Compiler package</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">## require root</span><br><span class="line">me=`id -u`</span><br><span class="line">if [ &quot;$me&quot; -ne 0 ]</span><br><span class="line">then</span><br><span class="line">    echo &quot;You must be root to run uninstaller&quot;</span><br><span class="line">    exit 1</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">echo &quot;Uninstalling Roadsend Compiler Runtime...&quot;</span><br><span class="line"></span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libcgi_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-std_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphpeval_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libprofiler_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libcgi_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libfastcgi_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libmhttpd_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-curl_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-gtk_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-mysql_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-pcre_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-runtime_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-std_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphp-xml_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libphpeval_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libprofiler_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libwebconnect_u.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-curl.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-gtk.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-mysql.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-pcre.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-runtime.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-std.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-xml.sch</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/cgi.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/fastcgi.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/mhttpd.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-curl.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-gtk.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-mysql.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-pcre.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.h</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo_config.h</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/bigloo.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloo_u-2.6f.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/bigloo/2.6f/libbigloogc-2.6f.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-runtime.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-std.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-xml.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/phpeval.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/profiler.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/webconnect.heap</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-gtk.init</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/php-xml.init</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/phpeval.init</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libmyapp_s.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libwebserver.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libwebserver.a</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/web_server.h</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libbigloo_u-2.6f.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/libs/libbigloogc-2.6f.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/modules/fastcgi/pcc.fcgi</span><br><span class="line">rm -f /./opt/roadsend/pcc/modules/apache1.3.x/mod_pcc.so</span><br><span class="line">rm -f /./opt/roadsend/pcc/bin/bigloo</span><br><span class="line">rm -f /usr/lib/libbigloo_u-2.6f.so</span><br><span class="line">rm -f /usr/lib/libbigloogc-2.6f.so</span><br><span class="line">rm -f /usr/lib/libcgi_u.so</span><br><span class="line">rm -f /usr/lib/libfastcgi_u.so</span><br><span class="line">rm -f /usr/lib/libmhttpd_u.so</span><br><span class="line">rm -f /usr/lib/libmyapp_s.so</span><br><span class="line">rm -f /usr/lib/libphp-curl_u.so</span><br><span class="line">rm -f /usr/lib/libphp-gtk_u.so</span><br><span class="line">rm -f /usr/lib/libphp-mysql_u.so</span><br><span class="line">rm -f /usr/lib/libphp-pcre_u.so</span><br><span class="line">rm -f /usr/lib/libphp-runtime_u.so</span><br><span class="line">rm -f /usr/lib/libphp-std_u.so</span><br><span class="line">rm -f /usr/lib/libphp-xml_u.so</span><br><span class="line">rm -f /usr/lib/libphpeval_u.so</span><br><span class="line">rm -f /usr/lib/libprofiler_u.so</span><br><span class="line">rm -f /usr/lib/libwebconnect_u.so</span><br><span class="line">rm -f /usr/lib/libwebserver.so</span><br><span class="line">rm -f /usr/lib/libcgi_u.a</span><br><span class="line">rm -f /usr/lib/libfastcgi_u.a</span><br><span class="line">rm -f /usr/lib/libmhttpd_u.a</span><br><span class="line">rm -f /usr/lib/libphp-curl_u.a</span><br><span class="line">rm -f /usr/lib/libphp-gtk_u.a</span><br><span class="line">rm -f /usr/lib/libphp-mysql_u.a</span><br><span class="line">rm -f /usr/lib/libphp-pcre_u.a</span><br><span class="line">rm -f /usr/lib/libphp-runtime_u.a</span><br><span class="line">rm -f /usr/lib/libphp-std_u.a</span><br><span class="line">rm -f /usr/lib/libphp-xml_u.a</span><br><span class="line">rm -f /usr/lib/libphpeval_u.a</span><br><span class="line">rm -f /usr/lib/libprofiler_u.a</span><br><span class="line">rm -f /usr/lib/libwebconnect_u.a</span><br><span class="line">rm -f /usr/lib/libwebserver.a</span><br><span class="line">    if [ -f &quot;/sbin/ldconfig&quot; ]; then</span><br><span class="line">        echo &quot;running ldconfig ...&quot;</span><br><span class="line">        /sbin/ldconfig</span><br><span class="line">    fi</span><br><span class="line">rm -f /opt/roadsend/pcc/bin/roadsend-pcc-runtime-uninstall.sh</span><br></pre></td></tr></table></figure>
+<p>看来还有一些项目要复制或者软连接到/usr/lib/去</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /opt/roadsend/pcc/libs/libbigloo_u-2.6f.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libbigloogc-2.6f.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libcgi_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libfastcgi_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libmyapp_s.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-std_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphpeval_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libprofiler_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebserver.so /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libcgi_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libmhttpd_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-curl_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-gtk_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-mysql_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-pcre_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-runtime_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-std_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphp-xml_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libphpeval_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libprofiler_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebconnect_u.a /usr/lib/</span><br><span class="line">sudo cp /opt/roadsend/pcc/libs/libwebserver.a /usr/lib/</span><br></pre></td></tr></table></figure>
+<p>除此之外，还需要复制配置文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo scp user@hostA:/etc/pcc.conf /etc/</span><br><span class="line">sudo scp user@hostA:/etc/pcc_conf.conf /etc/</span><br></pre></td></tr></table></figure>
+<p>再次运行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ pcc --static index.php -o index</span><br><span class="line"></span><br><span class="line">*** ERROR:bigloo:error-handler:</span><br><span class="line">Extension /opt/roadsend/pcc/libs/libphp-pcre_u.so didn<span class="string">'t load because: Shared object "libpcre.so.0" not found, required by "libphp-pcre_u.so", dynamic-load:/opt/roadsend/pcc/libs/libphp-pcre_u.so, /opt/roadsend/pcc/libs/libphp-pcre_u.so</span></span><br><span class="line"><span class="string">You may wish to remove this extension from /etc/pcc.conf if it exists. -- error-handler</span></span><br></pre></td></tr></table></figure>
+<p>又出现一个</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo scp user@hostA:/usr/<span class="built_in">local</span>/lib/libpcre.so.0 /usr/<span class="built_in">local</span>/lib/</span><br><span class="line">sudo scp user@hostA:/usr/<span class="built_in">local</span>/lib/libgcc_s.so.1 /usr/<span class="built_in">local</span>/lib/</span><br></pre></td></tr></table></figure>
+<p>再编译</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ pcc --static index.php -o index</span><br><span class="line">Error: problem running command &apos;gcc&apos;, exit status 1</span><br><span class="line">Rerunning with debug level 2 may provide more information.</span><br><span class="line">$ pcc --static index.php -o index -d 2</span><br><span class="line">...</span><br><span class="line">&gt;&gt;&gt;   /usr/bin/ld: cannot find -lcurl</span><br><span class="line">ERR:</span><br><span class="line">Error: problem running command &apos;gcc&apos;, exit status 1</span><br><span class="line">&gt;&gt;&gt;   cleaning up...</span><br></pre></td></tr></table></figure>
+<p>这个只要curl装好了其实应该就可以了，为什么还会报？根据同事的帮助，可以直接</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /usr/<span class="built_in">local</span>/lib/libcurl.a /lib/</span><br></pre></td></tr></table></figure>
+<p>这样就肯定能找到了,再次编译运行终于出现php的信息了。<br><img src="/images/evoup/pcc_result2.png" alt="Alt text"></p>
+<p>这里提供整个系统下载，帐号root密码空，供自行研究：）<br><a href="http://pan.baidu.com/s/1hqkTnE0" target="_blank" rel="noopener">http://pan.baidu.com/s/1hqkTnE0</a></p>
+<p>告一段落，下一篇写怎么把这些东西做成rpm直接安装</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/04/18/migrate-binary-application-from-os-to-os/" data-id="cjtcp5ssi00c1crsxzys28rps" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/04/21/ssh-authorized-keys/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          创建ssh信任失败的原因分析和改进
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/04/17/freebsd6-dot-2i386-install-subversion/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">freebsd6.2i386安装subversion1.8.8</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

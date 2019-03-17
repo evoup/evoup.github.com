@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>导入mysql的几种方法 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导入mysql的几种方法">
+<meta property="og:url" content="http://blog.evoupsight.com/2012/09/16/mysql-import-method-compare/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="导入mysql的几种方法">
+<meta name="twitter:description" content="mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mysql-import-method-compare" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2012/09/16/mysql-import-method-compare/" class="article-date">
+  <time datetime="2012-09-16T14:16:00.000Z" itemprop="datePublished">2012-09-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mysql/">mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      导入mysql的几种方法
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>mysql这玩意官方导入的方法我初步估算了一下，有5种。这里不涉及使用第三方软件导入的分析（如phpmyadmin）。且听下文点评各个方案要注意的部分，有错之处还请不吝赐教。</p>
+<a id="more"></a>
+<p>####1）mysql加管道符导入<br>这是最基本的方法,语法见下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uuser -p dbname &lt; import.sql</span><br></pre></td></tr></table></figure>
+<p>这种方案导入的时候要注意编码的问题，通过加入–default-character-set = utf8来解决，此外好像对csv和纯文本文件的导入支持比较差。要强制导入成功可以用–force参数。</p>
+<p>####2）load data infile<br>这个需要在mysql的shell中跑，语法见下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use dbname;<span class="built_in">set</span> names utf8;load data infile <span class="string">"/path/to/import.csv"</span> into table tbname(field1,field2)</span><br></pre></td></tr></table></figure>
+<p>这种方案默认的列分隔符为\t而行分隔符为\n，也就是说文本导入默认是unix换行格式的。而空数据的导入默认是认为\N导入之后就是NULL了。除此之外必须指定表名字，也就是说你有多个分表要导入就要写很多语句或者写一个shell遍历这么多的表，效率是可想而知的慢。</p>
+<p>####3）source<br>这个同样是需要在mysql的shell中跑，语法见下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use dbname;<span class="built_in">set</span> names utf8;<span class="built_in">source</span> import.sql</span><br></pre></td></tr></table></figure>
+<p>这种方案我没怎么试过，据说会出现导入过程中卡死，退出表损坏的状况，不推荐大胆尝试。</p>
+<p>####4）mysql -e<br>这个方法其实就是执行若干sql，语法见下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -uuser -p -e <span class="string">"use dbname;set names utf8;insert into tbname(field1,field2) values('foo','bar');"</span></span><br></pre></td></tr></table></figure>
+<p>所以这其实称不上是什么方法，前面的方法2和方法3都可以偷梁换柱啦：）</p>
+<p>####5）mysqlimport<br>这是mysql官方安装包提供的工具了，使用方法：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqlimport -uuser -p -h127.0.0.1 dbname importdir/* --field-terminated-by=<span class="string">','</span> --filelds-optionally-enclosed-by=<span class="string">'"'</span> --<span class="built_in">local</span> --compress --use-thread=12</span><br></pre></td></tr></table></figure>
+<p>以上这条语句代表把本地文件夹importdir下的所有准备导入的文本，按照以逗号为字段分割符，双引号为行分隔符，以压缩的方式，开12个线程同时导入到位于127.0.0.1上mysql服务器的dbname库中。<br>可见这种方案可以多表并发导入，不需要写多条语句就可以完成任务，推荐使用,另外提一句，上面的语句只需要用php的fputcsv函数并指定文件资源和写入行字符串这2个参数就可以了。<br>最后，如果使用mysqldump最好不要用-T的方式导出，因为据说无法使用set unique_checks、set autocommit等实现加速导入。</p>
+<p>####参考文章</p>
+<p><a href="http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/" target="_blank" rel="noopener">http://mechanics.flite.com/blog/2013/02/05/capturing-errors-and-warnings-from-load-data-infile/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2012/09/16/mysql-import-method-compare/" data-id="cjtcp5sme001ocrsx135q7a5p" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2012/10/22/freebsd-install-ganglia3-dot-4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          freebsd安装ganglia3.4
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2012/01/09/server-develop-knowledge/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">服务器开发知识汇总2010年整理的</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

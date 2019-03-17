@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>erlang调用C库函数(NIF 方式) | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。 好久没写C的动态库了，记得上次还是学习vc的时候去调">
+<meta property="og:type" content="article">
+<meta property="og:title" content="erlang调用C库函数(NIF 方式)">
+<meta property="og:url" content="http://blog.evoupsight.com/2013/03/01/erlang-c-nif/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。 好久没写C的动态库了，记得上次还是学习vc的时候去调">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="erlang调用C库函数(NIF 方式)">
+<meta name="twitter:description" content="新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。 好久没写C的动态库了，记得上次还是学习vc的时候去调">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-erlang-c-nif" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/03/01/erlang-c-nif/" class="article-date">
+  <time datetime="2013-03-01T13:39:00.000Z" itemprop="datePublished">2013-03-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      erlang调用C库函数(NIF 方式)
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>新客户端要求节省系统开销，对于监控的项目，如cpu的load不要通过shell的方式（如top）来获取，通过阅读先关开源软件的代码发现了getloadavg这个C标准库函数。考虑erlang三种和C外围程序交互的方式中，如果开发同步程序的话，NIF（本地函数）是在最高效的。但也要注意一下不要把费事阻塞的操作写到NIF中去，否则会vm会一直等待。</p>
+<p>好久没写C的动态库了，记得上次还是学习vc的时候去调用dll,还好unix下做动态库很容易。这就开始，拿到《erlang OTP并发编程》翻到十二章，发现该书OTP的版本有R13和R14。我手头的版本是R15，</p>
+<a id="more"></a>
+<p>参考了例子和这篇文章《Erlang NIF简析》<a href="http://blog.csdn.net/keyeagle/article/details/7009208" target="_blank" rel="noopener">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
+<p>终于实验成功。</p>
+<figure class="highlight c"><figcaption><span>cgetloadavg.c</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"erl_nif.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> ERL_NIF_TERM <span class="title">getloadavg_ex</span><span class="params">(ErlNifEnv* env, <span class="keyword">int</span> argc, <span class="keyword">const</span> ERL_NIF_TERM argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">double</span> load[<span class="number">3</span>];</span><br><span class="line">   <span class="keyword">char</span> buf[<span class="number">30</span>];</span><br><span class="line">   <span class="keyword">if</span> (getloadavg(load,<span class="number">3</span>)==<span class="number">-1</span>) &#123;</span><br><span class="line">       <span class="built_in">sprintf</span>(buf, <span class="string">"%f"</span>, <span class="number">0</span>);</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       <span class="built_in">sprintf</span>(buf, <span class="string">"%f"</span>, load[<span class="number">0</span>]);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> enif_make_string(env, buf, ERL_NIF_LATIN1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> ErlNifFunc nif_funcs[] =</span><br><span class="line">&#123;</span><br><span class="line">   &#123;<span class="string">"getloadavg_ex"</span>, <span class="number">0</span>, getloadavg_ex&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">ERL_NIF_INIT(getloadtest,nif_funcs,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)</span><br></pre></td></tr></table></figure>
+<p>以下写下简单的调用过程：</p>
+<p><code>`</code>bash<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o getloadtest.so -fpic -shared -I /usr/<span class="built_in">local</span>/lib/erlang/erts-5.9.1/include/ cgetloadavg.c</span><br></pre></td></tr></table></figure></p>
+<p>还没有在app里试验，如果是标准app<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o ./priv/getloadtest.so -fpic -shared -I /usr/<span class="built_in">local</span>/lib/erlang/erts-5.9.1/include/ cgetloadavg.c</span><br></pre></td></tr></table></figure></p>
+<p>就可以生成供NIF调用的动态链接库</p>
+<p>然后是erlang的，调用很简单：</p>
+<figure class="highlight erlang"><figcaption><span>getloadtest.erl</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">-module</span><span class="params">(getloadtest)</span>.</span><br><span class="line"><span class="keyword">-export</span><span class="params">([init/<span class="number">0</span>, getloadavg_ex/<span class="number">0</span>])</span>.</span><br><span class="line">-on_load<span class="params">(init/<span class="number">0</span>)</span>.</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">init</span><span class="params">()</span> -&gt;</span></span><br><span class="line">   erlang:load_nif(<span class="string">"./getloadtest"</span>, <span class="number">0</span>).</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">getloadavg_ex</span><span class="params">()</span> -&gt;</span></span><br><span class="line">   <span class="string">"NIF library not loaded"</span>.</span><br></pre></td></tr></table></figure>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Eshell V5.<span class="number">9.1</span>  (abort with ^G)</span><br><span class="line"><span class="number">1</span>&gt; c(getloadtest).</span><br><span class="line">&#123;ok,getloadtest&#125;</span><br><span class="line"><span class="number">2</span>&gt; getloadtest:getloadavg_ex().</span><br><span class="line"><span class="string">"2.263184"</span></span><br></pre></td></tr></table></figure>
+<p>reference:</p>
+<p><a href="http://www.erlang.org/doc/tutorial/nif.html" target="_blank" rel="noopener">http://www.erlang.org/doc/tutorial/nif.html</a></p>
+<p><a href="http://www.erlang.org/doc/man/erl_nif.html" target="_blank" rel="noopener">http://www.erlang.org/doc/man/erl_nif.html</a></p>
+<p><a href="http://blog.csdn.net/d52787790/article/details/7103288" target="_blank" rel="noopener">http://blog.csdn.net/d52787790/article/details/7103288</a></p>
+<p><a href="http://blog.csdn.net/keyeagle/article/details/7009208" target="_blank" rel="noopener">http://blog.csdn.net/keyeagle/article/details/7009208</a></p>
+<p><a href="http://www.freebsd.org/cgi/man.cgi?query=getloadavg" target="_blank" rel="noopener">http://www.freebsd.org/cgi/man.cgi?query=getloadavg</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/03/01/erlang-c-nif/" data-id="cjtcp5sn5002kcrsxfak98ojh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/03/07/ssh-copy-id/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          非常便捷的ssh信任制作脚本ssh-copy-id
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/02/27/erlang-monitor-cpu-memory-disk/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">[转]Erlang监测系统CPU、内存和磁盘</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

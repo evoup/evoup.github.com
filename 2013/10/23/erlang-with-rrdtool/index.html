@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>[How to]在erlang中使用rrdtool进行监控数据的保存 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="##概述 项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。 rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。 关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html ##准备工作在free">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[How to]在erlang中使用rrdtool进行监控数据的保存">
+<meta property="og:url" content="http://blog.evoupsight.com/2013/10/23/erlang-with-rrdtool/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="##概述 项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。 rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。 关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html ##准备工作在free">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://blog.evoupsight.com/images/evoup/rrdtool_dump.png">
+<meta property="og:image" content="http://blog.evoupsight.com/images/evoup/rrdtool_load_graph.png">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[How to]在erlang中使用rrdtool进行监控数据的保存">
+<meta name="twitter:description" content="##概述 项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。 rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。 关于如何创建rrd数据库的文章可以看这里http://www.cuddletech.com/articles/rrd/ar01s02.html ##准备工作在free">
+<meta name="twitter:image" content="http://blog.evoupsight.com/images/evoup/rrdtool_dump.png">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-erlang-with-rrdtool" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/10/23/erlang-with-rrdtool/" class="article-date">
+  <time datetime="2013-10-23T15:12:00.000Z" itemprop="datePublished">2013-10-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>►<a class="article-category-link" href="/categories/erlang/rrdtool/">rrdtool</a>►<a class="article-category-link" href="/categories/erlang/rrdtool/monitor/">monitor</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [How to]在erlang中使用rrdtool进行监控数据的保存
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##概述</p>
+<p>项目需要保存监控数据，之前用hbase存然后再出图的方式，虽然数据量可以，但整个方式比较落后。</p>
+<p>rrdtool是专门为了保存和出图设计的数据库。它的全称为round robin database，我们通常叫它为环状数据库。</p>
+<p>关于如何创建rrd数据库的文章可以看这里<a href="http://www.cuddletech.com/articles/rrd/ar01s02.html" target="_blank" rel="noopener">http://www.cuddletech.com/articles/rrd/ar01s02.html</a></p>
+<p>##准备工作<br>在freebsd上安装rrdtool1.2以上的版本<br><a id="more"></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/port/databases/rrdtool12</span><br><span class="line">sudo make install clean</span><br></pre></td></tr></table></figure>
+<p>erlang对应接口的安装</p>
+<p>在项目中rebar.conf对应位置中加入8-11行的内容</p>
+<figure class="highlight erlang"><figcaption><span>rebar.conf start:0</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;deps, [</span><br><span class="line">    &#123;mochiweb, <span class="string">"1.5.1"</span>,</span><br><span class="line">        &#123;git, <span class="string">"git://github.com/mochi/mochiweb.git"</span>,</span><br><span class="line">            &#123;tag, <span class="string">"1.5.1"</span>&#125; &#125;&#125;,</span><br><span class="line">        &#123;'log4erl', <span class="string">".*"</span>,</span><br><span class="line">            &#123;git, <span class="string">"git://github.com/ahmednawras/log4erl.git"</span>,</span><br><span class="line">                <span class="string">"master"</span>&#125; &#125;,</span><br><span class="line marked">        &#123;'rrdtool', <span class="string">".*"</span>,</span><br><span class="line marked">            &#123;git, <span class="string">"git://github.com/Vagabond/erlang-rrdtool.git"</span>,</span><br><span class="line marked">                <span class="string">"master"</span>&#125; &#125;</span><br><span class="line marked">    ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;sub_dirs, [<span class="string">"apps/monitorserver2"</span>, <span class="string">"rel"</span>]&#125;.</span><br></pre></td></tr></table></figure>
+<p>以及<br>rel/reltool.config对应位置中加入第13、30行的内容</p>
+<figure class="highlight erlang"><figcaption><span>rebar.conf start:0</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&#123;sys, [</span><br><span class="line">       &#123;lib_dirs, [<span class="string">"../apps"</span>, <span class="string">"../deps"</span>]&#125;,</span><br><span class="line">       &#123;erts, [&#123;mod_cond, derived&#125;, &#123;app_file, strip&#125;]&#125;,</span><br><span class="line">       &#123;app_file, strip&#125;,</span><br><span class="line">       &#123;rel, <span class="string">"monitorserver2"</span>, <span class="string">"1"</span>,</span><br><span class="line">        [</span><br><span class="line">         kernel,</span><br><span class="line">         stdlib,</span><br><span class="line">         sasl,</span><br><span class="line">         inets,</span><br><span class="line">         crypto,</span><br><span class="line">         mochiweb,</span><br><span class="line marked">         rrdtool,</span><br><span class="line">         monitorserver2</span><br><span class="line">        ]&#125;,</span><br><span class="line">       &#123;rel, <span class="string">"start_clean"</span>, <span class="string">""</span>,</span><br><span class="line">        [</span><br><span class="line">         kernel,</span><br><span class="line">         stdlib</span><br><span class="line">        ]&#125;,</span><br><span class="line">       &#123;boot_rel, <span class="string">"monitorserver2"</span>&#125;,</span><br><span class="line">       &#123;profile, embedded&#125;,</span><br><span class="line">       &#123;incl_cond, exclude&#125;,</span><br><span class="line">       &#123;excl_archive_filters, [<span class="string">".*"</span>]&#125;, <span class="comment">%% Do not archive built libs</span></span><br><span class="line">       &#123;excl_sys_filters, [<span class="string">"^bin/.*"</span>, <span class="string">"^erts.*/bin/(dialyzer|typer)"</span>,</span><br><span class="line">                           <span class="string">"^erts.*/(doc|info|include|lib|man|src)"</span>]&#125;,</span><br><span class="line">       &#123;excl_app_filters, [<span class="string">"\.gitignore"</span>]&#125;,</span><br><span class="line">       &#123;app, sasl,   [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, mochiweb,   [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line marked">       &#123;app, rrdtool,   [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, crypto,   [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, inets,   [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, stdlib, [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, kernel, [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, mnesia, [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, xmerl, [&#123;incl_cond, include&#125;]&#125;,</span><br><span class="line">       &#123;app, monitorserver2, [&#123;incl_cond, include&#125;]&#125;</span><br><span class="line">      ]&#125;.</span><br><span class="line"></span><br><span class="line">&#123;target_dir, <span class="string">"monitorserver2"</span>&#125;.</span><br><span class="line"></span><br><span class="line">&#123;overlay, [</span><br><span class="line">           &#123;mkdir, <span class="string">"log/sasl"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/erl"</span>, <span class="string">"\&#123;\&#123;erts_vsn\&#125;\&#125;/bin/erl"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/nodetool"</span>, <span class="string">"\&#123;\&#123;erts_vsn\&#125;\&#125;/bin/nodetool"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/monitorserver2"</span>, <span class="string">"bin/monitorserver2"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/monitorserver2.cmd"</span>, <span class="string">"bin/monitorserver2.cmd"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/start_erl.cmd"</span>, <span class="string">"bin/start_erl.cmd"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/install_upgrade.escript"</span>, <span class="string">"bin/install_upgrade.escript"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/sys.config"</span>, <span class="string">"releases/\&#123;\&#123;rel_vsn\&#125;\&#125;/sys.config"</span>&#125;,</span><br><span class="line">           &#123;copy, <span class="string">"files/vm.args"</span>, <span class="string">"releases/\&#123;\&#123;rel_vsn\&#125;\&#125;/vm.args"</span>&#125;</span><br><span class="line">          ]&#125;.</span><br></pre></td></tr></table></figure>
+<p>这样就算安装完成了（需要注意项目使用了rebar）</p>
+<p>##创建RRD数据库</p>
+<p>然后我们参考下开源监控软件ganglia的load_one数据库结构：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">rrdtool info load_one.rrd</span><br><span class="line"></span><br><span class="line">filename = <span class="string">"load_one.rrd"</span></span><br><span class="line">rrd_version = <span class="string">"0003"</span></span><br><span class="line">step = 15</span><br><span class="line">last_update = 1382507991</span><br><span class="line">ds[sum].<span class="built_in">type</span> = <span class="string">"GAUGE"</span></span><br><span class="line">ds[sum].minimal_heartbeat = 120</span><br><span class="line">ds[sum].min = NaN</span><br><span class="line">ds[sum].max = NaN</span><br><span class="line">ds[sum].last_ds = <span class="string">"0.10"</span></span><br><span class="line">ds[sum].value = 6.0000000000e-01</span><br><span class="line">ds[sum].unknown_sec = 0</span><br><span class="line">rra[0].cf = <span class="string">"AVERAGE"</span></span><br><span class="line">rra[0].rows = 5856</span><br><span class="line">rra[0].pdp_per_row = 1</span><br><span class="line">rra[0].xff = 5.0000000000e-01</span><br><span class="line">rra[0].cdp_prep[0].value = NaN</span><br><span class="line">rra[0].cdp_prep[0].unknown_datapoints = 0</span><br><span class="line">rra[1].cf = <span class="string">"AVERAGE"</span></span><br><span class="line">rra[1].rows = 20160</span><br><span class="line">rra[1].pdp_per_row = 4</span><br><span class="line">rra[1].xff = 5.0000000000e-01</span><br><span class="line">rra[1].cdp_prep[0].value = 3.3266666667e-01</span><br><span class="line">rra[1].cdp_prep[0].unknown_datapoints = 0</span><br><span class="line">rra[2].cf = <span class="string">"AVERAGE"</span></span><br><span class="line">rra[2].rows = 52704</span><br><span class="line">rra[2].pdp_per_row = 40</span><br><span class="line">rra[2].xff = 5.0000000000e-01</span><br><span class="line">rra[2].cdp_prep[0].value = 2.2742000000e+01</span><br><span class="line">rra[2].cdp_prep[0].unknown_datapoints = 14</span><br></pre></td></tr></table></figure>
+<p>熟悉一下它的结构，数据库的名字叫做load_one.rrd，rrd的版本为3，步长step为15秒，即15秒之内的数据不能再次被写入，为一个最小单位。<br>然后last_update为最后一次更新的时间戳，数据类型为GAUGE，这是一种直接写入不做平均计算的数据类型。minimal_heartbeat为120秒，意思是120秒内没有数据被更新，系统认为状态未知。<br>min max为最大和最小。last_ds最后的ds为0.10，最后被写入的数据为6.0000000000e-01，就是0.6，未知的时间为0。<br>接下来CF的第一个AVERAGE的每行（row）有1个pdp（ Primary Data Point），共有5856个pdp,我们算下代表的时间跨度，15<em>1</em>5856=87840秒，为24.4小时。为啥有0.4小时，估计是出图的时候，为了更好看吧，可以不去管它。这里废话一句：也可以通过如下命令查看实际的时间跨度：<br>rrdtool dump load_one.rrd &gt; load_one.xml<br>进去可以看一下是不是时间跨度规划正确。<br><img src="/images/evoup/rrdtool_dump.png" alt="Alt text"></p>
+<p>于是我有了我的load数据库</p>
+<figure class="highlight erlang"><figcaption><span>foo.erl</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;ok,PidRrdtool&#125;=rrdtool:start(),</span><br><span class="line">rrdtool:create(PidRrdtool, <span class="string">"load.rrd"</span>, [&#123;<span class="string">"load"</span>, 'GAUGE', [<span class="number">120</span>, <span class="number">0</span>, <span class="number">100</span>]&#125;],</span><br><span class="line">    [&#123;'AVERAGE', <span class="number">0.5</span>, <span class="number">1</span>, <span class="number">5856</span>&#125;, &#123;'AVERAGE', <span class="number">0.5</span>, <span class="number">4</span>, <span class="number">20160</span>&#125;, &#123;'AVERAGE', <span class="number">0.5</span>, <span class="number">40</span>, <span class="number">52704</span>&#125;</span><br><span class="line">    ],[&#123;step,<span class="number">15</span>&#125;]).</span><br></pre></td></tr></table></figure>
+<p> 需要注意的是这个create会无条件重建数据库，所以每次运行要先判断是否存在，如果不存在<br> 才调用rrdtool:create函数创建数据库。</p>
+<p> 其中最后一个参数为创建选项，可以传{step,15}，代表创建步长为15的数据库。</p>
+<p>##更新数据库<br>这个比较简单了，就是update</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">%%写入rrd数据库</span></span><br><span class="line"><span class="comment">%%Load为客户端上传的监控到的load数值</span></span><br><span class="line">rrdtool:update(PidRrdtool, <span class="string">"load.rrd"</span>, [&#123;<span class="string">"load"</span>, list_to_float(Load)&#125;], now()).</span><br></pre></td></tr></table></figure>
+<p>##简单的绘图</p>
+<p>这里用最原始的方法，rrdtool graph来画图</p>
+<figure class="highlight plain"><figcaption><span>make_graph.sh</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">rrdtool graph  myLoad.png                    \</span><br><span class="line">      --start 1382508875 --end 1382512874         \</span><br><span class="line">      --title &quot;Load Average yin-arch_ac101eb8&quot;   \</span><br><span class="line">      --v &quot;Load Average&quot;                          \</span><br><span class="line">      DEF:load=load.rrd:load:AVERAGE              \</span><br><span class="line">      HRULE:1#ff0000:&quot;warning value&quot;             \</span><br><span class="line">      AREA:load#4A4A4A:load\ average\</span><br></pre></td></tr></table></figure>
+<p>运行该脚本，最后绘图效果见此:</p>
+<p><img src="/images/evoup/rrdtool_load_graph.png" alt="Alt text"></p>
+<p>其他参考资料：<br><a href="http://oss.oetiker.ch/rrdtool/" target="_blank" rel="noopener">http://oss.oetiker.ch/rrdtool/</a></p>
+<p><a href="https://github.com/Vagabond/erlang-rrdtool" target="_blank" rel="noopener">https://github.com/Vagabond/erlang-rrdtool</a></p>
+<p><a href="http://blog.sina.com.cn/s/blog_79d1f5e00100test.html" target="_blank" rel="noopener">http://blog.sina.com.cn/s/blog_79d1f5e00100test.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/10/23/erlang-with-rrdtool/" data-id="cjtcp5so9003qcrsx6ge34qf7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/10/24/erlang-rebar-single-file-compile-with-vim/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          编译rebar项目中单个erlang源文件的vim脚本
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/10/22/vmware-ping-in-lan/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">局域网计算机和vmware虚拟机互ping</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

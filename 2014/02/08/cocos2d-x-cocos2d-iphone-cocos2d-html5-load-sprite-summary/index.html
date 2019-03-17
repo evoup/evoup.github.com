@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结">
+<meta property="og:url" content="http://blog.evoupsight.com/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结">
+<meta name="twitter:description" content="加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/" class="article-date">
+  <time datetime="2014-02-08T13:10:00.000Z" itemprop="datePublished">2014-02-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/cocos2d-x/">cocos2d-x</a>►<a class="article-category-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a>►<a class="article-category-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      cocos2d-x cocos2d-iphone cocos2d-html5下加载精灵的总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>加载精灵的几种套路，以下总结下cocos2d-x v2.2.2、cocos2d-iphone v0.99b和cocos2d-html5 v2.2.2三个平台下的创建显示图片和帧动画的方法：</p>
+<a id="more"></a>
+<blockquote>
+<p><i>直接从图片创建：</i><br><figure class="highlight cpp"><figcaption><span>cocos2d-x</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CCSprite *sprite=CCSprite::create(<span class="string">"res/pic.png"</span>); <span class="comment">//从pic.png创建一个精灵</span></span><br><span class="line">sprite-&gt;setPosition(ccp(<span class="number">100</span>, <span class="number">240</span>)); <span class="comment">//设置坐标为x=100,y=240</span></span><br><span class="line">sprite-&gt;setScale(<span class="number">0.5</span>); <span class="comment">//缩小50%</span></span><br><span class="line"><span class="keyword">this</span>-&gt;addChild(sprite,<span class="number">0</span>); <span class="comment">//加载到this场景对象下</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<figure class="highlight plain"><figcaption><span>-c cocos2d-iphone</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CCSprite *sprite = [CCSprite spriteWithFile:@&quot;res/pic.png&quot;]; //从pic.png创建一个精灵</span><br><span class="line">sprite.position = ccp(100, 240); //设置坐标为x=100,y=240</span><br><span class="line">sprite.scale = 0.5; //缩小50%</span><br><span class="line">[self addChild:sprite z:0]; //加载到self场景对象下</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><figcaption><span>cocos2d-html5</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sprite; <span class="comment">//定义sprite变量</span></span><br><span class="line"><span class="keyword">this</span>.sprite = cc.Sprite.create(<span class="string">"res/pic.png"</span>); <span class="comment">//从pic.png创建一个精灵</span></span><br><span class="line"><span class="keyword">this</span>.sprite.setPosition(<span class="keyword">new</span> cc.Point(<span class="number">100</span>,<span class="number">240</span>)); <span class="comment">//设置坐标为x=100,y=240</span></span><br><span class="line"><span class="keyword">this</span>.sprite.scale = <span class="number">0.5</span>; <span class="comment">//缩小50%</span></span><br><span class="line"><span class="keyword">this</span>.addChild(<span class="keyword">this</span>.sprite, <span class="number">0</span>); <span class="comment">//加载到this场景对象下</span></span><br></pre></td></tr></table></figure>
+<hr>
+<blockquote>
+<p><i>batchnode显示大量精灵：</i><br><br>注意：batchnode的限制是所有添加到它里面的CCSprite节点的Z轴顺序必须相同，且须使用相同纹理。</p>
+</blockquote>
+<figure class="highlight cpp"><figcaption><span>cocos2d-x</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CCSpriteBatchNode * batchNode = CCSpriteBatchNode::create(<span class="string">"pic.png"</span>); <span class="comment">//创建批渲染对象</span></span><br><span class="line"><span class="keyword">this</span>-&gt;addChild(batchNode); <span class="comment">//批渲染对象加载到self场景对象下</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++) &#123;</span><br><span class="line">    CCSprite *sprite = CCSprite::create(<span class="string">"pic.png"</span>); <span class="comment">//载入图片到精灵，方法效率看起来可以优化（code来自《cocos2d-x游戏开发之旅》）</span></span><br><span class="line">	batchNode-&gt;addChild(sprite); <span class="comment">//将精灵添加到批渲染对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><figcaption><span>-c cocos2d-iphone</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CCSpriteBatchNode * batchNode = [CCSpriteBatchNode batchNodeWithFile:</span><br><span class="line">    @&quot;pic.png&quot;]; //创建批渲染对象</span><br><span class="line">[self addChild:batch]; //批渲染对象加载到self场景对象下</span><br><span class="line">for (int i=0;i&lt;100;i++) &#123;</span><br><span class="line">    CCSprite *sprite = [CCSpriteBatchNode batchNodeWithFile:@&quot;pic.png&quot;]; //载入图片到精灵</span><br><span class="line">	[batchNode addChild:sprite]; //将精灵添加到批渲染对象</span><br><span class="line">&#125;	</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><figcaption><span>cocos2d-html5</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//首先定义好资源</span></span><br><span class="line"><span class="keyword">var</span> batchNode = cc.SpriteBatchNode.create(<span class="string">"pic.png"</span>, <span class="number">50</span>); <span class="comment">//定义批渲染对象</span></span><br><span class="line"><span class="keyword">this</span>.addChild(batchNode,<span class="number">0</span>); <span class="comment">//把批渲染节点加到this场景对象</span></span><br><span class="line"><span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;<span class="number">100</span>;i++) &#123; <span class="comment">//载入100个精灵并分别加到批渲染节点</span></span><br><span class="line">    <span class="keyword">var</span> sprite = cc.Sprite.createWithTexture(batchNode.getTexture(), cc.rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">85</span>, <span class="number">121</span>));</span><br><span class="line">    batchNode.addChild(sprite);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<blockquote>
+<p><i>batchnode加framecache结合显示单帧图片</i><br><figure class="highlight cpp"><figcaption><span>cocos2d-x</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CCSpriteBatchNode *batchNode = CCSpriteBatchNode::create(<span class="string">"resource.png"</span>); <span class="comment">//创建批渲染对象</span></span><br><span class="line"><span class="keyword">this</span>-&gt;addChild(batchNode); <span class="comment">//批渲染对象加载到this场景对象下</span></span><br><span class="line">CCSpriteFrameCache::sharedSpriteFrameCache()-&gt;addSpriteFramesWithFile(<span class="string">"resources.plist"</span>); <span class="comment">//帧缓冲加入plist打包好的文件，用texture packer软件可以打包</span></span><br><span class="line">CCSprite * sprite = CCSprite::createWithSpriteFrameName(<span class="string">"resources_00.png"</span>); <span class="comment">//读取单帧到精灵</span></span><br><span class="line">batchNode-&gt;addChild(sprite); <span class="comment">//加到批渲染对象</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<figure class="highlight plain"><figcaption><span>-c cocos2d-iphone</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:</span><br><span class="line">     @&quot;res/resources.plist&quot;]; //加载resource.plist文件到精灵帧缓冲区</span><br><span class="line">CCSpriteBatchNode *spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@&quot;resources.png&quot;]; //从精灵批渲染节点返会一个精灵表</span><br><span class="line">[self addChild:spriteSheet z:1]; //把精灵表加载到self场景对象下，并设置Z轴顺序为1</span><br><span class="line">self.sprite = [CCSprite spriteWithSpriteFrameName:@&quot;resource_00.png&quot;]; //再从缓冲加载单帧图片给精灵</span><br><span class="line">[spriteSheet addChild:sprite]; //精灵表将该精灵呈现出来	</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><figcaption><span>cocos2d-html5</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> spriteFrameCache = cc.SpriteFrameCache.getInstance();</span><br><span class="line">spriteFrameCache.addSpriteFrames(<span class="string">"res/resources.plist"</span>,<span class="string">"res/resources.png"</span>); <span class="comment">//从精灵批渲染节点返会一个精灵表</span></span><br><span class="line"><span class="keyword">this</span>.sprite = cc.Sprite.createWithSpriteFrameName(<span class="string">"resource_00.png"</span>); <span class="comment">//将单帧精灵图片添加到this场景对象</span></span><br><span class="line"><span class="keyword">var</span> batchNode = cc.SpriteBatchNode.create(<span class="string">"res/resources.png"</span>);</span><br><span class="line">batchNode.addChild(<span class="keyword">this</span>.sprite);</span><br><span class="line"><span class="keyword">this</span>.addChild(batchNode);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2014/02/08/cocos2d-x-cocos2d-iphone-cocos2d-html5-load-sprite-summary/" data-id="cjtcp5spw005mcrsx759jmjax" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/02/09/octopress2-undefined-method-for-nill-nilclass/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          octopress2报错undefined method `[] for nill:NilClass
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/01/23/cocos2d-html52-dot-2-2-first-exploration/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">cocos2d-html5-2.2.2初探</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

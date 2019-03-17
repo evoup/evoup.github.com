@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>导入nginx日志并采用hive进行统计 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导入nginx日志并采用hive进行统计">
+<meta property="og:url" content="http://blog.evoupsight.com/2014/03/10/import-nginx-log-and-use-hive-to-caculate/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="导入nginx日志并采用hive进行统计">
+<meta name="twitter:description" content="公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-import-nginx-log-and-use-hive-to-caculate" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/03/10/import-nginx-log-and-use-hive-to-caculate/" class="article-date">
+  <time datetime="2014-03-10T16:07:00.000Z" itemprop="datePublished">2014-03-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/hadoop/">hadoop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      导入nginx日志并采用hive进行统计
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>公司的日志本来是存成gzip或bz2格式直接导入到hdfs里去然后用程序直接mr的，速度是比较慢的。领导要求采用hive来计算，而在hive里建textfile表的这种方式，textfile是无法进行并行计算的，而且gzip和bz2做mr的速度是很慢的。所以准备采取先导入hdfs和textfile表，然后再转换为rcfile格式的表的策略。实际试验下来，如果一开始转换为文本或者是lzo格式，而不是采用gzip或bz2的格式的textfile的表，再转换为rcfile的方式会快很多，mr的速度也是比较快的。</p>
+<p>下面描述一下过程<br><a id="more"></a></p>
+<p>把全部日志上通过scp等方式传到服务器之后，要做的是先建一个textfile的表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> nginxlog (ipaddress <span class="keyword">string</span>, ...更多字段省略) <span class="keyword">COMMENT</span> <span class="string">'nginx log'</span> <span class="keyword">ROW</span> <span class="keyword">FORMAT</span> <span class="keyword">DELIMITED</span> <span class="keyword">FIELDS</span> <span class="keyword">TERMINATED</span> <span class="keyword">BY</span> <span class="string">','</span> <span class="keyword">stored</span> <span class="keyword">as</span> textfile    location <span class="string">'/data/log'</span>;</span><br></pre></td></tr></table></figure>
+<p>把得到所有nginx日志，然后用lzop先压缩好，然后传到hdfs上去。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ tar xjf server01-20140131.txt.bz2</span><br><span class="line">$ tar xjf server02-20140131.txt.bz2</span><br><span class="line">$ lzop server01-20140131.txt </span><br><span class="line">$ lzop server02-20140131.txt </span><br><span class="line">$ server01-20140131.txt.lzo server02-20140131.txt.lzo</span><br><span class="line">$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/<span class="built_in">log</span>/server01-20140131.txt.lzo</span><br><span class="line">$ /u01/app/hadoop fs -put server01-20140131.txt.lzo /data/<span class="built_in">log</span>/server02-20140131.txt.lzo</span><br><span class="line">$/u01/app/hadoop/bin/hadoop fs -ls /data/<span class="built_in">log</span>/</span><br><span class="line">Found 2 items</span><br><span class="line">-rw-r--r--   1 hadoop supergroup  364459530 2014-03-07 18:10 /data/<span class="built_in">log</span>/server01-20140131.txt.lzo</span><br><span class="line">-rw-r--r--   1 hadoop supergroup  364459530 2014-03-10 13:31 /data/<span class="built_in">log</span>/server02-20140201.txt.lzo</span><br></pre></td></tr></table></figure>
+<p>然后马上就可以查询了</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; select count(*) from nginxlog;</span><br><span class="line">Total MapReduce jobs = 1</span><br><span class="line">Launching Job 1 out of 1</span><br><span class="line">Number of reduce tasks determined at compile time: 1</span><br><span class="line">In order to <span class="keyword">change</span> the average <span class="keyword">load</span> <span class="keyword">for</span> a reducer (<span class="keyword">in</span> <span class="keyword">bytes</span>):</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.bytes.per.reducer=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">limit</span> the maximum <span class="built_in">number</span> <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.max=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">set</span> a <span class="keyword">constant</span> <span class="built_in">number</span> <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> mapred.reduce.tasks=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">Starting</span> Job = job_201403101051_0004, <span class="keyword">Tracking</span> <span class="keyword">URL</span> = <span class="keyword">http</span>://mdn2.net:<span class="number">50030</span>/jobdetails.jsp?jobid=job_201403101051_0004</span><br><span class="line"><span class="keyword">Kill</span> Command = /u01/app/hadoop/<span class="keyword">bin</span>/../<span class="keyword">bin</span>/hadoop job  -Dmapred.job.tracker=mdn2.net:<span class="number">9025</span> -<span class="keyword">kill</span> job_201403101051_0004</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">14</span>:<span class="number">17</span>:<span class="number">41</span>,<span class="number">179</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">14</span>:<span class="number">18</span>:<span class="number">20</span>,<span class="number">815</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">50</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">14</span>:<span class="number">18</span>:<span class="number">32</span>,<span class="number">927</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">14</span>:<span class="number">18</span>:<span class="number">38</span>,<span class="number">971</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">17</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">14</span>:<span class="number">18</span>:<span class="number">41</span>,<span class="number">991</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">100</span>%</span><br><span class="line">Ended Job = job_201403101051_0004</span><br><span class="line">OK</span><br><span class="line"><span class="number">2492916</span></span><br><span class="line"><span class="built_in">Time</span> taken: <span class="number">75.321</span> <span class="keyword">seconds</span></span><br></pre></td></tr></table></figure>
+<p>这么做也是可以使用hive的，但是速度还是比较慢。于是可以再创建一个rcfile格式的表，然后再查询</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/hive&gt; create external table nginxlog2 (ipaddress string, ...,更多字段) COMMENT &apos;nginx log rcfile format&apos; ROW FORMAT DELIMITED FIELDS TERMINATED BY &apos;,&apos; stored as RCFile    location &apos;/data/log2&apos;;</span><br></pre></td></tr></table></figure>
+<p>然后用</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; SET hive.exec.compress.output=true;</span><br><span class="line">hive&gt; SET io.rcfile.compression.type=BLOCK;</span><br><span class="line">hive&gt; insert overwrite table nginxlog2 select * from nginxlog;</span><br><span class="line">Total MapReduce jobs = 2</span><br><span class="line">Launching Job 1 out of 2</span><br><span class="line">Number of reduce tasks is <span class="keyword">set</span> <span class="keyword">to</span> <span class="number">0</span> since there<span class="string">'s no reduce operator</span></span><br><span class="line"><span class="string">Starting Job = job_201403101051_0007, Tracking URL = http://mdn2.net:50030/jobdetails.jsp?jobid=job_201403101051_0007</span></span><br><span class="line"><span class="string">Kill Command = /u01/app/hadoop/bin/../bin/hadoop job  -Dmapred.job.tracker=mdn2.net:9025 -kill job_201403101051_0007</span></span><br><span class="line"><span class="string">2014-03-10 15:20:20,959 Stage-1 map = 0%,  reduce = 0%</span></span><br><span class="line"><span class="string">2014-03-10 15:21:21,267 Stage-1 map = 0%,  reduce = 0%</span></span><br><span class="line"><span class="string">2014-03-10 15:22:21,627 Stage-1 map = 0%,  reduce = 0%</span></span><br><span class="line"><span class="string">2014-03-10 15:23:22,320 Stage-1 map = 0%,  reduce = 0%</span></span><br><span class="line"><span class="string">2014-03-10 15:23:36,542 Stage-1 map = 100%,  reduce = 0%</span></span><br><span class="line"><span class="string">2014-03-10 15:23:42,665 Stage-1 map = 100%,  reduce = 100%</span></span><br><span class="line"><span class="string">Ended Job = job_201403101051_0007</span></span><br><span class="line"><span class="string">Ended Job = -1308159129, job is filtered out (removed at runtime).</span></span><br><span class="line"><span class="string">Moving data to: hdfs://mdn2.net:9024/tmp/hive-hadoop/hive_2014-03-10_15-20-15_076_2561493179927538497/-ext-10000</span></span><br><span class="line"><span class="string">Loading data to table default.nginxlog2</span></span><br><span class="line"><span class="string">Deleted hdfs://mdn2.net:9024/data/log2</span></span><br><span class="line"><span class="string">Table default.nginxlog2 stats: [num_partitions: 0, num_files: 0, num_rows: 0, total_size: 0]</span></span><br><span class="line"><span class="string">2492916 Rows loaded to nginxlog2</span></span><br><span class="line"><span class="string">OK</span></span><br><span class="line"><span class="string">Time taken: 209.088 seconds</span></span><br></pre></td></tr></table></figure>
+<p>然后再次select，对比一下时间</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; select count(*) from nginxlog2;</span><br><span class="line">Total MapReduce jobs = 1</span><br><span class="line">Launching Job 1 out of 1</span><br><span class="line">Number of reduce tasks determined at compile time: 1</span><br><span class="line">In order to <span class="keyword">change</span> the average <span class="keyword">load</span> <span class="keyword">for</span> a reducer (<span class="keyword">in</span> <span class="keyword">bytes</span>):</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.bytes.per.reducer=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">limit</span> the maximum <span class="built_in">number</span> <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> hive.exec.reducers.max=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">In</span> <span class="keyword">order</span> <span class="keyword">to</span> <span class="keyword">set</span> a <span class="keyword">constant</span> <span class="built_in">number</span> <span class="keyword">of</span> reducers:</span><br><span class="line">  <span class="keyword">set</span> mapred.reduce.tasks=&lt;<span class="built_in">number</span>&gt;</span><br><span class="line"><span class="keyword">Starting</span> Job = job_201403101051_0008, <span class="keyword">Tracking</span> <span class="keyword">URL</span> = <span class="keyword">http</span>://mdn2.net:<span class="number">50030</span>/jobdetails.jsp?jobid=job_201403101051_0008</span><br><span class="line"><span class="keyword">Kill</span> Command = /u01/app/hadoop/<span class="keyword">bin</span>/../<span class="keyword">bin</span>/hadoop job  -Dmapred.job.tracker=mdn2.net:<span class="number">9025</span> -<span class="keyword">kill</span> job_201403101051_0008</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">26</span>:<span class="number">21</span>,<span class="number">984</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">0</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">26</span>:<span class="number">31</span>,<span class="number">031</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">33</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">26</span>:<span class="number">43</span>,<span class="number">107</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">67</span>%,  reduce = <span class="number">0</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">26</span>:<span class="number">49</span>,<span class="number">140</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">67</span>%,  reduce = <span class="number">17</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">26</span>:<span class="number">52</span>,<span class="number">153</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">22</span>%</span><br><span class="line"><span class="number">2014</span><span class="number">-03</span><span class="number">-10</span> <span class="number">15</span>:<span class="number">27</span>:<span class="number">04</span>,<span class="number">225</span> Stage<span class="number">-1</span> <span class="keyword">map</span> = <span class="number">100</span>%,  reduce = <span class="number">100</span>%</span><br><span class="line">Ended Job = job_201403101051_0008</span><br><span class="line">OK</span><br><span class="line"><span class="number">2492916</span></span><br><span class="line"><span class="built_in">Time</span> taken: <span class="number">55.656</span> <span class="keyword">seconds</span></span><br></pre></td></tr></table></figure>
+<p>我这里是2个节点， 55.656s，相比textfile的75.321s，rcfile的有20秒的优势，当然并行计算的节点越多，时间就越省。</p>
+<p>这里要补充一下：不通过本地导入的方式直接导入rcfile的原因，是因为textfile格式才支持从本地导入，sequencefile和rcfile均不支持，所以只能先搞一个表再复制。如果用textfile加gzip或bz2的表再复制到rcfile的表，时间会很长；而用textfile+lzo的表再复制到rcfile的表，时间比较短。lzo相对gzip或bz2压缩速度快但是相对压缩比没有优势，然而再转为rcfile格式mr会很快，这样hive查询就很快。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2014/03/10/import-nginx-log-and-use-hive-to-caculate/" data-id="cjtcp5sq70066crsx8mudiahj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/03/14/2d-player-charactor-pratice/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          设计2D游戏玩家角色
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/03/07/centos-hadoop0-dot-20-lzo-support/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">centos下hadoop0.20的LZO压缩支持</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

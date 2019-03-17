@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>hadoop2.x本地库安装 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="运行hadoop cli时会出现  14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...  using builtin-java classes where applicable 虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop2.x本地库安装">
+<meta property="og:url" content="http://blog.evoupsight.com/2014/07/30/hadoop2x-nativecodeloader/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="运行hadoop cli时会出现  14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...  using builtin-java classes where applicable 虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.948Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="hadoop2.x本地库安装">
+<meta name="twitter:description" content="运行hadoop cli时会出现  14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...  using builtin-java classes where applicable 虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-hadoop2x-nativecodeloader" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/30/hadoop2x-nativecodeloader/" class="article-date">
+  <time datetime="2014-07-30T18:00:00.000Z" itemprop="datePublished">2014-07-30</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/hadoop/">hadoop</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      hadoop2.x本地库安装
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>运行hadoop cli时会出现 </p>
+<p><code>14/07/25 14:45:25 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform...</code> </p>
+<p><code>using builtin-java classes where applicable</code></p>
+<p>虽然表面上看来不影响工作结果，但是放着警告不处理太不科学了，想办法解决，过程还是比较漫长，要解决的要有耐心看下文了。<br><a id="more"></a></p>
+<p>###首先查看本地库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls <span class="variable">$HADOOP_HOME</span>/lib/native/</span><br></pre></td></tr></table></figure>
+<p>发现动态库不存在,按照上文述及，也会这个错误。<br>查看系统的libc版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ll /lib64/libc.so.6</span><br><span class="line">lrwxrwxrwx. 1 root root 12 12月 12 2013 /lib64/libc.so.6 -&gt; libc-2.18.so</span><br></pre></td></tr></table></figure>
+<p>系统的版本为2.18</p>
+<p>参考cdh手册<br><a href="http://archive.cloudera.com/cdh4/cdh/4/hadoop/hadoop-project-dist/hadoop-common/NativeLibraries.html#Native_Libraries_Guide" target="_blank" rel="noopener">NativeLibraries.html#Native_Libraries_Guide</a></p>
+<p>找一个hadoop-mapreduce1-project的项目用ant跑一下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ant -Dcompile.native=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>期间会报错jvm-check需要1.6，我的是1.7，直接修改ant的build.xml文件，把里面的1.6改成1.7就可以了。</p>
+<p>慢慢等编译完成，报错以下依赖没有解决</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">[ivy:resolve] :: resolution report :: resolve 11214ms :: artifacts dl 10ms</span><br><span class="line">        ---------------------------------------------------------------------</span><br><span class="line">        |                  |            modules            ||   artifacts   |</span><br><span class="line">        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|</span><br><span class="line">        ---------------------------------------------------------------------</span><br><span class="line">        |      common      |   10  |   2   |   0   |   0   ||   8   |   0   |</span><br><span class="line">        ---------------------------------------------------------------------</span><br><span class="line">[ivy:resolve]</span><br><span class="line">[ivy:resolve] :: problems summary ::</span><br><span class="line">[ivy:resolve] :::: WARNINGS</span><br><span class="line">[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::</span><br><span class="line">[ivy:resolve]           ::          UNRESOLVED DEPENDENCIES         ::</span><br><span class="line">[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::</span><br><span class="line">[ivy:resolve]           :: org.codehaus.jackson<span class="comment">#jackson-mapper-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-mapper-asl;1.0.1 &#123;common=[default]&#125;:</span></span><br><span class="line">[ivy:resolve]   reactor-repo: unable to get resource <span class="keyword">for</span> org/codehaus/jackson<span class="comment">#jackson-mapper-asl;1.0.1: res=$&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: $&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.pom</span></span><br><span class="line">[ivy:resolve]   reactor-repo: unable to get resource <span class="keyword">for</span> org/codehaus/jackson<span class="comment">#jackson-mapper-asl;1.0.1: res=$&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: $&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-mapper-asl/1.0.1/jackson-mapper-asl-1.0.1.jar</span></span><br><span class="line">[ivy:resolve]           :: org.codehaus.jackson<span class="comment">#jackson-core-asl;1.0.1: several problems occurred while resolving dependency: org.codehaus.jackson#jackson-core-asl;1.0.1 &#123;common=[default]&#125;:</span></span><br><span class="line">[ivy:resolve]   reactor-repo: unable to get resource <span class="keyword">for</span> org/codehaus/jackson<span class="comment">#jackson-core-asl;1.0.1: res=$&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom: java.net.MalformedURLException: no protocol: $&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.pom</span></span><br><span class="line">[ivy:resolve]   reactor-repo: unable to get resource <span class="keyword">for</span> org/codehaus/jackson<span class="comment">#jackson-core-asl;1.0.1: res=$&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar: java.net.MalformedURLException: no protocol: $&#123;reactor.repo&#125;/org/codehaus/jackson/jackson-core-asl/1.0.1/jackson-core-asl-1.0.1.jar</span></span><br><span class="line">[ivy:resolve]           ::::::::::::::::::::::::::::::::::::::::::::::</span><br><span class="line">[ivy:resolve]</span><br><span class="line">[ivy:resolve] :: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS</span><br><span class="line"></span><br><span class="line">BUILD FAILED</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred <span class="keyword">while</span> executing this line:</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred <span class="keyword">while</span> executing this line:</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:440: impossible to resolve dependencies:</span><br><span class="line">        resolve failed - see output <span class="keyword">for</span> details</span><br><span class="line"></span><br><span class="line">Total time: 1 minute 33 seconds</span><br></pre></td></tr></table></figure>
+<p>少几个jar包，能不能通过直接复制到.ivy2目录的方式解决呢？暂时没这个能力</p>
+<p>尝试进到内部工程文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ./src/contrib/capacity-scheduler/</span><br></pre></td></tr></table></figure>
+<p>直接ant,报错一样的</p>
+<p>原来是要定义reactor.repo这个参数<br>参考<br><a href="http://www.verydemo.com/demo_c161_i273713.html" target="_blank" rel="noopener">《基于hadoop2.0.0的fuse安装以及libhdfs和fuse-dfs的编译》</a></p>
+<p>解决办法： </p>
+<p>   需要定义reactor.repo的url：</p>
+<p>  在/usr/hadoop/src/hadoop-mapreduce1-project/ivy/ivysettings.xml文件中添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;property name=<span class="string">"reactor.repo"</span></span><br><span class="line">          value=<span class="string">"http://repo1.maven.org/maven2/"</span></span><br><span class="line"> override=<span class="string">"false"</span>/&gt;</span><br></pre></td></tr></table></figure>
+<p>添加之后就能找到jackson</p>
+<p>但是继续编译会出现</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">compile:</span><br><span class="line">     [<span class="built_in">echo</span>] contrib: gridmix</span><br><span class="line">    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: warning: <span class="string">'includeantruntime'</span> was not <span class="built_in">set</span>, defaulting to build.sysclasspath=last; <span class="built_in">set</span> to <span class="literal">false</span> <span class="keyword">for</span> repeatable builds</span><br><span class="line">    [javac] Compiling 31 <span class="built_in">source</span> files to /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build/contrib/gridmix/classes</span><br><span class="line">    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:396: 错误: 类型参数? extends T不在类型变量E的范围内</span><br><span class="line">    [javac]   private &lt;T&gt; String getEnumValues(Enum&lt;? extends T&gt;[] e) &#123;</span><br><span class="line">    [javac]                                         ^</span><br><span class="line">    [javac]   其中, T,E是类型变量:</span><br><span class="line">    [javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object</span><br><span class="line">    [javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;</span><br><span class="line">    [javac] /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/gridmix/src/java/org/apache/hadoop/mapred/gridmix/Gridmix.java:399: 错误: 类型参数? extends T不在类型变量E的范围内</span><br><span class="line">    [javac]     <span class="keyword">for</span> (Enum&lt;? extends T&gt; v : e) &#123;</span><br><span class="line">    [javac]               ^</span><br><span class="line">    [javac]   其中, T,E是类型变量:</span><br><span class="line">    [javac]     T扩展已在方法 &lt;T&gt;getEnumValues(Enum&lt;? extends T&gt;[])中声明的Object</span><br><span class="line">    [javac]     E扩展已在类 Enum中声明的Enum&lt;E&gt;</span><br><span class="line">    [javac] 注: 某些输入文件使用或覆盖了已过时的 API。</span><br><span class="line">    [javac] 注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。</span><br><span class="line">    [javac] 注: 某些输入文件使用了未经检查或不安全的操作。</span><br><span class="line">    [javac] 注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。</span><br><span class="line">    [javac] 2 个错误</span><br><span class="line"></span><br><span class="line">BUILD FAILED</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/build.xml:614: The following error occurred <span class="keyword">while</span> executing this line:</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build.xml:30: The following error occurred <span class="keyword">while</span> executing this line:</span><br><span class="line">/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-mapreduce1-project/src/contrib/build-contrib.xml:193: Compile failed; see the compiler error output <span class="keyword">for</span> details.</span><br></pre></td></tr></table></figure>
+<p>可以参考<a href="http://www.th7.cn/Program/java/201208/88028.shtml" target="_blank" rel="noopener">《hadoop1.0.3编译eclipse plug-in》</a></p>
+<p>所以修改代码把Enum&lt;? extends T&gt;改成Enum&lt;?&gt;<br>重新用ant编译<br>编译成功<br>再用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ant -Dcompile.native=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>看看能否编译出libhadoop.so</p>
+<p>编译成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find . -<span class="built_in">type</span> f -name <span class="string">"libhadoop.so"</span></span><br></pre></td></tr></table></figure>
+<p>但是没有编译出libhadoop.so？</p>
+<p>官方文档误导了（说是ant，在根目录又没有ant的配置文件，根目录下build文件夹的native目录是空的），其实要用maven编译！<br>其实需要完全编译hadoop才行《hadoop2.2.0 centos 编译安装详解》<br><a href="http://f.dataguru.cn/thread-245387-1-1.html" target="_blank" rel="noopener">http://f.dataguru.cn/thread-245387-1-1.html</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src</span><br><span class="line">mvn package -Pdist,native -DskipTests -Dtar</span><br></pre></td></tr></table></figure>
+<p>报错<code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-enforcer-plugin:1.0</code><br><code>:enforce (default) on project hadoop-main: Some Enforcer rules have failed.</code><br><code>Look above for specific messages explaining why the rule failed. -&gt; [Help 1]</code></p>
+<p><a href="http://zhwj184.iteye.com/blog/1528627" target="_blank" rel="noopener">http://zhwj184.iteye.com/blog/1528627</a><br>如果为了提高执行速度，不想运行这个插件，则可以通过-Denforcer.skip=true或者简单的-Dskip=true就可以跳过这个这个插件的运行。如果mvn package过程中出现有关这个插件的异常，则可以简单通过这个参数跳过这个验证。</p>
+<p>那么直接在编译中加参数-Denforcer.skip=true</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn package -Pdist,native -DskipTests -Dtar -Denforcer.skip=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>再编译，这么很慢，要下载的文件很多<br>再次报错 <code>[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:</code><br><code>run (compile-proto) on project hadoop-common: An Ant</code><br><code>BuildException has occured: exec returned: 1 -&gt; [Help 1]</code></p>
+<p>参考<a href="http://wenku.baidu.com/link?url=Pkwth1GX3zRyM9BOaxuLhtQWI0dIcWUd7RYtHlvC0b5UpdoS1nc0Xxyn8dhOwnFMytT-Qeo_UZ31WxKE5ruREXF9Al_OGD6E5wr8GB8QRJy" target="_blank" rel="noopener">《hadoop源码编译问题》</a></p>
+<p>看来是protoc版本过低导致的</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://protobuf.googlecode.com/files/protobuf-2.4.1.tar.gz</span><br></pre></td></tr></table></figure>
+<p>被墙的自己想办法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">tar xzf protobuf-2.4.1.tar.gz</span><br><span class="line"><span class="built_in">cd</span> protobuf-2.4.1</span><br><span class="line">[hadoop@mdn4namenode1 protobuf-2.4.1]$ ./configure</span><br><span class="line">checking build system <span class="built_in">type</span>... x86_64-unknown-linux-gnu</span><br><span class="line">checking host system <span class="built_in">type</span>... x86_64-unknown-linux-gnu</span><br><span class="line">checking target system <span class="built_in">type</span>... x86_64-unknown-linux-gnu</span><br><span class="line">checking <span class="keyword">for</span> a BSD-compatible install... /usr/bin/install -c</span><br><span class="line">checking whether build environment is sane... yes</span><br><span class="line">checking <span class="keyword">for</span> a thread-safe mkdir -p... /usr/bin/mkdir -p</span><br><span class="line">checking <span class="keyword">for</span> gawk... gawk</span><br><span class="line">checking whether make sets $(MAKE)... yes</span><br><span class="line">checking <span class="keyword">for</span> gcc... no</span><br><span class="line">checking <span class="keyword">for</span> cc... no</span><br><span class="line">checking <span class="keyword">for</span> cl.exe... no</span><br><span class="line">configure: error: <span class="keyword">in</span> `/home/hadoop/software/protobuf-2.4.1<span class="string">':</span></span><br><span class="line"><span class="string">configure: error: no acceptable C compiler found in $PATH</span></span><br><span class="line"><span class="string">See `config.log'</span> <span class="keyword">for</span> more details.</span><br><span class="line"></span><br><span class="line">sudo yum install gcc</span><br></pre></td></tr></table></figure>
+<p>继续安装</p>
+<p><code>configure: error: C++ preprocessor &quot;/lib/cpp&quot; fails sanity check</code></p>
+<p>又出现很多问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install gcc-c++</span><br></pre></td></tr></table></figure>
+<p>再次</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>回来继续编译hadoop</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:1.6:run (make) on project hadoop-common: An Ant BuildException has occured: Execute failed: java.io.IOException: Cannot run program &quot;cmake&quot; (in directory &quot;/home/hadoop/software/hadoop-2.0.0-cdh4.7.0/src/hadoop-common-project/hadoop-common/target/native&quot;): error=2, 没有那个文件或目录 -&gt; [Help 1]</span><br></pre></td></tr></table></figure>
+<p>没装cmake</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install cmake</span><br></pre></td></tr></table></figure>
+<p>还有一些也装上</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install pkgconfig  openssl openssl-devel</span><br></pre></td></tr></table></figure>
+<p>这些可以参考《64位操作系统下重新编译hadoop-2.2.0》（这文章提到应该用mvn package -DskipTests -Pdist,native -Dtar来编译hadoop2）<br><a href="http://blog.itpub.net/20777547/viewspace-1147174" target="_blank" rel="noopener">http://blog.itpub.net/20777547/viewspace-1147174</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">[INFO]                                                                                                                             [40/1862]</span><br><span class="line">[INFO] Apache Hadoop Main ................................ SUCCESS [5.349s]</span><br><span class="line">[INFO] Apache Hadoop Project POM ......................... SUCCESS [3.432s]</span><br><span class="line">[INFO] Apache Hadoop Annotations ......................... SUCCESS [6.518s]</span><br><span class="line">[INFO] Apache Hadoop Assemblies .......................... SUCCESS [0.875s]</span><br><span class="line">[INFO] Apache Hadoop Project Dist POM .................... SUCCESS [3.334s]</span><br><span class="line">[INFO] Apache Hadoop Auth ................................ SUCCESS [6.069s]</span><br><span class="line">[INFO] Apache Hadoop Auth Examples ....................... SUCCESS [4.573s]</span><br><span class="line">[INFO] Jets3t Cloudera Dependencies ...................... SUCCESS [6.534s]</span><br><span class="line">[INFO] Apache Hadoop Common .............................. SUCCESS [2:01.338s]</span><br><span class="line">[INFO] Apache Hadoop Common Project ...................... SUCCESS [0.452s]</span><br><span class="line">[INFO] Apache Hadoop HDFS ................................ SUCCESS [2:06.706s]</span><br><span class="line">[INFO] Apache Hadoop HttpFS .............................. SUCCESS [24.891s]</span><br><span class="line">[INFO] Apache Hadoop HDFS Project ........................ SUCCESS [0.744s]</span><br><span class="line">[INFO] hadoop-yarn ....................................... SUCCESS [28.902s]</span><br><span class="line">[INFO] hadoop-yarn-api ................................... SUCCESS [1:08.858s]</span><br><span class="line">[INFO] hadoop-yarn-common ................................ SUCCESS [56.000s]</span><br><span class="line">[INFO] hadoop-yarn-server ................................ SUCCESS [0.517s]</span><br><span class="line">[INFO] hadoop-yarn-server-common ......................... SUCCESS [16.093s]</span><br><span class="line">[INFO] hadoop-yarn-server-nodemanager .................... SUCCESS [31.421s]</span><br><span class="line">[INFO] hadoop-yarn-server-web-proxy ...................... SUCCESS [7.293s]</span><br><span class="line">[INFO] hadoop-yarn-server-resourcemanager ................ SUCCESS [22.440s]</span><br><span class="line">[INFO] hadoop-yarn-server-tests .......................... SUCCESS [1.168s]</span><br><span class="line">[INFO] hadoop-yarn-client ................................ SUCCESS [8.536s]</span><br><span class="line">[INFO] hadoop-yarn-applications .......................... SUCCESS [0.276s]</span><br><span class="line">[INFO] hadoop-yarn-applications-distributedshell ......... SUCCESS [4.767s]</span><br><span class="line">[INFO] hadoop-mapreduce-client ........................... SUCCESS [0.433s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-core ...................... SUCCESS [54.060s]</span><br><span class="line">[INFO] hadoop-yarn-applications-unmanaged-am-launcher .... SUCCESS [5.197s]</span><br><span class="line">[INFO] hadoop-yarn-site .................................. SUCCESS [0.517s]</span><br><span class="line">[INFO] hadoop-yarn-project ............................... SUCCESS [36.840s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-common .................... SUCCESS [33.592s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-shuffle ................... SUCCESS [5.179s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-app ....................... SUCCESS [18.536s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-hs ........................ SUCCESS [9.267s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-jobclient ................. SUCCESS [10.860s]</span><br><span class="line">[INFO] hadoop-mapreduce-client-hs-plugins ................ SUCCESS [4.425s]</span><br><span class="line">[INFO] Apache Hadoop MapReduce Examples .................. SUCCESS [14.302s]</span><br><span class="line">[INFO] hadoop-mapreduce .................................. SUCCESS [4.028s]</span><br><span class="line">[INFO] Apache Hadoop MapReduce Streaming ................. SUCCESS [9.253s]</span><br><span class="line">[INFO] Apache Hadoop Distributed Copy .................... SUCCESS [1:14.406s]</span><br><span class="line">[INFO] Apache Hadoop Archives ............................ SUCCESS [4.108s]</span><br><span class="line">[INFO] Apache Hadoop Rumen ............................... SUCCESS [11.244s]</span><br><span class="line">[INFO] Apache Hadoop Gridmix ............................. SUCCESS [10.038s]</span><br><span class="line">[INFO] Apache Hadoop Data Join ........................... SUCCESS [5.673s]</span><br><span class="line">[INFO] Apache Hadoop Extras .............................. SUCCESS [6.033s]</span><br><span class="line">[INFO] Apache Hadoop Pipes ............................... SUCCESS [14.666s]</span><br><span class="line">[INFO] Apache Hadoop Tools Dist .......................... SUCCESS [3.519s]</span><br><span class="line">[INFO] Apache Hadoop Tools ............................... SUCCESS [0.066s]</span><br><span class="line">[INFO] Apache Hadoop Distribution ........................ SUCCESS [30.039s]</span><br><span class="line">[INFO] Apache Hadoop Client .............................. SUCCESS [20.618s]</span><br><span class="line">[INFO] Apache Hadoop Mini-Cluster ........................ SUCCESS [2.427s]</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] BUILD SUCCESS</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br><span class="line">[INFO] Total time: 15:51.852s</span><br><span class="line">[INFO] Finished at: Fri Jul 25 17:40:23 CST 2014</span><br><span class="line">[INFO] Final Memory: 127M/305M</span><br><span class="line">[INFO] ------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+<p>全部编译成功，然后找下libhadoop.so</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ find . -name <span class="string">"libhadoop.so"</span></span><br><span class="line">./src/hadoop-common-project/hadoop-common/target/hadoop-common-2.0.0-cdh4.7.0/lib/native/libhadoop.so</span><br><span class="line">./src/hadoop-common-project/hadoop-common/target/native/target/usr/<span class="built_in">local</span>/lib/libhadoop.so</span><br><span class="line">./src/hadoop-dist/target/hadoop-2.0.0-cdh4.7.0/lib/native/libhadoop.so</span><br></pre></td></tr></table></figure>
+<p>编译出来了，然后放到文章一开始说的$HADOOP_HOME/lib/native/目录下面，以后运行就不再报错了。</p>
+<p>参考文章<br><a href="http://www.linuxidc.com/Linux/2012-04/59200.htm" target="_blank" rel="noopener">《Hadoop本地库与系统版本不一致引起的错误解决方法》</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2014/07/30/hadoop2x-nativecodeloader/" data-id="cjtcp5ssf00bxcrsxssry6tnj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/07/30/hadoop-with-lzo/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          centos上hadoop2.x hdfs支持lzo
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/07/30/zookeeper-pseudo-distributed-installation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">zookeeper伪分布配置安装</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>[转]Erlang监测系统CPU、内存和磁盘 | evoup`s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="os_monErlang的os_mon服务中提供了一些用于监测系统信息的服务 (PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)  cpu_sup：监测CPU负载和使用率（Unix） disksup：监测磁盘（Unix、Windows） memsup：监测内存（Unix、Windows、VxWorks） os_sup：监测系统日志（Solaris、Windows">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[转]Erlang监测系统CPU、内存和磁盘">
+<meta property="og:url" content="http://blog.evoupsight.com/2013/02/27/erlang-monitor-cpu-memory-disk/index.html">
+<meta property="og:site_name" content="evoup`s Blog">
+<meta property="og:description" content="os_monErlang的os_mon服务中提供了一些用于监测系统信息的服务 (PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)  cpu_sup：监测CPU负载和使用率（Unix） disksup：监测磁盘（Unix、Windows） memsup：监测内存（Unix、Windows、VxWorks） os_sup：监测系统日志（Solaris、Windows">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-03-17T09:07:08.944Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[转]Erlang监测系统CPU、内存和磁盘">
+<meta name="twitter:description" content="os_monErlang的os_mon服务中提供了一些用于监测系统信息的服务 (PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)  cpu_sup：监测CPU负载和使用率（Unix） disksup：监测磁盘（Unix、Windows） memsup：监测内存（Unix、Windows、VxWorks） os_sup：监测系统日志（Solaris、Windows">
+  
+    <link rel="alternate" href="/atom.xml" title="evoup`s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">evoup`s Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://blog.evoupsight.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-erlang-monitor-cpu-memory-disk" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2013/02/27/erlang-monitor-cpu-memory-disk/" class="article-date">
+  <time datetime="2013-02-27T13:59:00.000Z" itemprop="datePublished">2013-02-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/erlang/">erlang</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [转]Erlang监测系统CPU、内存和磁盘
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>os_mon<br>Erlang的os_mon服务中提供了一些用于监测系统信息的服务</p>
+<font color="red">(PS:经过测试，freebsd上使用get_disk_data无法获取到磁盘的数据)</font>
+
+<p>cpu_sup：监测CPU负载和使用率（Unix）</p>
+<p>disksup：监测磁盘（Unix、Windows）</p>
+<p>memsup：监测内存（Unix、Windows、VxWorks）</p>
+<p>os_sup：监测系统日志（Solaris、Windows）</p>
+<a id="more"></a>
+<p>使用os_mon进行监测先必须启动监测服务application:start(os_mon) ，因为os_mon服务依赖于sasl服务，先必须启<br>动sasl服务，application:start(sasl) ，否则会返回{ error,{not_started,sasl} } 错误。os_mon提供的四种监测服<br>务中默认会启动三种服务：cpu_sup、disksup和memsup，如果需要自己设置启动的监测服务，可以修改os_mon.app<br>文件中的配置参数</p>
+<p>start_cpu_sup = bool()</p>
+<p>start_disksup = bool()</p>
+<p>start_memsup = bool()</p>
+<p>start_os_sup = bool()</p>
+<p>等于true时启动，等于false时不启动。os_mon.app文件在erlang的安装目录下../erl5.8.3/lib/os_mon-2.2.5<br>/ebin 。</p>
+<p>cpu_sup</p>
+<p>cpu监测在5.8.3版本中只能用于Solaris和Linux操作系统，负载值与Unix进程运行前在队列中的排队时间成正比，<br>因此值越大意味着负载越高，返回值除以256为rup和top命令中显示的值。avg1/0,avg5/0 和avg15/0 函数计算负载，<br>util/0 和util/1 函数计算CPU使用率。在Linux系统中，必须保证/proc文件目录能被cpu_sup服务访问，如果不能监<br>测服务会停止</p>
+<p>模块中的函数列表</p>
+<p>nprocs() -&gt; UnixProcesses | {error, Reason}</p>
+<p>返回UNIX进程数</p>
+<p>avg1() -&gt; SystemLoad | {error, Reason}</p>
+<p>返回最后1分钟系统的负载</p>
+<p>avg5() -&gt; SystemLoad | {error, Reason}</p>
+<p>返回最后5分钟系统的负载</p>
+<p>avg15() -&gt; SystemLoad | {error, Reason}</p>
+<p>返回最后15分钟系统的负载</p>
+<p>util() -&gt; CpuUtil | {error, Reason}</p>
+<p>返回CPU使用率</p>
+<p>util(Opts) -&gt; UtilSpec | {error, Reason}</p>
+<p>返回CPU使用率的详细信息</p>
+<p>调用这些函数取CPU监测数据时，如果前后两次调用，数值没有变化时显示为0，有点奇怪</p>
+<p>disksup</p>
+<p>disksup是一个用来监测磁盘空间的进程，适用于Unix和Windows系统。监测服务定期检查磁盘，对于每个磁盘或分<br>区，在它使用超过一定的可用空间量，通过{ {disk_almost_full，MountedOn}，[] } 设置产生报警。在Unix下所有的<br>本地磁盘都会被监测，包括存在的交换分区。在WIN32下所有类型为“FIXED_DISK”逻辑驱动器都会被检查。<br>配置监控间隔时间和阀值</p>
+<p>disk_space_check_interval = int()&gt;0</p>
+<p>监测间隔时间，单位为分钟，默认为30分钟。</p>
+<p>disk_almost_full_threshold = float()</p>
+<p>监测阀值，磁盘使用率达到多少时产生告警，默认为80，单位是百分比。</p>
+<p>模块中的函数列表</p>
+<p>get_disk_data() -&gt; [DiskData]</p>
+<p>返回最后一次磁盘检查结果</p>
+<p>get_check_interval() -&gt; MS</p>
+<p>获取监测间隔时间，单位是毫秒</p>
+<p>set_check_interval(Minutes) -&gt; ok</p>
+<p>设置监测间隔时间，这个设置在下一次监测时生效，服务退出后，这个值会失效，重启服务后使用默认值</p>
+<p>get_almost_full_threshold() -&gt; Percent</p>
+<p>获取监测阀值，为磁盘使用率</p>
+<p>set_almost_full_threshold(Float) -&gt; ok</p>
+<p>设置监测阀值，服务重启后，设置失效，使用默认值</p>
+<p>memsup</p>
+<p>memsup用来监控系统内存和各个进程内存的使用率，适用于Unix、Windows和VxWorks系统，定时监测内存，如果内<br>存使用超过系统分配的一定值，通过{system_memory_high_watermark, []} 设置产生告警。如果系统中任何Erlang<br>进程使用内存超过在总内存中的一定百分比，通过设置{process_memory_high_watermark,Pid} 产生告警。</p>
+<p>配置监测间隔时间和阀值</p>
+<p>memory_check_interval = int()&gt;0</p>
+<p>以分钟为刻度，默认为1分钟</p>
+<p>system_memory_high_watermark = float()</p>
+<p>内存使用阀值，默认为80，单位是百分比</p>
+<p>process_memory_high_watermark = float()</p>
+<p>单个Erlang进程使用阀值，默认为5，单位是百分比</p>
+<p>memsup_helper_timeout = int()&gt;0</p>
+<p>等待监测结果的超时时间，默认为30秒</p>
+<p>memsup_system_only = bool()</p>
+<p>设置是否只监控系统内存使用率还是同时监测Erlang进程内存使用率，默认为false</p>
+<p>模块中的函数列表</p>
+<p>get_memory_data() -&gt; {Total,Allocated,Worst}</p>
+<p>获取系统总内存，使用内存，每个Erlang进程的使用内存</p>
+<p>get_system_memory_data() -&gt; MemDataList</p>
+<p>获取系统内存使用的详细信息</p>
+<p>get_os_wordsize() -&gt; Wordsize</p>
+<p>获取操作系统的位数</p>
+<p>get_check_interval() -&gt; MS</p>
+<p>获取监测间隔时间，单位毫秒</p>
+<p>set_check_interval(Minutes) -&gt; ok</p>
+<p>设置监测间隔时间，单位分钟</p>
+<p>get_procmem_high_watermark() -&gt; int()</p>
+<p>获取每一进程内存使用告警阀值</p>
+<p>set_procmem_high_watermark(Float) -&gt; ok</p>
+<p>设置每一进程内存告警阀值</p>
+<p>get_sysmem_high_watermark() -&gt; int()</p>
+<p>获取系统内存使用阀值</p>
+<p>set_sysmem_high_watermark(Float) -&gt; ok</p>
+<p>设置系统内存使用阀值</p>
+<p>get_helper_timeout() -&gt; Seconds</p>
+<p>获取监测数据返回等待时间</p>
+<p>set_helper_timeout(Seconds) -&gt; ok</p>
+<p>设置监测数据返回等待时间</p>
+<p>从lib/megaco/src/tcp/megaco_tcp_connection.erl摘抄的代码, 挺详细的关于系统的信息:</p>
+<figure class="highlight erlang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SchedId      = erlang:system_info(scheduler_id),   </span><br><span class="line">SchedNum     = erlang:system_info(schedulers),   </span><br><span class="line">ProcCount    = erlang:system_info(process_count),   </span><br><span class="line">ProcLimit    = erlang:system_info(process_limit),   </span><br><span class="line">ProcMemUsed  = erlang:memory(processes_used),   </span><br><span class="line">ProcMemAlloc = erlang:memory(processes),   </span><br><span class="line">MemTot       = erlang:memory(total),   </span><br><span class="line"><span class="function"><span class="title">error_msg</span><span class="params">(<span class="string">"abormal termination: "</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Scheduler id:                         ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Num scheduler:                        ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Process count:                        ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Process limit:                        ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Memory used by erlang processes:      ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   Memory allocated by erlang processes: ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n   The total amount of memory allocated: ~p"</span>  </span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="string">"~n~p"</span>,   </span></span></span><br><span class="line"><span class="function"><span class="params">          [SchedId, SchedNum, ProcCount, ProcLimit,   </span></span></span><br><span class="line"><span class="function"><span class="params">           ProcMemUsed, ProcMemAlloc, MemTot, Reason])</span>,</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://blog.evoupsight.com/2013/02/27/erlang-monitor-cpu-memory-disk/" data-id="cjtcp5sn4002icrsx5scg15cv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2013/03/01/erlang-c-nif/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          erlang调用C库函数(NIF 方式)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/02/04/erlang-self-log-to-file/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">erlang自带日志写文件的方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/android/">android</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/android/cocos2d-js/">cocos2d-js</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/">c-language</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/c-language/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-html5/">cocos2d-html5</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/">cocos2d-js</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-js/android/">android</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/">cocos2d-x</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/">cocos2d-iphone</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/cocos2d-x/cocos2d-iphone/cocos2d-html5/">cocos2d-html5</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/cplusplus/">cplusplus</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/">erlang</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/rrdtool/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/erlang/vim/">vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/">freebsd</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/nginx/php/">php</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/php/">php</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/rrdtool/linux/">linux</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/">vim</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/freebsd/vim/ctags/">ctags</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/gamedev-cg/">gamedev-cg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/gcc/">gcc</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/golang/">golang</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hbase/hive/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hadoop/hive/java/">java</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/haproxy/">haproxy</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/">hbase</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hbase/hadoop/zookeeper/">zookeeper</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/hive/">hive</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/hive/maven/">maven</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/">java</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/java/maven/">maven</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java/mybatis/">mybatis</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/javascript/">javascript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/latex/">latex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/linux/">linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/">vmware</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/linux/vmware/centos/">centos</a></li></ul></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/">monitor</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/monitor/rrdtool/">rrdtool</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/">nginx</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/nginx/mongodb/">mongodb</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/octopress/">octopress</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/">php</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/">hadoop</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/php/hadoop/zookeeper/">zookeeper</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/monitor/">monitor</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/mysql/">mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nginx/">nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/php/nosql/">nosql</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/">rrdtool</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/rrdtool/nginx/">nginx</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/">shell</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/shell/devops/">devops</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shell/monitor/">monitor</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/socket-server/">socket server</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/">version_control</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/version-control/freebsd/">freebsd</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/vim/">vim</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/zookeeper/">zookeeper</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/08/">August 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/09/">September 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">May 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/04/">April 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">March 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/02/">February 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">January 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/12/">December 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/11/">November 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">October 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">September 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">July 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">June 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/05/">May 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/04/">April 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">March 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">February 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">January 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">December 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">November 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">October 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/09/">September 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">January 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/11/">November 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/09/">September 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/07/">July 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/06/">June 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">January 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">December 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/11/">November 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/07/">July 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/06/">June 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">December 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/10/">October 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/09/">September 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/06/">June 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/07/">July 2008</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2008/05/">May 2008</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/08/15/idea-mybatis-codes-generator/">mybatis生成器生成代码</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/11/latex-vim-pratice/">linux下latex中文配置小记</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/javascript-class-define-5-method/">五类方法定义javascript类</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/21/sync-fork-github/">同步github分支过来的代码库</a>
+          </li>
+        
+          <li>
+            <a href="/2014/09/16/sqoop-dump-to-mysql/">sqoop导出hive数据到mysql</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 evoup yin<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
